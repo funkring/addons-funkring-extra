@@ -1,0 +1,229 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* jdoc
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 8.0alpha1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-05 08:33+0000\n"
+"PO-Revision-Date: 2014-08-05 08:33+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: jdoc
+#: model:ir.actions.act_window,help:jdoc.action_jdoc_view
+msgid "<p class=\"oe_view_nocontent_create\">\n"
+"                Add to create a jDoc View \n"
+"              </p><p>\n"
+"                A jDoc view as a view of Data defined by User. This view could be used\n"
+"                for exporting, importing, synchronizing data.\n"
+"              </p>\n"
+"            "
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.view.rule,name:0
+msgid "Alias"
+msgstr ""
+
+#. module: jdoc
+#: selection:jdoc.view,ltype:0
+#: selection:jdoc.view.rule,ltype:0
+msgid "Composition"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.log,create_date:0
+msgid "Create Date"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.log,create_uid:0
+msgid "Creator"
+msgstr ""
+
+#. module: jdoc
+#: model:ir.actions.act_window,name:jdoc.action_jdoc_log
+#: model:ir.model,name:jdoc.model_jdoc_log
+#: view:jdoc.log:0
+#: field:jdoc.log,doc:0
+msgid "Document"
+msgstr ""
+
+#. module: jdoc
+#: model:ir.model,name:jdoc.model_jdoc_view
+msgid "Document View"
+msgstr ""
+
+#. module: jdoc
+#: model:ir.model,name:jdoc.model_jdoc_view_rule
+msgid "Document View Rule"
+msgstr ""
+
+#. module: jdoc
+#: view:jdoc.log:0
+msgid "Documents"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.log,write_uid:0
+msgid "Editor"
+msgstr ""
+
+#. module: jdoc
+#: code:addons/jdoc/jdoc.py:260
+#, python-format
+msgid "Error!"
+msgstr ""
+
+#. module: jdoc
+#: selection:jdoc.view.rule,option:0
+msgid "Exclude"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.view.rule,field_id:0
+msgid "Field"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.view.rule,field_relation:0
+msgid "Field Relation"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.view.rule,field_view_id:0
+msgid "Field View"
+msgstr ""
+
+#. module: jdoc
+#: selection:jdoc.view.rule,option:0
+msgid "Hidden"
+msgstr ""
+
+#. module: jdoc
+#: selection:jdoc.view.rule,option:0
+msgid "Include"
+msgstr ""
+
+#. module: jdoc
+#: code:addons/jdoc/jdoc.py:260
+#, python-format
+msgid "Invalid Model %s"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.view,ltype:0
+#: field:jdoc.view.rule,ltype:0
+msgid "Link Type"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.view,model_id:0
+msgid "Model"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.view,model_field_ids:0
+msgid "Model Fields"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.view,name:0
+msgid "Name"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.view.rule,option:0
+msgid "Option"
+msgstr ""
+
+#. module: jdoc
+#: selection:jdoc.view,ltype:0
+#: selection:jdoc.view.rule,ltype:0
+msgid "Reference"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.log,res_id:0
+msgid "Resource ID"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.log,res_model:0
+msgid "Resource Model"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.log,rev:0
+msgid "Revision"
+msgstr ""
+
+#. module: jdoc
+#: view:jdoc.view:0
+msgid "Rule"
+msgstr ""
+
+#. module: jdoc
+#: view:jdoc.view:0
+#: field:jdoc.view,rule_ids:0
+msgid "Rules"
+msgstr ""
+
+#. module: jdoc
+#: view:jdoc.log:0
+msgid "Search Document"
+msgstr ""
+
+#. module: jdoc
+#: view:jdoc.view:0
+msgid "Search View"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.view.rule,sequence:0
+msgid "Sequence"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.log,uuid:0
+msgid "UUID"
+msgstr ""
+
+#. module: jdoc
+#: model:ir.actions.act_window,name:jdoc.action_jdoc_view
+#: view:jdoc.view:0
+#: field:jdoc.view.rule,view_id:0
+msgid "View"
+msgstr "Ansicht"
+
+#. module: jdoc
+#: view:jdoc.view:0
+msgid "Views"
+msgstr ""
+
+#. module: jdoc
+#: selection:jdoc.view.rule,option:0
+msgid "Visible"
+msgstr ""
+
+#. module: jdoc
+#: field:jdoc.log,write_date:0
+msgid "Write Date"
+msgstr ""
+
+#. module: jdoc
+#: model:ir.ui.menu,name:jdoc.menu_jdoc_log
+msgid "jDoc Logs"
+msgstr ""
+
+#. module: jdoc
+#: model:ir.ui.menu,name:jdoc.menu_jdoc_view
+msgid "jDoc Views"
+msgstr ""
+
