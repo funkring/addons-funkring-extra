@@ -12,8 +12,8 @@ Ext.define('Fclipboard.store.LogStore', {
     
     info: function(message) {
         var self = this;
-        this.add({"message": self.extract(message),
-                  "prio" : 1});
+        this.add({ "message": self.extract(message),
+                         "prio" : 1});
     },
     
     error: function(message) {

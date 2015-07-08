@@ -1,17 +1,14 @@
 /*global Ext:false*/
 Ext.define('Fclipboard.model.Item', {
-   extend: 'Ext.data.Model',
+   extend: 'Fclipboard.model.BasicItem',
    requires: [
        'Ext.proxy.PouchDB'
    ],
-   config: {
-       fields: ['name', 'partner_id', 'parent_id', 'form', 'type'],
-       //belongsTo: [{model:'Fclipboard.model.Partner', associationKey:'partner_id'}],
-       identifier: 'uuid',
+   config: {      
        proxy: {
             type: 'pouchdb',
             database: 'fclipboard',
-            domain: [['fdoo__ir_model','=','fclipboard.item']]      
+            domain: [['fdoo__ir_model','=','fclipboard.item'],['is_template','=',false]]      
        }       
    }
 });

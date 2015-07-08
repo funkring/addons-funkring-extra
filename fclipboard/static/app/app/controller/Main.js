@@ -57,6 +57,7 @@ Ext.define('Fclipboard.controller.Main', {
         var self = this;        
         self.callParent(arguments);
         self.path = [];  
+        self.syncActive = false;
     },
 
     newItem: function() {
@@ -66,14 +67,51 @@ Ext.define('Fclipboard.controller.Main', {
     createItem: function(view, item_type) {
         var self = this;
         var mainView = self.getMainView();
-        var record = mainView.getRecord();
+        var parentRec = mainView.getRecord();
         
-        var newItem = Ext.create('Fclipboard.model.Item',
-                {'type': item_type,
-                 'parent_id' : record !== null ? record.getId() : null
-                });
+//         var newItem = Ext.create('Fclipboard.model.Item',
+//                 {'type': item_type || 'directory',
+//                  'parent_id' : record !== null ? record.getId() : null
+//                 });
        
-        self.editItem(newItem);
+         // new view
+        self.getMainView().push({
+            title: 'Neues Dokument',        
+            xtype: 'formview',
+            saveHandler: function(view, callback) {
+                // get values
+                var values = view.getValues();
+                values.type = item_type || 'directory';
+                values.parent_id = parentRec !== null ? parentRec.getId() : null;
+                
+                // get template
+                var template_id = values.template_id;
+                delete values.template_id;
+                                 
+                // clone template
+                var db = self.getDB();
+                db.put(values, function(err, doc) {
+                    
+                });
+            }, 
+            items: [{
+                        xtype: 'textfield',
+                        name: 'name',
+                        label: 'Name',
+                        required: true
+                    },
+                    {
+                        xtype: 'listselect',
+                        name: 'template_id',
+                        label: 'Vorlage',
+                        navigationView: self.getMainView(),
+                        store: 'ItemTemplateStore',
+                        displayField: 'name'                
+                    }                    
+                   ],
+            editable: true,
+            deleteable: true
+        });
     },
     
     editCurrentItem: function() {
@@ -86,19 +124,18 @@ Ext.define('Fclipboard.controller.Main', {
            
     editItem: function(record) {        
         var self = this;
-        var items = {
-            xtype: 'textfield',
-            name: 'name',
-            label: 'Name',
-            required: true
-        };
             
         // new view
         self.getMainView().push({
             title: record.data.name,
             xtype: 'formview',
             record: record,
-            items: items,
+            items: [{
+                        xtype: 'textfield',
+                        name: 'name',
+                        label: 'Name',
+                        required: true
+                    }],
             editable: true,
             deleteable: true
         });
@@ -243,37 +280,138 @@ Ext.define('Fclipboard.controller.Main', {
     getLog: function() {
         return Ext.getStore("LogStore");
     },
+    
+    refresh: function() {
+        this.getMainView().loadRecord();  
+    },
 
     sync: function() {        
         var self = this;
-        var db = self.getDB();
+                
+        if ( !self.syncActive ) {
+            self.syncActive = true;
         
-        db.get('_local/config').then( function(config) {
-            var log = self.getLog();
-            log.info("Hochladen auf <b>" + config.host + ":" + config.port + "</b> mit Benutzer <b>" + config.user +"</b>");
-            // reload after sync
-            PouchDBDriver.syncOdoo(config, [Ext.getStore("PartnerStore")], log, function(err) {
-                 if (err) {
-                     log.error(err);
-                 }
-                 self.getMainView.loadRecord();
+            // start dialog
+            var mbox = Ext.Msg.show({
+                title: "Synchronisation",
+                message: "Synchronisiere...",
+                buttons: []
             });
-        });        
+            
+            // clear log
+            var log = self.getLog();
+            log.removeAll();
+            
+            // define callback
+            var callback = function(err) {
+                if (err) {
+                     log.error(err);
+                     log.warning("<b>Synchronisation mit Fehlern abgeschlossen!</b>");
+                } else {
+                     log.info("<b>Synchronisation beendet!</b>");
+                }
+                
+                mbox.hide();
+                self.refresh();
+                self.syncActive = false;
+            };
+            
+            // fetch config and sync
+            var db = self.getDB();
+            db.get('_local/config', function(err,config) {
+                if ( !err ) {                    
+                    log.info("Hochladen auf <b>" + config.host + ":" + config.port + "</b> mit Benutzer <b>" + config.user +"</b>");
+                    
+                    // reload after sync
+                    PouchDBDriver.syncOdoo(config, [Ext.getStore("PartnerStore"),
+                                                    Ext.getStore("BasicItemStore")
+                                                   ], log, callback );
+                } else {
+                    callback(err);
+                }                
+            });
+        }  
        
     },
     
     resetSync: function() {
         var self = this;
         var log = this.getLog();
+        log.removeAll();
         
-        PouchDBDriver.resetDB('fclipboard', function(err) {
-            if (err) {
-                log.error(err);
-            } else {
-                log.info("Datenbank zurückgesetzt!");
-                self.getMainView().loadRecord();   
-            }
+        var syncPopover = Ext.create('Ext.Panel',{
+            title: "Zurücksetzen",
+            floating: true,
+            hideOnMaskTap : true,
+            modal: true,
+            width: '300px',
+            defaults: {
+                defaults: {
+                    xtype: 'button',
+                    margin: 10,
+                    flex : 1
+                } 
+            },                      
+            items: [
+                {
+                    xtype: 'fieldset',
+                    title: 'Zurücksetzen',
+                    items: [
+                         {
+                             text: 'Synchronisation',
+                             handler: function() {
+                                 PouchDBDriver.resetSync('fclipboard', function(err) {
+                                    if (err) {
+                                        log.error(err);
+                                    } else {
+                                        log.info("Sync-Daten zurückgesetzt!");                                      
+                                    }         
+                                    
+                                    self.refresh();
+                                    syncPopover.hide();                           
+                                });
+                             }                  
+                         },
+                         {
+                             text: 'Datenbank',
+                             handler: function() {
+                                  Ext.Msg.confirm('Löschen', 'Soll die Datenbank wirklich gelöscht werden?', function(choice)
+                                  {
+                                       var callback = function(err) {
+                                           if (err) {
+                                              log.error(err); 
+                                           }
+                                           self.refresh();
+                                           syncPopover.hide();
+                                           log.info("Datenbank zurückgesetzt!");
+                                       };    
+                                                                
+                                       if( choice == 'yes' ) {
+                                             self.getDB().get('_local/config', function(err, doc) {
+                                                PouchDBDriver.resetDB('fclipboard', function(err) {
+                                                    if ( doc ) {
+                                                        delete doc._rev;
+                                                        self.getDB().put(doc, function(err) {
+                                                            callback(err);                                                               
+                                                        });                                                                
+                                                    } else {
+                                                        callback(err);
+                                                    }
+                                                });    
+                                                
+                                            });                                           
+                                       } else {
+                                           syncPopover.hide();
+                                       }
+                                  });                                 
+                             }
+                         }
+                    ]            
+                }
+            ]            
         });
+        
+        syncPopover.show('pop');        
     }
     
     

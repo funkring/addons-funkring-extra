@@ -13,13 +13,14 @@ Ext.define('Fclipboard.model.Partner', {
                 'sreet2',
                 'zip', 
                 'city',
-                'fax'            
+                'fax',
+                'customer'        
                 ],
        identifier: 'uuid',
        proxy: {           
             type: 'pouchdb',
             database: 'fclipboard',
-            domain: [['fdoo__ir_model','=','res.partner']]      
+            domain: [['fdoo__ir_model','=','res.partner'],['customer','=',true]]      
         }
    } 
 });

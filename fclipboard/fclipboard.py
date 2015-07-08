@@ -86,7 +86,7 @@ class fclipboard_item(models.Model):
     vali = fields.Integer("Value", help="Integer Value")
     valb = fields.Boolean("Value", help="Boolean Value")
     vald = fields.Date("Value", help="Date Value")    
-    value = fields.Text("Value",readonly=True, _compute="_compute_value")
+    value = fields.Text("Value", readonly=True, _compute="_compute_value")
   
     # main definition
     _name = "fclipboard.item"

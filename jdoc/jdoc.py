@@ -206,40 +206,7 @@ class jdoc_jdoc(osv.AbstractModel):
             field_defs[field_name]=field_def        
         return res
     
-    
-    def _jdoc_update(self, cr, uid, ids, delete=False, context=None):
-        log_obj = self.pool["jdoc.log"]
-        for obj in self.browse(cr, SUPERUSER_ID, ids, context=context):            
-            new_doc = self._jdoc_get(cr, SUPERUSER_ID, obj, context=context)
-            if delete:
-                new_doc[META_DELETE]=True          
-            
-            uuid = new_doc[META_ID]
-            cur_doc = log_obj._get_document(cr, SUPERUSER_ID, uuid, context=context)
-            
-            changed = True
-            cur_rev = None
-            
-            if cur_doc:      
-                cur_rev = cur_doc.get(META_REV)          
-                changed = util.mergeDict(cur_doc, new_doc)                    
-            else:
-                cur_doc = new_doc
-                
-            if changed:                
-                cur_rev = log_obj._next_rev(cr, SUPERUSER_ID, cur_rev) 
-                cur_doc[META_REV] = cur_rev
-                json_doc = simplejson.dumps(cur_doc)
-                
-                log_obj.create(cr, SUPERUSER_ID, {
-                        "uuid" : uuid,
-                        "rev" : cur_rev,
-                        "doc" : json_doc,
-                        "deleted" : delete,
-                        "editor_uid" : uid
-                })
-                
-    def _jdoc_get(self, cr, uid, obj, refonly=False, emptyValues=True, context=None):
+    def _jdoc_get(self, cr, uid, obj, refonly=False, emptyValues=True, onlyFields=None, context=None):
         if not obj:
             return False
         
@@ -256,9 +223,10 @@ class jdoc_jdoc(osv.AbstractModel):
         
         fields = definition["fields"]
         for name, attrib in fields.items():
-            # check for hidden attribute
-            if attrib.get("hidden"):
+            # check for hidden attribute, or not in fields
+            if attrib.get("hidden") or (onlyFields and not name in onlyFields):
                 continue
+            
             # get type
             dtype = attrib["dtype"]
             # reset value
@@ -319,6 +287,11 @@ class jdoc_jdoc(osv.AbstractModel):
         
         in_list = changes.get("changes")
         model = changes["model"]
+        
+        fields = changes.get("fields")
+        if fields:
+            fields = set(fields)
+        
         model_obj = self.pool[model] 
 
         lastsync = changes.get("lastsync") or {}
@@ -339,7 +312,7 @@ class jdoc_jdoc(osv.AbstractModel):
         out_list = []        
         
         # build search domain
-        search_domain = []
+        search_domain = changes.get("domain") or []
         del_search_domain = [("res_model","=",model),("active","=",False)]
       
         # only sync with last date  
@@ -357,13 +330,13 @@ class jdoc_jdoc(osv.AbstractModel):
             
             # get last change date
             cr.execute("SELECT MAX(write_date) FROM %s WHERE id IN %%s " % model_obj._table, (tuple(out_ids),))
-            res = cr.fetchall()
+            res = cr.fetchone()
             if res:
                 last_date = max(last_date, res[0])
             
             # create docs
             for obj in model_obj.browse(cr, uid, out_ids, context=context):
-                doc = self._jdoc_get(cr, uid, obj, emptyValues=False, context=context)
+                doc = self._jdoc_get(cr, uid, obj, emptyValues=False, onlyFields=fields, context=context)
                 if doc:
                     out_list.append({ "id" : doc["_id"],                                 
                                       "doc" : doc 
@@ -386,7 +359,7 @@ class jdoc_jdoc(osv.AbstractModel):
             # get last change date
             cr.execute("SELECT MAX(write_date) FROM %s WHERE res_model=%%s AND id IN %%s" % mapping_obj._table, 
                                                                 (model, tuple([v["id"] for v in out_deleted_vals]) ) ) 
-            res = cr.fetchall()
+            res = cr.fetchone()
             if res:            
                 last_date = max(last_date, res[0])
                 
@@ -413,12 +386,12 @@ class jdoc_jdoc(osv.AbstractModel):
            "changes" : out_list
         }
     
-    def jdoc_get(self, cr, uid, uuid, res_model=None, refonly=False, emptyValues=False, name=None, context=None):
+    def jdoc_get(self, cr, uid, uuid, res_model=None, refonly=False, emptyValues=False, onlyFields=None, name=None, context=None):
         mapping_obj = self.pool["res.mapping"]
         obj = mapping_obj._browse_mapped(cr, uid, uuid, res_model=res_model, name=name, context=None)
         if not obj:
             return False
-        return self._jdoc_get(cr, uid, obj, refonly=refonly, emptyValues=emptyValues, context=context)
+        return self._jdoc_get(cr, uid, obj, refonly=refonly, emptyValues=emptyValues, onlyFields=onlyFields, context=context)
     
     def jdoc_put(self, cr, uid, doc, return_id=False, context=None):
         if not doc:
@@ -455,7 +428,7 @@ class jdoc_jdoc(osv.AbstractModel):
         # otherwise update        
         else:
         
-            definition = self._jdoc_def(cr, uid, obj._model._name)
+            definition = self._jdoc_def(cr, uid, model)
             fields = definition["fields"]
             
             values = {}
@@ -477,7 +450,7 @@ class jdoc_jdoc(osv.AbstractModel):
                         if dtype == "l":
                             values[field] = [(6,0,[])]
                         else:
-                            value[field] = None
+                            values[field] = None
                     # handle list
                     elif isinstance(value, list):
                         if not dtype == "l":
@@ -512,8 +485,8 @@ class jdoc_jdoc(osv.AbstractModel):
                     values[field] = value
                     
             if values:           
-                if obj:
-                    model_obj.write(cr, uid, obj.id, values, context=context)
+                if obj_id:
+                    model_obj.write(cr, uid, obj_id, values, context=context)
                 else:
                     obj_id = model_obj.create(cr, uid, values, context=context)
             

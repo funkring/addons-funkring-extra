@@ -17,26 +17,48 @@ Ext.define('Ext.proxy.PouchDBDriver',{
      * @return database
      */
     getDB: function(dbName) {    
+        var self = this;
         var db = this.databases[dbName];
-        if ( db === undefined ) {
-            db =  new PouchDB(dbName);
-            this.databases[dbName] = db;
+        if ( !db ) {
+            db = new PouchDB(dbName, {size: 1000,
+                                      adapter: 'websql' });
+            self.databases[dbName] = db;
         }
         return db;
     },    
     
     resetDB: function(dbName, callback) {
         var self = this;
-        var db = self.getDB(dbName);
+        var db = self.getDB(dbName);        
+        delete self.databases[dbName];
         db.destroy(callback);
-        self.databases[dbName] = undefined;
     },
 
+
+    resetSync: function(dbName, callback) {
+        var self = this;
+        var db = self.getDB(dbName);
+        
+        db.get("_local/odoo_sync", function(err, doc) {
+            if ( !err ) {
+                db.remove(doc,function(err) {
+                    callback(err);            
+                });
+            } else {
+                callback();    
+            }
+        });        
+    },
+    
      /**
      * sync odoo store
      */
-    syncOdooStore: function(con, db, store, syncUuid, res_model, log, callback) {        
-        var syncpointUuid = "_local/"+syncUuid+"{"+res_model+"}";
+    syncOdooStore: function(con, db, store, syncUuid, res_model, domain, log, callback) {        
+        var syncName = syncUuid+"-{"+res_model+"}";
+        if ( domain ) {
+            syncName = syncName + "-{"+JSON.stringify(domain)+"}";
+        }
+        
         var jdoc_obj = con.get_model("jdoc.jdoc");
         
         // delete docs
@@ -56,10 +78,13 @@ Ext.define('Ext.proxy.PouchDBDriver',{
                     return doc.fdoo__ir_model === res_model;
                 }
             }).then(function(changes) {
+                var fields =  store.getModel().getFields().keys;
                 jdoc_obj.exec("jdoc_sync", 
                      [
                        {
                         "model" : res_model,
+                        "domain" : domain,
+                        "fields" : fields,
                         "lastsync" : syncPoint,
                         "changes" : changes.results || {}
                        },
@@ -74,6 +99,9 @@ Ext.define('Ext.proxy.PouchDBDriver',{
                              var server_lastsync = res.lastsync;
                              var pending_server_changes = server_changes.length+1;
                              
+                             var docDeleted = 0;
+                             var docUpdated = 0;
+                             var docInserted = 0;
                                                           
                              var serverChangeDone = function(err) {
                                 pending_server_changes--;
@@ -83,25 +111,29 @@ Ext.define('Ext.proxy.PouchDBDriver',{
                                 }
                                 
                                 if ( !pending_server_changes ) {
-                                    log.info("Synchronisation abgeschlossen!");        
-                                   
+                                    // update sync data                                   
                                     db.info().then(function(res) {
                                         server_lastsync.seq = res.update_seq;
-                                        server_lastsync._id = syncPoint._id;
-                                        
-                                        db.get(server_lastsync._id, function(err, doc) {
+                                        db.get("_local/odoo_sync", function(err, doc) {
+                                           
+                                           // new sync point 
                                            if (err) {
-                                               db.put(server_lastsync, function(err) {
-                                                   log.info("Synchronisationspunkt erstmals erstellt!");
-                                                   callback(err,server_lastsync);
-                                               });
-                                           } else {
-                                              server_lastsync._rev = doc._rev;
-                                              db.put(server_lastsync, function(err) {
-                                                   log.info("Synchronisationspunkt erstellt!");
-                                                   callback(err,server_lastsync);
-                                               });
-                                           }
+                                              doc={_id: "_local/odoo_sync"};
+                                           } 
+                                           
+                                           // log statistik
+                                           log.info("Synchronisation für <b>" + res_model + "</b> ausgeführt </br> " +
+                                                    "<pre>" + 
+                                                    "    " + docDeleted + " Dokumente gelöscht" +
+                                                    "    " + docInserted + " Dokumente eingefügt" +
+                                                    "    " + docUpdated + " Dokumente aktualisiert" +
+                                                    "</pre>");
+                                           
+                                           doc[syncName]=server_lastsync;
+                                           db.put(doc, function(err) {                                              
+                                               callback(err, server_lastsync);                                               
+                                           });
+                                           
                                         });
                                     });           
                                 }                              
@@ -116,11 +148,12 @@ Ext.define('Ext.proxy.PouchDBDriver',{
                                     // lösche dokument
                                     db.get(server_change.id, function(err, doc) {
                                          if ( !err ) {
-                                            doc._deleted=true;                                          
-                                            log.info("Dokument " + server_change.id + " wird gelöscht");
+                                            doc._deleted=true; 
+                                            docDeleted++;                                         
+                                            //log.info("Dokument " + server_change.id + " wird gelöscht");
                                             db.put(doc, serverChangeDone); //<- decrement pending operations
                                          } else {
-                                            log.warning("Dokument " + server_change.id + " nicht vorhanden zu löschen");
+                                            //log.warning("Dokument " + server_change.id + " nicht vorhanden zu löschen");
                                             // decrement operations
                                             serverChangeDone(); 
                                          }                                      
@@ -130,10 +163,12 @@ Ext.define('Ext.proxy.PouchDBDriver',{
                                 } else if ( server_change.doc ) {
                                     db.get(server_change.id, function(err, doc) {
                                          if ( err ) {
-                                             log.warning("Dokument " + server_change.id + " wird neu erzeugt");
-                                         } else {                                         
+                                             docInserted++;
+                                             //log.warning("Dokument " + server_change.id + " wird neu erzeugt");
+                                         } else {
+                                             docUpdated++;                                         
                                              server_change.doc._rev = doc._rev;
-                                             log.info("Dokument " + server_change.id + " wird aktualisiert");
+                                             //log.info("Dokument " + server_change.id + " wird aktualisiert");
                                          }
                                          db.put(server_change.doc, serverChangeDone); //<- decrement pending operations                                         
                                     });
@@ -151,16 +186,23 @@ Ext.define('Ext.proxy.PouchDBDriver',{
         
         
         // get last syncpoint or create new
-        db.get(syncpointUuid).then( function(doc) {
-            syncChanges(doc);                             
-        }).catch( function(err) {
-            syncChanges({
-                "_id" : syncpointUuid,
-                "date" : null,
-                "sequence" : 0
-            });
+        db.get("_local/odoo_sync", function(err, doc) {
+            var syncpoint;
+             
+            if (!err) {
+                syncpoint = doc[syncName];
+            }
+            
+            if ( !syncpoint ) {
+                syncpoint = {
+                    "date" : null,
+                    "sequence" : 0
+                };
+            }
+            
+            syncChanges(syncpoint);     
+            
         });
-                    
       
     },
     
@@ -189,17 +231,33 @@ Ext.define('Ext.proxy.PouchDBDriver',{
                  this.info = this.log;
              };
          }
-       
+        
          // prepare store sync
-         var syncStore = function(store) {
+         var syncStore = function(store, callback) {
             var proxy = store.getProxy();
-            if ( proxy instanceof Ext.proxy.PouchDB ) {
-                var defaults = proxy.getDefaults();
-                var res_model =  defaults.fdoo__ir_model;
+            if ( proxy instanceof Ext.proxy.PouchDB ) {                
+                var domain = [];
+                var res_model = null;
+                
+                // search model and domain
+                Ext.each(proxy.getDomain(), function(val) {
+                   if ( Ext.isArray(val) && val.length === 3 && ( val[0].indexOf("fdoo__") === 0 || val[0].indexOf("_") === 0 ) ) {                        
+                       if (val[0] == "fdoo__ir_model" && val[1] === "=") {
+                           res_model = val[2];
+                       } 
+                   } else {
+                       domain.push(val);
+                   } 
+                });
+            
+                
                 if ( res_model) {
                     // get database                    
                     var db = self.getDB(proxy.getDatabase());
-                    self.syncOdooStore(con, db, store, syncuuid, res_model, log, callback);
+                    // sync odoo store
+                    self.syncOdooStore(con, db, store, syncuuid, res_model, domain, log, function(err, res) {
+                        callback(err, res);
+                    });
                 }
             }
          };
@@ -210,8 +268,22 @@ Ext.define('Ext.proxy.PouchDBDriver',{
              if (err) {
                  log.error(err);
              } else {
-                 log.info("Authentifizierung erfolgreich");                     
-                 Ext.each(stores, syncStore);                                 
+                 log.info("Authentifizierung erfolgreich");       
+                 
+                 var storeIndex = -1;
+                 var storeLength = stores.length;
+                 
+                 // handle stores
+                 var storeCallback = function(err, res) {
+                     if ( ++storeIndex < storeLength ) {
+                        syncStore(stores[storeIndex], storeCallback);
+                     } else {
+                        callback(err, res);                            
+                     }
+                 };
+                 
+                 storeCallback();
+                    
              }
          } );
         

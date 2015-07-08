@@ -136,7 +136,7 @@ Ext.define('Ext.proxy.PouchDB', {
                         filter.push("doc."+field+".toString().toLowerCase().indexOf('"+tokens[tokI].toLowerCase()+"') > -1");
                     }
                     
-                    stmt = 'doc.' + field + ' !== null && (' + filter.join(' || ') + ')';                    
+                    stmt = 'doc.' + field + ' && (' + filter.join(' || ') + ')';                    
                 } else {
                     stmt = '';
                 }
@@ -413,33 +413,37 @@ Ext.define('Ext.proxy.PouchDB', {
                 // GET ROWS
                 rows = response.rows;
                 
-                // INSPECT ROWS
-                Ext.each(rows, function(row) {
-                    
-                    Ext.each(associations, function(assoc) {     
-                        var foreign_key = assoc.getForeignKey();
-                        var assoc_key = assoc.getAssociationKey();
-                                                
-                        if ( foreign_key && assoc_key ) {
-                            var foreign_uuid = row.doc[foreign_key];
-                            if ( foreign_uuid ) {
-                                
-                                //NEW QUERY                                
-                                queryCount++;
-                                
-                                db.get(foreign_uuid, function(err, doc) {
-                                    if (err===null) {
-                                        row.doc[assoc_key] = doc;
-                                    }    
-                                    //COMPLETE                                 
-                                    complete();                                    
-                                });    
-                            }  
-                        }                         
+                // INSPECT ASSOCIATIONS
+                if ( associations && associations.length > 0 ) {
+                
+                    Ext.each(rows, function(row) {
                         
+                        Ext.each(associations, function(assoc) {     
+                            var foreign_key = assoc.getForeignKey();
+                            var assoc_key = assoc.getAssociationKey();
+                                                    
+                            if ( foreign_key && assoc_key ) {
+                                var foreign_uuid = row.doc[foreign_key];
+                                if ( foreign_uuid ) {
+                                    
+                                    //NEW QUERY                                
+                                    queryCount++;
+                                    
+                                    db.get(foreign_uuid, function(err, doc) {
+                                        if (err===null) {
+                                            row.doc[assoc_key] = doc;
+                                        }    
+                                        
+                                        //COMPLETE                                 
+                                        complete();                                    
+                                    });    
+                                }  
+                            }                         
+                            
+                        });                        
                     });
                     
-                });
+                }
                                                
             }    
             

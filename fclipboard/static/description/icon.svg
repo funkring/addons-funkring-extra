@@ -14,7 +14,7 @@
    height="128"
    id="svg7664"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="icon.svg"
    inkscape:export-filename="/home/martin/Work/openerp-merge/addons-funkring/at_project/static/description/icon.png"
    inkscape:export-xdpi="90"
@@ -261,15 +261,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="-133.4699"
+     inkscape:cx="-223.4699"
      inkscape:cy="163.56061"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1147"
-     inkscape:window-x="1920"
-     inkscape:window-y="25"
+     inkscape:window-height="1052"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7669">
@@ -279,7 +279,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>

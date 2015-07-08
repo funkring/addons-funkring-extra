@@ -127,7 +127,7 @@ Ext.define('Fclipboard.view.ListSelect', {
 
         store = this.getStore();
 
-        if ((value != undefined && !value.isModel) && store) {
+        if ((value !== undefined && !value.isModel) && store) {
             if (typeof value === 'object') {
                 value = value[this.getValueField()];
             }

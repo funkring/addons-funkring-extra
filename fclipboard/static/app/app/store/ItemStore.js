@@ -2,8 +2,7 @@
 
 Ext.define('Fclipboard.store.ItemStore', {
     extend: 'Ext.data.Store',    
-    config: {
-        domain: null,
+    config: {        
         model: 'Fclipboard.model.Item'       
     }
 });

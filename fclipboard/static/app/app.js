@@ -28,12 +28,16 @@ Ext.application({
     ],
 
     models: [
+        'BasicItem',
         'Item',
+        'ItemTemplate',
         'Partner'
     ],
     
     stores: [
+        'BasicItemStore',
         'ItemStore',
+        'ItemTemplateStore',
         'PartnerStore',
         'LogStore'
     ],
