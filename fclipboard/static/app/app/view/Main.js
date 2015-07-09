@@ -296,9 +296,10 @@ Ext.define('Fclipboard.view.Main', {
        
        if ( !Ext.isEmpty(this.partnerSearch) ) {
          partnerStore.load({
-           params: {
-               'domain' : [['name','like',this.partnerSearch]]
-           }
+           filters : [{
+                   property: 'name',
+                   value: this.partnerSearch
+           }]
          });
        } else {
          partnerStore.load();
@@ -308,18 +309,23 @@ Ext.define('Fclipboard.view.Main', {
    searchItems: function() {
        var record = this.getRecord();
        var domain = [['parent_id','=',record !== null ? record.getId() : null]];
-       
+             
+       var options = {
+           params : {
+               domain : domain
+           }
+       };
+              
        if ( !Ext.isEmpty(this.itemSearch) ) {
-           domain.push(['name','like',this.itemSearch]);
+           options.filters = [{
+              property: 'name',
+              value: this.itemSearch   
+           }];
        }
        
        // load data
        var itemStore = Ext.StoreMgr.lookup("ItemStore");
-       itemStore.load({
-           params: {
-               'domain' : domain
-           }
-       });  
+       itemStore.load(options);  
    },
    
         

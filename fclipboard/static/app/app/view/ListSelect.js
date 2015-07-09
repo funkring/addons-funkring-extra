@@ -37,7 +37,10 @@ Ext.define('Fclipboard.view.ListSelect', {
         if ( navigationView !== null && store !== null) {
            navigationView.push({
               xtype : 'panel',
-
+              listeners: {
+                  scope: self, 
+                  show: self.firstSearch
+              },
               items: [{
                 docked: 'top',
                 xtype: 'toolbar',                
@@ -99,12 +102,24 @@ Ext.define('Fclipboard.view.ListSelect', {
        if ( !Ext.isEmpty(searchValue) ) {
          storeInst.load({
            params: {
-               'domain' : [[searchField,'like',searchValue]]
+                filters : [{
+                   property: searchField,
+                   value: this.partnerSearch
+                }]
            }
          });
        } else {
          storeInst.load();
        }    
+   },
+   
+   firstSearch: function() {
+       debugger;
+       var self = this;        
+       var storeInst = self.getStore();
+       storeInst.load({ params : {
+           limit : 100
+       }});
    },
    
    onListTap: function() {
