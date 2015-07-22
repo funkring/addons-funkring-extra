@@ -76,7 +76,8 @@ class jdoc_jdoc(osv.AbstractModel):
         Field Attribute(s): 
             
             composition 
-            
+            export
+                        
             
         Class Attribute(s):
         
@@ -85,7 +86,8 @@ class jdoc_jdoc(osv.AbstractModel):
         """
         if not context:
             context = {}
-                       
+            
+                               
         #check recursion
         if recursion_set and model_obj._name in recursion_set:
             raise DefRecursionException
@@ -110,7 +112,35 @@ class jdoc_jdoc(osv.AbstractModel):
             
         all_fields = getFields(model_obj, {})
         for field, field_obj in all_fields.iteritems():
+            if field == "id":
+                continue
+                 
             field_type = field_obj._type
+            if field_type == "selection":
+                field_type = "char"
+                if field_obj.selection:
+                    
+                    selection = field_obj.selection
+                    if hasattr(selection, '__call__'):
+                        #selection = field_obj.selection()
+                        selection = None
+                        
+                    if selection:
+                        for sel in selection:
+                            sel_value = sel[0]
+                            if not sel_value:
+                                continue
+                            if isinstance(sel_value, basestring):
+                                field_type = "char"
+                                break
+                            if isinstance(sel_value,(int,long)):
+                                field_type = "integer"
+                                break
+                            elif isinstance(sel_value,float):
+                                field_type = "float"
+                                break
+                            
+            
             field_relation = field_obj._obj
             field_name = getAttrOrNone(field_obj,"alias") or field          
             field_def = {}
@@ -217,7 +247,7 @@ class jdoc_jdoc(osv.AbstractModel):
       
         definition = self._jdoc_def(cr, uid, obj._name)
         model = definition["model"]        
-               
+        
         res = {META_ID : doc_uuid,
                META_MODEL : model}
         
@@ -238,7 +268,7 @@ class jdoc_jdoc(osv.AbstractModel):
                 if dtype in ("c","r"):
                     dtype_obj = getattr(obj, attrib["name"])
                     if dtype_obj:                        
-                        value = self._jdoc_get(cr, uid, dtype_obj, refonly=(dtype=="r"), emptyValues=emptyValues, context=context)
+                        value = self._jdoc_get(cr, uid, dtype_obj, refonly=(dtype=="r"), emptyValues=emptyValues, context=context)                    
                 # handle list type 
                 else:
                     dtype_objs = getattr(obj, attrib["name"])
@@ -264,9 +294,16 @@ class jdoc_jdoc(osv.AbstractModel):
         jdoc_sync
         @param changes: changeset to sync 
                           { "model" : xyz
-                            "date" : "2014-01-01 00:00:01",   # date  
-                            "id"  :  3                        # highest database id from last sync from change target (odoo),
-                            "seq" :  1                        # highest sequence from change source for the last sync
+                            "view" : "_jdoc_get_fclipboard",
+                            lastsync: {
+                                "date" : "2014-01-01 00:00:01",   # date  
+                                "id"  :  3                        # highest database id from last sync from change target (odoo),
+                                "seq" :  1                        # highest sequence from change source for the last sync
+                                "lastchange" : {
+                                    model.xy : "2014-01-01 00:00:01"
+                                }
+                                
+                            },
                             "changes" : [
                                {
                                   "id": "doc2",
@@ -297,14 +334,21 @@ class jdoc_jdoc(osv.AbstractModel):
         lastsync = changes.get("lastsync") or {}
         last_date = lastsync.get("date",None)
         seq = lastsync.get("seq",0)
-        
-        #conflictDocs = {}
-        
+               
+        view = changes.get("view")
+                        
+        # Method GET
+        method_get = view and view.get("get") or self._jdoc_get
+        # Method PUT
+        method_put = view and view.get("put") or self.jdoc_put
+        # Method CHANGE
+        method_lastchange = view and view.get("lastchange") or None
+
         # process input list
         if in_list:
             for change in in_list:
                 doc = change["doc"]
-                self.jdoc_put(cr, uid, doc, context=context)
+                method_put(cr, uid, doc, context=context)
                 seq = max(change["seq"], seq)
                 
         
@@ -315,9 +359,27 @@ class jdoc_jdoc(osv.AbstractModel):
         search_domain = changes.get("domain") or []
         del_search_domain = [("res_model","=",model),("active","=",False)]
       
+        # check for full sync due to changed dependency
+        sync_inc = True
+        lastchange = None
+        if method_lastchange:            
+            lastchange = method_lastchange(cr, uid, context=context)
+            if lastchange:   
+                lastsync_lastchange = lastsync.get("depchange") or {}                                 
+                for key, value in lastchange.items():
+                    lastsync_lastchange_date = lastsync_lastchange.get(key)
+                    if not lastsync_lastchange_date or value > lastsync_lastchange_date:                        
+                        sync_inc = False
+                        break
+                        
+            
+      
         # only sync with last date  
         if last_date:
-            search_domain.append(("write_date",">",last_date))
+            # domain for search
+            if sync_inc:
+                search_domain.append(("write_date",">",last_date))
+            # domain for search deleted
             del_search_domain.append(("write_date",">",last_date))
             
         
@@ -336,7 +398,7 @@ class jdoc_jdoc(osv.AbstractModel):
             
             # create docs
             for obj in model_obj.browse(cr, uid, out_ids, context=context):
-                doc = self._jdoc_get(cr, uid, obj, emptyValues=False, onlyFields=fields, context=context)
+                doc = method_get(cr, uid, obj, emptyValues=False, onlyFields=fields, context=context)
                 if doc:
                     out_list.append({ "id" : doc["_id"],                                 
                                       "doc" : doc 
@@ -376,13 +438,17 @@ class jdoc_jdoc(osv.AbstractModel):
                  })
         
         
+        lastsync =  {
+                       "date" : last_date,
+                       "seq" : seq                      
+                    }
+    
+        if lastchange:
+            lastsync["lastchange"] = lastchange
         
         return {
            "model" : model,
-           "lastsync" : {
-                           "date" : last_date,
-                           "seq" : seq
-                        },
+           "lastsync" : lastsync,
            "changes" : out_list
         }
     
@@ -420,6 +486,24 @@ class jdoc_jdoc(osv.AbstractModel):
         
         model_obj = self.pool[model]
         
+        # get database id 
+        def get_id(value, attribs):
+            res = None
+            if value:
+                # check uuid
+                if isinstance(value, basestring):
+                    res = mapping_obj.get_id(cr, uid, attribs.get("model"), value)
+                
+                # check reference or document
+                elif isinstance(value, dict):                                                        
+                    if isReference(value):
+                        # get reference
+                        res = mapping_obj.get_id(cr, uid, value.get(META_MODEL), value)
+                    else:
+                        # update document and get reference
+                        res = self.jdoc_put(cr, uid, value, return_id=True, context=context)
+            return res
+        
         # check for delete
         if doc.get("_deleted"):
             mapping_obj.unlink_uuid(cr, uid, uuid, res_model=model, context=context)
@@ -444,7 +528,10 @@ class jdoc_jdoc(osv.AbstractModel):
                     continue
                 
                 dtype = attribs["dtype"]
-                if dtype in ("c","r","l"):
+                if dtype == "r":
+                    values[field] = get_id(value, attribs)
+                    
+                elif dtype in ("c","l"):
                     # handle empty value
                     if not value:
                         if dtype == "l":
@@ -458,24 +545,7 @@ class jdoc_jdoc(osv.AbstractModel):
                         
                         sub_ids = []
                         for list_value in value:
-                            if not list_value:
-                                continue
-                            
-                            sub_id = None
-                            
-                            # check uuid
-                            if isinstance(list_value, basestring):
-                                sub_id = mapping_obj.get_id(cr, uid, None, list_value)
-                            
-                            # check reference or document
-                            elif isinstance(list_value, dict):                                                        
-                                if isReference(list_value):
-                                    # get reference
-                                    sub_id = mapping_obj.get_id(cr, uid, list_value.get(META_MODEL), list_value)
-                                else:
-                                    # update document and get reference
-                                    sub_id = self.jdoc_put(cr, uid, list_value, return_id=True, context=context)
-                                
+                            sub_id = get_id(list_value, attribs)
                             if sub_id:
                                 sub_ids.append(sub_id)
                                 

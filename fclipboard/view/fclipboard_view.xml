@@ -12,37 +12,46 @@
                         <field name="name" default_focus="1" placeholder="Name" />                        
                     </h1>
                     <field name="root_id" attrs="{'invisible':[('parent_id','==',False)]}"/>
+                    <field name="section" class="oe_inline"/> 
                     <field name="code" class="oe_inline" placeholder="Code"/>
+                    <span class="oe_inline">
+                        <field name="template" invisible="context.get('item_view',False)"/>
+                        <label for="template" invisible="context.get('item_view',False)"/>   
+                        <field name="active" invisible="context.get('item_view',False)"/>
+                        <label for="active" invisible="context.get('item_view',False)"/>
+                    </span>
                 </div>
+               
                 <group>
-                    <group>
-                        <field name="section"/>
-                        <field name="type"/>
-                        <field name="valc" attrs="{'invisible':[('type','!=','c')]}"/>
-                        <field name="valt" attrs="{'invisible':[('type','!=','t')]}"/>
-                        <field name="valf" attrs="{'invisible':[('type','!=','f')]}"/>
-                        <field name="vali" attrs="{'invisible':[('type','!=','i')]}"/>
-                        <field name="valb" attrs="{'invisible':[('type','!=','b')]}"/>
-                        <field name="vald" attrs="{'invisible':[('type','!=','d')]}"/>
+                    <group>                    
+                        <!-- reference type -->    
+                        <field name="rtype"/>
+                        <field name="order_id" attrs="{'invisible':[('rtype','!=','order_id')]}"/>
+                        <field name="pricelist_id" attrs="{'invisible':[('rtype','!=','pricelist_id')]}"/>
+                        <field name="partner_id" attrs="{'invisible':[('rtype','!=','partner_id')]}"/>
+                        <field name="product_id" attrs="{'invisible':[('rtype','!=','product_id')]}"/>
+                        <!-- primitive type -->
+                        <field name="dtype"/>
+                        <field name="valf" attrs="{'invisible':[('dtype','!=','f')]}"/>
+                        <field name="vali" attrs="{'invisible':[('dtype','!=','i')]}"/>
+                        <field name="valb" attrs="{'invisible':[('dtype','!=','b')]}"/>
+                        <field name="vald" attrs="{'invisible':[('dtype','!=','d')]}"/>
+                        <field name="valc"/>
+                        <field name="valt"/>                        
                     </group>     
-                    <group>                              
-                        <field name="active"/>    
-                        <field name="is_template"/>
+                    <group>           
                         <field name="parent_id" invisible="context.get('item_view',False)" domain="[('id','!=',active_id),'!',('id','child_of',active_id)]"/>
-                        <field name="owner_id" attrs="{'invisible':[('parent_id','!=',False)]}"/>                       
-                        <field name="ref"/>                        
+                        <field name="owner_id" invisible="context.get('item_view',False)" attrs="{'invisible':[('parent_id','!=',False)]}"/>                       
                     </group>
                 </group>
                 <div>
                     <field name="child_ids" 
                         context="{'item_view':True}">
                         <tree>
-                            <field name="sequence" widget="handle"/>
-                            <field name="name"/>
-                            <field name="type"/>       
+                            <field name="sequence" widget="handle"/>                            
+                            <field name="name"/>                            
                             <field name="section"/>
                             <field name="code"/>
-                            <field name="ref"/>
                             <field name="value"/>
                         </tree>                        
                     </field>
@@ -58,13 +67,11 @@
       <field name="model">fclipboard.item</field>
       <field name="arch" type="xml">
         <tree string="Items" >
-            <field name="name"/>
-            <field name="type"/>    
+            <field name="name"/>                
             <field name="section"/>     
             <field name="parent_id"/>
-            <field name="is_template"/>
+            <field name="template"/>
             <field name="owner_id"/>            
-            <field name="ref"/>
             <field name="value"/>            
         </tree>
       </field>
@@ -77,11 +84,11 @@
         <search string="Item">
             <field name="name"/>
             <field name="code"/>
-            <field name="type"/>
-            <field name="ref"/>
+            <field name="dtype"/>
+            <field name="rtype"/>
             <field name="parent_id"/>
-            <filter string="Document" name="document" domain="[('parent_id','=',False)]"/>
-            <filter string="Template" name="template" domain="[('is_template','=',True)]"/>
+            <filter string="Document" name="document" domain="[('parent_id','=',False),('template','=',False)]"/>
+            <filter string="Template" name="template" domain="[('template','=',True)]"/>
             <group expand="1" string="Group By...">
                 <filter string="Parent" context="{'group_by': 'parent_id'}" />
             </group>          
@@ -94,7 +101,7 @@
       <field name="res_model">fclipboard.item</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
-      <field name="context">{"search_default_document":1}</field>  
+      <field name="context">{"search_default_document":1 }</field>  
     </record>
 
     <menuitem id="menu_fclipboard_item" name="Clipboard" parent="base.menu_sales"

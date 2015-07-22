@@ -25,7 +25,166 @@ Ext.define('Ext.proxy.PouchDBDriver',{
             self.databases[dbName] = db;
         }
         return db;
-    },    
+    },  
+    
+    /**
+     * @ return view build form domain
+     */
+    buildView: function(domain) {
+      if (!domain) {
+          return null;
+      }
+      
+      var name = 'index';
+      var keys = [];   
+      var keyValues = [];
+      var tupl, op, value, field;
+      var foundKey;
+                    
+      for (var i=0; i<domain.length;i++) {
+          tupl = domain[i];
+          foundKey = false;
+          
+          if ( tupl.constructor === Array && tupl.length == 3) {
+              field = tupl[0];
+              op = tupl[1];
+              value = tupl[2];   
+              name = name + "_" + field;
+                              
+              if ( op === '=') {         
+                  keys.push(field);      
+                  keyValues.push(value || null);     
+                  foundKey = true;                                    
+              }
+          } 
+          
+          if ( !foundKey ) {
+              continue;
+          }
+      }
+      if ( keys.length === 1) {
+          return {
+              name: name,
+              key: keyValues[0] || null,
+              index: {
+                map: "function(doc) { \n"+
+                     "  if (doc." + keys[0] + ")  { \n" +
+                     "    emit(doc." + keys[0]+"); \n" +
+                     "  } else { \n" +
+                     "    emit(null); " +
+                     "  }" +
+                     "}"
+              }                    
+          };
+      } else if ( keys.length > 0 ) {
+          var fct = "function(doc) { \n" +
+                    "  var key = [];\n";
+                    
+          for ( var keyI=0; keyI < keys.length; keyI++) {
+             fct +=
+               "  if (doc." + keys[keyI] + ")  { \n" +
+               "    key.push(doc." + keys[keyI]+"); \n" +
+               "  } else { \n" +
+               "    key.push(null); \n" +
+               "  } \n" +
+               "  \n";               
+          }
+          
+          fct += "  emit(key);\n";
+          fct += "}\n";
+          
+          return {
+              name: name,
+              key: keyValues,
+              index: {
+                map: fct
+              }       
+          };
+      }
+
+      return null;
+    },  
+    
+    search: function(db, domain, params, callback) {    
+        var self = this;
+        var view = self.buildView(domain);
+        
+        if (view !== null) {
+            params.key = view.key;
+            db.query(view.name, params, function(err, res) {                
+                if ( !err ) {
+                    // no error result was successfull
+                    callback(err, res);
+                } else {
+                    //create view doc
+                    var doc = {
+                        _id: "_design/" + view.name,
+                        views: {                            
+                        }
+                    };
+                    doc.views[view.name]=view.index;
+                    //put doc
+                    db.put(doc, function(err, res) {
+                        if (err) {
+                            // error on create index
+                            callback(err, null);
+                        } else {
+                            // query again
+                            db.query(view.name, params, callback);
+                        }
+                    });          
+                }
+                    
+            });       
+        } else {
+            db.allDocs(params, callback);
+        } 
+    },
+    
+    deepCopy: function(db, new_parent_uuid, template_uuid, parent_field, defaults, callback ) {
+        var self = this;
+        self.search(db, [[parent_field,"=",template_uuid]], {'include_docs':true}, function(err, res) {
+            if ( err ) {
+                callback(err);
+            } else {
+                var rows = res.rows;
+                
+                var operationCount = rows.length+1;
+                var operationCallback = function(err, res) {
+                    if ( --operationCount === 0 ) {
+                        callback(err, res);
+                    }
+                };
+                
+                Ext.each(rows, function(row) {
+                   // prepare copy
+                   var template_child_uuid = row.doc._id;
+                   var child = row.doc;
+                   delete child._id;
+                   delete child._rev;
+                   child[parent_field]=new_parent_uuid;
+                   
+                   // copy defaults
+                   if ( defaults ) {                    
+                       for ( var key in defaults) {
+                           child[key] = defaults[key];
+                       }
+                   }
+                   
+                   // create copy
+                   db.post(child, function(err, res) {
+                        if ( !err ) {
+                            self.deepCopy(db, res.id, template_child_uuid, parent_field, defaults, operationCallback);
+                        } else {
+                            operationCallback(err, res);
+                        }               
+                   });       
+                });
+                
+                operationCallback(err, res);
+            }
+        });
+    },
     
     resetDB: function(dbName, callback) {
         var self = this;

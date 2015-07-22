@@ -15,134 +15,63 @@ Ext.define('Fclipboard.view.Main', {
     ],
     config: {
         // **********************************************************
-        // Title
+        //  Defaults
         // **********************************************************
         
         title: 'Dokumente',
-    
-        // **********************************************************
-        // Define available Items
-        // **********************************************************
-        
         record: null,        
-                        
+
         // **********************************************************
-        // NavigationBar Items
+        //  Navigation Bar
         // **********************************************************
         
         navigationBar: {
             items: [
-            {
-                xtype: 'button',
-                id: 'parentItemButton',
-                ui: 'back',
-                text: 'Back',       
-                align: 'left',
-                action: 'parentItem'  
-            },           
-            {
-                xtype: 'button',
-                id: 'editConfigButton',
-                iconCls: 'settings',                
-                align: 'left',
-                hidden: true,   
-                action: 'editConfig'   
-            },  
-            {
-                xtype: 'button',
-                id: 'resetSync',
-                iconCls: 'trash',
-                align: 'left',
-                action: 'resetSync'  
-            }, 
-            {
-                xtype: 'button',
-                id: 'syncButton',
-                text: 'Starten',
-                //iconCls: 'compose',  
-                hidden: true,              
-                align: 'right',
-                action: 'sync'                
-            },
-            {
-                xtype: 'button',
-                id: 'editItemButton',
-                iconCls: 'settings',                
-                align: 'right',
-                action: 'editItem'   
-            },    
-            {
-                xtype: 'button',
-                id: 'deleteRecord',
-                iconCls: 'trash',
-                align: 'right',
-                action: 'deleteRecord'  
-            },                   
-            {
-                xtype: 'button',
-                id: 'newItemButton',
-                iconCls: 'add',
-                align: 'right',
-                action: 'newItem'      
-            },
-            {
-                xtype: 'button',
-                id: 'saveViewButton',
-                text: 'OK',
-                //iconCls: 'compose',  
-                hidden: true,              
-                align: 'right',
-                action: 'saveView'                
-            }           
-                         
-        ]
-        },
-        
+                {
+                    xtype: 'button',
+                    id: 'deleteRecord',
+                    iconCls: 'trash',
+                    align: 'right',
+                    action: 'deleteRecord',  
+                    hidden: true
+                }, 
+                {
+                    xtype: 'button',
+                    id: 'saveViewButton',
+                    text: 'OK',                                  
+                    align: 'right',
+                    action: 'saveView',
+                    hidden: true                
+                }      
+            ]
+        },           
         
         listeners : {
             activeitemchange : function(view, newCard) {
-                var items = view.getInnerItems(),
-                    index = items.indexOf(newCard),
-                    saveButton = view.down('button[action=saveView]'),
-                    newButton = view.down('button[action=newItem]'),
-                    editButton = view.down('button[action=editItem]'),
-                    backButton = view.down('button[action=parentItem]'),
-                    editConfigButton = view.down('button[action=editConfig]'),
-                    syncButton = view.down('button[action=sync]'),
-                    deleteButton = view.down('button[action=deleteRecord]'),
-                    resetSyncButton = view.down('button[action=resetSync]');
+                var saveButton = view.down('button[action=saveView]');
+                var deleteButton = view.down('button[action=deleteRecord]');
+                
+                if ( newCard instanceof Fclipboard.view.FormView ) {
+                    saveButton.show();
                     
-                if ( index === 0) {
-                    saveButton.hide();
-                    newButton.show();
-                    deleteButton.hide();
-                } else {
-                    // check for deletable support
-                    try {
-                        if (newCard.getDeleteable() && !newCard.getRecord().phantom ) {
-                            deleteButton.show();
-                        } else {
-                            deleteButton.hide();
-                        }
-                    } catch (err) {
+                    var record = newCard.getRecord();
+                    if (newCard.getDeleteable() && record && !record.phantom ) {
+                        deleteButton.show();
+                    } else {
                         deleteButton.hide();
                     }
-                    
-                    saveButton.show();
-                    newButton.hide();                    
-                    editButton.hide();
-                    backButton.hide();
-                    syncButton.hide();
-                    editConfigButton.hide();
-                    resetSyncButton.hide();
+                } else {
+                    saveButton.hide();
+                    deleteButton.hide();
                 }
             }
         },
-        
+             
+           
         // **********************************************************
         // View Items
         // **********************************************************
-        
+                
         items: [
             {                
                 xtype: 'tabpanel',
@@ -154,16 +83,25 @@ Ext.define('Fclipboard.view.Main', {
                         Ext.getCmp("mainView").validateComponents();  
                     }  
                 },
-                                        
+                                                                        
                 items: [   
                     {
                         title: 'Dokumente',
                         id: 'itemTab',
-                        iconCls: 'home',                        
+                        iconCls: 'home',     
                         items: [{
                             docked: 'top',
                             xtype: 'toolbar',
-                            items: [                               
+                            ui: 'neutral',
+                            items: [
+                                {
+                                    xtype: 'button',
+                                    id: 'parentItemButton',
+                                    ui: 'back',
+                                    text: 'Zurück',       
+                                    align: 'left',
+                                    action: 'parentItem'  
+                                },                               
                                 {
                                     xtype: 'searchfield',
                                     placeholder: 'Suche',
@@ -177,7 +115,22 @@ Ext.define('Fclipboard.view.Main', {
                                             Ext.getCmp("mainView").searchItemDelayed(null);
                                         }
                                     }                       
-                                }                           
+                                },
+                                {
+                                    xtype: 'button',
+                                    id: 'editItemButton',
+                                    iconCls: 'settings',                
+                                    align: 'right',
+                                    action: 'editItem'   
+                                }, 
+                                {
+                                    xtype: 'button',
+                                    id: 'newItemButton',
+                                    iconCls: 'add',
+                                    align: 'right',
+                                    action: 'newItem'      
+                                }
+                                                         
                             ]                           
                         },
                         {
@@ -187,31 +140,26 @@ Ext.define('Fclipboard.view.Main', {
                             id: 'itemList',
                             cls: 'ItemList',
                             itemTpl: Ext.create('Ext.XTemplate',
-                                            '<tpl if="type==\'product_amount\'">',
+                                                '{name}'
+                                               )  
+                            /*
+                            itemTpl: Ext.create('Ext.XTemplate',
+                                            '<tpl if="dtype == \'res.partner\'">',
                                                 '<span class="left-col">{name}</span>',
-                                                '<input class="right-col" name="item_{id}" type="number" data-index="{sequence}"/>',
+                                                '<span class="right-col">&ltKein(e)&gt</span>',                                                
                                             '<tpl else>',
                                                 '{name}',
-                                            '</tpl>')                
+                                            '</tpl>')    */            
                         }]            
-                    },                                 
-                    {
-                        title: 'Anhänge',
-                        id: 'attachmentTab',
-                        iconCls: 'action',        
-                        items: [
-                            {
-                                             
-                            }
-                        ]
                     },
                     {
-                        title: 'Partner',
+                        title: 'Partner',                        
                         id: 'partnerTab',
                         iconCls: 'team',        
                         items: [{
                             docked: 'top',                            
                             xtype: 'toolbar',
+                            ui: 'neutral',
                             items: [                                
                                 {
                                     xtype: 'searchfield',
@@ -226,6 +174,13 @@ Ext.define('Fclipboard.view.Main', {
                                             Ext.getCmp("mainView").searchPartnerDelayed(null);
                                         }
                                     }
+                                },
+                                {
+                                    xtype: 'button',
+                                    id: 'newPartnerButton',
+                                    iconCls: 'add',
+                                    align: 'right',
+                                    action: 'newPartner'      
                                 }                              
                             ]                           
                         },
@@ -240,10 +195,42 @@ Ext.define('Fclipboard.view.Main', {
                         }]
                     },
                     {
-                        title: 'Hochladen',
+                        title: 'Synchronisation',
                         id: 'syncTab',
                         iconCls: 'refresh',
-                        items: [                          
+                        items:  [
+                            {
+                                docked: 'top',                            
+                                xtype: 'toolbar',
+                                ui: 'neutral',
+                                items: [
+                                    {
+                                        xtype: 'button',
+                                        id: 'editConfigButton',
+                                        text: 'Einstellungen',
+                                        align: 'left',
+                                        action: 'editConfig'   
+                                    },
+                                    {
+                                        xtype: 'button',
+                                        id: 'resetSync',
+                                        text: 'Zurücksetzen',
+                                        align: 'left',
+                                        action: 'resetSync'  
+                                    }, 
+                                    {
+                                        xtype: 'spacer',
+                                        flex: 1
+                                    },
+                                    {
+                                        xtype: 'button',
+                                        id: 'syncButton',
+                                        text: 'Starten',
+                                        align: 'right',
+                                        action: 'sync'                
+                                    },                           
+                                ]                           
+                            },                          
                             {
                                 xtype: 'scrolllist',
                                 id: 'logList',
@@ -296,13 +283,20 @@ Ext.define('Fclipboard.view.Main', {
        
        if ( !Ext.isEmpty(this.partnerSearch) ) {
          partnerStore.load({
+           params: {
+                 limit: 100
+           },
            filters : [{
                    property: 'name',
                    value: this.partnerSearch
            }]
          });
        } else {
-         partnerStore.load();
+         partnerStore.load({
+             params : {
+                 limit: 100
+             }
+         });
        }    
    },
    
@@ -339,32 +333,34 @@ Ext.define('Fclipboard.view.Main', {
 
        var activeItem = context.activeItem || Ext.getCmp("mainPanel").getActiveItem();
        var title = context.title || activeItem.title;
-       var record = context.record || self.getRecord();              
-       var data = record && record.data || null;
+       var itemRecord = context.record || self.getRecord();              
+       var itemData = itemRecord && itemRecord.data || null;
 
        var syncTabActive = (activeItem.getId() == "syncTab");
        var itemTabActive = (activeItem.getId() == "itemTab");
        var attachmentTabActive = (activeItem.getId() == "attachmentTab");
        
        // override title with name from data       
-       if ( (itemTabActive || attachmentTabActive) && data !== null ) {
-           title = data.name;
+       if ( (itemTabActive || attachmentTabActive) && itemData !== null ) {
+           title = itemData.name;
            if ( attachmentTabActive ) {
                title = title + " / Anhänge ";
            } 
        } 
     
+       Ext.getCmp('parentItemButton').setHidden(itemRecord === null);
+       Ext.getCmp('editItemButton').setHidden(itemRecord === null);
        // update button state
-       
+       /*
        Ext.getCmp('itemSearch').setValue(null);
        Ext.getCmp('partnerSearch').setValue(null);       
        Ext.getCmp('newItemButton').setHidden(syncTabActive);
        Ext.getCmp('editItemButton').setHidden(!itemTabActive || record === null || syncTabActive );
-       Ext.getCmp('parentItemButton').setHidden(!itemTabActive || record === null);
+       
        Ext.getCmp('syncButton').setHidden(!syncTabActive);
        Ext.getCmp('editConfigButton').setHidden(!syncTabActive);
        Ext.getCmp('deleteRecord').setHidden(true);
-       Ext.getCmp('resetSync').setHidden(!syncTabActive);
+       Ext.getCmp('resetSync').setHidden(!syncTabActive);*/
        
        // reset title      
        self.setTitle(title);
@@ -391,19 +387,8 @@ Ext.define('Fclipboard.view.Main', {
    
    showNewItemSelection: function() {      
         var self = this;
-        var activeItem = Ext.getCmp("mainPanel").getActiveItem();
-        switch ( activeItem.getId() ) {
-            case "itemTab":
-                 self.fireEvent('createItem', self, "directory");
-                 break;
-            case "partnerTab":
-                 self.fireEvent('newPartner', self);
-                 break;            
-            default:
-                 break;
-        }
-        
-        
+        self.fireEvent('createItem', self, "d");
+              
         /*        
             var newItemPicker = Ext.create('Ext.Picker',{
                 doneButton: 'Erstellen',

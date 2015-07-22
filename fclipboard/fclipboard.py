@@ -18,29 +18,54 @@
 #
 ##############################################################################
 
-import openerp
 from openerp import models, fields, api, _
 from openerp.addons.at_base.format import LangFormat
+
+SECTION_HEADER = 10
+SECTION_BODY = 20
 
 class fclipboard_item(models.Model):
     
     @api.one
-    def _compute_value(self):
-        if self.type == "c":
+    def _get_dtype_name(self):
+        if self.dtype == "c":
             return self.valc
-        elif self.type == "t":
+        elif self.dtype == "t":
             return self.valt
-        elif self.type == "i":
+        elif self.dtype == "i":
             if type(self.vali) in (int,long):
-                return str(self.vali)
-            return None
-        elif self.type == "f":
+                return str(self.vali)            
+        elif self.dtype == "f":
             f = LangFormat()
-            f.formatLang(self.valf)
-        elif self.type == "d":
+            return f.formatLang(self.valf)
+        elif self.dtype == "d":
             f = LangFormat()
-            f.formatLang(self.vald,date=True)
+            return f.formatLang(self.vald,date=True)
+        elif self.dtype == "b":
+            return self.valb and _("Yes") or _("No")
         return None
+    
+    @api.one
+    def _get_rtype_name(self):
+        if self.rtype:
+            obj = self[self.dtype]
+            return obj.name_get()[0][1]                
+        return None
+        
+    @api.one
+    def _compute_value(self):
+        values = []
+        
+        dtype_val = self._get_dtype_value()
+        if dtype_val:
+            values.append(dtype_val)
+            
+        rtype_val = self._get_rtype_value()
+        if rtype_val:
+            values.append(rtype_val)
+            
+        self.value = " ".join(values)
+            
     
     @api.one   
     @api.depends("parent_id")
@@ -53,39 +78,48 @@ class fclipboard_item(models.Model):
     # fields
     name = fields.Char("Name", required=True, select=True)
     code = fields.Char("Code", select=True)
-    type = fields.Selection([("n","Directory"),
-                             ("c","Char"),
-                             ("t","Text"),
-                             ("i","Integer"),
-                             ("f","Float"),
-                             ("b","Boolean"),    
-                             ("d","Date"),                         
-                            ],"Type", select=True, required=True)
     
-    section = fields.Selection([(1,"Master"),
-                                (2,"Detail")],
+    dtype = fields.Selection([("c","Char"),
+                              ("t","Text"),
+                              ("i","Integer"),
+                              ("f","Float"),
+                              ("b","Boolean"),    
+                              ("d","Date"),
+                             ],"Type", select=True)
+       
+    rtype = fields.Selection([("partner_id","Partner"),
+                              ("product_id","Product"),
+                              ("order_id","Order"),
+                              ("pricelist_id","Pricelist")],
+                              "Reference Type", select=True)
+    
+    section = fields.Selection([(SECTION_HEADER,"Header"),
+                                (SECTION_BODY,"Body")],
                                    "Section", select=True, required=True)
     
-    ref = fields.Reference([("res.partner","Partner"),
-                            ("product.product","Product"),
-                            ("sale.order","Sales Order")], string="Reference", select=True)
-    
-    owner_id = fields.Many2one("res.users", "Owner", ondelete="set null")
-    active = fields.Boolean("Active")
-    is_template = fields.Boolean("Template")
+    owner_id = fields.Many2one("res.users", "Owner", ondelete="set null", select=True)
+    active = fields.Boolean("Active", select=True)
+    template = fields.Boolean("Template")
     
     root_id = fields.Many2one("fclipboard.item","Root", select=True, compute="_compute_root_id", readonly=True)
-    parent_id = fields.Many2one("fclipboard.item","Parent", select=True, ondelete="cascade")
+    parent_id = fields.Many2one("fclipboard.item","Parent", select=True, ondelete="cascade", export=True, composition=False)
     child_ids = fields.One2many("fclipboard.item","parent_id", "Childs")
     
-    sequence = fields.Integer("Sequence")
+    sequence = fields.Integer("Sequence", select=True)
     
-    valc = fields.Char("Value", help="String Value")
-    valt = fields.Text("Value", help="Text Value")
+    valc = fields.Char("Info", help="String Value")
+    valt = fields.Text("Description", help="Text Value")
+    
     valf = fields.Float("Value", help="Float Value")
     vali = fields.Integer("Value", help="Integer Value")
     valb = fields.Boolean("Value", help="Boolean Value")
-    vald = fields.Date("Value", help="Date Value")    
+    vald = fields.Date("Value", help="Date Value")
+        
+    partner_id = fields.Many2one("res.partner","Partner", ondelete="restrict")
+    product_id = fields.Many2one("product.product","Product", ondelete="restrict")
+    order_id = fields.Many2one("sale.order","Sale Order", ondelete="restrict")
+    pricelist_id = fields.Many2one("product.pricelist","Pricelist", ondelete="restrict")
+    
     value = fields.Text("Value", readonly=True, _compute="_compute_value")
   
     # main definition
@@ -94,8 +128,7 @@ class fclipboard_item(models.Model):
     _order = "section, sequence"
     _defaults = {
         "sequence" : 20,
-        "section" : 2,
-        "type" : "n",
+        "section" : 20,
         "active" : True
     }
     

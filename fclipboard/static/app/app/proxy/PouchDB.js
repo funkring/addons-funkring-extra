@@ -174,84 +174,7 @@ Ext.define('Ext.proxy.PouchDB', {
       return Ext.functionFactory('doc', 'if ( ' + ifstmt + ' ) emit(doc);');       
     },
     
-    /**
-     * @private
-     * Build View
-     */
-    buildView: function(domain) {
-      if (!domain) {
-          return null;
-      }
-      
-      var name = 'index';
-      var keys = [];   
-      var keyValues = [];
-      var tupl, op, value, field;
-      var foundKey;
-                    
-      for (var i=0; i<domain.length;i++) {
-          tupl = domain[i];
-          foundKey = false;
-          
-          if ( tupl.constructor === Array && tupl.length == 3) {
-              field = tupl[0];
-              op = tupl[1];
-              value = tupl[2];   
-              name = name + "_" + field;
-                              
-              if ( op === '=') {         
-                  keys.push(field);      
-                  keyValues.push(value);     
-                  foundKey = true;                                    
-              }
-          } 
-          
-          if ( !foundKey ) {
-              continue;
-          }
-      }
-      
-      if ( keys.length === 1) {
-          return {
-              name: name,
-              key: keyValues[0],
-              index: {
-                map: "function(doc) { \n"+
-                     "  if (doc." + keys[0] + ")  { \n" +
-                     "    emit(doc." + keys[0]+"); \n" +
-                     "  }\n" +
-                     "}"
-              }                    
-          };
-      } else if ( keys.length > 0 ) {
-          var fct = "function(doc) { \n" +
-                    "  var key = [];\n";
-                    
-          for ( var keyI=0; keyI < keys.length; keyI++) {
-             fct +=
-               "  if (doc." + keys[keyI] + ")  { \n" +
-               "    key.push(doc." + keys[keyI]+"); \n" +
-               "  } else { \n" +
-               "    key.push(null); \n" +
-               "  } \n" +
-               "  \n";               
-          }
-          
-          fct += "  emit(key);\n";
-          fct += "}\n";
-          
-          return {
-              name: name,
-              key: keyValues,
-              index: {
-                map: fct
-              }       
-          };
-      }
-
-      return null;
-    },
-    
+        
     /**
      * @private
      * add Domain as Default Values 
@@ -367,15 +290,24 @@ Ext.define('Ext.proxy.PouchDB', {
         var fields  = Model.getFields().items;
         var length  = fields.length;
         var data    = record.data;
-        var doc     = defaults || {};
+        var doc     = {};
         
+        // set defaults
+        if ( defaults ) {
+            for (var key in defaults) {
+                doc[key]=defaults[key];
+            }
+        }
+
+        // set fields        
         var i, field, name, value;
         for (i = 0; i < length; i++) {
             field = fields[i];
             name  = field.getName();
             value = data[name];
             
-            if ( field.getPersist() === false ) {
+            // check for undefined and persist
+            if ( value === undefined  || field.getPersist() === false ) {
                 continue;
             }
             
@@ -530,39 +462,7 @@ Ext.define('Ext.proxy.PouchDB', {
         };                
         
         // QUERY
-        var view = self.buildView(filter_domain);
-        if (view !== null) {
-            params.key = view.key;
-            db.query(view.name, params, function(err, res) {                
-                if ( !err ) {
-                    // no error result was successfull
-                    resultCallback(err, res);
-                } else {
-                    //create view doc
-                    var doc = {
-                        _id: "_design/" + view.name,
-                        views: {                            
-                        }
-                    };
-                    doc.views[view.name]=view.index;
-                    //put doc
-                    db.put(doc, function(err, res) {
-                        if (err) {
-                            // error on create index
-                            resultCallback(err, null);
-                        } else {
-                            // query again
-                            db.query(view.name, params, resultCallback);
-                        }
-                    });          
-                }
-                    
-            });       
-        } else {
-            db.allDocs(params, resultCallback);
-        } 
-        
-        
+        PouchDBDriver.search(db, filter_domain, params, resultCallback);
     },
     
     // update function

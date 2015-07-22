@@ -1,9 +1,6 @@
 /*global Ext:false*/
 Ext.define('Fclipboard.model.Item', {
-   extend: 'Fclipboard.model.BasicItem',
-   requires: [
-       'Ext.proxy.PouchDB'
-   ],
+   extend: 'Fclipboard.model.BasicItem',   
    config: {      
        proxy: {
             type: 'pouchdb',

@@ -26,7 +26,12 @@ Ext.define('Fclipboard.view.ListSelect', {
         /**
          * @cfg {String} value field
          */
-        valueField: "id"
+        valueField: "id",
+        
+        /**
+         * @cfg {String} title
+         */
+        title: "Auswahl"
     },
     
     showPicker: function() {
@@ -36,6 +41,7 @@ Ext.define('Fclipboard.view.ListSelect', {
         
         if ( navigationView !== null && store !== null) {
            navigationView.push({
+              title: self.getTitle(),
               xtype : 'panel',
               listeners: {
                   scope: self, 
@@ -114,7 +120,6 @@ Ext.define('Fclipboard.view.ListSelect', {
    },
    
    firstSearch: function() {
-       debugger;
        var self = this;        
        var storeInst = self.getStore();
        storeInst.load({ params : {
@@ -131,7 +136,7 @@ Ext.define('Fclipboard.view.ListSelect', {
            self.callParent(arguments);
        }       
    },
-   
+      
    applyValue: function(value) {
         var record = value,
             index, store;

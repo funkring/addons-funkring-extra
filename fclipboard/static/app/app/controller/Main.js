@@ -23,7 +23,10 @@ Ext.define('Fclipboard.controller.Main', {
             },
             'button[action=saveView]': {
                 tap: 'saveRecord'
-            },            
+            },         
+            'button[action=newPartner]': {
+                tap: 'newPartner'
+            },
             'button[action=parentItem]': {
                 tap: 'parentItem'  
             },
@@ -41,7 +44,6 @@ Ext.define('Fclipboard.controller.Main', {
             },
             mainView: {
                 createItem: 'createItem',
-                newPartner: 'newPartner',
                 parentItem: 'parentItem'
             },
             partnerList: {
@@ -75,23 +77,40 @@ Ext.define('Fclipboard.controller.Main', {
 //                 });
        
          // new view
-        self.getMainView().push({
+         
+        var itemForm = Ext.create("Fclipboard.view.FormView",{
             title: 'Neues Dokument',        
-            xtype: 'formview',
+            xtype: 'formview',            
             saveHandler: function(view, callback) {
                 // get values
                 var values = view.getValues();
-                values.type = item_type || 'directory';
+                values.fdoo__ir_model = 'fclipboard.item';
+                values.dtype = item_type || 'd';
                 values.parent_id = parentRec !== null ? parentRec.getId() : null;
-                
+                values.is_template = false;
+                            
                 // get template
                 var template_id = values.template_id;
                 delete values.template_id;
-                                 
-                // clone template
+                
                 var db = self.getDB();
-                db.put(values, function(err, doc) {
-                    
+                db.post(values, function(err, res) {
+                    if( !err ) {
+                       if ( template_id ) {
+                           // clone template
+                           var mbox = Ext.Msg.show({
+                                title: "Neues Dokument",
+                                message: "Erstelle Struktur...",
+                                buttons: []
+                           });
+                           PouchDBDriver.deepCopy(db, res.id, template_id, "parent_id", {is_template:false}, function(err,res) {
+                              mbox.hide();
+                              callback(err, res);
+                           });
+                           return;       
+                        } 
+                    } 
+                    callback(err, res);                    
                 });
             }, 
             items: [{
@@ -102,6 +121,7 @@ Ext.define('Fclipboard.controller.Main', {
                     },
                     {
                         xtype: 'listselect',
+                        autoSelect: false,
                         name: 'template_id',
                         label: 'Vorlage',
                         navigationView: self.getMainView(),
@@ -112,6 +132,7 @@ Ext.define('Fclipboard.controller.Main', {
             editable: true,
             deleteable: true
         });
+        self.getMainView().push(itemForm);
     },
     
     editCurrentItem: function() {
