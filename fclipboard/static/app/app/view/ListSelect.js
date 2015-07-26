@@ -31,7 +31,14 @@ Ext.define('Fclipboard.view.ListSelect', {
         /**
          * @cfg {String} title
          */
-        title: "Auswahl"
+        title: "Auswahl",
+        
+        
+        /**
+         * handler if creation of new 
+         * records are allowed
+         */
+        pickerToolbarItems: null
     },
     
     showPicker: function() {
@@ -40,6 +47,28 @@ Ext.define('Fclipboard.view.ListSelect', {
         var store = self.getStore();
         
         if ( navigationView !== null && store !== null) {
+           var toolbarItems = [{
+                    xtype: 'searchfield',
+                    placeholder: 'Suche',
+                    flex: 1,
+                    listeners: {
+                        keyup: function(field, key, opts) {
+                            self.searchDelayed(field.getValue());
+                        },
+                        clearicontap: function() {
+                            self.searchDelayed(null);
+                        }
+                        
+                    }
+                }
+           ];
+
+           // add additional items
+           var additionalToolbarItems=self.getPickerToolbarItems();
+           if ( additionalToolbarItems ) {
+                toolbarItems = toolbarItems.concat(additionalToolbarItems);
+           }
+        
            navigationView.push({
               title: self.getTitle(),
               xtype : 'panel',
@@ -50,21 +79,7 @@ Ext.define('Fclipboard.view.ListSelect', {
               items: [{
                 docked: 'top',
                 xtype: 'toolbar',                
-                items: [{
-                            xtype: 'searchfield',
-                            placeholder: 'Suche',
-                            flex: 1,
-                            listeners: {
-                                keyup: function(field, key, opts) {
-                                    self.searchDelayed(field.getValue());
-                                },
-                                clearicontap: function() {
-                                    self.searchDelayed(null);
-                                }
-                                
-                            }
-                        }
-                      ]
+                items: toolbarItems
               },
               {
                 xtype: 'list',

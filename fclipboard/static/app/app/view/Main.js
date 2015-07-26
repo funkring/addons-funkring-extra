@@ -109,10 +109,10 @@ Ext.define('Fclipboard.view.Main', {
                                     flex: 1,
                                     listeners: {
                                         keyup: function(field, key, opts) {
-                                            Ext.getCmp("mainView").searchItemDelayed(field.getValue());
+                                            Ext.getCmp('mainView').fireEvent('searchItem',field.getValue());
                                         },
                                         clearicontap: function() {
-                                            Ext.getCmp("mainView").searchItemDelayed(null);
+                                            Ext.getCmp('mainView').fireEvent('searchItem',null);
                                         }
                                     }                       
                                 },
@@ -174,10 +174,10 @@ Ext.define('Fclipboard.view.Main', {
                                     flex: 1,
                                     listeners: {
                                         keyup: function(field, key, opts) {
-                                            Ext.getCmp("mainView").searchPartnerDelayed(field.getValue());
+                                            Ext.getCmp('mainView').fireEvent('searchPartner',field.getValue());
                                         },
                                         clearicontap: function() {
-                                            Ext.getCmp("mainView").searchPartnerDelayed(null);
+                                            Ext.getCmp('mainView').fireEvent('searchPartner',null);
                                         }
                                     }
                                 },
@@ -257,94 +257,9 @@ Ext.define('Fclipboard.view.Main', {
     // init
    constructor: function(config) {
         var self = this;        
-        self.callParent(config);
-        
-        self.partnerSearchTask = Ext.create('Ext.util.DelayedTask', function() {
-            self.searchPartner();
-        });
-           
-        self.itemSearchTask = Ext.create('Ext.util.DelayedTask', function() {
-            self.searchItems();
-        });
-                   
-        self.loadRecord();        
+        self.callParent(config);  
+        self.fireEvent("doDataReload");      
    },
-   
-   searchDelayed: function(task) {
-        task.delay(500);
-   },
-   
-   searchPartnerDelayed: function(text) {
-        this.partnerSearch = text;
-        this.searchDelayed(this.partnerSearchTask);
-   },
-   
-   searchItemDelayed: function(text) {
-        this.itemSearch = text;
-        this.searchDelayed(this.itemSearchTask);    
-   },   
-   
-   searchPartner: function(callback) {
-       var partnerStore = Ext.StoreMgr.lookup("PartnerStore");
-       
-       var options = {   
-           params : {
-              limit: 100
-           } 
-       };
-       
-       if (callback) {
-           options.callback = callback; 
-       }
-       
-       if ( !Ext.isEmpty(this.partnerSearch) ) {
-         options.filters = [{
-                   property: 'name',
-                   value: this.partnerSearch
-         }];
-         partnerStore.load(options);
-       }   
-       
-       partnerStore.load(options);
-   },
-   
-   searchItems: function(callback) {
-       var record = this.getRecord();
-       var domain = [['parent_id','=',record !== null ? record.getId() : null]];
-             
-       var options = {
-           params : {
-               domain : domain
-           }
-       };
-       
-       if ( callback ) {
-            // check for callback
-           var afterLoadCallbackCount = 0;
-           var afterLoadCallback = function() {
-               if ( ++afterLoadCallbackCount >= 2 ) {
-                   callback();
-               }
-           };
-           options.callback=afterLoadCallback;
-       }
-              
-       if ( !Ext.isEmpty(this.itemSearch) ) {
-           options.filters = [{
-              property: 'name',
-              value: this.itemSearch   
-           }];
-       }
-       
-       // load data
-       var itemStore = Ext.StoreMgr.lookup("ItemStore");
-       itemStore.load(options);
-       
-       // load header item
-       var headerItemStore =  Ext.StoreMgr.lookup("HeaderItemStore");
-       headerItemStore.load(options);
-   },
-   
         
    validateComponents: function(context) {
        var self = this;
@@ -373,50 +288,11 @@ Ext.define('Fclipboard.view.Main', {
     
        Ext.getCmp('parentItemButton').setHidden(itemRecord === null);
        Ext.getCmp('editItemButton').setHidden(itemRecord === null);
-       // update button state
-       /*
-       Ext.getCmp('itemSearch').setValue(null);
-       Ext.getCmp('partnerSearch').setValue(null);       
-       Ext.getCmp('newItemButton').setHidden(syncTabActive);
-       Ext.getCmp('editItemButton').setHidden(!itemTabActive || record === null || syncTabActive );
-       
-       Ext.getCmp('syncButton').setHidden(!syncTabActive);
-       Ext.getCmp('editConfigButton').setHidden(!syncTabActive);
-       Ext.getCmp('deleteRecord').setHidden(true);
-       Ext.getCmp('resetSync').setHidden(!syncTabActive);*/
+      
        
        // reset title      
        self.setTitle(title);
        this.getNavigationBar().setTitle(this.getTitle());  
-   },
-   
-      
-   loadRecord: function(callback) {
-       var self = this;
-       
-       // init
-       self.partnerSearchTask.cancel();
-       self.itemSearchTask.cancel();       
-       self.partnerSearch = null;
-       self.itemSearch = null;
-        
-       // validate components
-       self.validateComponents();
-       
-       // check for callback
-       var afterLoadCallback = null;
-       if ( callback ) {
-           var afterLoadCallbackCount = 0;
-           afterLoadCallback = function() {
-               if ( ++afterLoadCallbackCount >= 2 ) {
-                   callback();
-               }
-           };
-        }
-       
-       // load data
-       self.searchItems(afterLoadCallback);
-       self.searchPartner(afterLoadCallback);       
    },
    
    showNewItemSelection: function() {      
@@ -487,9 +363,9 @@ Ext.define('Fclipboard.view.Main', {
        var activeItem = Ext.getCmp("mainPanel").getActiveItem();
        var itemTabActive = (activeItem.getId() == "itemTab");
        if ( itemTabActive ) {
-          self.fireEvent('parentItem', self);
+          self.fireEvent('parentItem');
        } else {
-          self.loadRecord();
+          self.fireEvent('doDataReload');
        }
    }
    

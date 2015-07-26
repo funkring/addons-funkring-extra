@@ -5,7 +5,8 @@ Ext.define('Fclipboard.controller.Main', {
         'Ext.field.Hidden',
         'Ext.field.Select',
         'Ext.form.FieldSet',
-        'Ext.proxy.PouchDBDriver'
+        'Ext.proxy.PouchDBDriver',
+        'Ext.util.DelayedTask'
     ],
     config: {
         refs: {
@@ -44,7 +45,11 @@ Ext.define('Fclipboard.controller.Main', {
             },
             mainView: {
                 createItem: 'createItem',
-                parentItem: 'parentItem'
+                parentItem: 'parentItem',
+                searchPartner: 'searchPartnerDelayed',
+                searchItem: 'searchItemDelayed',
+                doDataReload: 'dataReload',
+                editItem: 'editItem'
             },
             partnerList: {
                 select: 'selectPartner'
@@ -60,8 +65,93 @@ Ext.define('Fclipboard.controller.Main', {
         self.callParent(arguments);
         self.path = [];
         self.syncActive = false;
+        self.partnerSearch = null;
+        self.itemSearch = null;
         
+        self.partnerSearchTask = Ext.create('Ext.util.DelayedTask', function() {
+            self.searchPartner();
+        });
+           
+        self.itemSearchTask = Ext.create('Ext.util.DelayedTask', function() {
+            self.searchItems();
+        });
         
+        //self.loadRecord();
+    },
+    
+    searchDelayed: function(task) {
+        task.delay(500);
+    },
+    
+    searchPartnerDelayed: function(text) {
+        this.partnerSearch = text;
+        this.searchDelayed(this.partnerSearchTask);
+    },
+    
+    searchItemDelayed: function(text) {
+        this.itemSearch = text;
+        this.searchDelayed(this.itemSearchTask);    
+    },   
+    
+    searchPartner: function(callback) {
+       var partnerStore = Ext.StoreMgr.lookup("PartnerStore");
+       
+       var options = {   
+           params : {
+              limit: 100
+           } 
+       };
+       
+       if (callback) {
+           options.callback = callback; 
+       }
+       
+       if ( !Ext.isEmpty(this.partnerSearch) ) {
+         options.filters = [{
+                   property: 'name',
+                   value: this.partnerSearch
+         }];
+         partnerStore.load(options);
+       }   
+       
+       partnerStore.load(options);
+    },
+    
+    searchItems: function(callback) {
+       var record = this.getMainView().getRecord();
+       var domain = [['parent_id','=',record !== null ? record.getId() : null]];
+             
+       var options = {
+           params : {
+               domain : domain
+           }
+       };
+       
+       if ( callback ) {
+            // check for callback
+           var afterLoadCallbackCount = 0;
+           var afterLoadCallback = function() {
+               if ( ++afterLoadCallbackCount >= 2 ) {
+                   callback();
+               }
+           };
+           options.callback=afterLoadCallback;
+       }
+              
+       if ( !Ext.isEmpty(this.itemSearch) ) {
+           options.filters = [{
+              property: 'name',
+              value: this.itemSearch   
+           }];
+       }
+       
+       // load data
+       var itemStore = Ext.StoreMgr.lookup("ItemStore");
+       itemStore.load(options);
+       
+       // load header item
+       var headerItemStore =  Ext.StoreMgr.lookup("HeaderItemStore");
+       headerItemStore.load(options);
     },
 
     newItem: function() {
@@ -110,7 +200,8 @@ Ext.define('Fclipboard.controller.Main', {
                                 callback(err,function() {
                                    var item = Ext.getStore("ItemStore").getById(newDocId);
                                    if ( item ) {
-                                        self.editItem(item);                                        
+                                        self.getMainView().fireEvent("editItem",item);
+                                        //self.editItem(item);                                        
                                    }
                                 });
                               } else {
@@ -144,6 +235,34 @@ Ext.define('Fclipboard.controller.Main', {
             deleteable: true
         });
         self.getMainView().push(itemForm);
+    },
+      
+    loadRecord: function(callback) {
+        var self = this;
+
+        // init
+        self.partnerSearchTask.cancel();
+        self.itemSearchTask.cancel();       
+        self.partnerSearch = null;
+        self.itemSearch = null;
+         
+        // validate components
+        self.getMainView().validateComponents();
+        
+        // check for callback
+        var afterLoadCallback = null;
+        if ( callback ) {
+            var afterLoadCallbackCount = 0;
+            afterLoadCallback = function() {
+                if ( ++afterLoadCallbackCount >= 2 ) {
+                    callback();
+                }
+            };
+         }
+        
+        // load data
+        self.searchItems(afterLoadCallback);
+        self.searchPartner(afterLoadCallback);       
     },
     
     editCurrentItem: function() {
@@ -246,7 +365,14 @@ Ext.define('Fclipboard.controller.Main', {
                                         navigationView: self.getMainView(),
                                         store: 'PartnerStore',
                                         displayField: 'name',
-                                        valueName: 'partner_id'
+                                        valueName: 'partner_id',
+                                        pickerToolbarItems: [{
+                                            xtype: 'button',
+                                            id: 'newPartnerButton',
+                                            iconCls: 'add',
+                                            align: 'right',
+                                            action: 'newPartner'      
+                                        }]
                                     };
                                     values[name]=data.partner_id;
                                     break;
@@ -437,7 +563,7 @@ Ext.define('Fclipboard.controller.Main', {
         
         var reloadHandler = function(err, callback) {
             mainView.pop();
-            mainView.loadRecord(callback);
+            self.loadRecord(callback);
         };
         
         // if save handler exist use it
@@ -477,12 +603,10 @@ Ext.define('Fclipboard.controller.Main', {
         }
         
     },
-        
     
     selectPartner: function(list, record) {
         list.deselect(record);
         this.editPartner(record);
-        return false;                                
     },
     
     selectItem: function(list, record) {
@@ -495,8 +619,7 @@ Ext.define('Fclipboard.controller.Main', {
         }
         
         mainView.setRecord(record);
-        mainView.loadRecord();
-        //return false;
+        this.loadRecord();
     },
     
     parentItem: function() {
@@ -506,7 +629,7 @@ Ext.define('Fclipboard.controller.Main', {
         } 
         var mainView = this.getMainView();
         mainView.setRecord(parentRecord);
-        mainView.loadRecord();
+        this.loadRecord();
     },
     
     findPricelist: function(callback) {
@@ -542,8 +665,8 @@ Ext.define('Fclipboard.controller.Main', {
         return Ext.getStore("LogStore");
     },
     
-    refresh: function() {
-        this.getMainView().loadRecord();  
+    dataReload: function() {
+        this.loadRecord();  
     },
 
     sync: function() {        
