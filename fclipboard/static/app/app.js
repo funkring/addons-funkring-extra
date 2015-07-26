@@ -31,15 +31,20 @@ Ext.application({
         'BasicItem',
         'Item',
         'ItemTemplate',
-        'Partner'
+        'HeaderItem',
+        'Partner',
+        'Pricelist',
+        'PricelistItem'
     ],
     
     stores: [
         'BasicItemStore',
         'ItemStore',
         'ItemTemplateStore',
+        'HeaderItemStore',
         'PartnerStore',
-        'LogStore'
+        'LogStore',
+        'PricelistStore'
     ],
     
     controllers: [

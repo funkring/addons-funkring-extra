@@ -86,6 +86,7 @@ class fclipboard_item(models.Model):
                               ("b","Boolean"),    
                               ("d","Date"),
                              ],"Type", select=True)
+                             
        
     rtype = fields.Selection([("partner_id","Partner"),
                               ("product_id","Product"),
@@ -99,7 +100,9 @@ class fclipboard_item(models.Model):
     
     owner_id = fields.Many2one("res.users", "Owner", ondelete="set null", select=True)
     active = fields.Boolean("Active", select=True)
+    
     template = fields.Boolean("Template")
+    required = fields.Boolean("Required")
     
     root_id = fields.Many2one("fclipboard.item","Root", select=True, compute="_compute_root_id", readonly=True)
     parent_id = fields.Many2one("fclipboard.item","Parent", select=True, ondelete="cascade", export=True, composition=False)
@@ -128,7 +131,7 @@ class fclipboard_item(models.Model):
     _order = "section, sequence"
     _defaults = {
         "sequence" : 20,
-        "section" : 20,
+        "section" : 10,
         "active" : True
     }
     

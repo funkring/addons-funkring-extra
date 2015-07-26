@@ -5,15 +5,16 @@ Ext.define('Fclipboard.model.BasicItem', {
        'Ext.proxy.PouchDB'
    ],
    config: {
-       fields: ['name','code','is_template','parent_id','dtype',
-                'section','code','sequence',
+       fields: ['name','code','template','parent_id','dtype','rtype',
+                'section','code','sequence', 'required',
+                'product_id', 'pricelist_id', 'partner_id',
                 'valc','valt','valf','vali','valb','vald'],
 //       belongsTo: [{model:'Fclipboard.model.Partner', associationKey:'partner_id'}],
        identifier: 'uuid',
        proxy: {
             type: 'pouchdb',
             database: 'fclipboard',
-            domain: [['fdoo__ir_model','=','fclipboard.item']]      
+            resModel: 'fclipboard.item'
        }       
    }
 });

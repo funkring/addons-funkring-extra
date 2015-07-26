@@ -33,6 +33,7 @@ Ext.define('Ext.proxy.PouchDB', {
         'Ext.proxy.PouchDBDriver'
     ],
     config: {
+        
         /**
          * @cfg {Object} reader
          * @hide
@@ -43,18 +44,39 @@ Ext.define('Ext.proxy.PouchDB', {
          * @cfg {Object} writer
          * @hide
          */
-        writer: null,       
+        writer: null,
+               
         /**
          * @cfg {String} database
          * Database name to access tables from
-         */
+         */        
         database: null, 
+        
         /**
          * @cfg {List} domain 
          * Tuple list of filters
          */
         domain: null,
-       /**
+        
+        /**
+         * @cfg  {List} default Domain
+         * Default Domain is built from resModel + domain, and is used
+         * for new documents and search
+         */
+        defaultDomain: null,
+        
+        /**
+         * @cfg {String} view
+         * View name for synchronisation
+         */
+        view: null,
+        
+        /**
+         * @cfg {String} model name
+         */
+        resModel: null,
+        
+        /**
          * @cfg
          * Date Format
          */
@@ -65,10 +87,32 @@ Ext.define('Ext.proxy.PouchDB', {
      /**
      * Creates the proxy, throws an error if local storage is not supported in the current browser.
      * @param {Object} config (optional) Config object.
-     */
-    //constructor: function(config) {
-    //    this.callParent(arguments);        
-    //},
+     
+    constructor: function(config) {
+        var self = this;
+        self.callParent(arguments);                
+        
+    },*/
+    
+    applyResModel: function(resModel) {
+        var self = this;
+        if ( resModel ) {
+            var defaultDomain = [["fdoo__ir_model","=",resModel]];
+            
+            // add domain values
+            var domain = self.getDomain();
+            if ( domain ) {
+                Ext.each(domain, function(val) {
+                    defaultDomain.push(val);
+                });
+            } 
+            
+            self.setDefaultDomain(defaultDomain);            
+        } else {
+            self.setDefaultDomain(self.getDomain());
+        }
+        return resModel;
+    },
     
     /**
      * @private
@@ -341,12 +385,23 @@ Ext.define('Ext.proxy.PouchDB', {
     read: function(operation, callback, scope) {
         var self = this;
         var db = PouchDBDriver.getDB(self.getDatabase());
-        
         var param;
         var params = {'include_docs':true};
-        var filter_domain = self.getDomain();
-        var sorters = operation.getSorters();
-        var filters = operation.getFilters();
+        var filter_domain = self.getDefaultDomain();
+        
+        // get sorters from store
+        var defaultSorters = null;
+        var defaultFilters = null;
+        if ( scope instanceof Ext.data.Store) {
+            defaultSorters = scope.getSorters();
+            defaultFilters = scope.getFilters();
+        }
+        
+        // set sorters
+        var sorters = operation.getSorters() || defaultSorters;
+        var filters = operation.getFilters() || defaultFilters;
+        
+        // set associations
         var associations = self.getModel().getAssociations().items;
             
         // PREPARE PARAMS                    
@@ -362,7 +417,6 @@ Ext.define('Ext.proxy.PouchDB', {
                 }
             }
         } 
-        
         // START OPERATION
         operation.setStarted();
         
@@ -399,6 +453,7 @@ Ext.define('Ext.proxy.PouchDB', {
                             
                             // add sorters
                             if ( hasSorters ) {
+                                filtered.setSortRoot('data');
                                 filtered.addSorters(sorters);                          
                             }
                             
@@ -484,7 +539,7 @@ Ext.define('Ext.proxy.PouchDB', {
                     defaults = doc;
                 } else {
                     defaults = {};
-                    self.addDomainAsDefaultValues(self.getDomain(), defaults);
+                    self.addDomainAsDefaultValues(self.getDefaultDomain(), defaults);
                 }
                 
                 //create next doc

@@ -253,6 +253,8 @@ class jdoc_jdoc(osv.AbstractModel):
         
         fields = definition["fields"]
         for name, attrib in fields.items():
+            if name == "required":
+                pass
             # check for hidden attribute, or not in fields
             if attrib.get("hidden") or (onlyFields and not name in onlyFields):
                 continue
@@ -286,7 +288,7 @@ class jdoc_jdoc(osv.AbstractModel):
             if emptyValues or value:
                 res[name]=value    
                 
-        res["write_date"]=obj.write_date    
+        #res["write_date"]=obj.write_date    
         return res
     
     def jdoc_sync(self, cr, uid, changes, context=None):
@@ -336,6 +338,8 @@ class jdoc_jdoc(osv.AbstractModel):
         seq = lastsync.get("seq",0)
                
         view = changes.get("view")
+        if view:
+            view = getattr(model_obj,view)(cr, uid, context=context)
                         
         # Method GET
         method_get = view and view.get("get") or self._jdoc_get
@@ -365,7 +369,7 @@ class jdoc_jdoc(osv.AbstractModel):
         if method_lastchange:            
             lastchange = method_lastchange(cr, uid, context=context)
             if lastchange:   
-                lastsync_lastchange = lastsync.get("depchange") or {}                                 
+                lastsync_lastchange = lastsync.get("lastchange") or {}                                 
                 for key, value in lastchange.items():
                     lastsync_lastchange_date = lastsync_lastchange.get(key)
                     if not lastsync_lastchange_date or value > lastsync_lastchange_date:                        

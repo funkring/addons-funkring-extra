@@ -18,8 +18,9 @@
 #
 ##############################################################################
 
-from openerp.osv import fields, osv
-
+from openerp.osv import osv
+from openerp.addons.jdoc.jdoc import META_MODEL
+ 
 class product_sale_pricelist(osv.Model):
     
     def _jdoc_fclipboard_get(self, cr, uid, obj, *args, **kwargs):
@@ -28,6 +29,7 @@ class product_sale_pricelist(osv.Model):
         products = []
         res = {
           "_id" : mapping_obj.get_uuid(cr, uid, obj._model._name, obj.id),
+          META_MODEL : "product.pricelist",
           "name" : obj.name,
           "products" : products
         }
@@ -49,7 +51,8 @@ class product_sale_pricelist(osv.Model):
             for item in version.items_id:
                 if item.product_id:
                     product = _jdoc_get_product(item.product_id)
-                    product["seq"] = item.sequence
+                    product["pos"] = item.sequence
+                    products.append(product)
         
         return res
     

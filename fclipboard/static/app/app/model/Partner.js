@@ -20,7 +20,8 @@ Ext.define('Fclipboard.model.Partner', {
        proxy: {           
             type: 'pouchdb',
             database: 'fclipboard',
-            domain: [['fdoo__ir_model','=','res.partner'],['customer','=',true]]      
+            domain: [['customer','=',true]],
+            resModel: 'res.partner'
         }
    } 
 });

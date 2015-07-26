@@ -7,7 +7,7 @@ Ext.define('Fclipboard.view.ConfigView', {
         items: [
             {
                 xtype: 'fieldset',
-                title: 'Kontakt',
+                title: 'Verbindung',
                 items: [
                     {
                         xtype: 'hiddenfield',

@@ -23,8 +23,9 @@
                 </div>
                
                 <group>
-                    <group>                    
-                        <!-- reference type -->    
+                    <group>
+                        <field name="required" attrs="{'invisible':['|',('section','=','10'),('parent_id','==',False)]}"/>                    
+                        <!-- reference type -->
                         <field name="rtype"/>
                         <field name="order_id" attrs="{'invisible':[('rtype','!=','order_id')]}"/>
                         <field name="pricelist_id" attrs="{'invisible':[('rtype','!=','pricelist_id')]}"/>

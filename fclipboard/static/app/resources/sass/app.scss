@@ -33,3 +33,13 @@ ItemList {
     width: 1em;
     width: 100px;
 }
+
+
+.LogList {
+ font-family: "Lucida Console", Monaco, monospace;    
+ font-size: 70%;
+}
+
+.invalidField .x-form-field {
+  background-color: red !important;
+}

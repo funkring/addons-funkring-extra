@@ -1,4 +1,4 @@
-/*global Ext:false*, Fclipboard:false*/
+/*global Ext:false*, Fclipboard:false, futil*/
 
 Ext.define('Fclipboard.view.Main', {
     extend: 'Ext.navigation.View',
@@ -132,7 +132,7 @@ Ext.define('Fclipboard.view.Main', {
                                 }
                                                          
                             ]                           
-                        },
+                        },                        
                         {
                             xtype: 'list',
                             height: '100%',
@@ -140,8 +140,14 @@ Ext.define('Fclipboard.view.Main', {
                             id: 'itemList',
                             cls: 'ItemList',
                             itemTpl: Ext.create('Ext.XTemplate',
-                                                '{name}'
-                                               )  
+                                                '{name}')
+                                                
+                            /*
+                            itemTpl: Ext.create('Ext.XTemplate',
+                                                '{name} {[this.f(1.0)]}',
+                                               {
+                                                 f: futil.formatFloat
+                                               })*/
                             /*
                             itemTpl: Ext.create('Ext.XTemplate',
                                             '<tpl if="dtype == \'res.partner\'">',
@@ -195,7 +201,7 @@ Ext.define('Fclipboard.view.Main', {
                         }]
                     },
                     {
-                        title: 'Synchronisation',
+                        title: 'Abgleich',
                         id: 'syncTab',
                         iconCls: 'refresh',
                         items:  [
@@ -228,7 +234,7 @@ Ext.define('Fclipboard.view.Main', {
                                         text: 'Starten',
                                         align: 'right',
                                         action: 'sync'                
-                                    },                           
+                                    }                           
                                 ]                           
                             },                          
                             {
@@ -278,29 +284,31 @@ Ext.define('Fclipboard.view.Main', {
         this.searchDelayed(this.itemSearchTask);    
    },   
    
-   searchPartner: function() {
+   searchPartner: function(callback) {
        var partnerStore = Ext.StoreMgr.lookup("PartnerStore");
        
+       var options = {   
+           params : {
+              limit: 100
+           } 
+       };
+       
+       if (callback) {
+           options.callback = callback; 
+       }
+       
        if ( !Ext.isEmpty(this.partnerSearch) ) {
-         partnerStore.load({
-           params: {
-                 limit: 100
-           },
-           filters : [{
+         options.filters = [{
                    property: 'name',
                    value: this.partnerSearch
-           }]
-         });
-       } else {
-         partnerStore.load({
-             params : {
-                 limit: 100
-             }
-         });
-       }    
+         }];
+         partnerStore.load(options);
+       }   
+       
+       partnerStore.load(options);
    },
    
-   searchItems: function() {
+   searchItems: function(callback) {
        var record = this.getRecord();
        var domain = [['parent_id','=',record !== null ? record.getId() : null]];
              
@@ -309,6 +317,17 @@ Ext.define('Fclipboard.view.Main', {
                domain : domain
            }
        };
+       
+       if ( callback ) {
+            // check for callback
+           var afterLoadCallbackCount = 0;
+           var afterLoadCallback = function() {
+               if ( ++afterLoadCallbackCount >= 2 ) {
+                   callback();
+               }
+           };
+           options.callback=afterLoadCallback;
+       }
               
        if ( !Ext.isEmpty(this.itemSearch) ) {
            options.filters = [{
@@ -319,7 +338,11 @@ Ext.define('Fclipboard.view.Main', {
        
        // load data
        var itemStore = Ext.StoreMgr.lookup("ItemStore");
-       itemStore.load(options);  
+       itemStore.load(options);
+       
+       // load header item
+       var headerItemStore =  Ext.StoreMgr.lookup("HeaderItemStore");
+       headerItemStore.load(options);
    },
    
         
@@ -368,7 +391,7 @@ Ext.define('Fclipboard.view.Main', {
    },
    
       
-   loadRecord: function() {
+   loadRecord: function(callback) {
        var self = this;
        
        // init
@@ -380,38 +403,75 @@ Ext.define('Fclipboard.view.Main', {
        // validate components
        self.validateComponents();
        
+       // check for callback
+       var afterLoadCallback = null;
+       if ( callback ) {
+           var afterLoadCallbackCount = 0;
+           afterLoadCallback = function() {
+               if ( ++afterLoadCallbackCount >= 2 ) {
+                   callback();
+               }
+           };
+        }
+       
        // load data
-       self.searchItems();
-       self.searchPartner();       
+       self.searchItems(afterLoadCallback);
+       self.searchPartner(afterLoadCallback);       
    },
    
    showNewItemSelection: function() {      
         var self = this;
-        self.fireEvent('createItem', self, "d");
-              
-        /*        
-            var newItemPicker = Ext.create('Ext.Picker',{
-                doneButton: 'Erstellen',
-                cancelButton: 'Abbrechen',
-                modal: true,
-                slots:[{
-                    name: 'item_type',
-                    title: 'Element',
-                    displayField: 'name',
-                    valueField: 'type',
-                    data: recordCreateables
-                }],               
-                listeners: {
-                    change: function(picker,button) {
-                        var val = picker.getValue().item_type;
-                        self.fireEvent('createItem', self, val);
-                    }
-                } 
+        var record = self.getRecord();
+
+        if ( !record ) {        
+            self.fireEvent("createItem", self);
+        } else {
+        
+            var itemStore = Ext.getStore("ItemStore");
+            var productItems = itemStore.queryBy(function(record) {
+                if ( record.getRtype() == "product_id") {
+                    return true;
+                }
+                return false;
             });
             
-            Ext.Viewport.add(newItemPicker);
-            newItemPicker.show();
-        */
+            if ( productItems.length === 0 ) {
+                 var newItemPicker = Ext.create('Ext.Picker',{
+                    doneButton: 'Erstellen',
+                    cancelButton: 'Abbrechen',
+                    modal: true,
+                    slots:[{
+                        name: 'option',
+                        title: 'Element',
+                        displayField: 'name',
+                        valueField: 'option',
+                        data: [{
+                            "name" : "Ordner",
+                            "option" : 0  
+                        }, {
+                            "name" : "Produkt",
+                            "option" : 1
+                        }]
+                    }],               
+                    listeners: {
+                        change: function(picker,button) {
+                            var option = picker.getValue().option;
+                            if ( option === 1) {
+                                self.fireEvent("addProduct", self);
+                            } else {
+                                self.fireEvent('createItem', self);
+                            }
+                        }
+                    } 
+                });
+                
+                Ext.Viewport.add(newItemPicker);
+                newItemPicker.show();
+            } else {
+                self.fireEvent("addProduct", self);
+            }
+            
+        }  
    },
 
       

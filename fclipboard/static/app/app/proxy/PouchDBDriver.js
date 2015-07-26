@@ -212,7 +212,7 @@ Ext.define('Ext.proxy.PouchDBDriver',{
      /**
      * sync odoo store
      */
-    syncOdooStore: function(con, db, store, syncUuid, res_model, domain, log, callback) {        
+    syncOdooStore: function(con, db, store, syncUuid, res_model, domain, view, log, callback) {        
         var syncName = syncUuid+"-{"+res_model+"}";
         if ( domain ) {
             syncName = syncName + "-{"+JSON.stringify(domain)+"}";
@@ -243,16 +243,17 @@ Ext.define('Ext.proxy.PouchDBDriver',{
                        {
                         "model" : res_model,
                         "domain" : domain,
+                        "view": view, 
                         "fields" : fields,
                         "lastsync" : syncPoint,
-                        "changes" : changes.results || {}
+                        "changes" : changes.results || {}                        
                        },
                        con.user_context
                      ],                       
                      null, 
                      function(err, res) {
                          if ( err ) {                                                             
-                             log.error(err);
+                             callback(err);
                          } else {
                              var server_changes = res.changes;
                              var server_lastsync = res.lastsync;
@@ -339,7 +340,7 @@ Ext.define('Ext.proxy.PouchDBDriver',{
                          }
                      });                                
             }).catch(function(err) {
-                log.error(err);
+                callback(err);
             });
         };
         
@@ -394,29 +395,22 @@ Ext.define('Ext.proxy.PouchDBDriver',{
          // prepare store sync
          var syncStore = function(store, callback) {
             var proxy = store.getProxy();
-            if ( proxy instanceof Ext.proxy.PouchDB ) {                
-                var domain = [];
-                var res_model = null;
-                
-                // search model and domain
-                Ext.each(proxy.getDomain(), function(val) {
-                   if ( Ext.isArray(val) && val.length === 3 && ( val[0].indexOf("fdoo__") === 0 || val[0].indexOf("_") === 0 ) ) {                        
-                       if (val[0] == "fdoo__ir_model" && val[1] === "=") {
-                           res_model = val[2];
-                       } 
-                   } else {
-                       domain.push(val);
-                   } 
-                });
-            
-                
+            if ( proxy instanceof Ext.proxy.PouchDB ) {
+                // get model and domain  
+                var res_model = proxy.getResModel();
+                var domain = proxy.getDomain();
+                var view = proxy.getView();
+                // can only sync with model                
                 if ( res_model) {
                     // get database                    
                     var db = self.getDB(proxy.getDatabase());
                     // sync odoo store
-                    self.syncOdooStore(con, db, store, syncuuid, res_model, domain, log, function(err, res) {
+                    self.syncOdooStore(con, db, store, syncuuid, res_model, domain, view, log, function(err, res) {
                         callback(err, res);
                     });
+                } else {                    
+                    log.error("Kein resModel für Store " + Ext.getClass(store).getName() + " gesetzt!");
+                    callback();
                 }
             }
          };

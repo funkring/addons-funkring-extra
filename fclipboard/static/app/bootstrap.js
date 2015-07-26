@@ -783,19 +783,25 @@ Ext.ClassManager.addNameAlternateMappings({
   ],
   "Fclipboard.controller.Main": [],
   "Fclipboard.model.BasicItem": [],
+  "Fclipboard.model.HeaderItem": [],
   "Fclipboard.model.Item": [],
   "Fclipboard.model.ItemTemplate": [],
   "Fclipboard.model.Partner": [],
+  "Fclipboard.model.Pricelist": [],
+  "Fclipboard.model.PricelistItem": [],
   "Fclipboard.store.BasicItemStore": [],
+  "Fclipboard.store.HeaderItemStore": [],
   "Fclipboard.store.ItemStore": [],
   "Fclipboard.store.ItemTemplateStore": [],
   "Fclipboard.store.LogStore": [],
   "Fclipboard.store.PartnerStore": [],
+  "Fclipboard.store.PricelistStore": [],
   "Fclipboard.view.ConfigView": [],
   "Fclipboard.view.FormView": [],
   "Fclipboard.view.ListSelect": [],
   "Fclipboard.view.Main": [],
   "Fclipboard.view.PartnerView": [],
+  "Fclipboard.view.PricelistView": [],
   "ScrollList": []
 });
 
@@ -1761,14 +1767,19 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.viewport.WindowsPhone": [],
   "Fclipboard.controller.Main": [],
   "Fclipboard.model.BasicItem": [],
+  "Fclipboard.model.HeaderItem": [],
   "Fclipboard.model.Item": [],
   "Fclipboard.model.ItemTemplate": [],
   "Fclipboard.model.Partner": [],
+  "Fclipboard.model.Pricelist": [],
+  "Fclipboard.model.PricelistItem": [],
   "Fclipboard.store.BasicItemStore": [],
+  "Fclipboard.store.HeaderItemStore": [],
   "Fclipboard.store.ItemStore": [],
   "Fclipboard.store.ItemTemplateStore": [],
   "Fclipboard.store.LogStore": [],
   "Fclipboard.store.PartnerStore": [],
+  "Fclipboard.store.PricelistStore": [],
   "Fclipboard.view.ConfigView": [
     "widget.configform"
   ],
@@ -1783,6 +1794,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Fclipboard.view.PartnerView": [
     "widget.partnerform"
+  ],
+  "Fclipboard.view.PricelistView": [
+    "widget.pricelistview"
   ],
   "ScrollList": [
     "widget.scrolllist"

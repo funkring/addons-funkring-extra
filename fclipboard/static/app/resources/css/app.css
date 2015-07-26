@@ -6638,6 +6638,10 @@ body.x-desktop {
 }
 
 .LogList {
- font-family: "Lucida Console", Monaco, monospace;    
- font-size: 70%;
+  font-family: "Lucida Console", Monaco, monospace;
+  font-size: 70%;
+}
+
+.invalidField .x-form-field {
+  background-color: red !important;
 }

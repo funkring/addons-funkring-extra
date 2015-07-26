@@ -58,23 +58,21 @@ Ext.define('Fclipboard.controller.Main', {
     init: function() {
         var self = this;        
         self.callParent(arguments);
-        self.path = [];  
+        self.path = [];
         self.syncActive = false;
+        
+        
     },
 
     newItem: function() {
         this.getMainView().showNewItemSelection();
     },
     
-    createItem: function(view, item_type) {
+    createItem: function(view) {
         var self = this;
         var mainView = self.getMainView();
         var parentRec = mainView.getRecord();
         
-//         var newItem = Ext.create('Fclipboard.model.Item',
-//                 {'type': item_type || 'directory',
-//                  'parent_id' : record !== null ? record.getId() : null
-//                 });
        
          // new view
          
@@ -85,9 +83,10 @@ Ext.define('Fclipboard.controller.Main', {
                 // get values
                 var values = view.getValues();
                 values.fdoo__ir_model = 'fclipboard.item';
-                values.dtype = item_type || 'd';
+                values.section = 20;
+                values.dtype = null;
                 values.parent_id = parentRec !== null ? parentRec.getId() : null;
-                values.is_template = false;
+                values.template = false;
                             
                 // get template
                 var template_id = values.template_id;
@@ -103,14 +102,26 @@ Ext.define('Fclipboard.controller.Main', {
                                 message: "Erstelle Struktur...",
                                 buttons: []
                            });
-                           PouchDBDriver.deepCopy(db, res.id, template_id, "parent_id", {is_template:false}, function(err,res) {
+                           var newDocId = res.id;
+                           PouchDBDriver.deepCopy(db, res.id, template_id, "parent_id", {template:false}, function(err,res) {
                               mbox.hide();
-                              callback(err, res);
+                              if (!err && template_id) {
+                                // open view if template was defined
+                                callback(err,function() {
+                                   var item = Ext.getStore("ItemStore").getById(newDocId);
+                                   if ( item ) {
+                                        self.editItem(item);                                        
+                                   }
+                                });
+                              } else {
+                                // do normal callback
+                                callback(err);
+                              }
                            });
-                           return;       
+                           return; // no callback       
                         } 
                     } 
-                    callback(err, res);                    
+                    callback(err);                    
                 });
             }, 
             items: [{
@@ -143,24 +154,204 @@ Ext.define('Fclipboard.controller.Main', {
         } 
     },
            
-    editItem: function(record) {        
+    editItem: function(record) {
+        // edit only if non type
+        if ( record.dtype ) {
+            return;
+        }
+
         var self = this;
-            
-        // new view
-        self.getMainView().push({
-            title: record.data.name,
-            xtype: 'formview',
-            record: record,
-            items: [{
+        var db = self.getDB();
+        var store = Ext.getStore("HeaderItemStore");
+        
+        store.load({
+            params : {
+               domain : [["parent_id","=",record.getId()]]
+            },    
+            scope: self,
+            callback: function(itemRecords, operation, success) {
+                if (success) {
+                
+                    var items = [{
                         xtype: 'textfield',
                         name: 'name',
                         label: 'Name',
                         required: true
-                    }],
-            editable: true,
-            deleteable: true
+                    }];
+                    
+                    var values = {
+                        name: record.getData().name 
+                    };
+                    
+                    // build mask                    
+                    Ext.each(itemRecords, function(itemRecord) {
+                        var name = itemRecord.getId();
+                        var data = itemRecord.getData();
+                        var dtype = data.dtype;
+                        var field = null;
+                        
+                        if ( dtype ) {
+                            switch (dtype) {                                
+                                case "i":
+                                    field = {
+                                        xtype: 'numberfield',
+                                        valueName: "vali"
+                                    };
+                                    values[name]=data.vali;
+                                    break;
+                                case "f":
+                                    field = {
+                                        xtype: 'textfield',
+                                        valueName: "valf"
+                                    };
+                                    values[name]=data.valf;
+                                    break;
+                                case "c":
+                                    field = {
+                                        xtype: 'textfield',
+                                        valueName: "valc"
+                                    };
+                                    values[name]=data.valc;
+                                    break;
+                                case "t":
+                                    field = {
+                                        xtype: 'textareafield',
+                                        valueName: "valt"
+                                    };
+                                    values[name]=data.valt;
+                                    break;
+                                case "b":
+                                    field = {
+                                        xtype: 'togglefield',
+                                        valueName: "valb"
+                                    };
+                                    values[name]=data.valb;
+                                    break;    
+                                case "d":
+                                    field = {
+                                        xtype: 'datepickerfield',
+                                        valueName: "vald"
+                                    };
+                                    values[name]=data.vald;
+                                    break; 
+                            }
+                            
+                        } else { 
+                            var rtype = data.rtype;
+                            switch (rtype) {
+                                case "partner_id":
+                                    field = {
+                                        xtype: 'listselect',
+                                        autoSelect: false,
+                                        navigationView: self.getMainView(),
+                                        store: 'PartnerStore',
+                                        displayField: 'name',
+                                        valueName: 'partner_id'
+                                    };
+                                    values[name]=data.partner_id;
+                                    break;
+                                    
+                                case "pricelist_id":
+                                    field = {
+                                        xtype: 'listselect',
+                                        autoSelect: false,
+                                        navigationView: self.getMainView(),
+                                        store: 'PricelistStore',
+                                        displayField: 'name',
+                                        valueName: 'pricelist_id'           
+                                    };
+                                    values[name]=data.pricelist_id;
+                                    break;
+                            }
+                        }
+                        
+                        // finalize field
+                        if ( field ) {
+                            field.name = name;
+                            field.label = data.name;
+                            field.item = data;
+                            
+                            if ( data.required ) {
+                                field.required = true;
+                            }
+                            
+                            items.push(field);   
+                        }
+                         
+                    }); 
+                    
+                    var view = Ext.create("Fclipboard.view.FormView", {
+                        title: values.name,
+                        record: record,
+                        items: items,
+                        editable: true,
+                        deleteable: true,
+                        saveHandler: function(view, callback) {
+                        
+                                        var newValues = view.getValues();
+                                        var db = self.getDB();
+                                        
+                                        db.get(record.getId()).then(function(doc) {     
+                                                                               
+                                            //field update
+                                            var updateItemIndex=0;
+                                            var updateItem = function() {
+                                                if ( updateItemIndex < itemRecords.length ) {
+                                                    
+                                                    // get field data
+                                                    var itemRecord = itemRecords[updateItemIndex++];
+                                                    var itemName = itemRecord.getId();
+                                                    var field = view.query("field[name='"+itemName+"']");
+                                                    
+                                                    // only update if field exist
+                                                    if ( field.length > 0 ) {
+
+                                                        db.get(itemName).then(function(doc) {
+                                                            var newValue = newValues[itemName];
+                                                            var valueName = field[0].valueName;
+                                                            doc[valueName]=newValue;
+                                                            
+                                                            // update 
+                                                            db.put(doc).then(function(res) {
+                                                                updateItem();
+                                                            }).catch(function(err) {
+                                                                callback(err);
+                                                            });     
+                                                                                                               
+                                                        }).catch(function(err) {
+                                                            callback(err);      
+                                                        });
+                                                        
+                                                    }
+                                                } else {
+                                                    callback();
+                                                }
+                                            };
+                                        
+                                            // update name
+                                            doc.name = newValues.name;
+                                            db.put(doc).then(function(res) {
+                                                updateItem();
+                                            }).catch(function(err) {
+                                                callback(err);
+                                            });
+                                        }).catch(function(err) {
+                                            callback(err);
+                                        });
+                                    }
+                    });
+                    
+                    // set values
+                    view.setValues(values);
+                    
+                    // show view
+                    self.getMainView().push(view);               
+                    
+                }
+            }
         });
         
+               
     },
         
     newPartner: function() {        
@@ -180,7 +371,7 @@ Ext.define('Fclipboard.controller.Main', {
     
     editConfig: function(record) {
         var self = this;
-        var db = PouchDBDriver.getDB('fclipboard');
+        var db = self.getDB();
         
         var load = function(doc) {
             var configForm = Ext.create("Fclipboard.view.ConfigView",{
@@ -211,6 +402,31 @@ Ext.define('Fclipboard.controller.Main', {
         var self = this;
         var mainView = self.getMainView();
         var view = mainView.getActiveItem();
+       
+        // check fields for errors
+        
+        var isValid = true;
+        var fields = view.query("field");
+        
+        for (var i=0; i<fields.length; i++) {
+            var field = fields[i];
+            var value = field.getValue();
+            
+            if ( value && typeof value == "string") {
+                value = field.getValue().trim();
+            }
+            
+            if ( field.getRequired() && (value === null || value === "") )  {
+                 fields[i].addCls('invalidField');
+                 isValid = false;
+            } else {
+                fields[i].removeCls('invalidField');
+            }
+        }
+        
+        if ( !isValid ) {
+            return;
+        }
         
         // check for save handler
         var saveHandler = null;
@@ -219,9 +435,9 @@ Ext.define('Fclipboard.controller.Main', {
         } catch (err) {            
         }        
         
-        var reloadHandler = function(err) {
+        var reloadHandler = function(err, callback) {
             mainView.pop();
-            mainView.loadRecord();
+            mainView.loadRecord(callback);
         };
         
         // if save handler exist use it
@@ -280,7 +496,7 @@ Ext.define('Fclipboard.controller.Main', {
         
         mainView.setRecord(record);
         mainView.loadRecord();
-        return false;
+        //return false;
     },
     
     parentItem: function() {
@@ -291,6 +507,30 @@ Ext.define('Fclipboard.controller.Main', {
         var mainView = this.getMainView();
         mainView.setRecord(parentRecord);
         mainView.loadRecord();
+    },
+    
+    findPricelist: function(callback) {
+        var self = this;
+        var record = self.getMainView().getRecord();
+        var db = self.getDB();
+        if ( record )  {
+            var findPriceList = function(parentDoc) {
+                PouchDBDriver.search(db, [("parent_id","=",parentDoc.id),("rtype","=","pricelist_id")],{}, function(err, rows) {
+                    if ( rows.length > 0 ) {
+                        callback(null,rows[0]);
+                    } else if  ( parentDoc.parent_id !== null && parentDoc.parent_id !== parentDoc._id ) {
+                        db.get(parentDoc.parent_id).then(function(parentDoc) {
+                            findPriceList(parentDoc);
+                        }).catch(function(err) {
+                            callback(err); 
+                        });
+                    }   
+                });
+            };            
+            db.get(record.getId()).then(findPriceList).catch(function(err) {
+               callback(err); 
+            });
+        }
     },
 
     getDB: function() {
@@ -315,7 +555,7 @@ Ext.define('Fclipboard.controller.Main', {
             // start dialog
             var mbox = Ext.Msg.show({
                 title: "Synchronisation",
-                message: "Synchronisiere...",
+                message: "Datenabgleich mit Server",
                 buttons: []
             });
             
@@ -345,7 +585,8 @@ Ext.define('Fclipboard.controller.Main', {
                     
                     // reload after sync
                     PouchDBDriver.syncOdoo(config, [Ext.getStore("PartnerStore"),
-                                                    Ext.getStore("BasicItemStore")
+                                                    Ext.getStore("BasicItemStore"),
+                                                    Ext.getStore("PricelistStore")
                                                    ], log, callback );
                 } else {
                     callback(err);
