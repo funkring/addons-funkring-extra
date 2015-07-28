@@ -141,6 +141,41 @@ Ext.define('Ext.proxy.PouchDBDriver',{
         } 
     },
     
+    /**
+     * search first child where the passed domain match
+     * also search up in the parent tree
+     */
+    findFirstChild: function(db, parent_uuid, parent_field, domain, callback) {    
+        var self = this;        
+        
+        // check not found
+        if ( !parent_uuid ) {
+            callback(null,null);
+            return;
+        }
+        
+        var searchDomain =  [["parent_id","=",parent_uuid]];
+        if ( domain ) {            
+            searchDomain = searchDomain.concat(domain);
+        }
+        
+        self.search(db, searchDomain, {'include_docs':true}, function(err, res) {
+             if ( !err && res ) {
+                 if ( res.rows.length > 0 ) {
+                     callback(null, res.rows[0].doc);
+                 } else {
+                     db.get(parent_uuid).then(function(doc) {                     
+                         self.findFirstChild(db, doc[parent_field], parent_field, domain, callback);
+                     }).catch(function(err) {
+                        callback(err); 
+                     });
+                 }
+            } else {
+                callback(err);
+            }
+        });
+    },
+    
     deepCopy: function(db, new_parent_uuid, template_uuid, parent_field, defaults, callback ) {
         var self = this;
         self.search(db, [[parent_field,"=",template_uuid]], {'include_docs':true}, function(err, res) {

@@ -3805,7 +3805,7 @@ body.x-desktop {
   opacity: .5;
 }
 
-.x-button-round, .x-button.x-button-action-round, .x-button.x-button-confirm-round, .x-button.x-button-decline-round {
+.x-button-round, .x-button.x-button-action-round, .x-button.x-button-confirm-round, .x-button.x-button-decline-round, .x-button.x-button-numInputButtonRed-round, .x-button.x-button-numInputButtonBlack-round {
   -webkit-border-radius: 0.9em;
   -moz-border-radius: 0.9em;
   -ms-border-radius: 0.9em;
@@ -3861,11 +3861,13 @@ body.x-desktop {
   line-height: 1em;
 }
 
-.x-button-small, .x-button.x-button-action-small, .x-button.x-button-confirm-small, .x-button.x-button-decline-small,
+.x-button-small, .x-button.x-button-action-small, .x-button.x-button-confirm-small, .x-button.x-button-decline-small, .x-button.x-button-numInputButtonRed-small, .x-button.x-button-numInputButtonBlack-small,
 .x-toolbar .x-button-small,
 .x-toolbar .x-button.x-button-action-small,
 .x-toolbar .x-button.x-button-confirm-small,
-.x-toolbar .x-button.x-button-decline-small {
+.x-toolbar .x-button.x-button-decline-small,
+.x-toolbar .x-button.x-button-numInputButtonRed-small,
+.x-toolbar .x-button.x-button-numInputButtonBlack-small {
   -webkit-border-radius: 0.3em;
   -moz-border-radius: 0.3em;
   -ms-border-radius: 0.3em;
@@ -3874,15 +3876,19 @@ body.x-desktop {
   padding: .2em .4em;
   min-height: 0;
 }
-.x-button-small .x-button-label, .x-button.x-button-action-small .x-button-label, .x-button.x-button-confirm-small .x-button-label, .x-button.x-button-decline-small .x-button-label, .x-button-small .x-badge, .x-button.x-button-action-small .x-badge, .x-button.x-button-confirm-small .x-badge, .x-button.x-button-decline-small .x-badge, .x-button-small .x-hasbadge .x-badge, .x-hasbadge .x-button-small .x-badge, .x-button.x-button-action-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-action-small .x-badge, .x-button.x-button-confirm-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-confirm-small .x-badge, .x-button.x-button-decline-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-decline-small .x-badge,
+.x-button-small .x-button-label, .x-button.x-button-action-small .x-button-label, .x-button.x-button-confirm-small .x-button-label, .x-button.x-button-decline-small .x-button-label, .x-button.x-button-numInputButtonRed-small .x-button-label, .x-button.x-button-numInputButtonBlack-small .x-button-label, .x-button-small .x-badge, .x-button.x-button-action-small .x-badge, .x-button.x-button-confirm-small .x-badge, .x-button.x-button-decline-small .x-badge, .x-button.x-button-numInputButtonRed-small .x-badge, .x-button.x-button-numInputButtonBlack-small .x-badge, .x-button-small .x-hasbadge .x-badge, .x-hasbadge .x-button-small .x-badge, .x-button.x-button-action-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-action-small .x-badge, .x-button.x-button-confirm-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-confirm-small .x-badge, .x-button.x-button-decline-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-decline-small .x-badge, .x-button.x-button-numInputButtonRed-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-numInputButtonRed-small .x-badge, .x-button.x-button-numInputButtonBlack-small .x-hasbadge .x-badge, .x-hasbadge .x-button.x-button-numInputButtonBlack-small .x-badge,
 .x-toolbar .x-button-small .x-button-label,
 .x-toolbar .x-button.x-button-action-small .x-button-label,
 .x-toolbar .x-button.x-button-confirm-small .x-button-label,
 .x-toolbar .x-button.x-button-decline-small .x-button-label,
+.x-toolbar .x-button.x-button-numInputButtonRed-small .x-button-label,
+.x-toolbar .x-button.x-button-numInputButtonBlack-small .x-button-label,
 .x-toolbar .x-button-small .x-badge,
 .x-toolbar .x-button.x-button-action-small .x-badge,
 .x-toolbar .x-button.x-button-confirm-small .x-badge,
 .x-toolbar .x-button.x-button-decline-small .x-badge,
+.x-toolbar .x-button.x-button-numInputButtonRed-small .x-badge,
+.x-toolbar .x-button.x-button-numInputButtonBlack-small .x-badge,
 .x-toolbar .x-button-small .x-hasbadge .x-badge, .x-hasbadge
 .x-toolbar .x-button-small .x-badge,
 .x-toolbar .x-button.x-button-action-small .x-hasbadge .x-badge, .x-hasbadge
@@ -3890,14 +3896,20 @@ body.x-desktop {
 .x-toolbar .x-button.x-button-confirm-small .x-hasbadge .x-badge, .x-hasbadge
 .x-toolbar .x-button.x-button-confirm-small .x-badge,
 .x-toolbar .x-button.x-button-decline-small .x-hasbadge .x-badge, .x-hasbadge
-.x-toolbar .x-button.x-button-decline-small .x-badge {
+.x-toolbar .x-button.x-button-decline-small .x-badge,
+.x-toolbar .x-button.x-button-numInputButtonRed-small .x-hasbadge .x-badge, .x-hasbadge
+.x-toolbar .x-button.x-button-numInputButtonRed-small .x-badge,
+.x-toolbar .x-button.x-button-numInputButtonBlack-small .x-hasbadge .x-badge, .x-hasbadge
+.x-toolbar .x-button.x-button-numInputButtonBlack-small .x-badge {
   font-size: .6em;
 }
-.x-button-small .x-button-icon, .x-button.x-button-action-small .x-button-icon, .x-button.x-button-confirm-small .x-button-icon, .x-button.x-button-decline-small .x-button-icon,
+.x-button-small .x-button-icon, .x-button.x-button-action-small .x-button-icon, .x-button.x-button-confirm-small .x-button-icon, .x-button.x-button-decline-small .x-button-icon, .x-button.x-button-numInputButtonRed-small .x-button-icon, .x-button.x-button-numInputButtonBlack-small .x-button-icon,
 .x-toolbar .x-button-small .x-button-icon,
 .x-toolbar .x-button.x-button-action-small .x-button-icon,
 .x-toolbar .x-button.x-button-confirm-small .x-button-icon,
-.x-toolbar .x-button.x-button-decline-small .x-button-icon {
+.x-toolbar .x-button.x-button-decline-small .x-button-icon,
+.x-toolbar .x-button.x-button-numInputButtonRed-small .x-button-icon,
+.x-toolbar .x-button.x-button-numInputButtonBlack-small .x-button-icon {
   width: .75em;
   height: .75em;
 }
@@ -6620,21 +6632,66 @@ body.x-desktop {
   border-color: #C0C0C0;
 }
 
-.ItemList .x-list-item .left-col {
+.x-list-item .col-tmpl, .x-list-item .col-60, .x-list-item .col-60-border, .x-list-item .col-70, .x-list-item .col-70-border, .x-list-item .col-10, .x-list-item .col-10-border, .x-list-item .col-20, .x-list-item .col-20-border, .x-list-item .col-30, .x-list-item .col-30-border, .x-list-item .col-40, .x-list-item .col-40-border {
+  padding: 0px 8px 0px 8px;
   float: left;
-  margin: 0px 10px 0px 10px;
+  overflow: hidden;
 }
 
-.ItemList .x-list-item .right-col {
-  float: right;
-  width: 100px;
+.x-list-item .col-tmpl-right, .x-list-item .col-10-right, .x-list-item .col-10-right-border {
+  padding: 0px 8px 0px 8px;
+  overflow: hidden;
+  float: left;
+  text-align: right;
+  overflow: hidden;
 }
 
-.ItemList .x-list-item .right-arrow {
-  float: right;
-  height: 1em;
-  width: 1em;
-  width: 100px;
+.x-list-item .col-tmpl-border, .x-list-item .col-60-border, .x-list-item .col-70-border, .x-list-item .col-10-border, .x-list-item .col-20-border, .x-list-item .col-30-border, .x-list-item .col-40-border {
+  border-left: solid #5db7f5;
+}
+
+.x-list-item .col-tmpl-border-right, .x-list-item .col-10-right-border {
+  border-right: solid #5db7f5;
+}
+
+.x-list-item .col-positive {
+  font-weight: bold;
+}
+
+.x-list-item .col-negative {
+  color: red !important;
+}
+
+.x-list-item .col-60, .x-list-item .col-60-border {
+  width: 60%;
+}
+
+.x-list-item .col-70, .x-list-item .col-70-border {
+  width: 70%;
+}
+
+.x-list-item .col-10, .x-list-item .col-10-border {
+  width: 10%;
+}
+
+.x-list-item .col-10-right, .x-list-item .col-10-right-border {
+  width: 10%;
+}
+
+.x-list-item .col-20, .x-list-item .col-20-border {
+  width: 20%;
+}
+
+.x-list-item .col-30, .x-list-item .col-30-border {
+  width: 30%;
+}
+
+.x-list-item .col-40, .x-list-item .col-40-border {
+  width: 60%;
+}
+
+.x-list-item .col-last {
+  clear: both;
 }
 
 .LogList {
@@ -6644,4 +6701,169 @@ body.x-desktop {
 
 .invalidField .x-form-field {
   background-color: red !important;
+}
+
+.x-button.x-button-numInputButtonRed, .x-toolbar .x-button.x-button-numInputButtonRed,
+.x-button.x-button-numInputButtonRed-round, .x-toolbar
+.x-button.x-button-numInputButtonRed-round,
+.x-button.x-button-numInputButtonRed-small, .x-toolbar
+.x-button.x-button-numInputButtonRed-small {
+  border: 1px solid #b53223;
+  border-top-color: #cb3727;
+  background-color: #e06b5e;
+  color: black;
+}
+.x-button.x-button-numInputButtonRed.x-button-back:before, .x-button.x-button-numInputButtonRed.x-button-forward:before, .x-toolbar .x-button.x-button-numInputButtonRed.x-button-back:before, .x-toolbar .x-button.x-button-numInputButtonRed.x-button-forward:before,
+.x-button.x-button-numInputButtonRed-round.x-button-back:before,
+.x-button.x-button-numInputButtonRed-round.x-button-forward:before, .x-toolbar
+.x-button.x-button-numInputButtonRed-round.x-button-back:before, .x-toolbar
+.x-button.x-button-numInputButtonRed-round.x-button-forward:before,
+.x-button.x-button-numInputButtonRed-small.x-button-back:before,
+.x-button.x-button-numInputButtonRed-small.x-button-forward:before, .x-toolbar
+.x-button.x-button-numInputButtonRed-small.x-button-back:before, .x-toolbar
+.x-button.x-button-numInputButtonRed-small.x-button-forward:before {
+  background: #b53223;
+}
+.x-button.x-button-numInputButtonRed, .x-button.x-button-numInputButtonRed.x-button-back:after, .x-button.x-button-numInputButtonRed.x-button-forward:after, .x-toolbar .x-button.x-button-numInputButtonRed, .x-toolbar .x-button.x-button-numInputButtonRed.x-button-back:after, .x-toolbar .x-button.x-button-numInputButtonRed.x-button-forward:after,
+.x-button.x-button-numInputButtonRed-round,
+.x-button.x-button-numInputButtonRed-round.x-button-back:after,
+.x-button.x-button-numInputButtonRed-round.x-button-forward:after, .x-toolbar
+.x-button.x-button-numInputButtonRed-round, .x-toolbar
+.x-button.x-button-numInputButtonRed-round.x-button-back:after, .x-toolbar
+.x-button.x-button-numInputButtonRed-round.x-button-forward:after,
+.x-button.x-button-numInputButtonRed-small,
+.x-button.x-button-numInputButtonRed-small.x-button-back:after,
+.x-button.x-button-numInputButtonRed-small.x-button-forward:after, .x-toolbar
+.x-button.x-button-numInputButtonRed-small, .x-toolbar
+.x-button.x-button-numInputButtonRed-small.x-button-back:after, .x-toolbar
+.x-button.x-button-numInputButtonRed-small.x-button-forward:after {
+  background-image: none;
+  background-color: #e06b5e;
+  background-image: -webkit-linear-gradient(top, #eca69e, #e47f73 50%, #e06b5e 51%, #dc5749);
+  background-image: -moz-linear-gradient(top, #eca69e, #e47f73 50%, #e06b5e 51%, #dc5749);
+  background-image: -o-linear-gradient(top, #eca69e, #e47f73 50%, #e06b5e 51%, #dc5749);
+  background-image: -ms-linear-gradient(top, #eca69e, #e47f73 50%, #e06b5e 51%, #dc5749);
+}
+.x-button.x-button-numInputButtonRed.x-button-pressing, .x-button.x-button-numInputButtonRed.x-button-pressing:after, .x-button.x-button-numInputButtonRed.x-button-pressed, .x-button.x-button-numInputButtonRed.x-button-pressed:after, .x-button.x-button-numInputButtonRed.x-button-active, .x-button.x-button-numInputButtonRed.x-button-active:after, .x-toolbar .x-button.x-button-numInputButtonRed.x-button-pressing, .x-toolbar .x-button.x-button-numInputButtonRed.x-button-pressing:after, .x-toolbar .x-button.x-button-numInputButtonRed.x-button-pressed, .x-toolbar .x-button.x-button-numInputButtonRed.x-button-pressed:after, .x-toolbar .x-button.x-button-numInputButtonRed.x-button-active, .x-toolbar .x-button.x-button-numInputButtonRed.x-button-active:after,
+.x-button.x-button-numInputButtonRed-round.x-button-pressing,
+.x-button.x-button-numInputButtonRed-round.x-button-pressing:after,
+.x-button.x-button-numInputButtonRed-round.x-button-pressed,
+.x-button.x-button-numInputButtonRed-round.x-button-pressed:after,
+.x-button.x-button-numInputButtonRed-round.x-button-active,
+.x-button.x-button-numInputButtonRed-round.x-button-active:after, .x-toolbar
+.x-button.x-button-numInputButtonRed-round.x-button-pressing, .x-toolbar
+.x-button.x-button-numInputButtonRed-round.x-button-pressing:after, .x-toolbar
+.x-button.x-button-numInputButtonRed-round.x-button-pressed, .x-toolbar
+.x-button.x-button-numInputButtonRed-round.x-button-pressed:after, .x-toolbar
+.x-button.x-button-numInputButtonRed-round.x-button-active, .x-toolbar
+.x-button.x-button-numInputButtonRed-round.x-button-active:after,
+.x-button.x-button-numInputButtonRed-small.x-button-pressing,
+.x-button.x-button-numInputButtonRed-small.x-button-pressing:after,
+.x-button.x-button-numInputButtonRed-small.x-button-pressed,
+.x-button.x-button-numInputButtonRed-small.x-button-pressed:after,
+.x-button.x-button-numInputButtonRed-small.x-button-active,
+.x-button.x-button-numInputButtonRed-small.x-button-active:after, .x-toolbar
+.x-button.x-button-numInputButtonRed-small.x-button-pressing, .x-toolbar
+.x-button.x-button-numInputButtonRed-small.x-button-pressing:after, .x-toolbar
+.x-button.x-button-numInputButtonRed-small.x-button-pressed, .x-toolbar
+.x-button.x-button-numInputButtonRed-small.x-button-pressed:after, .x-toolbar
+.x-button.x-button-numInputButtonRed-small.x-button-active, .x-toolbar
+.x-button.x-button-numInputButtonRed-small.x-button-active:after {
+  background-image: none;
+  background-color: #de5f51;
+  background-image: -webkit-linear-gradient(top, #d33a29, #d94c3c 10%, #de5f51 65%, #de6153);
+  background-image: -moz-linear-gradient(top, #d33a29, #d94c3c 10%, #de5f51 65%, #de6153);
+  background-image: -o-linear-gradient(top, #d33a29, #d94c3c 10%, #de5f51 65%, #de6153);
+  background-image: -ms-linear-gradient(top, #d33a29, #d94c3c 10%, #de5f51 65%, #de6153);
+}
+
+.x-button.x-button-numInputButtonBlack, .x-toolbar .x-button.x-button-numInputButtonBlack,
+.x-button.x-button-numInputButtonBlack-round, .x-toolbar
+.x-button.x-button-numInputButtonBlack-round,
+.x-button.x-button-numInputButtonBlack-small, .x-toolbar
+.x-button.x-button-numInputButtonBlack-small {
+  border: 1px solid #1f1f1f;
+  border-top-color: #2c2c2c;
+  background-color: #525252;
+  color: white;
+}
+.x-button.x-button-numInputButtonBlack.x-button-back:before, .x-button.x-button-numInputButtonBlack.x-button-forward:before, .x-toolbar .x-button.x-button-numInputButtonBlack.x-button-back:before, .x-toolbar .x-button.x-button-numInputButtonBlack.x-button-forward:before,
+.x-button.x-button-numInputButtonBlack-round.x-button-back:before,
+.x-button.x-button-numInputButtonBlack-round.x-button-forward:before, .x-toolbar
+.x-button.x-button-numInputButtonBlack-round.x-button-back:before, .x-toolbar
+.x-button.x-button-numInputButtonBlack-round.x-button-forward:before,
+.x-button.x-button-numInputButtonBlack-small.x-button-back:before,
+.x-button.x-button-numInputButtonBlack-small.x-button-forward:before, .x-toolbar
+.x-button.x-button-numInputButtonBlack-small.x-button-back:before, .x-toolbar
+.x-button.x-button-numInputButtonBlack-small.x-button-forward:before {
+  background: #1f1f1f;
+}
+.x-button.x-button-numInputButtonBlack, .x-button.x-button-numInputButtonBlack.x-button-back:after, .x-button.x-button-numInputButtonBlack.x-button-forward:after, .x-toolbar .x-button.x-button-numInputButtonBlack, .x-toolbar .x-button.x-button-numInputButtonBlack.x-button-back:after, .x-toolbar .x-button.x-button-numInputButtonBlack.x-button-forward:after,
+.x-button.x-button-numInputButtonBlack-round,
+.x-button.x-button-numInputButtonBlack-round.x-button-back:after,
+.x-button.x-button-numInputButtonBlack-round.x-button-forward:after, .x-toolbar
+.x-button.x-button-numInputButtonBlack-round, .x-toolbar
+.x-button.x-button-numInputButtonBlack-round.x-button-back:after, .x-toolbar
+.x-button.x-button-numInputButtonBlack-round.x-button-forward:after,
+.x-button.x-button-numInputButtonBlack-small,
+.x-button.x-button-numInputButtonBlack-small.x-button-back:after,
+.x-button.x-button-numInputButtonBlack-small.x-button-forward:after, .x-toolbar
+.x-button.x-button-numInputButtonBlack-small, .x-toolbar
+.x-button.x-button-numInputButtonBlack-small.x-button-back:after, .x-toolbar
+.x-button.x-button-numInputButtonBlack-small.x-button-forward:after {
+  background-image: none;
+  background-color: #525252;
+  background-image: -webkit-linear-gradient(top, #787878, #5f5f5f 50%, #525252 51%, #454545);
+  background-image: -moz-linear-gradient(top, #787878, #5f5f5f 50%, #525252 51%, #454545);
+  background-image: -o-linear-gradient(top, #787878, #5f5f5f 50%, #525252 51%, #454545);
+  background-image: -ms-linear-gradient(top, #787878, #5f5f5f 50%, #525252 51%, #454545);
+}
+.x-button.x-button-numInputButtonBlack.x-button-pressing, .x-button.x-button-numInputButtonBlack.x-button-pressing:after, .x-button.x-button-numInputButtonBlack.x-button-pressed, .x-button.x-button-numInputButtonBlack.x-button-pressed:after, .x-button.x-button-numInputButtonBlack.x-button-active, .x-button.x-button-numInputButtonBlack.x-button-active:after, .x-toolbar .x-button.x-button-numInputButtonBlack.x-button-pressing, .x-toolbar .x-button.x-button-numInputButtonBlack.x-button-pressing:after, .x-toolbar .x-button.x-button-numInputButtonBlack.x-button-pressed, .x-toolbar .x-button.x-button-numInputButtonBlack.x-button-pressed:after, .x-toolbar .x-button.x-button-numInputButtonBlack.x-button-active, .x-toolbar .x-button.x-button-numInputButtonBlack.x-button-active:after,
+.x-button.x-button-numInputButtonBlack-round.x-button-pressing,
+.x-button.x-button-numInputButtonBlack-round.x-button-pressing:after,
+.x-button.x-button-numInputButtonBlack-round.x-button-pressed,
+.x-button.x-button-numInputButtonBlack-round.x-button-pressed:after,
+.x-button.x-button-numInputButtonBlack-round.x-button-active,
+.x-button.x-button-numInputButtonBlack-round.x-button-active:after, .x-toolbar
+.x-button.x-button-numInputButtonBlack-round.x-button-pressing, .x-toolbar
+.x-button.x-button-numInputButtonBlack-round.x-button-pressing:after, .x-toolbar
+.x-button.x-button-numInputButtonBlack-round.x-button-pressed, .x-toolbar
+.x-button.x-button-numInputButtonBlack-round.x-button-pressed:after, .x-toolbar
+.x-button.x-button-numInputButtonBlack-round.x-button-active, .x-toolbar
+.x-button.x-button-numInputButtonBlack-round.x-button-active:after,
+.x-button.x-button-numInputButtonBlack-small.x-button-pressing,
+.x-button.x-button-numInputButtonBlack-small.x-button-pressing:after,
+.x-button.x-button-numInputButtonBlack-small.x-button-pressed,
+.x-button.x-button-numInputButtonBlack-small.x-button-pressed:after,
+.x-button.x-button-numInputButtonBlack-small.x-button-active,
+.x-button.x-button-numInputButtonBlack-small.x-button-active:after, .x-toolbar
+.x-button.x-button-numInputButtonBlack-small.x-button-pressing, .x-toolbar
+.x-button.x-button-numInputButtonBlack-small.x-button-pressing:after, .x-toolbar
+.x-button.x-button-numInputButtonBlack-small.x-button-pressed, .x-toolbar
+.x-button.x-button-numInputButtonBlack-small.x-button-pressed:after, .x-toolbar
+.x-button.x-button-numInputButtonBlack-small.x-button-active, .x-toolbar
+.x-button.x-button-numInputButtonBlack-small.x-button-active:after {
+  background-image: none;
+  background-color: #4a4a4a;
+  background-image: -webkit-linear-gradient(top, #313131, #3e3e3e 10%, #4a4a4a 65%, #4c4c4c);
+  background-image: -moz-linear-gradient(top, #313131, #3e3e3e 10%, #4a4a4a 65%, #4c4c4c);
+  background-image: -o-linear-gradient(top, #313131, #3e3e3e 10%, #4a4a4a 65%, #4c4c4c);
+  background-image: -ms-linear-gradient(top, #313131, #3e3e3e 10%, #4a4a4a 65%, #4c4c4c);
+}
+
+.NumInputButton {
+  margin: 2px;
+  color: #ffffff !important;
+  font-size: 1.3em;
+}
+
+.NumInputContainer {
+  background-color: #525252;
+  padding: 8px;
+}
+
+.NumInputField {
+  font-family: "Lucida Console", Monaco, monospace;
+  text-align: right;
+  font-size: 1.1em;
 }

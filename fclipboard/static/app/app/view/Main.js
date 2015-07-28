@@ -195,6 +195,7 @@ Ext.define('Fclipboard.view.Main', {
                             id: 'partnerList',
                             height: '100%',
                             store: 'PartnerStore',
+                            grouped: true,
                             //disableSelection:true,                            
                             cls: 'PartnerList',
                             itemTpl: '{name}'                       
@@ -294,63 +295,7 @@ Ext.define('Fclipboard.view.Main', {
        self.setTitle(title);
        this.getNavigationBar().setTitle(this.getTitle());  
    },
-   
-   showNewItemSelection: function() {      
-        var self = this;
-        var record = self.getRecord();
-
-        if ( !record ) {        
-            self.fireEvent("createItem", self);
-        } else {
-        
-            var itemStore = Ext.getStore("ItemStore");
-            var productItems = itemStore.queryBy(function(record) {
-                if ( record.getRtype() == "product_id") {
-                    return true;
-                }
-                return false;
-            });
-            
-            if ( productItems.length === 0 ) {
-                 var newItemPicker = Ext.create('Ext.Picker',{
-                    doneButton: 'Erstellen',
-                    cancelButton: 'Abbrechen',
-                    modal: true,
-                    slots:[{
-                        name: 'option',
-                        title: 'Element',
-                        displayField: 'name',
-                        valueField: 'option',
-                        data: [{
-                            "name" : "Ordner",
-                            "option" : 0  
-                        }, {
-                            "name" : "Produkt",
-                            "option" : 1
-                        }]
-                    }],               
-                    listeners: {
-                        change: function(picker,button) {
-                            var option = picker.getValue().option;
-                            if ( option === 1) {
-                                self.fireEvent("addProduct", self);
-                            } else {
-                                self.fireEvent('createItem', self);
-                            }
-                        }
-                    } 
-                });
-                
-                Ext.Viewport.add(newItemPicker);
-                newItemPicker.show();
-            } else {
-                self.fireEvent("addProduct", self);
-            }
-            
-        }  
-   },
-
-      
+           
    pop: function() {
        this.callParent(arguments);
        this.validateComponents();

@@ -33,7 +33,6 @@ Ext.define('Fclipboard.view.ListSelect', {
          */
         title: "Auswahl",
         
-        
         /**
          * handler if creation of new 
          * records are allowed
@@ -47,6 +46,7 @@ Ext.define('Fclipboard.view.ListSelect', {
         var store = self.getStore();
         
         if ( navigationView !== null && store !== null) {
+        
            var toolbarItems = [{
                     xtype: 'searchfield',
                     placeholder: 'Suche',
@@ -71,7 +71,7 @@ Ext.define('Fclipboard.view.ListSelect', {
         
            navigationView.push({
               title: self.getTitle(),
-              xtype : 'panel',
+              xtype : 'container',
               listeners: {
                   scope: self, 
                   show: self.firstSearch
@@ -113,35 +113,32 @@ Ext.define('Fclipboard.view.ListSelect', {
        this.setSearchValue(searchValue);
        this.searchTask.delay(500);
    },
-   
+      
    search: function() {
        var self = this;
        var storeInst = self.getStore();
        var searchValue = self.getSearchValue();
        var searchField = self.getDisplayField();
        
-       if ( !Ext.isEmpty(searchValue) ) {
-         storeInst.load({
-           params: {
-                filters : [{
-                   property: searchField,
-                   value: this.partnerSearch
-                }]
+       var options = {
+           params : {
+              limit: 100
            }
-         });
-       } else {
-         storeInst.load();
-       }    
+       };
+       
+       if ( !Ext.isEmpty(searchValue) ) {
+         options.filters = [{
+            property: searchField,
+            value: self.searchValue
+         }];         
+       }          
+       storeInst.load(options);
    },
    
    firstSearch: function() {
-       var self = this;        
-       var storeInst = self.getStore();
-       storeInst.load({ params : {
-           limit : 100
-       }});
+      this.search();  
    },
-   
+     
    onListTap: function() {
        var self = this;
        var navigationView = self.getNavigationView();
@@ -161,7 +158,6 @@ Ext.define('Fclipboard.view.ListSelect', {
         this.getOptions();
 
         store = this.getStore();
-
         if ((value !== undefined && value !== null && !value.isModel) && store) {
             if (typeof value === 'object') {
                 value = value[this.getValueField()];

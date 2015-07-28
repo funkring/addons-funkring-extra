@@ -24,7 +24,9 @@ Ext.application({
         'PartnerView',
         'ConfigView',
         'ListSelect',
-        'ScrollList'
+        'ScrollList',
+        'PricelistView',
+        'NumberInputView'
     ],
 
     models: [
@@ -44,7 +46,8 @@ Ext.application({
         'HeaderItemStore',
         'PartnerStore',
         'LogStore',
-        'PricelistStore'
+        'PricelistStore',
+        'PricelistItemStore'
     ],
     
     controllers: [

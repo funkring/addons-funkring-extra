@@ -380,6 +380,18 @@ Ext.define('Ext.proxy.PouchDB', {
             }
         }
     },
+    
+    // read document callback
+    readDocument: function(uuid, callback) {
+        var self = this;
+        var db = PouchDBDriver.getDB(self.getDatabase());
+        db.get(uuid).then(function(doc) {
+            var record = self.createRecord(doc);
+            callback(null,record);
+        }).catch( function (err) {
+            callback(err);
+        });
+    },
              
     // read function
     read: function(operation, callback, scope) {

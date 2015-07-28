@@ -795,11 +795,13 @@ Ext.ClassManager.addNameAlternateMappings({
   "Fclipboard.store.ItemTemplateStore": [],
   "Fclipboard.store.LogStore": [],
   "Fclipboard.store.PartnerStore": [],
+  "Fclipboard.store.PricelistItemStore": [],
   "Fclipboard.store.PricelistStore": [],
   "Fclipboard.view.ConfigView": [],
   "Fclipboard.view.FormView": [],
   "Fclipboard.view.ListSelect": [],
   "Fclipboard.view.Main": [],
+  "Fclipboard.view.NumberInputView": [],
   "Fclipboard.view.PartnerView": [],
   "Fclipboard.view.PricelistView": [],
   "ScrollList": []
@@ -1779,6 +1781,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Fclipboard.store.ItemTemplateStore": [],
   "Fclipboard.store.LogStore": [],
   "Fclipboard.store.PartnerStore": [],
+  "Fclipboard.store.PricelistItemStore": [],
   "Fclipboard.store.PricelistStore": [],
   "Fclipboard.view.ConfigView": [
     "widget.configform"
@@ -1792,11 +1795,14 @@ Ext.ClassManager.addNameAliasMappings({
   "Fclipboard.view.Main": [
     "widget.main"
   ],
+  "Fclipboard.view.NumberInputView": [
+    "widget.numberinput"
+  ],
   "Fclipboard.view.PartnerView": [
     "widget.partnerform"
   ],
   "Fclipboard.view.PricelistView": [
-    "widget.pricelistview"
+    "widget.pricelist"
   ],
   "ScrollList": [
     "widget.scrolllist"
