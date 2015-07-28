@@ -125,6 +125,43 @@
    clear:both;
 }
 
+// ******************************************************************
+// InfoView
+// ******************************************************************
+
+.fc-info-header {
+    font-weight: bold;
+    color: #115a8d;
+    margin: 8px 10px 6px 10px;
+}
+
+.fc-info-field {
+    float: left;
+    margin: 0px 10px 1px 25px;
+    color: #55b3f4;
+}
+
+.fc-info {
+    font-size: 80%;
+}
+
+.fc-info-label {
+    @extend .fc-info;
+    color: #115a8d;
+}
+
+.fc-info-value {
+    @extend .fc-info;
+     
+}
+.fc-info-container {   
+}
+
+.fc-info-last {
+   clear:both;
+   margin-bottom: 10px;
+}
+
 
 // ******************************************************************
 // ItemList
@@ -144,6 +181,14 @@ ItemList {
 
 .invalidField .x-form-field {
   background-color: red !important;
+}
+
+// ******************************************************************
+// Item Info 
+// ******************************************************************
+
+.ItemInfo {
+    
 }
 
 // ******************************************************************

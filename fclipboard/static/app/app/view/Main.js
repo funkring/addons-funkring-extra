@@ -134,19 +134,31 @@ Ext.define('Fclipboard.view.Main', {
                                 }
                                                          
                             ]                           
-                        },                        
+                        },             
                         {
-                            xtype: 'list',
-                            height: '100%',
-                            store: 'ItemStore',
-                            id: 'itemList',
-                            cls: 'ItemList',
-                            listeners: {
-                                select: function(list, record) {
-                                    list.deselect(record);
+                             layout: 'vbox',
+                             height: '100%',
+                             items: [
+                                {
+                                    xtype: 'container',
+                                    id: 'itemInfo',
+                                    cls: 'ItemInfo'
+                                },
+                                {
+                                    xtype: 'list',
+                                    flex: 1,
+                                    store: 'ItemStore',
+                                    id: 'itemList',
+                                    cls: 'ItemList',
+                                    listeners: {
+                                        select: function(list, record) {
+                                            list.deselect(record);
+                                        }
+                                    }          
                                 }
-                            }          
-                        }]            
+                             ]
+                        }
+                      ]            
                     },
                     {
                         title: 'Partner',                        

@@ -30,7 +30,7 @@ futil.parseFloat = function(num) {
 };
 
 
-futil.barrier = function(callback, args) {
+futil.Barrier = function(callback, args) {
   this.callback = callback;
   this.ref = 1;
   

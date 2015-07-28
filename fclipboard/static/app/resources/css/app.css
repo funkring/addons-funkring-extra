@@ -6694,6 +6694,31 @@ body.x-desktop {
   clear: both;
 }
 
+.fc-info-header {
+  font-weight: bold;
+  color: #115a8d;
+  margin: 8px 10px 6px 10px;
+}
+
+.fc-info-field {
+  float: left;
+  margin: 0px 10px 1px 25px;
+  color: #55b3f4;
+}
+
+.fc-info, .fc-info-label, .fc-info-value {
+  font-size: 80%;
+}
+
+.fc-info-label {
+  color: #115a8d;
+}
+
+.fc-info-last {
+  clear: both;
+  margin-bottom: 10px;
+}
+
 .LogList {
   font-family: "Lucida Console", Monaco, monospace;
   font-size: 70%;
