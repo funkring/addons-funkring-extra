@@ -16,7 +16,9 @@ Ext.define('Fclipboard.view.PricelistView', {
         
         pricelist: null,
         
-        productAmount: {},
+        saveHandler: null, 
+        
+        order: {},
         
         title: 'Preisliste',
         
@@ -48,11 +50,11 @@ Ext.define('Fclipboard.view.PricelistView', {
             grouped: true,
             listeners: {
                 itemtap: function(list, index, element, record) {
-                    setTimeout(function() {
-                       list.deselect(index); 
-                    },500);
-                    Ext.getCmp('pricelistView').showNumberInput(element, record.get('product_id') );
-                }
+                    Ext.getCmp('pricelistView').showNumberInput(element, record );
+                },
+                select: function(list, record) {
+                    list.deselect(record);
+                }                    
             }         
         }]
              
@@ -70,22 +72,23 @@ Ext.define('Fclipboard.view.PricelistView', {
                                 '<div class="col-10 {cls}">{code}</div>',
                                 '<div class="col-70 {cls}">{name}</div>',
                                 '<div class="col-10 {cls}">{uom}</div>',
-                                '<div class="col-10-right {cls}">{amount}</div>',
+                                '<div class="col-10-right {cls}">{qty}</div>',
                                 '<div class="col-last {cls}"></div>',
                             {
                               apply: function(values, parent) {
-                                 var amount = self.getProductAmount()[values.product_id];
-                                 if ( !amount ) {
-                                        amount = 0.0;
+                                 var line = self.getOrder()[values.product_id];
+                                 var qty = 0.0;
+                                 if ( line ) {
+                                    qty = line.qty;
                                  }
                                  
                                  var cls='';
-                                 if (amount > 0.0) {
+                                 if (qty > 0.0) {
                                     cls = ' col-positive';
                                  }
                                  
                                  values.cls = cls;
-                                 values.amount = futil.formatFloat(amount);
+                                 values.qty = futil.formatFloat(qty);
                                  return this.applyOut(values, [], parent).join('');
                               }      
                             }));
@@ -138,8 +141,10 @@ Ext.define('Fclipboard.view.PricelistView', {
        store.load(options);
    },
    
-    showNumberInput: function(nextTo, product_id) {
+    showNumberInput: function(nextTo, record) {
         var self = this;
+        var product_id = record.get('product_id');   
+        var line = self.getOrder()[product_id]; 
         
         //check number view
         if ( !self.numberInputView ) {
@@ -147,8 +152,13 @@ Ext.define('Fclipboard.view.PricelistView', {
         }
         
         // show
-        self.numberInputView.showBy(nextTo, 'tl-tr?', false, self.getProductAmount()[product_id], function(numInput, newVal) { 
-            self.getProductAmount()[product_id]=newVal;
+        self.numberInputView.showBy(nextTo, 'tl-tr?', false, line && line.qty || 0.0, function(numInput, newVal) {
+            self.getOrder()[product_id]={
+                name: record.get('name'),
+                qty: newVal,
+                uom: record.get('uom'),
+                code: record.get('code')
+            };
             self.search();
         });
     },

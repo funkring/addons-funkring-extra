@@ -59,7 +59,7 @@ Ext.define('Fclipboard.controller.Main', {
                 select: 'selectPartner'
             },
             itemList: {
-                select: 'selectItem'
+                itemtap: 'selectItem'
             }
         }
     },
@@ -655,17 +655,31 @@ Ext.define('Fclipboard.controller.Main', {
         this.editPartner(record);
     },
     
-    selectItem: function(list, record) {
-        list.deselect(record);
-        var mainView = this.getMainView();
-        
-        var lastRecord = mainView.getRecord();
-        if (lastRecord !== null) {
-            this.path.push(lastRecord);
+    selectItem: function(list, index, element, record) {
+        var self = this;        
+                
+        //check for product selection
+        if ( record.get('rtype') == "product_id" && record.get('section') == 20 ) {
+            var store = Ext.getStore("ItemStore");
+            self.showNumberInput(element, record.get('valf'), function(view, newValue) {
+                if ( newValue !== 0.0 ) {
+                    record.set('valf',newValue);                                     
+                } else {
+                    store.remove(record);                  
+                }
+                store.sync();
+            });
+        } else {
+            var mainView = self.getMainView();
+            
+            var lastRecord = mainView.getRecord();
+            if (lastRecord !== null) {
+                this.path.push(lastRecord);
+            }
+            
+            mainView.setRecord(record);
+            self.loadRecord();
         }
-        
-        mainView.setRecord(record);
-        this.loadRecord();
     },
     
     parentItem: function() {
@@ -689,7 +703,7 @@ Ext.define('Fclipboard.controller.Main', {
         
             var itemStore = Ext.getStore("ItemStore");
             var productItems = itemStore.queryBy(function(record) {
-                if ( record.getRtype() == "product_id") {
+                if ( record.get('rtype') == "product_id") {
                     return true;
                 }
                 return false;
@@ -752,13 +766,89 @@ Ext.define('Fclipboard.controller.Main', {
     },
     
     addProduct: function() {
-        var self = this;
-        if ( self.pricelist ) {
-            var view = Ext.create("Fclipboard.view.PricelistView", {
+        var self = this;    
+        var record = this.getMainView().getRecord();
+        if ( self.pricelist && record) {
+            var db = self.getDB();
+            
+            // search current items
+            PouchDBDriver.search(db, [["parent_id","=",record.getId()],["section","=",20],["rtype","=","product_id"]], {'include_docs':true}, function(err, result) {
+                if ( err ) {
+                    return;
+                } 
+                
+                var order = {};
+                var orderItems = {};
+                Ext.each(result.rows, function(row) {
+                    var doc = row.doc;
+                    //create order line
+                    order[doc.product_id]={
+                        name : doc.name,
+                        qty : doc.valf,
+                        uom : doc.valc,
+                        code : doc.code,
+                        product_id : doc.product_id
+                    };                    
+                    orderItems[doc.product_id]=doc;
+                });
+                
+                var view = Ext.create("Fclipboard.view.PricelistView", {
+
                            title: self.pricelist.name,
-                           pricelist: self.pricelist
+                           pricelist: self.pricelist,
+                           order: order,
+                            
+                           saveHandler: function(view, callback) {
+                              var update = [];
+                              var newOrder = view.getOrder();
+                              // update create new                     
+                              Ext.iterate(newOrder, function(product_id, line) {                                    
+                                    if ( product_id in orderItems ) {
+                                        var doc = orderItems[product_id];
+                                        if ( doc.valf !== line.qty || doc.name !== line.name ) {
+                                            if ( line.qty === 0.0 ) {
+                                                // delete
+                                                update.push({
+                                                    _id : doc._id,
+                                                    _rev : doc._rev,
+                                                    _deleted : true
+                                                });   
+                                            } else {
+                                                update.name=line.name;
+                                                update.valf=line.qty;
+                                                update.code=line.code;
+                                                update.valc=line.uom;                                                
+                                                update.push(doc);
+                                            }
+                                        }
+                                    } else if ( line.qty !== 0.0 ) {
+                                        update.push({
+                                            "fdoo__ir_model" : "fclipboard.item",
+                                            "product_id" : product_id,
+                                            "name" : line.name,  
+                                            "parent_id" : record.getId(),
+                                            "section" : 20,
+                                            "rtype" : "product_id",
+                                            "dtype" : "f",
+                                            "valf" : line.qty,
+                                            "code" : line.code,
+                                            "valc" : line.uom                                            
+                                         });
+                                    }
+                              });
+                              
+                              // update and do callback
+                              db.bulkDocs(update, function(err, res) {
+                                  callback(err);
+                              });
+                               
+                           }
                        });
-            self.getMainView().push(view);         
+                       
+                self.getMainView().push(view);       
+                
+            });
+             
         }
     },
 
@@ -789,7 +879,7 @@ Ext.define('Fclipboard.controller.Main', {
                 }
                 
                 mbox.hide();
-                self.refresh();
+                self.dataReload();
                 self.syncActive = false;
             };
             
@@ -862,7 +952,7 @@ Ext.define('Fclipboard.controller.Main', {
                                         log.info("Sync-Daten zurückgesetzt!");                                      
                                     }         
                                     
-                                    self.refresh();
+                                    self.dataReload();
                                     syncPopover.hide();                           
                                 });
                              }                  
@@ -876,7 +966,7 @@ Ext.define('Fclipboard.controller.Main', {
                                            if (err) {
                                               log.error(err); 
                                            }
-                                           self.refresh();
+                                           self.dataReload();
                                            syncPopover.hide();
                                            log.info("Datenbank zurückgesetzt!");
                                        };    

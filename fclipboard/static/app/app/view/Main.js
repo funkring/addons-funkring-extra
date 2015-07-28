@@ -60,6 +60,8 @@ Ext.define('Fclipboard.view.Main', {
                     } else {
                         deleteButton.hide();
                     }
+                } else if ( newCard.getSaveHandler && newCard.getSaveHandler() ) {
+                     saveButton.show();
                 } else {
                     saveButton.hide();
                     deleteButton.hide();
@@ -139,23 +141,11 @@ Ext.define('Fclipboard.view.Main', {
                             store: 'ItemStore',
                             id: 'itemList',
                             cls: 'ItemList',
-                            itemTpl: Ext.create('Ext.XTemplate',
-                                                '{name}')
-                                                
-                            /*
-                            itemTpl: Ext.create('Ext.XTemplate',
-                                                '{name} {[this.f(1.0)]}',
-                                               {
-                                                 f: futil.formatFloat
-                                               })*/
-                            /*
-                            itemTpl: Ext.create('Ext.XTemplate',
-                                            '<tpl if="dtype == \'res.partner\'">',
-                                                '<span class="left-col">{name}</span>',
-                                                '<span class="right-col">&ltKein(e)&gt</span>',                                                
-                                            '<tpl else>',
-                                                '{name}',
-                                            '</tpl>')    */            
+                            listeners: {
+                                select: function(list, record) {
+                                    list.deselect(record);
+                                }
+                            }          
                         }]            
                     },
                     {
@@ -245,7 +235,7 @@ Ext.define('Fclipboard.view.Main', {
                                 store: 'LogStore',
                                 disableSelection:true,                            
                                 cls: 'LogList',
-                                itemTpl: '{message}'                       
+                                itemTpl: '{message}'                                 
                             }                
                         ]
                         
@@ -259,6 +249,34 @@ Ext.define('Fclipboard.view.Main', {
    constructor: function(config) {
         var self = this;        
         self.callParent(config);  
+                
+        var itemList = Ext.getCmp("itemList");  
+        itemList.setItemTpl(Ext.create('Ext.XTemplate', 
+                            '<tpl if="t==1">',
+                                '<div class="col-10">{code}</div>',
+                                '<div class="col-70">{name}</div>',
+                                '<div class="col-10">{uom}</div>',
+                                '<div class="col-10-right {cls}">{qty}</div>',
+                                '<div class="col-last"></div>',
+                            '<tpl else>',
+                                '{name}',
+                            '</tpl>',
+                            {
+                              apply: function(values, parent) {
+                                 // determine type
+                                 values.t = 0;
+                                 // check type
+                                 if ( values.rtype === "product_id") {
+                                     values.t = 1;
+                                     values.qty = futil.formatFloat(values.valf);
+                                     values.uom = values.valc;
+                                 }
+                                 return this.applyOut(values, [], parent).join('');
+                              }      
+                            }));
+        
+        
+        // reload
         self.fireEvent("doDataReload");      
    },
         

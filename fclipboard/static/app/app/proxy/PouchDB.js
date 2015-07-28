@@ -120,8 +120,8 @@ Ext.define('Ext.proxy.PouchDB', {
      */
     setException: function(operation, err) {
         if (err) {
-            this.fireEvent('exception', this, operation);
-            operation.operation(err);
+            operation.exception=err;
+            this.fireEvent('exception', this, operation);            
         }
     },
     
