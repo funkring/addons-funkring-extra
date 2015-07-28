@@ -67,45 +67,27 @@ Ext.define('Fclipboard.view.PricelistView', {
          
          
          pricelist.setItemTpl(Ext.create('Ext.XTemplate', 
-                                '{[this.formatLine(values)]}',
-                                /*
-                                '<div class="col-10">{code}</div>',
-                                '<div class="col-70">{name}</div>',
-                                '<div class="col-10">{uom}</div>',
-                                '<div class="col-10-right">{[this.formatAmount(values.product_id)]}</div>',
-                                '<div class="col-last"></div>',*/
+                                '<div class="col-10 {cls}">{code}</div>',
+                                '<div class="col-70 {cls}">{name}</div>',
+                                '<div class="col-10 {cls}">{uom}</div>',
+                                '<div class="col-10-right {cls}">{amount}</div>',
+                                '<div class="col-last {cls}"></div>',
                             {
-                              /*
-                              formatAmount: function(product_id) {    
-                                    var amount = self.getProductAmount()[product_id];
-                                    if ( !amount ) {
+                              apply: function(values, parent) {
+                                 var amount = self.getProductAmount()[values.product_id];
+                                 if ( !amount ) {
                                         amount = 0.0;
-                                    }
-                                    if (amount > 0.0) {
-                                        return "<b>"+futil.formatFloat(amount)+"</b>";
-                                    }
-                                    return futil.formatFloat(amount);   
-                              },*/
-                              formatLine: function(values) {    
-                                    var amount = self.getProductAmount()[values.product_id];
-                                    if ( !amount ) {
-                                        amount = 0.0;
-                                    }
-                                    var cls='';
-                                    if (amount > 0.0) {
-                                        cls = ' col-positive';
-                                    }
-                                    
-                                    var res = ['<div class="col-10' + cls + '">' + values.code + '</div>',
-                                               '<div class="col-70' + cls + '">' + values.name + '</div>',
-                                               '<div class="col-10' + cls + '">' + values.uom + '</div>',
-                                               '<div class="col-10-right' + cls + '">' + futil.formatFloat(amount) + '</div>',
-                                               '<div class="col-last"></div>'
-                                              ].join(" ");
-                                    
-                                                
-                                    return res;   
-                              }                   
+                                 }
+                                 
+                                 var cls='';
+                                 if (amount > 0.0) {
+                                    cls = ' col-positive';
+                                 }
+                                 
+                                 values.cls = cls;
+                                 values.amount = futil.formatFloat(amount);
+                                 return this.applyOut(values, [], parent).join('');
+                              }      
                             }));
          
          //
