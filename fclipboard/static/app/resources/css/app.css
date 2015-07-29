@@ -254,6 +254,14 @@
  * Default border-radius for items in rounded list
  */
 /**
+ * @var {color} $grid-header-bg-color
+ * Background-color for grid header rows (in grouped grids).
+ */
+/**
+ * @var {string} $grid-header-gradient
+ * Gradient style for list header rows (in grouped lists).
+ */
+/**
  * @class Ext.form.Panel
  */
 /**
@@ -1701,98 +1709,122 @@ input, textarea {
 @keyframes x-loading-spinner-rotate {
   0% {
     -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
   }
 
   8.32% {
     -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
   }
 
   8.33% {
     -ms-transform: rotate(30deg);
+    transform: rotate(30deg);
   }
 
   16.65% {
     -ms-transform: rotate(30deg);
+    transform: rotate(30deg);
   }
 
   16.66% {
     -ms-transform: rotate(60deg);
+    transform: rotate(60deg);
   }
 
   24.99% {
     -ms-transform: rotate(60deg);
+    transform: rotate(60deg);
   }
 
   25% {
     -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
   }
 
   33.32% {
     -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
   }
 
   33.33% {
     -ms-transform: rotate(120deg);
+    transform: rotate(120deg);
   }
 
   41.65% {
     -ms-transform: rotate(120deg);
+    transform: rotate(120deg);
   }
 
   41.66% {
     -ms-transform: rotate(150deg);
+    transform: rotate(150deg);
   }
 
   49.99% {
     -ms-transform: rotate(150deg);
+    transform: rotate(150deg);
   }
 
   50% {
     -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
   }
 
   58.32% {
     -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
   }
 
   58.33% {
     -ms-transform: rotate(210deg);
+    transform: rotate(210deg);
   }
 
   66.65% {
     -ms-transform: rotate(210deg);
+    transform: rotate(210deg);
   }
 
   66.66% {
     -ms-transform: rotate(240deg);
+    transform: rotate(240deg);
   }
 
   74.99% {
     -ms-transform: rotate(240deg);
+    transform: rotate(240deg);
   }
 
   75% {
     -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
   }
 
   83.32% {
     -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
   }
 
   83.33% {
     -ms-transform: rotate(300deg);
+    transform: rotate(300deg);
   }
 
   91.65% {
     -ms-transform: rotate(300deg);
+    transform: rotate(300deg);
   }
 
   91.66% {
     -ms-transform: rotate(330deg);
+    transform: rotate(330deg);
   }
 
   100% {
     -ms-transform: rotate(330deg);
+    transform: rotate(330deg);
   }
 }
 
@@ -3106,6 +3138,16 @@ input[type="search"]::-webkit-search-cancel-button {
   vertical-align: middle;
 }
 
+.x-orientation-inspector {
+  display: none;
+  content: "landscape";
+}
+@media (orientation : portrait) {
+  .x-orientation-inspector {
+    content: "portrait";
+  }
+}
+
 .x-grid .x-grid-header-container {
   border-width: 0 1px 1px 0;
   border-style: solid;
@@ -3229,6 +3271,7 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 .x-grid .x-grid-viewoptions .x-column-options-sortablehandle,
 .x-grid .x-grid-viewoptions .x-column-options-visibleindicator,
+.x-grid .x-grid-viewoptions .x-column-options-groupindicator,
 .x-grid .x-grid-viewoptions .x-column-options-folder,
 .x-grid .x-grid-viewoptions .x-column-options-leaf {
   width: 40px;
@@ -3238,6 +3281,7 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 .x-grid .x-grid-viewoptions .x-column-options-sortablehandle:after,
 .x-grid .x-grid-viewoptions .x-column-options-visibleindicator:after,
+.x-grid .x-grid-viewoptions .x-column-options-groupindicator:after,
 .x-grid .x-grid-viewoptions .x-column-options-folder:after,
 .x-grid .x-grid-viewoptions .x-column-options-leaf:after {
   position: absolute;
@@ -3265,6 +3309,14 @@ input[type="search"]::-webkit-search-cancel-button {
   font-size: 30px;
   line-height: 54px;
   content: "E";
+}
+.x-grid .x-grid-viewoptions .x-column-options-groupindicator {
+  right: 40px;
+}
+.x-grid .x-grid-viewoptions .x-column-options-groupindicator:after {
+  font-size: 30px;
+  line-height: 54px;
+  content: "g";
 }
 .x-grid .x-grid-viewoptions .x-column-options-folder,
 .x-grid .x-grid-viewoptions .x-column-options-leaf {
@@ -3358,6 +3410,37 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 .x-grid .x-grid-summaryrow .x-grid-multiselection-cell:after {
   content: '';
+}
+
+.x-ie .x-grid-grouped .x-translatable-container .x-grid-row:before, .x-ie .x-grid-grouped .x-translatable-container .x-grid-header:before {
+  content: ". .";
+  color: transparent;
+  position: absolute;
+  left: 0px;
+  word-spacing: 3000px;
+  opacity: 0;
+}
+
+.x-grid-header {
+  line-height: 44px;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  z-index: 2 !important;
+}
+
+.x-ios .x-grid-header {
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  -ms-transform: translate3d(0, 0, 0);
+  -o-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+.x-grid-grouped .x-grid-row.x-grid-header-wrap .x-dock-horizontal,
+.x-grid-grouped .x-grid-row-tpl.x-grid-header-wrap {
+  border-top: 0;
 }
 
 /**
@@ -6578,33 +6661,33 @@ body.x-desktop {
   border-color: #fff #d7d7d7 #d7d7d7 #fff;
   color: #fff;
 }
-.x-grid .x-grid-viewoptions .x-column-options-sortablehandle,
-.x-grid .x-grid-viewoptions .x-column-options-visibleindicator,
-.x-grid .x-grid-viewoptions .x-column-options-folder,
-.x-grid .x-grid-viewoptions .x-column-options-leaf {
-  color: #C0C0C0;
-}
 .x-grid .x-grid-viewoptions .x-column-options-sortablehandle {
   color: #aaa;
 }
 .x-grid .x-grid-viewoptions .x-column-options-text {
-  color: #C0C0C0;
-}
-.x-grid .x-grid-viewoptions .x-list-item.x-item-selected.x-list-item-tpl {
-  border-top-color: #ccc;
-}
-.x-grid .x-grid-viewoptions .x-list-item.x-item-selected.x-list-item-tpl .x-column-options-text {
   color: #000;
 }
-.x-grid .x-grid-viewoptions .x-list-item.x-item-selected.x-list-item-tpl .x-column-options-visibleindicator:after {
+.x-grid .x-grid-viewoptions .x-list-item.x-list-item-tpl {
+  border-top-color: #ccc;
+}
+.x-grid .x-grid-viewoptions .x-column-options-visibleindicator {
   color: #1464AE;
 }
-.x-grid .x-grid-viewoptions .x-list-item.x-item-selected.x-list-item-tpl .x-column-options-sortablehandle:after {
-  color: #aaa;
+.x-grid .x-grid-viewoptions .x-column-options-groupindicator {
+  color: #C0C0C0;
 }
-.x-grid .x-grid-viewoptions .x-list-item.x-item-selected.x-list-item-tpl .x-column-options-folder:after,
-.x-grid .x-grid-viewoptions .x-list-item.x-item-selected.x-list-item-tpl .x-column-options-leaf:after {
+.x-grid .x-grid-viewoptions .x-column-options-folder,
+.x-grid .x-grid-viewoptions .x-column-options-leaf {
   color: #91E698;
+}
+.x-grid .x-grid-viewoptions .x-column-options-hidden .x-column-options-visibleindicator,
+.x-grid .x-grid-viewoptions .x-column-options-hidden .x-column-options-text,
+.x-grid .x-grid-viewoptions .x-column-options-hidden .x-column-options-folder,
+.x-grid .x-grid-viewoptions .x-column-options-hidden .x-column-options-leaf {
+  color: #C0C0C0;
+}
+.x-grid .x-grid-viewoptions .x-column-options-grouped .x-column-options-groupindicator {
+  color: #1464AE;
 }
 .x-grid .x-grid-columnoptions {
   border-color: #d7d7d7;
@@ -6630,6 +6713,19 @@ body.x-desktop {
 }
 .x-grid .x-grid-summaryrow .x-grid-cell {
   border-color: #C0C0C0;
+}
+.x-grid .x-grid-header {
+  background-image: none;
+  background-color: #5ab5f5;
+  background-image: -webkit-linear-gradient(top, #a2d6f9, #72c0f6 3%, #42abf4);
+  background-image: -moz-linear-gradient(top, #a2d6f9, #72c0f6 3%, #42abf4);
+  background-image: -o-linear-gradient(top, #a2d6f9, #72c0f6 3%, #42abf4);
+  background-image: -ms-linear-gradient(top, #a2d6f9, #72c0f6 3%, #42abf4);
+  color: #0a6aac;
+  text-shadow: rgba(255, 255, 255, 0.25) 0 0.08em 0;
+  border-top: 1px solid #5ab5f5;
+  border-bottom: 1px solid #0d87dc;
+  padding: 0 1.02em;
 }
 
 .x-list-item .col-tmpl, .x-list-item .col-60, .x-list-item .col-60-border, .x-list-item .col-70, .x-list-item .col-70-border, .x-list-item .col-10, .x-list-item .col-10-border, .x-list-item .col-20, .x-list-item .col-20-border, .x-list-item .col-30, .x-list-item .col-30-border, .x-list-item .col-40, .x-list-item .col-40-border {
