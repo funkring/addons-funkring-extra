@@ -8,7 +8,7 @@ Ext.define('Fclipboard.model.BasicItem', {
        fields: ['name','code','template','parent_id','dtype','rtype',
                 'section','code','sequence', 'required',
                 'product_id', 'pricelist_id', 'partner_id',
-                'valc','valt','valf','vali','valb','vald'],
+                'valc','valt','valf','vali','valb','vald','group'],
 //       belongsTo: [{model:'Fclipboard.model.Partner', associationKey:'partner_id'}],
        identifier: 'uuid',
        proxy: {

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-25 13:54+0000\n"
-"PO-Revision-Date: 2015-07-25 16:01+0100\n"
+"POT-Creation-Date: 2015-07-29 13:44+0000\n"
+"PO-Revision-Date: 2015-07-29 15:45+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -70,7 +70,7 @@ msgstr "Erstellt am"
 #. module: fclipboard
 #: selection:fclipboard.item,dtype:0
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #. module: fclipboard
 #: help:fclipboard.item,vald:0
@@ -96,6 +96,11 @@ msgstr ""
 #: help:fclipboard.item,valf:0
 msgid "Float Value"
 msgstr "Float Wert"
+
+#. module: fclipboard
+#: field:fclipboard.item,group:0
+msgid "Group"
+msgstr "Gruppierung"
 
 #. module: fclipboard
 #: view:fclipboard.item:fclipboard.search_fclipboard_item

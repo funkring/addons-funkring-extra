@@ -907,7 +907,9 @@ Ext.define('Fclipboard.controller.Main', {
                         qty : doc.valf,
                         uom : doc.valc,
                         code : doc.code,
-                        product_id : doc.product_id
+                        product_id : doc.product_id,
+                        sequence: doc.sequence,
+                        category: doc.group
                     };                    
                     orderItems[doc.product_id]=doc;
                 });
@@ -937,22 +939,26 @@ Ext.define('Fclipboard.controller.Main', {
                                                 doc.name=line.name;
                                                 doc.valf=line.qty;
                                                 doc.code=line.code;
-                                                doc.valc=line.uom;                                                
+                                                doc.valc=line.uom;  
+                                                doc.sequence=line.sequence; 
+                                                doc.group=line.category;                                             
                                                 update.push(doc);
                                             }
                                         }
                                     } else if ( line.qty !== 0.0 ) {
                                         update.push({
-                                            "fdoo__ir_model" : "fclipboard.item",
-                                            "product_id" : product_id,
-                                            "name" : line.name,  
-                                            "parent_id" : record.getId(),
-                                            "section" : 20,
-                                            "rtype" : "product_id",
-                                            "dtype" : "f",
-                                            "valf" : line.qty,
-                                            "code" : line.code,
-                                            "valc" : line.uom                                            
+                                            fdoo__ir_model : "fclipboard.item",
+                                            product_id : product_id,
+                                            name : line.name,  
+                                            parent_id : record.getId(),
+                                            section : 20,
+                                            rtype : "product_id",
+                                            dtype : "f",
+                                            valf : line.qty,
+                                            code : line.code,
+                                            valc : line.uom,
+                                            sequence : line.sequence,
+                                            group : line.category                                           
                                          });
                                     }
                               });

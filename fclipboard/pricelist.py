@@ -51,7 +51,7 @@ class product_sale_pricelist(osv.Model):
             for item in version.items_id:
                 if item.product_id:
                     product = _jdoc_get_product(item.product_id)
-                    product["pos"] = item.sequence
+                    product["sequence"] = item.sequence
                     products.append(product)
         
         return res

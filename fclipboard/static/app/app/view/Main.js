@@ -148,6 +148,7 @@ Ext.define('Fclipboard.view.Main', {
                                     xtype: 'list',
                                     flex: 1,
                                     store: 'ItemStore',
+                                    grouped: true,
                                     id: 'itemList',
                                     cls: 'ItemList',
                                     listeners: {

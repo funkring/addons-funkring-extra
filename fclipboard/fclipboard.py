@@ -98,6 +98,7 @@ class fclipboard_item(models.Model):
                                 (SECTION_BODY,"Body")],
                                    "Section", select=True, required=True)
     
+    group = fields.Char("Group")
     owner_id = fields.Many2one("res.users", "Owner", ondelete="set null", select=True)
     active = fields.Boolean("Active", select=True)
     

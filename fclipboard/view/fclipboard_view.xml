@@ -42,6 +42,7 @@
                     </group>     
                     <group>           
                         <field name="parent_id" invisible="context.get('item_view',False)" domain="[('id','!=',active_id),'!',('id','child_of',active_id)]"/>
+                        <field name="group"/>
                         <field name="owner_id" invisible="context.get('item_view',False)" attrs="{'invisible':[('parent_id','!=',False)]}"/>                       
                     </group>
                 </group>

@@ -157,7 +157,9 @@ Ext.define('Fclipboard.view.PricelistView', {
                 name: record.get('name'),
                 qty: newVal,
                 uom: record.get('uom'),
-                code: record.get('code')
+                code: record.get('code'),
+                category: record.get('category'),
+                sequence: record.get('sequence') 
             };
             self.search();
         });
