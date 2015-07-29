@@ -70520,6 +70520,7 @@ Ext.define('Ext.data.identifier.LocalUuid', {
 /*global Ext:false*/
 (Ext.cmd.derive('Fclipboard.view.PartnerView', Fclipboard.view.FormView, {
     config: {
+        scrollable: true,
         items: [
             {
                 xtype: 'fieldset',

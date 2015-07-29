@@ -4,6 +4,7 @@ Ext.define('Fclipboard.view.PartnerView', {
     extend: 'Fclipboard.view.FormView',    
     xtype: 'partnerform',
     config: {
+        scrollable: true,
         items: [
             {
                 xtype: 'fieldset',
