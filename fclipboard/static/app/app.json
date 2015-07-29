@@ -4,9 +4,11 @@
         "native": {
             "packager": "cordova",
             "cordova" : {
-                "config": {                    
-                    "platforms": "ios android",
-
+                "config": {
+                    // Uncomment the line below and add the platforms you wish to build for
+                    //"platforms": "ios android",
+                    
+                    "platforms": "ios",
                     "id": "net.funkring.Fclipboard",
                     "name": "Fclipboard"
                 }
