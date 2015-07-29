@@ -7,7 +7,7 @@ Ext.define('Fclipboard.store.ItemStore', {
         
         sorters: [{
                       property: 'group',
-                      direction: 'ASC',  
+                      direction: 'ASC'
                   },
                   {
                       property: 'section',
