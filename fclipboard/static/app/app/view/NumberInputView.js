@@ -44,7 +44,7 @@ Ext.define('Fclipboard.view.NumberInputView', {
             },
             {
                 fn: 'showInput',
-                event: 'show',
+                event: 'show'
             },
             {
                 fn: 'hideInput',

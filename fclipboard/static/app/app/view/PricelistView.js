@@ -141,7 +141,7 @@ Ext.define('Fclipboard.view.PricelistView', {
        store.load(options);
    },
    
-    showNumberInput: function(nextTo, record) {
+   showNumberInput: function(nextTo, record) {
         var self = this;
         var product_id = record.get('product_id');   
         var line = self.getOrder()[product_id]; 
@@ -161,6 +161,6 @@ Ext.define('Fclipboard.view.PricelistView', {
             };
             self.search();
         });
-    },
+    }
   
 });

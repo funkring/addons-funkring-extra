@@ -171,7 +171,8 @@ Ext.define('Fclipboard.controller.Main', {
          
         var itemForm = Ext.create("Fclipboard.view.FormView",{
             title: 'Neues Dokument',        
-            xtype: 'formview',            
+            xtype: 'formview',       
+            scrollable: false,      
             saveHandler: function(view, callback) {
                 // get values
                 var values = view.getValues();
@@ -297,6 +298,7 @@ Ext.define('Fclipboard.controller.Main', {
                        Ext.each(self.path, function(parentRecord) {
                            path.push(parentRecord.get('name'));
                        });
+                       path.push(record.get('name'));
                        info.path = path.join(" / ");
                     } 
                 }
@@ -572,6 +574,7 @@ Ext.define('Fclipboard.controller.Main', {
               var view = Ext.create("Fclipboard.view.FormView", {
                     title: values.name,
                     record: record,
+                    scrollable: true,      
                     items: items,
                     editable: true,
                     deleteable: true,
@@ -824,7 +827,7 @@ Ext.define('Fclipboard.controller.Main', {
                 return false;
             });
             
-            if ( productItems.length === 0 ) {
+            if ( itemStore.getCount() === 0 ) {
                  var newItemPicker = Ext.create('Ext.Picker',{
                     doneButton: 'Erstellen',
                     cancelButton: 'Abbrechen',
@@ -860,6 +863,8 @@ Ext.define('Fclipboard.controller.Main', {
                 Ext.Viewport.add(newItemPicker);
                 newItemPicker.show();
                 
+            } else if ( productItems.length === 0 ) {
+                self.createItem();
             } else {
                 self.addProduct();
             }
@@ -929,10 +934,10 @@ Ext.define('Fclipboard.controller.Main', {
                                                     _deleted : true
                                                 });   
                                             } else {
-                                                update.name=line.name;
-                                                update.valf=line.qty;
-                                                update.code=line.code;
-                                                update.valc=line.uom;                                                
+                                                doc.name=line.name;
+                                                doc.valf=line.qty;
+                                                doc.code=line.code;
+                                                doc.valc=line.uom;                                                
                                                 update.push(doc);
                                             }
                                         }
@@ -986,6 +991,9 @@ Ext.define('Fclipboard.controller.Main', {
             
             // define callback
             var callback = function(err) {
+                self.syncActive = false;
+                mbox.hide();
+                
                 if (err) {
                      log.error(err);
                      log.warning("<b>Synchronisation mit Fehlern abgeschlossen!</b>");
@@ -993,15 +1001,19 @@ Ext.define('Fclipboard.controller.Main', {
                      log.info("<b>Synchronisation beendet!</b>");
                 }
                 
-                mbox.hide();
-                self.loadRoot();
-                self.syncActive = false;
+                self.loadRoot();                
             };
             
             // fetch config and sync
             var db = self.getDB();
-            db.get('_local/config', function(err,config) {
-                if ( !err ) {                    
+            db.get('_local/config', function(err, config) {
+                
+                // check config
+                if (!err && !(config.host && config.port && config.user && config.db && config.password)) {
+                    err = "Ungültige Konfiguration";
+                }
+            
+                if ( !err ) {
                     log.info("Hochladen auf <b>" + config.host + ":" + config.port + "</b> mit Benutzer <b>" + config.user +"</b>");
                     
                     // reload after sync
@@ -1085,7 +1097,7 @@ Ext.define('Fclipboard.controller.Main', {
                                            syncPopover.hide();
                                            log.info("Datenbank zurückgesetzt!");
                                        };    
-                                                                
+
                                        if( choice == 'yes' ) {
                                              self.getDB().get('_local/config', function(err, doc) {
                                                 PouchDBDriver.resetDB('fclipboard', function(err) {

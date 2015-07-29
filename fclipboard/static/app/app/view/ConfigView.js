@@ -4,6 +4,7 @@ Ext.define('Fclipboard.view.ConfigView', {
     extend: 'Fclipboard.view.FormView',    
     xtype: 'configform',
     config: {
+        scrollable: true,
         items: [
             {
                 xtype: 'fieldset',

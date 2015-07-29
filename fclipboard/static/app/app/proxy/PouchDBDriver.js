@@ -20,8 +20,12 @@ Ext.define('Ext.proxy.PouchDBDriver',{
         var self = this;
         var db = this.databases[dbName];
         if ( !db ) {
-            db = new PouchDB(dbName, {size: 1000,
+            /*
+            db = new PouchDB(dbName, {size: 50,
                                       adapter: 'websql' });
+            */     
+                                            
+            db = new PouchDB(dbName, {size: 50});
             self.databases[dbName] = db;
         }
         return db;

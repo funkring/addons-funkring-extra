@@ -162,6 +162,13 @@
    margin-bottom: 10px;
 }
 
+.fclipboard-path {
+    margin: 8px 10px 6px 10px;
+    font-size: 80%;
+    font-weight: bold;
+    color: grey;
+}
+
 
 // ******************************************************************
 // ItemList
@@ -205,12 +212,17 @@ ItemList {
 }
 
 .NumInputContainer {
-    background-color: #525252;
+    background-color: #525252 !important;
     padding: 8px;
 }
 
 .NumInputField {
     font-family: "Lucida Console", Monaco, monospace;
     text-align: right;
-    font-size: 1.1em;  
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.x-item-disabled .NumInputField {
+    color: #696969 !important;
 }

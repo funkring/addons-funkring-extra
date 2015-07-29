@@ -1,4 +1,26 @@
 {
+    "builds": {
+        "web": {"default": true},
+        "native": {
+            "packager": "phonegap",
+            "phonegap" : {
+                "config": {
+                    // Uncomment the line below and add the platform you wish to build for
+                    "platform": "ios",
+
+                    // Uncomment and Set this line to true to enable PhoneGap Remote Building.
+                    // To properly use this you must set the following properties in your local.properties file (if this file does not exist create it in your app root)
+                    // phonegap.remote.username=myname@domain.com
+                    // phonegap.remote.password=mys3cr3tp@ssw0rd
+                    //"remote":false,
+
+                    "id": "net.funkring.Fclipboard",
+                    "name": "Fclipboard"
+                }
+            }
+        }
+    },
+
     /**
      * The application's namespace, used by Sencha Command to generate classes
      */
@@ -48,7 +70,7 @@
             "x-bootstrap": true
         },
         {
-            "path": "pouchdb-3.4.0.min.js",
+            "path": "pouchdb-3.6.0.min.js",
             "bundle": true,
             "update" : "delta"
         },
@@ -147,4 +169,5 @@
      * Normally you should never change this value.
      */
     "id": "4cc668ee-1c4f-4914-9090-70fb78165aee"
+   
 }
