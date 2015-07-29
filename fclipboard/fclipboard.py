@@ -26,7 +26,6 @@ SECTION_BODY = 20
 
 class fclipboard_item(models.Model):
     
-    @api.one
     def _get_dtype_name(self):
         if self.dtype == "c":
             return self.valc
@@ -36,31 +35,32 @@ class fclipboard_item(models.Model):
             if type(self.vali) in (int,long):
                 return str(self.vali)            
         elif self.dtype == "f":
-            f = LangFormat()
+            f = LangFormat(self._cr, self._uid, self._context)
             return f.formatLang(self.valf)
         elif self.dtype == "d":
-            f = LangFormat()
+            f = LangFormat(self._cr, self._uid, self._context)
             return f.formatLang(self.vald,date=True)
         elif self.dtype == "b":
             return self.valb and _("Yes") or _("No")
         return None
     
-    @api.one
     def _get_rtype_name(self):
         if self.rtype:
-            obj = self[self.dtype]
-            return obj.name_get()[0][1]                
+            obj = self[self.rtype]
+            name = obj.name_get()
+            if name:
+                return name[0][1]         
         return None
         
     @api.one
     def _compute_value(self):
         values = []
         
-        dtype_val = self._get_dtype_value()
+        dtype_val = self._get_dtype_name()
         if dtype_val:
             values.append(dtype_val)
             
-        rtype_val = self._get_rtype_value()
+        rtype_val = self._get_rtype_name()
         if rtype_val:
             values.append(rtype_val)
             
@@ -99,7 +99,7 @@ class fclipboard_item(models.Model):
                                    "Section", select=True, required=True)
     
     group = fields.Char("Group")
-    owner_id = fields.Many2one("res.users", "Owner", ondelete="set null", select=True)
+    owner_id = fields.Many2one("res.users", "Owner", ondelete="set null", select=True, default=lambda self: self._uid)
     active = fields.Boolean("Active", select=True)
     
     template = fields.Boolean("Template")
@@ -124,7 +124,7 @@ class fclipboard_item(models.Model):
     order_id = fields.Many2one("sale.order","Sale Order", ondelete="restrict")
     pricelist_id = fields.Many2one("product.pricelist","Pricelist", ondelete="restrict")
     
-    value = fields.Text("Value", readonly=True, _compute="_compute_value")
+    value = fields.Text("Value", readonly=True, compute="_compute_value")
   
     # main definition
     _name = "fclipboard.item"
