@@ -64,8 +64,35 @@ class fclipboard_item(models.Model):
         if rtype_val:
             values.append(rtype_val)
             
+        if self.valc:
+            values.append(self.valc)
+            
         self.value = " ".join(values)
             
+    @api.multi
+    def action_open(self):
+        act_obj = self.env["ir.actions.act_window"]
+        action = act_obj.for_xml_id("fclipboard","action_fclipboard_item_open")
+        if action:
+            for item in self:            
+                action["res_id"] = item.id
+                return action
+        return True
+    
+    @api.one
+    def action_draft(self):
+        self.state = "draft"
+        return True
+    
+    @api.one
+    def action_release(self):
+        self.state = "released"
+        return True
+    
+    @api.one
+    def action_processed(self):
+        self.state = "processed"
+        return True
     
     @api.one   
     @api.depends("parent_id")
@@ -76,8 +103,8 @@ class fclipboard_item(models.Model):
             self.root_id = self.id
         
     # fields
-    name = fields.Char("Name", required=True, select=True)
-    code = fields.Char("Code", select=True)
+    name = fields.Char("Name", required=True, index=True)
+    code = fields.Char("Code", index=True)
     
     dtype = fields.Selection([("c","Char"),
                               ("t","Text"),
@@ -85,31 +112,31 @@ class fclipboard_item(models.Model):
                               ("f","Float"),
                               ("b","Boolean"),    
                               ("d","Date"),
-                             ],"Type", select=True)
+                             ],"Type", index=True)
                              
        
     rtype = fields.Selection([("partner_id","Partner"),
                               ("product_id","Product"),
                               ("order_id","Order"),
                               ("pricelist_id","Pricelist")],
-                              "Reference Type", select=True)
+                              "Reference Type", index=True)
     
     section = fields.Selection([(SECTION_HEADER,"Header"),
                                 (SECTION_BODY,"Body")],
-                                   "Section", select=True, required=True)
+                                   "Section", index=True, required=True, default=SECTION_HEADER)
     
     group = fields.Char("Group")
-    owner_id = fields.Many2one("res.users", "Owner", ondelete="set null", select=True, default=lambda self: self._uid)
-    active = fields.Boolean("Active", select=True)
+    owner_id = fields.Many2one("res.users", "Owner", ondelete="set null", index=True, default=lambda self: self._uid)
+    active = fields.Boolean("Active", index=True, default=True)
     
     template = fields.Boolean("Template")
     required = fields.Boolean("Required")
     
-    root_id = fields.Many2one("fclipboard.item","Root", select=True, compute="_compute_root_id", readonly=True)
-    parent_id = fields.Many2one("fclipboard.item","Parent", select=True, ondelete="cascade", export=True, composition=False)
+    root_id = fields.Many2one("fclipboard.item","Root", index=True, compute="_compute_root_id", readonly=True)
+    parent_id = fields.Many2one("fclipboard.item","Parent", index=True, ondelete="cascade", export=True, composition=False)
     child_ids = fields.One2many("fclipboard.item","parent_id", "Childs")
     
-    sequence = fields.Integer("Sequence", select=True)
+    sequence = fields.Integer("Sequence", index=True, default=20)
     
     valc = fields.Char("Info", help="String Value")
     valt = fields.Text("Description", help="Text Value")
@@ -124,15 +151,16 @@ class fclipboard_item(models.Model):
     order_id = fields.Many2one("sale.order","Sale Order", ondelete="restrict")
     pricelist_id = fields.Many2one("product.pricelist","Pricelist", ondelete="restrict")
     
-    value = fields.Text("Value", readonly=True, compute="_compute_value")
+    value = fields.Text("Value", readonly=True, copy=False, compute="_compute_value")
   
+    state = fields.Selection([('draft','Draft'),
+                              ('released','Released'),
+                              ('processed','Processed')]
+                             , string='Status', index=True, readonly=True, default="draft", copy=False)
+    
+        
     # main definition
     _name = "fclipboard.item"
     _description = "Item"  
     _order = "section, sequence"
-    _defaults = {
-        "sequence" : 20,
-        "section" : 10,
-        "active" : True
-    }
     

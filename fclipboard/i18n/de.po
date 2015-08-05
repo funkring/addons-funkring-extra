@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-29 13:44+0000\n"
-"PO-Revision-Date: 2015-07-29 15:45+0100\n"
+"POT-Creation-Date: 2015-08-04 22:05+0000\n"
+"PO-Revision-Date: 2015-08-05 00:05+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -88,6 +88,11 @@ msgid "Document"
 msgstr "Dokument"
 
 #. module: fclipboard
+#: selection:fclipboard.item,state:0
+msgid "Draft"
+msgstr "Entwurf"
+
+#. module: fclipboard
 #: selection:fclipboard.item,dtype:0
 msgid "Float"
 msgstr ""
@@ -136,6 +141,7 @@ msgstr "Integer Wert"
 #: view:fclipboard.item:fclipboard.form_fclipboard_item
 #: view:fclipboard.item:fclipboard.search_fclipboard_item
 #: model:ir.actions.act_window,name:fclipboard.action_fclipboard_item
+#: model:ir.actions.act_window,name:fclipboard.action_fclipboard_item_open
 #: model:ir.model,name:fclipboard.model_fclipboard_item
 msgid "Item"
 msgstr "Element"
@@ -162,10 +168,15 @@ msgid "Name"
 msgstr ""
 
 #. module: fclipboard
-#: code:addons/fclipboard/fclipboard.py:45
+#: code:addons/fclipboard/fclipboard.py:44
 #, python-format
 msgid "No"
 msgstr "Nein"
+
+#. module: fclipboard
+#: view:fclipboard.item:fclipboard.form_fclipboard_item
+msgid "Open"
+msgstr "Öffnen"
 
 #. module: fclipboard
 #: selection:fclipboard.item,rtype:0
@@ -195,6 +206,12 @@ msgid "Pricelist"
 msgstr "Preisliste"
 
 #. module: fclipboard
+#: view:fclipboard.item:fclipboard.form_fclipboard_item
+#: selection:fclipboard.item,state:0
+msgid "Processed"
+msgstr "Bearbeitet"
+
+#. module: fclipboard
 #: field:fclipboard.item,product_id:0 selection:fclipboard.item,rtype:0
 msgid "Product"
 msgstr "Produkt"
@@ -203,6 +220,16 @@ msgstr "Produkt"
 #: field:fclipboard.item,rtype:0
 msgid "Reference Type"
 msgstr "Referenztyp"
+
+#. module: fclipboard
+#: view:fclipboard.item:fclipboard.form_fclipboard_item
+msgid "Release"
+msgstr "Freigeben"
+
+#. module: fclipboard
+#: selection:fclipboard.item,state:0
+msgid "Released"
+msgstr "Freigegeben"
 
 #. module: fclipboard
 #: field:fclipboard.item,required:0
@@ -223,6 +250,11 @@ msgstr "Abschnitt"
 #: field:fclipboard.item,sequence:0
 msgid "Sequence"
 msgstr "Sequenz"
+
+#. module: fclipboard
+#: field:fclipboard.item,state:0
+msgid "Status"
+msgstr ""
 
 #. module: fclipboard
 #: help:fclipboard.item,valc:0
@@ -246,6 +278,11 @@ msgid "Text Value"
 msgstr "Text Wert (Mehrzeilig)"
 
 #. module: fclipboard
+#: view:fclipboard.item:fclipboard.form_fclipboard_item
+msgid "To Draft"
+msgstr "Setze auf Entwurf"
+
+#. module: fclipboard
 #: field:fclipboard.item,dtype:0
 msgid "Type"
 msgstr "Typ"
@@ -253,12 +290,11 @@ msgstr "Typ"
 #. module: fclipboard
 #: field:fclipboard.item,valb:0 field:fclipboard.item,vald:0
 #: field:fclipboard.item,valf:0 field:fclipboard.item,vali:0
-#: field:fclipboard.item,value:0
 msgid "Value"
 msgstr "Wert"
 
 #. module: fclipboard
-#: code:addons/fclipboard/fclipboard.py:45
+#: code:addons/fclipboard/fclipboard.py:44
 #, python-format
 msgid "Yes"
 msgstr "Ja"

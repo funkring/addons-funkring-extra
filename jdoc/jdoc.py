@@ -23,7 +23,6 @@ from openerp.addons.at_base import util
 import openerp
 import uuid
 
-import simplejson
 import re
 
 PATTERN_REV = re.compile("^([0-9]+)-(.*)$")
