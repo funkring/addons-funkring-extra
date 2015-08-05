@@ -15,6 +15,9 @@
                <button name="action_processed" string="Processed" type="object" 
                          attrs="{'invisible':['|',('parent_id','!=',False),('state','!=','released')]}"/>
                          
+               <button name="action_validate" string="Valdiate Hierarchy" type="object" groups="base.group_no_one" 
+                         attrs="{'invisible':[('parent_id','!=',False)]}"/>
+                         
                <field  name="state"  widget="statusbar" attrs="{'invisible':[('parent_id','!=',False)]}" />
             </header>
             <sheet string="Item">
@@ -54,18 +57,21 @@
                         <field name="parent_id" invisible="context.get('item_view',False)" domain="[('id','!=',active_id),'!',('id','child_of',active_id)]"/>
                         <field name="group"/>
                         <field name="owner_id" invisible="context.get('item_view',False)" attrs="{'invisible':[('parent_id','!=',False)]}"/>
+                        <field name="write_date"/>
                     </group>
                 </group>
                 <div>
                     <field name="child_ids" 
                         context="{'item_view':True}">
                         <tree>
-                            <field name="sequence" widget="handle"/>                            
-                            <field name="name"/>                            
-                            <field name="section"/>
+                            <field name="sequence" widget="handle"/>
+                            <button name="action_open" type="object" icon="gtk-edit"/>                            
                             <field name="code"/>                            
+                            <field name="name"/>                            
                             <field name="value"/>
-                            <button name="action_open" type="object" string="Open"/>                           
+                            <field name="rtype" invisible="1"/>
+                            <button name="action_link" type="object" icon="gtk-jump-to" attrs="{'invisible':[('rtype','=',False)]}"/>
+                            <field name="section"/>
                         </tree>                        
                     </field>
                 </div>
@@ -79,13 +85,15 @@
       <field name="name">fclipboard.tree_fclipboard_item</field>
       <field name="model">fclipboard.item</field>
       <field name="arch" type="xml">
-        <tree string="Items" >
+        <tree string="Items" colors="blue:state == 'draft';red:state == 'released'">            
             <field name="name"/>                
             <field name="section"/>     
             <field name="parent_id"/>
             <field name="template"/>
             <field name="owner_id"/>            
-            <field name="value"/>            
+            <field name="value"/>
+            <field name="state"/>
+            <field name="write_date"/>            
         </tree>
       </field>
     </record>
@@ -94,7 +102,7 @@
       <field name="name">fclipboard.search_fclipboard_item</field>
       <field name="model">fclipboard.item</field>
       <field name="arch" type="xml">
-        <search string="Item">
+        <search string="Item">         
             <field name="name"/>
             <field name="code"/>
             <field name="dtype"/>

@@ -51,7 +51,8 @@ class fclipboard_item(models.Model):
             if name:
                 return name[0][1]         
         return None
-        
+    
+            
     @api.one
     def _compute_value(self):
         values = []
@@ -60,12 +61,12 @@ class fclipboard_item(models.Model):
         if dtype_val:
             values.append(dtype_val)
             
+        if dtype_val != "c" and self.valc:
+            values.append(self.valc)
+            
         rtype_val = self._get_rtype_name()
         if rtype_val:
             values.append(rtype_val)
-            
-        if self.valc:
-            values.append(self.valc)
             
         self.value = " ".join(values)
             
@@ -82,25 +83,56 @@ class fclipboard_item(models.Model):
     @api.one
     def action_draft(self):
         self.state = "draft"
-        return True
     
     @api.one
     def action_release(self):
         self.state = "released"
-        return True
     
     @api.one
     def action_processed(self):
         self.state = "processed"
-        return True
     
     @api.one   
     @api.depends("parent_id")
     def _compute_root_id(self):
-        if self.parent_id:
-            self.root_id = self.parent_id.root_id.id
-        else:
-            self.root_id = self.id
+        parent = self.parent_id
+        root = self
+        while parent:
+            root = parent
+            parent = parent.parent_id
+        self.root_id = root.id
+            
+    @api.one
+    def _value_ref(self):
+        rtype = self.rtype
+        res = None        
+        if rtype:
+            obj = self[rtype]
+            if obj:
+                res = "%s,%s" % (obj._model._name, obj.id)
+        self.value_ref = res
+                
+    @api.one
+    def action_validate(self):
+        self._compute_root_id()
+        for child in self.child_ids:
+            child.action_validate()
+                
+    @api.multi
+    def action_link(self):
+        rtype = self.rtype
+        if rtype:
+            obj = self[rtype]
+            if obj:
+                return {
+                    "type": "ir.actions.act_window",
+                    "res_model":  obj._model._name,
+                    "views": [[False, "form"]],
+                    "res_id": obj.id,
+                    "target": "current"
+                }
+        return True
+        
         
     # fields
     name = fields.Char("Name", required=True, index=True)
@@ -132,7 +164,7 @@ class fclipboard_item(models.Model):
     template = fields.Boolean("Template")
     required = fields.Boolean("Required")
     
-    root_id = fields.Many2one("fclipboard.item","Root", index=True, compute="_compute_root_id", readonly=True)
+    root_id = fields.Many2one("fclipboard.item","Root", index=True, compute="_compute_root_id", readonly=True, store=True)
     parent_id = fields.Many2one("fclipboard.item","Parent", index=True, ondelete="cascade", export=True, composition=False)
     child_ids = fields.One2many("fclipboard.item","parent_id", "Childs")
     
@@ -158,9 +190,17 @@ class fclipboard_item(models.Model):
                               ('processed','Processed')]
                              , string='Status', index=True, readonly=True, default="draft", copy=False)
     
+    value_ref = fields.Reference([("res.partner","Partner"),
+                                  ("product.product","Product"),
+                                  ("sale.order","Order"),
+                                  ("product.pricelist","Pricelist")],
+                                  string="Link",
+                                  compute="_value_ref")
+    
+    write_date = fields.Datetime("Last Change", readonly=True, index=True)
         
     # main definition
     _name = "fclipboard.item"
     _description = "Item"  
-    _order = "section, sequence"
+    _order = "section, sequence, write_date"
     

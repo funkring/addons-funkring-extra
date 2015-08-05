@@ -318,6 +318,14 @@ class jdoc_jdoc(osv.AbstractModel):
                                   "seq": 3
                                }
                             ]
+                            "actions" : [
+                               {
+                                   "field_id" : root_id,
+                                   "model": "fclipboard.item",
+                                   "domain" : [['state','!=','release']],
+                                   "action" : action_release                               
+                               }
+                           ]
         
         """
         
@@ -334,6 +342,7 @@ class jdoc_jdoc(osv.AbstractModel):
 
         lastsync = changes.get("lastsync") or {}
         last_date = lastsync.get("date",None)
+        actions = changes.get("actions")
         seq = lastsync.get("seq",0)
                
         view = changes.get("view")
@@ -347,13 +356,63 @@ class jdoc_jdoc(osv.AbstractModel):
         # Method CHANGE
         method_lastchange = view and view.get("lastchange") or None
 
-        # process input list
+        # process input list        
         if in_list:
+            changed_models = {}
             for change in in_list:
                 doc = change["doc"]
-                method_put(cr, uid, doc, context=context)
+                method_put(cr, uid, doc, changed_models=changed_models, context=context)
                 seq = max(change["seq"], seq)
                 
+            if actions:
+                for action in actions:
+                    action_model = action.get("model")
+                    if not action_model:
+                        continue
+                    
+                    method = action.get("action")
+                    if not method or method.startswith("_"):
+                        continue
+                    
+                    action_obj = self.pool[action_model]
+                    if not action_obj:
+                        continue
+                    
+                    action_ids = changed_models.get(action_model)
+                    if not action_ids:
+                        continue
+                    
+                    # determine changed ids
+                    action_ids = list(action_ids)
+                    field_id = action.get("field_id")
+                    if field_id:
+                        if field_id.startswith("_"):
+                            continue
+                        
+                        new_action_ids = set()
+                        
+                        for vals in action_obj.read(cr, uid, action_ids, [field_id], context=context):
+                            new_changed_id = vals[field_id]
+                            
+                            if isinstance(new_changed_id,tuple) and len(new_changed_id) > 0:
+                                new_changed_id = new_changed_id[0]
+                                
+                            if new_changed_id:
+                                new_action_ids.add(new_changed_id)
+                            
+                        action_ids = list(new_action_ids)    
+                    
+                    if not action_ids:
+                        continue
+                    
+                    # check domain
+                    action_domain = action.get("domain")
+                    if action_domain:
+                        action_domain.insert(0,("id","in",action_ids))
+                        action_ids = action_obj.search(cr, uid, action_domain)
+                    
+                    # execute action
+                    getattr(model_obj, method)(cr, uid, action_ids, context=context)
         
         # process output list        
         out_list = []        
@@ -462,7 +521,7 @@ class jdoc_jdoc(osv.AbstractModel):
             return False
         return self._jdoc_get(cr, uid, obj, refonly=refonly, emptyValues=emptyValues, onlyFields=onlyFields, context=context)
     
-    def jdoc_put(self, cr, uid, doc, return_id=False, context=None):
+    def jdoc_put(self, cr, uid, doc, return_id=False, changed_models=None, context=None):
         if not doc:
             return False
         
@@ -504,7 +563,7 @@ class jdoc_jdoc(osv.AbstractModel):
                         res = mapping_obj.get_id(cr, uid, value.get(META_MODEL), value)
                     else:
                         # update document and get reference
-                        res = self.jdoc_put(cr, uid, value, return_id=True, context=context)
+                        res = self.jdoc_put(cr, uid, value, return_id=True, changed_models=changed_models, context=context)
             return res
         
         # check for delete
@@ -566,6 +625,16 @@ class jdoc_jdoc(osv.AbstractModel):
             # validate, create uuid
             # use uuid passed in values if new
             uuid = mapping_obj.get_uuid(cr, uid, model, obj_id, uuid=uuid)
+            
+            # update updated dict
+            if not changed_models is None: 
+                changed_ids =changed_models.get(model, None)
+                if changed_ids is None:
+                    changed_ids = set()
+                    changed_models[model]=changed_ids
+                changed_ids.add(obj_id)
+                    
+            
 
         # finished!
         if return_id:
