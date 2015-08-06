@@ -344,7 +344,7 @@ class jdoc_jdoc(osv.AbstractModel):
         last_date = lastsync.get("date",None)
         actions = changes.get("actions")
         seq = lastsync.get("seq",0)
-               
+        
         view = changes.get("view")
         if view:
             view = getattr(model_obj,view)(cr, uid, context=context)
@@ -356,12 +356,13 @@ class jdoc_jdoc(osv.AbstractModel):
         # Method CHANGE
         method_lastchange = view and view.get("lastchange") or None
 
-        # process input list        
+        # process input list    
+        errors = []    
         if in_list:
             changed_models = {}
             for change in in_list:
                 doc = change["doc"]
-                method_put(cr, uid, doc, changed_models=changed_models, context=context)
+                method_put(cr, uid, doc, changed_models=changed_models, errors=errors, context=context)
                 seq = max(change["seq"], seq)
                 
             if actions:
@@ -450,6 +451,14 @@ class jdoc_jdoc(osv.AbstractModel):
         #
         
         out_ids = model_obj.search(cr, uid, search_domain, order="write_date asc, id asc")
+        
+        # resync errors
+        if errors:
+            for error in errors:
+                oid = error.get("id")
+                if oid and oid not in out_ids:
+                    out_ids.append(oid)
+        
         if out_ids:
             
             # get last change date
@@ -508,11 +517,16 @@ class jdoc_jdoc(osv.AbstractModel):
         if lastchange:
             lastsync["lastchange"] = lastchange
         
-        return {
+        res =  {
            "model" : model,
            "lastsync" : lastsync,
-           "changes" : out_list
+           "changes" : out_list,
         }
+        
+        if errors:
+            res["errors"] = errors
+        
+        return res
     
     def jdoc_get(self, cr, uid, uuid, res_model=None, refonly=False, emptyValues=False, onlyFields=None, name=None, context=None):
         mapping_obj = self.pool["res.mapping"]
@@ -521,7 +535,7 @@ class jdoc_jdoc(osv.AbstractModel):
             return False
         return self._jdoc_get(cr, uid, obj, refonly=refonly, emptyValues=emptyValues, onlyFields=onlyFields, context=context)
     
-    def jdoc_put(self, cr, uid, doc, return_id=False, changed_models=None, context=None):
+    def jdoc_put(self, cr, uid, doc, return_id=False, changed_models=None, errors=None, context=None):
         if not doc:
             return False
         
@@ -563,13 +577,26 @@ class jdoc_jdoc(osv.AbstractModel):
                         res = mapping_obj.get_id(cr, uid, value.get(META_MODEL), value)
                     else:
                         # update document and get reference
-                        res = self.jdoc_put(cr, uid, value, return_id=True, changed_models=changed_models, context=context)
+                        res = self.jdoc_put(cr, uid, value, return_id=True, changed_models=changed_models, errors=errors, context=context)
             return res
         
         # check for delete
         if doc.get("_deleted"):
-            mapping_obj.unlink_uuid(cr, uid, uuid, res_model=model, context=context)
-            obj_id = False
+            try:
+                with cr.savepoint():             
+                    mapping_obj.unlink_uuid(cr, uid, uuid, res_model=model, context=context)
+                    obj_id = False
+            except Exception as e:
+                if not errors is None:
+                    errors.append({
+                       "model" : model,
+                       "id" : obj_id,
+                       "uuid" : uuid,
+                       "error" : e.message,
+                       "error_class" : e.__class__.__name__               
+                    })
+                else:
+                    raise e
         
         # otherwise update        
         else:
