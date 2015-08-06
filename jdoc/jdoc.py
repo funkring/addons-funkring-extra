@@ -360,10 +360,51 @@ class jdoc_jdoc(osv.AbstractModel):
         errors = []    
         if in_list:
             changed_models = {}
+            changeset = {}
+            resolved_uuid2id = {}
+            
+            # build changeset
             for change in in_list:
                 doc = change["doc"]
-                method_put(cr, uid, doc, changed_models=changed_models, errors=errors, context=context)
+                doc_uuid = doc[META_ID]
+                if not doc.get(META_DELETE):
+                    changeset[doc_uuid] = change
+            
+            def put_change(change, uuid2id_resolver=None):
+                doc = change["doc"]               
+                return method_put(cr, uid, doc, return_id=True, uuid2id_resolver=uuid2id_resolver, changed_models=changed_models, errors=errors, context=context)
+            
+            def get_dependency(uuid):
+                # check if dependency was already processed
+                res = resolved_uuid2id.get(uuid, False)
+                if res or res is None:
+                    return res
+                
+                # resolve
+                res = None
+                change = changeset.get(uuid)
+                
+                if change:
+                    res = put_change(change)
+                    
+                resolved_uuid2id[uuid] = res
+                return res
+                
+            
+            # process changes
+            for change in in_list:
+                doc = change["doc"]
+                doc_uuid = doc[META_ID]
                 seq = max(change["seq"], seq)
+                 
+                # check if change was already put, resolved
+                if doc_uuid in resolved_uuid2id:
+                    resolved_change = changeset.get(doc_uuid)
+                    if resolved_change["seq"] == change["seq"]:
+                        continue
+                
+                put_change(change,uuid2id_resolver=get_dependency)
+
                 
             if actions:
                 for action in actions:
@@ -535,7 +576,7 @@ class jdoc_jdoc(osv.AbstractModel):
             return False
         return self._jdoc_get(cr, uid, obj, refonly=refonly, emptyValues=emptyValues, onlyFields=onlyFields, context=context)
     
-    def jdoc_put(self, cr, uid, doc, return_id=False, changed_models=None, errors=None, context=None):
+    def jdoc_put(self, cr, uid, doc, return_id=False, uuid2id_resolver=None, changed_models=None, errors=None, context=None):
         if not doc:
             return False
         
@@ -565,19 +606,27 @@ class jdoc_jdoc(osv.AbstractModel):
         # get database id 
         def get_id(value, attribs):
             res = None
+            res_uuid = None
             if value:
                 # check uuid
                 if isinstance(value, basestring):
+                    res_uuid = value
                     res = mapping_obj.get_id(cr, uid, attribs.get("model"), value)
                 
                 # check reference or document
                 elif isinstance(value, dict):                                                        
                     if isReference(value):
                         # get reference
-                        res = mapping_obj.get_id(cr, uid, value.get(META_MODEL), value)
+                        res_uuid = value[META_ID]
+                        res = mapping_obj.get_id(cr, uid, value.get(META_MODEL), res_uuid)                        
                     else:
                         # update document and get reference
                         res = self.jdoc_put(cr, uid, value, return_id=True, changed_models=changed_models, errors=errors, context=context)
+                        
+            # if not found try uuid resolver
+            if not res and res_uuid and uuid2id_resolver:
+                res = uuid2id_resolver(res_uuid)
+                
             return res
         
         # check for delete
