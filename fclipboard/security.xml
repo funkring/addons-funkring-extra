@@ -10,7 +10,17 @@
       <field name="perm_create" eval="True"/>
       <field name="perm_write" eval="True"/>
     </record>
- 
+    
+    <record id="access_fclipboard_level_salesman_base" model="ir.model.access">
+      <field name="name">fclipboard_level/salesman_base</field>
+      <field name="model_id" ref="model_fclipboard_level"/>
+      <field name="group_id" ref="base.group_sale_salesman"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
     <record id="rule_fclipboard_own_item_salesman" model="ir.rule">
       <field name="name">fclipboard_own_item/salesman</field>
       <field name="model_id" ref="model_fclipboard_item"/>

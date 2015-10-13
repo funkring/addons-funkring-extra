@@ -24,6 +24,22 @@ from openerp.addons.at_base.format import LangFormat
 SECTION_HEADER = 10
 SECTION_BODY = 20
 
+
+class fclipboard_level(models.Model):
+    
+    item_id = fields.Many2one("fclipboard.item","Item")
+    name = fields.Char("Name", required=True)
+    sequence = fields.Integer("Sequence", default=10)
+    level = fields.Integer("Level", default=0)    
+    type = fields.Selection([("folder","Folder"),
+                             ("product","Product")],
+                             string="Type", required=True)
+        
+    _name = "fclipboard.level"
+    _description = "Child"
+    _order = "level, sequence"
+        
+
 class fclipboard_item(models.Model):
     
     def _get_dtype_name(self):
@@ -156,6 +172,8 @@ class fclipboard_item(models.Model):
     section = fields.Selection([(SECTION_HEADER,"Header"),
                                 (SECTION_BODY,"Body")],
                                    "Section", index=True, required=True, default=SECTION_HEADER)
+    
+    level_ids = fields.One2many("fclipboard.level", "item_id", "Levels", composition=True)
     
     group = fields.Char("Group")
     owner_id = fields.Many2one("res.users", "Owner", ondelete="set null", index=True, default=lambda self: self._uid)

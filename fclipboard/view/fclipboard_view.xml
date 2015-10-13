@@ -60,21 +60,37 @@
                         <field name="write_date"/>
                     </group>
                 </group>
-                <div>
-                    <field name="child_ids" 
-                        context="{'item_view':True}">
-                        <tree>
-                            <field name="sequence" widget="handle"/>
-                            <button name="action_open" type="object" icon="gtk-edit"/>                            
-                            <field name="code"/>                            
-                            <field name="name"/>                            
-                            <field name="value"/>
-                            <field name="rtype" invisible="1"/>
-                            <button name="action_link" type="object" icon="gtk-jump-to" attrs="{'invisible':[('rtype','=',False)]}"/>
-                            <field name="section"/>
-                        </tree>                        
-                    </field>
-                </div>
+                <notebook>
+                    <page string="Childs">
+                        <div>
+                            <field name="child_ids" 
+                                context="{'item_view':True}">
+                                <tree>
+                                    <field name="sequence" widget="handle"/>
+                                    <button name="action_open" type="object" icon="gtk-edit"/>                            
+                                    <field name="code"/>                            
+                                    <field name="name"/>                            
+                                    <field name="value"/>
+                                    <field name="rtype" invisible="1"/>
+                                    <button name="action_link" type="object" icon="gtk-jump-to" attrs="{'invisible':[('rtype','=',False)]}"/>
+                                    <field name="section"/>
+                                </tree>                        
+                            </field>
+                        </div>
+                    </page>
+                    <page string="Levels">
+                        <div>
+                            <field name="level_ids">
+                                <tree editable="buttom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="type"/>
+                                    <field name="level"/>                                    
+                                </tree>
+                            </field>
+                        </div>
+                    </page>
+                </notebook>
                 
             </sheet>
         </form>

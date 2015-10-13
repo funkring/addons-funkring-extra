@@ -63,7 +63,7 @@ class hr_timesheet_sheet(osv.Model):
 
             if line.to_invoice:
                 line_total = get_total(line)
-            elif order and not order.state in ("cancel","draft"):
+            elif order and not order.state in ("cancel","draft","sent"):
                 line_total = get_total(line)
                 
                 # get sold hours
