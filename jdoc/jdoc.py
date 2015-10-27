@@ -400,7 +400,7 @@ class jdoc_jdoc(osv.AbstractModel):
                 # check if change was already put, resolved
                 if doc_uuid in resolved_uuid2id:
                     resolved_change = changeset.get(doc_uuid)
-                    if resolved_change["seq"] == change["seq"]:
+                    if resolved_change and resolved_change["seq"] == change["seq"]:
                         continue
                 
                 put_change(change,uuid2id_resolver=get_dependency)
