@@ -78,14 +78,14 @@
                             </field>
                         </div>
                     </page>
-                    <page string="Levels">
+                    <page string="Rules">
                         <div>
-                            <field name="level_ids">
+                            <field name="rule_ids">
                                 <tree editable="buttom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
                                     <field name="type"/>
-                                    <field name="level"/>                                    
+                                    <field name="xpath"/>                                    
                                 </tree>
                             </field>
                         </div>

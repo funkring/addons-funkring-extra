@@ -25,19 +25,20 @@ SECTION_HEADER = 10
 SECTION_BODY = 20
 
 
-class fclipboard_level(models.Model):
+class fclipboard_rules(models.Model):
     
-    item_id = fields.Many2one("fclipboard.item","Item")
+    item_id = fields.Many2one("fclipboard.item","Item",ondelete="cascade")
     name = fields.Char("Name", required=True)
     sequence = fields.Integer("Sequence", default=10)
-    level = fields.Integer("Level", default=0)    
+    xpath = fields.Char("Path", default="/")    
     type = fields.Selection([("folder","Folder"),
-                             ("product","Product")],
+                             ("product","Product"),
+                             ("none","None")],
                              string="Type", required=True)
         
-    _name = "fclipboard.level"
-    _description = "Child"
-    _order = "level, sequence"
+    _name = "fclipboard.rule"
+    _description = "Rules"
+    _order = "sequence"
         
 
 class fclipboard_item(models.Model):
@@ -173,11 +174,13 @@ class fclipboard_item(models.Model):
                                 (SECTION_BODY,"Body")],
                                    "Section", index=True, required=True, default=SECTION_HEADER)
     
-    level_ids = fields.One2many("fclipboard.level", "item_id", "Levels", composition=True)
+    rule_ids = fields.One2many("fclipboard.rule", "item_id", "Rules", composition=True)
     
     group = fields.Char("Group")
     owner_id = fields.Many2one("res.users", "Owner", ondelete="set null", index=True, default=lambda self: self._uid)
     active = fields.Boolean("Active", index=True, default=True)
+    
+    template_id = fields.Many2one("fclipboard.item","Template", index=True, ondelete="set null", export=True, composition=False)
     
     template = fields.Boolean("Template")
     required = fields.Boolean("Required")

@@ -569,6 +569,13 @@ class jdoc_jdoc(osv.AbstractModel):
         
         return res
     
+    def jdoc_by_id(self, cr, uid, res_model, oid, refonly=False, emptyValues=False, onlyFields=None, name=None, context=None):
+        model_obj = self.pool[res_model]
+        obj = model_obj.browse(cr, uid, oid, context=context)
+        if not obj:
+            return False
+        return self._jdoc_get(cr, uid, obj, refonly=refonly, emptyValues=emptyValues, onlyFields=onlyFields, context=context)
+    
     def jdoc_get(self, cr, uid, uuid, res_model=None, refonly=False, emptyValues=False, onlyFields=None, name=None, context=None):
         mapping_obj = self.pool["res.mapping"]
         obj = mapping_obj._browse_mapped(cr, uid, uuid, res_model=res_model, name=name, context=None)
