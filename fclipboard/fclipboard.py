@@ -223,5 +223,5 @@ class fclipboard_item(models.Model):
     # main definition
     _name = "fclipboard.item"
     _description = "Item"  
-    _order = "section, sequence, write_date"
+    _order = "section, sequence, write_date desc"
     
