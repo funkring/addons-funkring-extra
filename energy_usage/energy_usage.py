@@ -30,6 +30,7 @@ class energy_usage(models.Model):
     date_from = fields.Date("From", help="Start of usage", required=True)
     date_to = fields.Date("To", help="End of usage", required=True)
     amount = fields.Float("kWh", compute="_amount", readonly=True)
+    days = fields.Integer("Days", compute="_amount", readonly=True)
     
     @api.one
     @api.depends("date_from","date_to","product_id")
@@ -38,8 +39,9 @@ class energy_usage(models.Model):
             dt_from = util.strToDate(self.date_from)
             dt_to = util.strToDate(self.date_to)
             dt_diff = dt_to - dt_from
-            days = dt_diff.days + 1
-            self.amount = days * self.product_id.kw * 24
+            self.days = dt_diff.days + 1
+            self.amount = self.days * self.product_id.kw * 24
         else:
             self.amount = 0.0
+            self.days = 0.0
     

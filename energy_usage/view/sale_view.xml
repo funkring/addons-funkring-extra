@@ -15,7 +15,8 @@
                     <tree editable="buttom">
                         <field name="product_id" domain="[('kw','>',0)]"/>
                         <field name="date_from"/>
-                        <field name="date_to"/>                        
+                        <field name="date_to"/>
+                        <field name="days"/>                        
                         <field name="amount" sum="Total"/>
                     </tree>
                 </field>                  
