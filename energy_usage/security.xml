@@ -1,0 +1,15 @@
+<openerp>
+  <data>
+  
+      <record id="access_energy_usage_sale_salesman" model="ir.model.access">
+        <field name="name">energy_usage/sale_salesman</field>
+        <field name="model_id" ref="model_energy_usage"/>
+        <field name="group_id" ref="base.group_sale_salesman"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_write" eval="True"/>
+      </record>
+  
+  </data>
+</openerp>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+  
+    <report id="report_energy_usage_order_pdf"
+      string="Energy Usage"
+      name="energy_usage_order"
+      auto="False"
+      report_type="aeroo"
+      model="sale.order"
+      in_format="oo-odt"
+      out_format="oo-pdf"
+      parser="energy_usage/report/energy_usage_report.py"
+      rml="energy_usage/report/energy_usage_report.odt"/>
+  
+    <report id="report_energy_usage_invoice_pdf"
+      string="Energy Usage"
+      name="energy_usage_invoice"
+      auto="False"
+      report_type="aeroo"
+      model="account.invoice"
+      in_format="oo-odt"
+      out_format="oo-pdf"
+      parser="energy_usage/report/energy_usage_report.py"
+      rml="energy_usage/report/energy_usage_report.odt"/>
+      
+  </data>  
+</openerp>

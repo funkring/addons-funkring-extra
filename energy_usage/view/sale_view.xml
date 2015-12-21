@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+ <data>
+ 
+    <record id="form_sale_order" model="ir.ui.view">
+      <field name="name">energy_usage.form_sale_order</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form"/>
+      <field name="arch" type="xml">
+        
+        <xpath expr="//form/sheet/notebook" position="inside">
+            
+            <page string="Energy Usage">
+                <field name="energy_usage_ids">
+                    <tree editable="buttom">
+                        <field name="product_id" domain="[('kw','>',0)]"/>
+                        <field name="date_from"/>
+                        <field name="date_to"/>                        
+                        <field name="amount" sum="Total"/>
+                    </tree>
+                </field>                  
+                <div>
+                    <label for="energy_usage_info" class="oe_edit_only"/>
+                    <field name="energy_usage_info"/>                
+                </div>                              
+            </page>
+            
+        </xpath>
+        
+      </field>
+    </record>
+    
+  </data>
+</openerp>
