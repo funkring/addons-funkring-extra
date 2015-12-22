@@ -1,0 +1,43 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* fpos
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-12-22 13:27+0000\n"
+"PO-Revision-Date: 2015-12-22 14:29+0100\n"
+"Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 1.5.4\n"
+
+#. module: fpos
+#: help:pos.config,user_ids:0
+msgid "Allowed users for the Point of Sale"
+msgstr "Erlaubte Benutzer für diese Kasse"
+
+#. module: fpos
+#: field:res.users,pin:0
+msgid "PIN"
+msgstr ""
+
+#. module: fpos
+#: view:pos.config:fpos.form_pos_config
+msgid "Receipt"
+msgstr "Quittung"
+
+#. module: fpos
+#: help:res.users,pin:0
+msgid "User PIN for fast authentication on Fpos hardware"
+msgstr "Benutzer PIN für Schnellanmeldung"
+
+#. module: fpos
+#: model:ir.model,name:fpos.model_res_users
+#: view:pos.config:fpos.form_pos_config field:pos.config,user_ids:0
+msgid "Users"
+msgstr "Benutzer"

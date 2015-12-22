@@ -220,14 +220,19 @@ class jdoc_jdoc(osv.AbstractModel):
             else:
                 continue
             
-            # if export is explicit set
-            # correct hidden
-            # field could not hidden
-            field_export = getAttrOrNone(field_obj,"export")
-            if field_export:
-                field_def["hidden"]=False
-            elif field_export is False:
+            # check if field is not visible
+            field_invisible = getAttrOrNone(field_obj,"invisible")
+            if field_invisible:
                 field_def["hidden"]=True
+            else:            
+                # if export is explicit set
+                # correct hidden
+                # field could not hidden
+                field_export = getAttrOrNone(field_obj,"export")
+                if field_export:
+                    field_def["hidden"]=False
+                elif field_export is False:
+                    field_def["hidden"]=True
           
             field_def["name"]=field
             if field_relation:

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+ <data>
+    <record id="form_pos_config" model="ir.ui.view">
+      <field name="name">fpos.form_pos_config</field>
+      <field name="model">pos.config</field>
+      <field name="inherit_id" ref="point_of_sale.view_pos_config_form"/>
+      <field name="arch" type="xml">
+            <group string="Receipt" position="after">
+                <group string="Users">
+                    <div>
+                        <field name="user_ids"/>
+                    </div>
+                </group>
+            </group>        
+      </field>
+    </record>
+  </data>
+</openerp>

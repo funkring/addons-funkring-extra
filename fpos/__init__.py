@@ -1,0 +1,2 @@
+import point_of_sale
+import res_users
