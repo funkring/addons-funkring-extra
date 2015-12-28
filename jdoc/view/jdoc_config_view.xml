@@ -1,0 +1,39 @@
+<openerp>
+  <data>
+    
+    <record id="form_jdoc_res_config" model="ir.ui.view">
+      <field name="name">jdoc.form_jdoc_res_config</field>
+      <field name="model">jdoc.res.config</field>
+      <field name="arch" type="xml">
+        <form string="jDoc Configuration">
+            <header>             
+                <button string="Apply" type="object" name="execute" class="oe_highlight"/>
+                or
+                <button string="Cancel" type="object" name="cancel" class="oe_link"/>                
+            </header>
+            <div>
+                <group string="CouchDB">
+                    <field string="Url" name="couchdb_url"/>
+                    <field string="User" name="couchdb_user"/>
+                    <field string="Password" name="couchdb_password"/>
+                    <field string="Public Url" name="couchdb_public_url"/>
+                </group>
+            </div>
+        </form>
+      </field>
+    </record>
+    
+    <record id="action_jdoc_res_config" model="ir.actions.act_window">
+      <field name="name">jDoc Configuration</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">jdoc.res.config</field>
+      <field name="view_mode">form</field>
+      <field name="target">inline</field>
+    </record>
+    
+    <menuitem id="menu_jdoc_res_config" parent="base.menu_config"
+      sequence="90"
+      action="action_jdoc_res_config"/>
+
+  </data>
+</openerp>

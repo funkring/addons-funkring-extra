@@ -15,5 +15,6 @@ encoding//hr_sale/timesheet.py=utf-8
 encoding//jdoc/__openerp__.py=utf-8
 encoding//jdoc/controller/main.py=utf-8
 encoding//jdoc/jdoc.py=utf-8
+encoding//jdoc/res_config.py=utf-8
 encoding//product_energy/__openerp__.py=utf-8
 encoding//product_energy/product.py=utf-8

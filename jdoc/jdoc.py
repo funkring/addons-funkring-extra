@@ -20,10 +20,14 @@
 
 from openerp.osv import fields, osv
 from openerp.addons.at_base import util
+import simplejson
 import openerp
 import uuid
+import couchdb
+import hashlib
 
 import re
+from cherrypy.lib.httputil import urljoin
 
 PATTERN_REV = re.compile("^([0-9]+)-(.*)$")
 
@@ -295,7 +299,7 @@ class jdoc_jdoc(osv.AbstractModel):
         #res["write_date"]=obj.write_date    
         return res
     
-    def jdoc_sync(self, cr, uid, changes, context=None):
+    def jdoc_sync(self, cr, uid, data,  context=None):
         """
         jdoc_sync
         @param changes: changeset to sync 
@@ -335,25 +339,57 @@ class jdoc_jdoc(osv.AbstractModel):
         """
         
         mapping_obj = self.pool["res.mapping"]
-        
-        in_list = changes.get("changes")
-        model = changes["model"]
-        
-        fields = changes.get("fields")
+        in_list = data.get("changes")        
+        res_doc = data.get("result_format") == "doc"
+                
+        # get model, domain and fields
+        model = data["model"]        
+        search_domain = data.get("domain") or []        
+        fields = data.get("fields")
         if fields:
             fields = set(fields)
         
         model_obj = self.pool[model] 
 
-        lastsync = changes.get("lastsync") or {}
-        last_date = lastsync.get("date",None)
-        actions = changes.get("actions")
-        seq = lastsync.get("seq",0)
+        # get view
+        view = None
+        view_name = data.get("view")
+        if view_name:
+            view = getattr(model_obj,view_name)(cr, uid, context=context)
+  
+        # build sync domain and checksum
+        syncdomain = {
+            "model" : model            
+        } 
+        if search_domain:
+            syncdomain["domain"] = search_domain
+        if fields:
+            syncdomain["fields"] = fields
+        if view_name:
+            syncdomain["view"] = view_name
+                
+        domain_uuid = hashlib.md5()
+        domain_uuid.update(simplejson.dumps(search_domain))
+        domain_uuid = domain_uuid.hexdigest()
         
-        view = changes.get("view")
-        if view:
-            view = getattr(model_obj,view)(cr, uid, context=context)
-                        
+        # get last sync attribs
+        lastsync = data.get("lastsync")
+        last_date = lastsync.get("date",None)
+        seq = lastsync.get("seq",0)
+        lastsync_lastchange = lastsync.get("lastchange",None)
+                   
+        # if domain not equal reset change date
+        if not domain_uuid or domain_uuid != lastsync.get("domain_uuid"):
+            last_date = None   
+            lastsync_lastchange = None    
+            
+        # create last change if not exist
+        if lastsync_lastchange is None:
+            lastsync_lastchange = {}
+        
+        # get actions
+        actions = data.get("actions")
+                          
         # Method GET
         method_get = view and view.get("get") or self._jdoc_get
         # Method PUT
@@ -465,7 +501,6 @@ class jdoc_jdoc(osv.AbstractModel):
         out_list = []        
         
         # build search domain
-        search_domain = changes.get("domain") or []
         del_search_domain = [("res_model","=",model),("active","=",False)]
       
         # check for full sync due to changed dependency
@@ -474,7 +509,6 @@ class jdoc_jdoc(osv.AbstractModel):
         if method_lastchange:            
             lastchange = method_lastchange(cr, uid, context=context)
             if lastchange:   
-                lastsync_lastchange = lastsync.get("lastchange") or {}                                 
                 for key, value in lastchange.items():
                     lastsync_lastchange_date = lastsync_lastchange.get(key)
                     if not lastsync_lastchange_date or value > lastsync_lastchange_date:                        
@@ -517,9 +551,12 @@ class jdoc_jdoc(osv.AbstractModel):
             for obj in model_obj.browse(cr, uid, out_ids, context=context):
                 doc = method_get(cr, uid, obj, emptyValues=False, onlyFields=fields, context=context)
                 if doc:
-                    out_list.append({ "id" : doc["_id"],                                 
-                                      "doc" : doc 
-                                    })
+                    if res_doc:
+                        out_list.append(doc)
+                    else:
+                        out_list.append({ "id" : doc["_id"],                                 
+                                          "doc" : doc 
+                                        })
                 
         #
         # search deleted
@@ -549,15 +586,22 @@ class jdoc_jdoc(osv.AbstractModel):
                 
                 # uuid 
                 uuid = out_deleted_val["uuid"]
-                out_list.append({
-                   "id" : uuid,
-                   "deleted" : True                                 
-                 })
+                if res_doc:
+                    out_list.append({
+                       "_id" : uuid,
+                       "_deleted" : True                                 
+                     })
+                else:
+                    out_list.append({
+                       "id" : uuid,
+                       "deleted" : True                                 
+                     })
         
         
         lastsync =  {
                        "date" : last_date,
-                       "seq" : seq                      
+                       "seq" : seq,
+                       "domain_uuid" : domain_uuid                     
                     }
     
         if lastchange:
@@ -731,6 +775,163 @@ class jdoc_jdoc(osv.AbstractModel):
             res = uuid
             
         return res
+ 
+    
+    def jdoc_couchdb_before(self, cr, uid, config, context=None):
+        return self.jdoc_couchdb_sync(cr, uid, context=context)
+    
+    def jdoc_couchdb_after(self, cr, uid, config, context=None):
+        return self.jdoc_couchdb_sync(cr, uid, context=context)
+       
+    def jdoc_couchdb_sync(self, cr, uid, config, context=None):
+        """ Sync with CouchDB
+        
+            @param  config: {
+                        name: "fclipboard",
+                        models : [{
+                            "model" : xyz
+                            "view" : "_jdoc_get_fclipboard"
+                            "domain" : ...
+                        }]
+                    }
+        """
+        config_name = config.get("name")
+        if not config_name:
+            raise osv.except_osv(_("Error"), _("No configuration name passed"))
+        
+        param_obj = self.pool.get("ir.config_parameter")
+        db_uuid = param_obj.get_param(cr, uid, "database.uuid")
+                
+        couchdb_url = param_obj.get_param(cr, SUPERUSER_ID, "couchdb_url", "http://localhost:5894", context=context)
+        couchdb_user = param_obj.get_param(cr, SUPERUSER_ID, "couchdb_user", context=context)
+        couchdb_password = param_obj.get_param(cr, SUPERUSER_ID, "couchdb_password", context=context)
+          
+        # READ CONFIG      
+        client_db =  "%s-%s-%s" % (config_name, db_uuid, uid)
+        client_uuid = "%s-%s" % (db_uuid, uid)
+        client_passwd = self.pool["res.users"].read(cr, uid, uid, {"password"}, context=context)["password"]
+        if not client_passwd:
+            raise osv.except_osv(_("Error"), _("Unable to get user password. Deinstall 'auth_crypt' Module"))
+        
+        couchdb_public_url = param_obj.get_param(cr, uid, "couchdb_public_url")
+        if not couchdb_public_url:
+            raise osv.except_osv(_("Error"), _("No public couchdb url defined"))
+        
+        # READ/UPDATE USER
+        server = couchdb.Server(couchdb_url)
+        if couchdb_user and couchdb_password:
+            server.resource.credentials = (couchdb_user, couchdb_password)
+            
+        user_db = server["_users"]
+        user_id = "org.couchdb.user:%s" % client_uuid
+        
+        user_doc = user_db.get(user_id)
+        if not user_doc:
+            user_doc = {
+                "_id" :  user_id,
+                "name" : client_uuid,
+                "type" : "user",
+                "roles" : []
+            }
+        
+        user_doc["password"] = client_passwd
+        user_db.save(user_doc)
+        
+        # CREATE/OPEN DB
+        db = None
+        if not client_db in server:
+            db = server.create(client_db)
+        else:
+            db = server[client_db]
+
+        
+        # SYNC DB
+        models = config.get("models")
+        for model_config in models:           
+            # get lastsync
+            lastsync = db.get("_local/lastsync")
+            if not lastsync:
+                lastsync = {"_id" : "_local/lastsync"}
+                            
+            # check if filter exist
+            model_obj = self.pool[model_config["model"]]
+            model_api  ="model_%s" % model_obj._table
+            model_api_id = "_design/%s" % model_api
+            model_doc = db.get(model_api_id)
+            if not model_doc:
+                model_doc = {
+                    "_id" : model_api_id,
+                    "filters" : {
+                        "model" : "function(doc, req) { if (doc.fdoo__ir_model == '%s') { return true; } else { return false; } }" %  model_obj._name                
+                    }
+                }
+                db.save(model_doc)
+            
+                          
+            # get changes
+            options = {
+              "filter" : "%s/model" % model_api,
+              "include_docs" : True,
+              "since" : lastsync.get("seq",0)
+            }           
+           
+            sync_config = dict(model_config)
+            sync_config["lastsync"] = lastsync
+            db_changeset = db.changes(**options)
+            sync_config["changes"] = db_changeset["results"]
+            sync_config["result_format"] = "doc"
+
+            # first sync 
+            sync_res = self.jdoc_sync(cr, uid, sync_config, context=context)
+            lastsync.update(sync_res["lastsync"])
+            
+            # update documents
+            changed_revs = set()
+            result = sync_res["changes"]
+            if result:
+                for update_res in db.update(result):
+                    if update_res[0]:
+                        changed_revs.add((update_res[1], update_res[2]))
+                        
+            # second sync            
+            if changed_revs:           
+                # get changes
+                options["since"] = lastsync["seq"]
+                db_changeset = db.changes(**options)
+                
+                # filter changes
+                db_changes = []
+                for db_change in db_changeset["results"]:
+                    already_processed = False
+                    for rev_change in db_change["changes"]:
+                        if (db_change["id"], rev_change["rev"]) in changed_revs:
+                            already_processed = True
+                            break
+                        
+                    if not already_processed:
+                        db_changes.append(db_change)
+
+                # only sync if changes                    
+                if db_changes:
+                    sync_config["lastsync"] = lastsync                    
+                    sync_config["changes"] = db_changes
+                    sync_res = self.jdoc_sync(cr, uid, sync_config, context=context)
+                    lastsync.update(sync_res["lastsync"])
+                
+                # update seq
+                lastsync["seq"] = max(lastsync["seq"], db_changeset["last_seq"])
+                    
+            # commit
+            cr.commit() 
+            # update lastsync
+            db.save(lastsync)
+            
+                        
+        return {
+            "url" : couchdb_public_url,
+            "db" : client_db,
+            "user" : client_uuid
+        }
     
     @openerp.tools.ormcache()
     def _jdoc_def(self, cr, uid, model):
@@ -738,8 +939,6 @@ class jdoc_jdoc(osv.AbstractModel):
     
     _description = "JSON Document Support"    
     _name = "jdoc.jdoc"
-    
-
 
  
     
