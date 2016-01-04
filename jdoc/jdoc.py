@@ -244,9 +244,12 @@ class jdoc_jdoc(osv.AbstractModel):
             field_defs[field_name]=field_def        
         return res
     
-    def _jdoc_get(self, cr, uid, obj, refonly=False, emptyValues=True, onlyFields=None, context=None):
+    def _jdoc_get(self, cr, uid, obj, refonly=False, options=None, context=None):
         if not obj:
             return False
+        
+        if not options:
+            options = {}
         
         mapping_obj = self.pool.get("res.mapping")       
         doc_uuid = mapping_obj.get_uuid(cr, uid, obj._name, obj.id)
@@ -258,6 +261,20 @@ class jdoc_jdoc(osv.AbstractModel):
         
         res = {META_ID : doc_uuid,
                META_MODEL : model}
+        
+        emptyValues = True
+        onlyFields = None
+        compositions = None
+        
+        # check options
+        if options:
+            emptyValues = options.get("empty_values", emptyValues)
+            model_options = options.get("model")
+            if model_options:
+                model_options = model_options.get(model)
+                if model_options:
+                    onlyFields = model_options.get("fields", onlyFields)
+                    compositions = model_options.get("compositions", compositions)
         
         fields = definition["fields"]
         for name, attrib in fields.items():
@@ -271,19 +288,26 @@ class jdoc_jdoc(osv.AbstractModel):
             dtype = attrib["dtype"]
             # reset value
             value = None
-            
+                  
             # evaluate composite, reference and list type
             if dtype in ("c","r","l"):
                 # get model
                 if dtype in ("c","r"):
+                    # check compositions
+                    if dtype == "r" and compositions and name in compositions:
+                        dtype = "c"
                     dtype_obj = getattr(obj, attrib["name"])
                     if dtype_obj:                        
-                        value = self._jdoc_get(cr, uid, dtype_obj, refonly=(dtype=="r"), emptyValues=emptyValues, context=context)                    
+                        value = self._jdoc_get(cr, uid, dtype_obj, refonly=(dtype=="r"), options=options, context=context)                    
                 # handle list type 
                 else:
                     dtype_objs = getattr(obj, attrib["name"])
+                    ltype = attrib.get("ltype")
+                    # check compositions
+                    if ltype == "r" and compositions and name in compositions:
+                        ltype = "c"
                     for dtype_obj in dtype_objs:
-                        list_value = self._jdoc_get(cr, uid, dtype_obj, refonly=(attrib.get("ltype")=="r"), emptyValues=emptyValues, context=context)
+                        list_value = self._jdoc_get(cr, uid, dtype_obj, refonly=(ltype=="r"), options=options, context=context)
                         if list_value:
                             if value is None:
                                 value = []
@@ -338,19 +362,36 @@ class jdoc_jdoc(osv.AbstractModel):
         
         """
         
+        # get model
+        model = data["model"]
+        model_obj = self.pool[model]
+        
+        # get mapping
         mapping_obj = self.pool["res.mapping"]
+        
+        # get changes
         in_list = data.get("changes")        
         res_doc = data.get("result_format") == "doc"
                 
-        # get model, domain and fields
-        model = data["model"]        
-        search_domain = data.get("domain") or []        
-        fields = data.get("fields")
-        if fields:
-            fields = set(fields)
+        # get search domain
+        search_domain = data.get("domain") or []
         
-        model_obj = self.pool[model] 
-
+        # get options        
+        fields = data.get("fields")
+        compositions = data.get("compositions")
+        options = {"empty_values" : False }
+        model_options = {}
+        
+        if fields:
+            model_options["fields"] = set(fields)
+        if compositions:
+            model_options["compositions"] = set(compositions)
+        
+        if model_options:
+            options["model"] = {
+                model : model_options
+            }
+            
         # get view
         view = None
         view_name = data.get("view")
@@ -363,13 +404,13 @@ class jdoc_jdoc(osv.AbstractModel):
         } 
         if search_domain:
             syncdomain["domain"] = search_domain
-        if fields:
-            syncdomain["fields"] = fields
         if view_name:
             syncdomain["view"] = view_name
+        if options:
+            syncdomain["options"] = options
                 
         domain_uuid = hashlib.md5()
-        domain_uuid.update(simplejson.dumps(search_domain))
+        domain_uuid.update(simplejson.dumps(syncdomain))
         domain_uuid = domain_uuid.hexdigest()
         
         # get last sync attribs
@@ -549,7 +590,7 @@ class jdoc_jdoc(osv.AbstractModel):
             
             # create docs
             for obj in model_obj.browse(cr, uid, out_ids, context=context):
-                doc = method_get(cr, uid, obj, emptyValues=False, onlyFields=fields, context=context)
+                doc = method_get(cr, uid, obj, options=options, context=context)
                 if doc:
                     if res_doc:
                         out_list.append(doc)
@@ -618,19 +659,19 @@ class jdoc_jdoc(osv.AbstractModel):
         
         return res
     
-    def jdoc_by_id(self, cr, uid, res_model, oid, refonly=False, emptyValues=False, onlyFields=None, name=None, context=None):
+    def jdoc_by_id(self, cr, uid, res_model, oid, refonly=False, options=None, context=None):
         model_obj = self.pool[res_model]
         obj = model_obj.browse(cr, uid, oid, context=context)
         if not obj:
             return False
-        return self._jdoc_get(cr, uid, obj, refonly=refonly, emptyValues=emptyValues, onlyFields=onlyFields, context=context)
+        return self._jdoc_get(cr, uid, obj, refonly=refonly, options=options, context=context)
     
-    def jdoc_get(self, cr, uid, uuid, res_model=None, refonly=False, emptyValues=False, onlyFields=None, name=None, context=None):
+    def jdoc_get(self, cr, uid, uuid, res_model=None, refonly=False, options=None, name=None, context=None):
         mapping_obj = self.pool["res.mapping"]
         obj = mapping_obj._browse_mapped(cr, uid, uuid, res_model=res_model, name=name, context=None)
         if not obj:
             return False
-        return self._jdoc_get(cr, uid, obj, refonly=refonly, emptyValues=emptyValues, onlyFields=onlyFields, context=context)
+        return self._jdoc_get(cr, uid, obj, refonly=refonly, options=options, context=context)
     
     def jdoc_put(self, cr, uid, doc, return_id=False, uuid2id_resolver=None, changed_models=None, errors=None, context=None):
         if not doc:
@@ -778,10 +819,10 @@ class jdoc_jdoc(osv.AbstractModel):
  
     
     def jdoc_couchdb_before(self, cr, uid, config, context=None):
-        return self.jdoc_couchdb_sync(cr, uid, context=context)
+        return self.jdoc_couchdb_sync(cr, uid, config, context=context)
     
     def jdoc_couchdb_after(self, cr, uid, config, context=None):
-        return self.jdoc_couchdb_sync(cr, uid, context=context)
+        return self.jdoc_couchdb_sync(cr, uid, config, context=context)
        
     def jdoc_couchdb_sync(self, cr, uid, config, context=None):
         """ Sync with CouchDB

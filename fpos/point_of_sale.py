@@ -20,13 +20,40 @@
 
 from openerp.osv import fields, osv
 
-class point_of_sale(osv.Model):
+
+class pos_config(osv.Model):
+
     _inherit = "pos.config"
-    _columns = {       
+    _columns = {
+        "user_id" : fields.many2one("res.users","Sync User", select=True),
         "user_ids" : fields.many2many("res.users", 
                                       "pos_config_user_rel", 
                                       "config_id", "user_id", 
                                       "Users", 
-                                      help="Allowed users for the Point of Sale",
-                                      composition=True)
+                                      help="Allowed users for the Point of Sale")
     }
+    _sql_constraints = [
+        ("user_uniq", "unique (user_id)","Fpos User could only assinged once")
+    ]
+    
+    def get_profile(self, cr, uid, context=None):
+        """
+        @return: Fpos Profile
+        """
+        profile_id = self.search_id(cr, uid, [("user_id","=", uid)], context=context)
+        if not profile_id:
+            return False
+        
+        jdoc_obj = self.pool["jdoc.jdoc"]
+        jdoc_options = {
+            "model" : {
+                "pos.config" : {
+                    "compositions" : set(("journal_ids","user_ids"))
+                }
+            }
+        }
+        return jdoc_obj.jdoc_by_id(cr, uid, "pos.config", profile_id, options=jdoc_options, context=context)
+    
+
+#class pos_order(osv):
+        

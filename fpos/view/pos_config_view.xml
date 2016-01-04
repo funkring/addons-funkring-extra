@@ -6,8 +6,11 @@
       <field name="model">pos.config</field>
       <field name="inherit_id" ref="point_of_sale.view_pos_config_form"/>
       <field name="arch" type="xml">
+            <field name="picking_type_id" position="before">
+                <field name="user_id" string="Fpos User"/>
+            </field>
             <group string="Receipt" position="after">
-                <group string="Users">
+                <group string="User" colspan="4">                  
                     <div>
                         <field name="user_ids"/>
                     </div>
