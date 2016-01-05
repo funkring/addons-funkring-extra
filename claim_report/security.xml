@@ -1,0 +1,64 @@
+<openerp>
+  <data>
+    
+    <record id="access_claim_report_sale_salesman" model="ir.model.access">
+      <field name="name">claim_report/sale_salesman</field>
+      <field name="model_id" ref="model_claim_report"/>
+      <field name="group_id" ref="base.group_sale_salesman"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    <record id="access_claim_report_sale_manager" model="ir.model.access">
+      <field name="name">claim_report/sale_manager</field>
+      <field name="model_id" ref="model_claim_report"/>
+      <field name="group_id" ref="base.group_sale_manager"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    <record id="access_claim_report_line_sale_salesman" model="ir.model.access">
+      <field name="name">claim_report_line/sale_salesman</field>
+      <field name="model_id" ref="model_claim_report_line"/>
+      <field name="group_id" ref="base.group_sale_salesman"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    <record id="access_claim_report_line_sale_manager" model="ir.model.access">
+      <field name="name">claim_report_line/sale_manager</field>
+      <field name="model_id" ref="model_claim_report_line"/>
+      <field name="group_id" ref="base.group_sale_manager"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+    
+  </data>
+  
+  <data noupdate="0">
+    
+    <record id="claim_report_salesman_rule" model="ir.rule">
+        <field name="model_id" ref="model_claim_report"/>
+        <field name="name">Personal Claim Reports</field>
+        <field name="domain_force">['|',('user_id','=',user.id),('user_id','=',False)]</field>
+        <field name="groups" eval="[(4, ref('base.group_sale_salesman'))]"/>
+    </record>
+    
+    <record id="claim_report_line_salesman_rule" model="ir.rule">
+        <field name="model_id" ref="model_claim_report_line"/>
+        <field name="name">Personal Claim Report Lines</field>
+        <field name="domain_force">['|',('claim_id.user_id','=',user.id),('claim_id.user_id','=',False)]</field>
+        <field name="groups" eval="[(4, ref('base.group_sale_salesman'))]"/>
+    </record>
+    
+  </data>
+  
+</openerp>

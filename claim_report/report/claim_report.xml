@@ -1,0 +1,17 @@
+<openerp>
+  <data>
+  
+    <report id="report_claim_report" 
+            string="Claim Report" 
+            name="claim.report_claim_report" 
+            auto="False" 
+            report_type="aeroo" 
+            model="claim.report"
+            process_sep="True" 
+            in_format="oo-odt" 
+            out_format="oo-pdf" 
+            parser="claim_report/report/claim_report.py" 
+            rml="claim_report/report/claim_report.odt" />
+
+  </data>
+</openerp>

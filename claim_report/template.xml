@@ -1,0 +1,12 @@
+<openerp>
+  <data>
+    
+     <template id="tmpl_module" name="claim_report.assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+             <link rel="stylesheet" href="/claim_report/static/src/css/module.css"/>
+        </xpath>
+    </template>
+    
+  </data>
+</openerp>
+

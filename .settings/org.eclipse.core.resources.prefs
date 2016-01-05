@@ -1,4 +1,7 @@
 eclipse.preferences.version=1
+encoding//claim_report/__openerp__.py=utf-8
+encoding//claim_report/claim_report.py=utf-8
+encoding//claim_report/report/claim_report.py=utf-8
 encoding//energy_usage/__openerp__.py=utf-8
 encoding//energy_usage/energy_usage.py=utf-8
 encoding//energy_usage/report/energy_usage_report.py=utf-8
@@ -18,3 +21,4 @@ encoding//jdoc/jdoc.py=utf-8
 encoding//jdoc/res_config.py=utf-8
 encoding//product_energy/__openerp__.py=utf-8
 encoding//product_energy/product.py=utf-8
+encoding//web_tree_image/__openerp__.py=utf-8

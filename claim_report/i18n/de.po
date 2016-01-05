@@ -1,0 +1,237 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* claim_report
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-01-05 16:38+0000\n"
+"PO-Revision-Date: 2016-01-05 17:51+0100\n"
+"Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 1.5.4\n"
+
+#. module: claim_report
+#: field:claim.report,address_id:0
+msgid "Address"
+msgstr "Adresse"
+
+#. module: claim_report
+#: field:claim.report,categ_ids:0
+msgid "Categories"
+msgstr "Stichworte"
+
+#. module: claim_report
+#: field:claim.report,claim_date:0
+msgid "Claim Date"
+msgstr "Schadenmeldung am"
+
+#. module: claim_report
+#: field:claim.report,claim_partner_id:0
+msgid "Claim Partner"
+msgstr "Schaden gemeldet von"
+
+#. module: claim_report
+#: view:claim.report:claim_report.form_claim_report
+#: view:claim.report:claim_report.search_claim_report
+#: model:ir.actions.act_window,name:claim_report.action_claim_report
+#: model:ir.actions.report.xml,name:claim_report.report_claim_report
+#: model:ir.model,name:claim_report.model_claim_report
+#: model:ir.ui.menu,name:claim_report.menu_claim_report
+msgid "Claim Report"
+msgstr "Schadenbericht"
+
+#. module: claim_report
+#: model:ir.model,name:claim_report.model_claim_report_line
+msgid "Claim Report Line"
+msgstr "Schadenbericht Position"
+
+#. module: claim_report
+#: view:claim.report:claim_report.tree_claim_report
+msgid "Claim Reports"
+msgstr "Schadenberichte"
+
+#. module: claim_report
+#: field:claim.report,contact_id:0
+msgid "Contact"
+msgstr "Kontakt"
+
+#. module: claim_report
+#: field:claim.report,create_uid:0 field:claim.report.line,create_uid:0
+msgid "Created by"
+msgstr "Erstellt von"
+
+#. module: claim_report
+#: field:claim.report,create_date:0 field:claim.report.line,create_date:0
+msgid "Created on"
+msgstr "Erstellt am"
+
+#. module: claim_report
+#: field:claim.report,customer_description:0
+msgid "Customer Description"
+msgstr "Auftragsbeschreibung des Kunden"
+
+#. module: claim_report
+#: help:claim.report,message_last_post:0
+msgid "Date of the last message posted on the record."
+msgstr "letzer Eintrag"
+
+#. module: claim_report
+#: field:claim.report,description:0 field:claim.report.line,description:0
+msgid "Description"
+msgstr "Beschreibung"
+
+#. module: claim_report
+#: field:claim.report,line_ids:0
+msgid "Documentation"
+msgstr "Dokumentation"
+
+#. module: claim_report
+#: field:claim.report,expert_id:0
+msgid "Expert"
+msgstr "Sachverständiger"
+
+#. module: claim_report
+#: field:claim.report,message_follower_ids:0
+msgid "Followers"
+msgstr "Beobachter"
+
+#. module: claim_report
+#: view:claim.report:claim_report.search_claim_report
+msgid "Group By..."
+msgstr "Gruppiert nach..."
+
+#. module: claim_report
+#: help:claim.report,message_summary:0
+msgid ""
+"Holds the Chatter summary (number of messages, ...). This summary is "
+"directly in html format in order to be inserted in kanban views."
+msgstr ""
+
+#. module: claim_report
+#: field:claim.report,id:0 field:claim.report.line,id:0
+msgid "ID"
+msgstr ""
+
+#. module: claim_report
+#: help:claim.report,message_unread:0
+msgid "If checked new messages require your attention."
+msgstr ""
+
+#. module: claim_report
+#: field:claim.report.line,image:0 field:claim.report.line,image_medium:0
+#: field:claim.report.line,image_report:0
+#: field:claim.report.line,image_small:0
+msgid "Image"
+msgstr "Bild"
+
+#. module: claim_report
+#: view:claim.report:claim_report.search_claim_report
+#: field:claim.report,insurance_id:0
+msgid "Insurance"
+msgstr "Versicherung"
+
+#. module: claim_report
+#: field:claim.report,message_is_follower:0
+msgid "Is a Follower"
+msgstr "Ist ein Beobachter"
+
+#. module: claim_report
+#: field:claim.report,message_last_post:0
+msgid "Last Message Date"
+msgstr ""
+
+#. module: claim_report
+#: field:claim.report,write_uid:0 field:claim.report.line,write_uid:0
+msgid "Last Updated by"
+msgstr ""
+
+#. module: claim_report
+#: field:claim.report,write_date:0 field:claim.report.line,write_date:0
+msgid "Last Updated on"
+msgstr ""
+
+#. module: claim_report
+#: field:claim.report,message_ids:0
+msgid "Messages"
+msgstr "Nachrichten"
+
+#. module: claim_report
+#: help:claim.report,message_ids:0
+msgid "Messages and communication history"
+msgstr ""
+
+#. module: claim_report
+#: field:claim.report,name:0 field:claim.report.line,name:0
+msgid "Name"
+msgstr ""
+
+#. module: claim_report
+#: field:claim.report,order_id:0
+msgid "Order"
+msgstr "Auftrag"
+
+#. module: claim_report
+#: field:claim.report,partner_id:0
+msgid "Partner"
+msgstr ""
+
+#. module: claim_report
+#: field:claim.report,ref:0
+msgid "Reference"
+msgstr "Referenz"
+
+#. module: claim_report
+#: field:claim.report.line,claim_id:0
+msgid "Report"
+msgstr "Bericht"
+
+#. module: claim_report
+#: field:claim.report,date:0
+msgid "Review Date"
+msgstr "Schaden besichtigt am"
+
+#. module: claim_report
+#: field:claim.report.line,sequence:0
+msgid "Sequence"
+msgstr "Sequenz"
+
+#. module: claim_report
+#: field:claim.report,shop_id:0
+msgid "Shop"
+msgstr "Vertriebsshop"
+
+#. module: claim_report
+#: field:claim.report,message_summary:0
+msgid "Summary"
+msgstr ""
+
+#. module: claim_report
+#: field:claim.report,message_unread:0
+msgid "Unread Messages"
+msgstr ""
+
+#. module: claim_report
+#: field:claim.report,user_id:0
+msgid "User"
+msgstr "Benutzer"
+
+#. module: claim_report
+#: help:claim.report.line,image_medium:0
+msgid "resized as 128x128px image, with aspect ratio preserved"
+msgstr "verkleinertes Bild mit 128x128px mit beibehaltenen Seitenverhältnis"
+
+#. module: claim_report
+#: help:claim.report.line,image_report:0
+msgid "resized as 256x256px image, with aspect ratio preserved"
+msgstr ""
+
+#. module: claim_report
+#: help:claim.report.line,image_small:0
+msgid "resized as 64x64px image, with aspect ratio preserved"
+msgstr "verkleinertes Bild mit 64x64px mit beibehaltenen Seitenverhältnis"
