@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-11 22:25+0000\n"
-"PO-Revision-Date: 2016-01-11 23:26+0100\n"
+"POT-Creation-Date: 2016-01-11 23:34+0000\n"
+"PO-Revision-Date: 2016-01-12 00:35+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,6 +15,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
 "X-Generator: Poedit 1.5.4\n"
+
+#. module: leakage_report
+#: view:leakage.report:leakage_report.form_leakage_report
+msgid "Actions"
+msgstr "Maßnahmen"
 
 #. module: leakage_report
 #: selection:leakage.report,leakage_state:0
@@ -27,6 +32,7 @@ msgid "Address"
 msgstr "Adresse"
 
 #. module: leakage_report
+#: view:leakage.report:leakage_report.form_leakage_report
 #: field:leakage.report,affected_other:0
 msgid "Affected Areas"
 msgstr "betroffene Flächen"
@@ -67,6 +73,7 @@ msgstr "Erstellt am"
 
 #. module: leakage_report
 #: model:ir.model,name:leakage_report.model_leakage_damage
+#: view:leakage.report:leakage_report.form_leakage_report
 #: field:leakage.report,damage_id:0
 msgid "Damage"
 msgstr "Schaden"
@@ -112,8 +119,8 @@ msgid "Failed"
 msgstr "Fehlgeschlagen"
 
 #. module: leakage_report
+#: view:leakage.report:leakage_report.form_leakage_report
 #: field:leakage.report,floormat_name:0
-#: field:leakage.report,floormat_product_id:0
 msgid "Floor Material"
 msgstr "Fliesen/Oberbeläge"
 
@@ -121,6 +128,11 @@ msgstr "Fliesen/Oberbeläge"
 #: field:leakage.report,floormat_amount:0
 msgid "Floor Material amount"
 msgstr "Material Menge"
+
+#. module: leakage_report
+#: field:leakage.report,floormat_product_id:0
+msgid "Floor Product"
+msgstr "Fliesen/Bodenbelag Produkt"
 
 #. module: leakage_report
 #: field:leakage.report,message_follower_ids:0
@@ -162,6 +174,7 @@ msgid "Inactive when measured"
 msgstr "nicht aktiv bei Messtermin"
 
 #. module: leakage_report
+#: view:leakage.report:leakage_report.form_leakage_report
 #: view:leakage.report:leakage_report.search_leakage_report
 #: field:leakage.report,insurance_id:0
 msgid "Insurance"
@@ -200,6 +213,11 @@ msgstr ""
 #: field:leakage.report.test,write_date:0 field:leakage.test,write_date:0
 msgid "Last Updated on"
 msgstr ""
+
+#. module: leakage_report
+#: model:ir.ui.menu,name:leakage_report.menu_leakage_config
+msgid "Leakage"
+msgstr "Leckortung"
 
 #. module: leakage_report
 #: model:ir.model,name:leakage_report.model_leakage_method
@@ -243,7 +261,12 @@ msgid "Leakage Tests"
 msgstr "Leckortungstests"
 
 #. module: leakage_report
+#: model:ir.actions.act_window,name:leakage_report.action_leakage_material
 #: model:ir.model,name:leakage_report.model_leakage_material
+#: model:ir.ui.menu,name:leakage_report.menu_leakage_material
+#: view:leakage.material:leakage_report.form_leakage_material
+#: view:leakage.material:leakage_report.search_leakage_material
+#: view:leakage.report:leakage_report.form_leakage_report
 #: field:leakage.report,material_ids:0
 msgid "Material"
 msgstr ""
@@ -257,6 +280,11 @@ msgstr "Fliesen/Oberbeläge"
 #: selection:leakage.report,floormat_state:0
 msgid "Material available"
 msgstr "Material vorhanden"
+
+#. module: leakage_report
+#: view:leakage.material:leakage_report.tree_leakage_material
+msgid "Materials"
+msgstr "Materialen"
 
 #. module: leakage_report
 #: field:leakage.report,measure_from:0
@@ -274,6 +302,11 @@ msgid "Measure To"
 msgstr "Messzeit bis"
 
 #. module: leakage_report
+#: view:leakage.report:leakage_report.form_leakage_report
+msgid "Measurement Result"
+msgstr "Messergebnis"
+
+#. module: leakage_report
 #: field:leakage.report,message_ids:0
 msgid "Messages"
 msgstr ""
@@ -284,6 +317,7 @@ msgid "Messages and communication history"
 msgstr ""
 
 #. module: leakage_report
+#: view:leakage.report:leakage_report.form_leakage_report
 #: field:leakage.report,method_ids:0
 msgid "Methods"
 msgstr "Messgeräte und Verfahren"
@@ -462,6 +496,11 @@ msgid "Test"
 msgstr ""
 
 #. module: leakage_report
+#: view:leakage.report:leakage_report.form_leakage_report
+msgid "Tests"
+msgstr ""
+
+#. module: leakage_report
 #: field:leakage.test,type:0
 msgid "Type"
 msgstr "Typ"
@@ -477,6 +516,7 @@ msgid "Unread Messages"
 msgstr ""
 
 #. module: leakage_report
+#: view:leakage.report:leakage_report.form_leakage_report
 #: field:leakage.report,work_description:0
 msgid "Work Description"
 msgstr "Arbeitsbeschreibung"

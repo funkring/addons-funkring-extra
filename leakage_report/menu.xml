@@ -1,0 +1,8 @@
+<openerp>
+  <data>
+    
+      <menuitem id="menu_leakage_config" name="Leakage" parent="base.menu_base_config"
+             sequence="50"/>
+    
+  </data>
+</openerp>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="form_leakage_material" model="ir.ui.view">
+      <field name="name">leakage_report.form_leakage_material</field>
+      <field name="model">leakage.material</field>
+      <field name="arch" type="xml">
+        <form string="Material">
+          <group>
+            <field name="name"/>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_leakage_material" model="ir.ui.view">
+      <field name="name">leakage_report.tree_leakage_material</field>
+      <field name="model">leakage.material</field>
+      <field name="arch" type="xml">
+        <tree string="Materials">
+           <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_leakage_material" model="ir.ui.view">
+      <field name="name">leakage_report.search_leakage_material</field>
+      <field name="model">leakage.material</field>
+      <field name="arch" type="xml">
+        <search string="Material">
+          <field name="name"/>
+        </search>
+      </field>
+    </record>
+
+    <record id="action_leakage_material" model="ir.actions.act_window">
+      <field name="name">Material</field>
+      <field name="res_model">leakage.material</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>    
+    </record>
+
+    <menuitem id="menu_leakage_material" name="Material" parent="menu_leakage_config"
+      sequence="2"
+      action="action_leakage_material"/>
+  </data>
+</openerp>

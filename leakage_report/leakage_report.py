@@ -34,7 +34,7 @@ class leakage_report(models.Model):
             }))
         return res
     
-    name = fields.Char("Name", required=True)
+    name = fields.Char("Name", default="/", required=True)
     shop_id = fields.Many2one("sale.shop", "Shop", required=True)
     date = fields.Date("Date", required=True)
     partner_id = fields.Many2one("res.partner", "Partner", required=True)
@@ -74,7 +74,7 @@ class leakage_report(models.Model):
                                        ("material","Material available")],
                                       "Material Status")
     
-    floormat_product_id = fields.Many2one("product.product", "Floor Material")
+    floormat_product_id = fields.Many2one("product.product", "Floor Product")
     floormat_name = fields.Char("Floor Material")
     floormat_amount = fields.Float("Floor Material amount")
         
@@ -106,7 +106,7 @@ class leakage_report(models.Model):
     material_other = fields.Char("Other Material")
     
     @api.multi
-    def onchange_order(self, order_id, shop_id=None, partner_id=None, user_id=None, address_id=None, contact_id=None, ref=None):
+    def onchange_order(self, order_id, shop_id=None, partner_id=None, user_id=None, address_id=None, ref=None):
         res = {}
         if order_id:
             value = {}

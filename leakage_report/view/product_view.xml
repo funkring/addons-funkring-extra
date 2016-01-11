@@ -9,8 +9,8 @@
       <field name="arch" type="xml">
         <div name="options" position="inside">
             <div>
-                <label for="leakage_method"/>                
                 <field name="leakage_method"/>
+                <label for="leakage_method"/>
             </div>
         </div>
       </field>

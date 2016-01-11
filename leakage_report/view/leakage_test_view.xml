@@ -47,7 +47,7 @@
       <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="menu_leakage_test" name="Leakage Test" parent="base.menu_base_config"
+    <menuitem id="menu_leakage_test" name="Leakage Test" parent="menu_leakage_config"
       sequence="4"
       action="action_leakage_test"/>
       

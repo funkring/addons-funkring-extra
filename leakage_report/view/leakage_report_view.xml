@@ -13,7 +13,7 @@
             </h1>
             <group>
                 <group>                    
-                    <field name="order_id" on_change="onchange_order(order_id, shop_id, partner_id, user_id, address_id, contact_id, ref)"/>     
+                    <field name="order_id" on_change="onchange_order(order_id, shop_id, partner_id, user_id, address_id, ref)"/>     
                     <field name="shop_id" widget="seletion"/>               
                     <field name="partner_id"/>
                     <field name="address_id"/>
@@ -25,6 +25,7 @@
                     <field name="measure_from"/>
                     <field name="measure_to"/>
                     <field name="partner_ids" widget="many2many_tags"/>
+                    <field name="leakage_state"/>
                     <field name="open_state"/>
                     <field name="open_partner_id" attrs="{'invisible':[('open_state','!=','opened_other')]}"/>               
                 </group>
@@ -33,34 +34,38 @@
                 <label for="description"/>
                 <field name="description"/>
             </div>
-            <span>                    
-                <label for="measure_noresult"/>
-                <field name="measure_result"/>
-            </span>
-            <div attrs="{'invisible':[('measure_noresult','=',True)]}">
-                <label for="measure_result"/>
-                <field name="measure_result"/>
-            </div>
-            <div>
-                <span>
-                    <label for="work_further"/>
-                    <field name="work_further"/>
-                </span>
-                <label for="work_description"/>
-                <field name="work_description"/>
-            </div>            
+            <group string="Measurement Result">
+                <div>
+                    <span>
+                        <label for="measure_noresult"/>
+                        <field name="measure_noresult"/>
+                    </span>  
+                    <div attrs="{'invisible':[('measure_noresult','=',True)]}">
+                        <field name="measure_result"/>
+                    </div>
+                </div>              
+            </group>
+            <group string="Work Description">
+                <div>
+                    <span>
+                        <label for="work_further"/>
+                        <field name="work_further"/>
+                    </span>
+                    <field name="work_description"/>
+                </div>            
+            </group>
             <group>
-                <group>
+                <group string="Floor Material">
                    <field name="floormat_state"/>
                    <field name="floormat_product_id"/>
                    <field name="floormat_amount"/>
                 </group>
-                <group>
-                   <field name="damage_id"/>
+                <group string="Damage">
+                   <field name="damage_id" widget="selection"/>
                    <field name="damage_amount"/>
                 </group>                
             </group>
-            <group>
+            <group string="Affected Areas">
                 <group>
                    <field name="affected_cailing"/>
                    <field name="affected_wall"/>
@@ -72,22 +77,29 @@
                 </div>
             </group>
             <group>
-                <group>
+                <group string="Insurance">
                     <field name="insurance_needed"/>
                     <field name="insurance_informed"/>
                     <field name="insurance_id"/>
                 </group>
-                <group>
-                    <field name="action_drying"/>
-                    <field name="action_drying_order"/>
-                    <field name="action_renovation"/>
-                    <field name="action_other"/>
+                <group string="Actions">
+                    <group>
+                        <field name="action_drying"/>
+                        <field name="action_drying_order"/>
+                        <field name="action_renovation"/>
+                    </group>
+                    <group>
+                        <div>                                        
+                            <field name="action_other"/>
+                        </div>
+                    </group>
                 </group>
             </group>
             <group>
-                <group>                   
+                <group string="Methods">   
+                    <div>                
                     <field name="method_ids">
-                        <tree>
+                        <tree editable="buttom">
                             <field name="product_id" 
                                  domain="[('leakage_method','=',True)]" 
                                  on_change="product_id_change(product_id, name, uom_id)"/>
@@ -96,21 +108,31 @@
                             <field name="amount"/>
                         </tree>
                     </field>
+                    </div>
                 </group>
-                <group>
-                    <field name="test_other"/>           
-                    <field name="test_ids">
-                        <tree editable="buttom">
-                            <field name="test_id" readonly="1"/>
-                            <field name="status"/>
-                        </tree>
-                    </field>
+                <group string="Tests">
+                    <div>                             
+                        <field name="test_ids">
+                            <tree editable="buttom">
+                                <field name="test_id" readonly="1"/>
+                                <field name="status"/>
+                            </tree>
+                        </field>
+                        <span>
+                            <label for="test_other" class="oe_edit_only"/>
+                            <field name="test_other"/>
+                        </span>     
+                    </div>
                 </group>
             </group>
             <group>
-                <field name="material_other"/>
-                <field name="material_ids" widget="many2many_tags"/>
-            </group>            
+                <group string="Material">                
+                    <field name="material_ids" widget="many2many_tags"/>
+                    <field name="material_other"/>
+                </group>
+                <group>
+                </group>            
+            </group>
           </sheet>   
           <div class="oe_chatter">
             <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
@@ -162,7 +184,7 @@
     </record>
 
     <menuitem id="menu_leakage_report" name="Leakage Reports" parent="base.menu_sales"
-      sequence="5"
+      sequence="4"
       action="action_leakage_report"/>
   </data>
 </openerp>

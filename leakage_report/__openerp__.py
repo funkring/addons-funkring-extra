@@ -35,9 +35,11 @@ Leak Report
     "depends" : ["at_sale","at_product","product"],
     "data" : ["security.xml",
               "sequence.xml",
+              "menu.xml",
               "view/leakage_report_view.xml",
               "view/product_view.xml",
               "view/leakage_test_view.xml",
+              "view/leakage_material_view.xml",
               "report/leakage_report.xml"
              ],
     "auto_install" : False,
