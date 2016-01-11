@@ -1,0 +1,150 @@
+<openerp>
+  
+  <data>
+    
+    <record id="access_leakage_report_sale_salesman" model="ir.model.access">
+      <field name="name">leakage_report/sale_salesman</field>
+      <field name="model_id" ref="model_leakage_report"/>
+      <field name="group_id" ref="base.group_sale_salesman"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    <record id="access_leakage_report_sale_manager" model="ir.model.access">
+      <field name="name">leakage_report/sale_manager</field>
+      <field name="model_id" ref="model_leakage_report"/>
+      <field name="group_id" ref="base.group_sale_manager"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    <record id="access_leakage_test_sale_salesman" model="ir.model.access">
+      <field name="name">leakage_test/sale_salesman</field>
+      <field name="model_id" ref="model_leakage_test"/>
+      <field name="group_id" ref="base.group_sale_salesman"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="False"/>
+      <field name="perm_create" eval="False"/>
+      <field name="perm_write" eval="False"/>
+    </record>
+
+    <record id="access_leakage_test_sale_manager" model="ir.model.access">
+      <field name="name">leakage_test/sale_manager</field>
+      <field name="model_id" ref="model_leakage_test"/>
+      <field name="group_id" ref="base.group_sale_manager"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    <record id="access_leakage_report_test_sale_salesman" model="ir.model.access">
+      <field name="name">leakage_report_test/sale_salesman</field>
+      <field name="model_id" ref="model_leakage_report_test"/>
+      <field name="group_id" ref="base.group_sale_salesman"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    <record id="access_leakage_report_test_sale_manager" model="ir.model.access">
+      <field name="name">leakage_report_test/sale_manager</field>
+      <field name="model_id" ref="model_leakage_report_test"/>
+      <field name="group_id" ref="base.group_sale_manager"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+    
+    <record id="access_leakage_material_sale_salesman" model="ir.model.access">
+      <field name="name">leakage_material/sale_salesman</field>
+      <field name="model_id" ref="model_leakage_material"/>
+      <field name="group_id" ref="base.group_sale_salesman"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="False"/>
+      <field name="perm_create" eval="False"/>
+      <field name="perm_write" eval="False"/>
+    </record>
+
+    <record id="access_leakage_material_sale_manager" model="ir.model.access">
+      <field name="name">leakage_material/sale_manager</field>
+      <field name="model_id" ref="model_leakage_material"/>
+      <field name="group_id" ref="base.group_sale_manager"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    <record id="access_leakage_method_sale_manager" model="ir.model.access">
+      <field name="name">leakage_method/sale_manager</field>
+      <field name="model_id" ref="model_leakage_method"/>
+      <field name="group_id" ref="base.group_sale_manager"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    <record id="access_leakage_method_sale_salesman" model="ir.model.access">
+      <field name="name">leakage_method/sale_salesman</field>
+      <field name="model_id" ref="model_leakage_method"/>
+      <field name="group_id" ref="base.group_sale_salesman"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+    
+    <record id="access_leakage_method_sale_manager" model="ir.model.access">
+      <field name="name">leakage_method/sale_manager</field>
+      <field name="model_id" ref="model_leakage_method"/>
+      <field name="group_id" ref="base.group_sale_manager"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    <record id="access_leakage_damage_sale_salesman" model="ir.model.access">
+      <field name="name">leakage_damage/sale_salesman</field>
+      <field name="model_id" ref="model_leakage_damage"/>
+      <field name="group_id" ref="base.group_sale_salesman"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="False"/>
+      <field name="perm_create" eval="False"/>
+      <field name="perm_write" eval="False"/>
+    </record>
+
+    <record id="access_leakage_damage_sale_manager" model="ir.model.access">
+      <field name="name">leakage_damage/sale_manager</field>
+      <field name="model_id" ref="model_leakage_damage"/>
+      <field name="group_id" ref="base.group_sale_manager"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+    
+  </data>
+  
+
+  <data noupdate="0">
+    
+    <record id="claim_report_salesman_rule" model="ir.rule">
+        <field name="model_id" ref="model_leakage_report"/>
+        <field name="name">Personal Leakage Reports</field>
+        <field name="domain_force">['|',('user_id','=',user.id),('user_id','=',False)]</field>
+        <field name="groups" eval="[(4, ref('base.group_sale_salesman'))]"/>
+    </record>
+    
+  </data>
+  
+  
+</openerp>

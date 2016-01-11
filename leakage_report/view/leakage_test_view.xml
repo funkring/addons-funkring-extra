@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="form_leakage_test" model="ir.ui.view">
+      <field name="name">leakage_report.form_leakage_test</field>
+      <field name="model">leakage.test</field>
+      <field name="arch" type="xml">
+        <form string="Leakage Test">
+          <group>
+            <group>
+                <field name="name"/>
+            </group>
+            <group>
+                <field name="type"/>
+            </group>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_leakage_test" model="ir.ui.view">
+      <field name="name">leakage_report.tree_leakage_test</field>
+      <field name="model">leakage.test</field>
+      <field name="arch" type="xml">
+        <tree string="Leakage Tests">
+            <field name="name"/>
+            <field name="type"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_leakage_test" model="ir.ui.view">
+      <field name="name">leakage_report.search_leakage_test</field>
+      <field name="model">leakage.test</field>
+      <field name="arch" type="xml">
+        <search string="Leakage Test">
+            <field name="name"/>
+            <field name="type"/>
+        </search>
+      </field>
+    </record>
+
+    <record id="action_leakage_test" model="ir.actions.act_window">
+      <field name="name">Leakage Test</field>
+      <field name="res_model">leakage.test</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_leakage_test" name="Leakage Test" parent="base.menu_base_config"
+      sequence="4"
+      action="action_leakage_test"/>
+      
+  </data>
+</openerp>

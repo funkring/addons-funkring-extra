@@ -1,0 +1,482 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* leakage_report
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-01-11 22:25+0000\n"
+"PO-Revision-Date: 2016-01-11 23:26+0100\n"
+"Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 1.5.4\n"
+
+#. module: leakage_report
+#: selection:leakage.report,leakage_state:0
+msgid "Active when measured"
+msgstr "aktiv bei Messtermin"
+
+#. module: leakage_report
+#: field:leakage.report,address_id:0
+msgid "Address"
+msgstr "Adresse"
+
+#. module: leakage_report
+#: field:leakage.report,affected_other:0
+msgid "Affected Areas"
+msgstr "betroffene Flächen"
+
+#. module: leakage_report
+#: field:leakage.report,affected_cailing:0
+msgid "Affected Cailing"
+msgstr "Decke"
+
+#. module: leakage_report
+#: field:leakage.report,affected_floor:0
+msgid "Affected Floor"
+msgstr "Boden"
+
+#. module: leakage_report
+#: field:leakage.report,affected_wall:0
+msgid "Affected Wall"
+msgstr "Wand"
+
+#. module: leakage_report
+#: field:leakage.method,amount:0
+msgid "Amount"
+msgstr "Menge"
+
+#. module: leakage_report
+#: field:leakage.damage,create_uid:0 field:leakage.material,create_uid:0
+#: field:leakage.method,create_uid:0 field:leakage.report,create_uid:0
+#: field:leakage.report.test,create_uid:0 field:leakage.test,create_uid:0
+msgid "Created by"
+msgstr "Erstellt von"
+
+#. module: leakage_report
+#: field:leakage.damage,create_date:0 field:leakage.material,create_date:0
+#: field:leakage.method,create_date:0 field:leakage.report,create_date:0
+#: field:leakage.report.test,create_date:0 field:leakage.test,create_date:0
+msgid "Created on"
+msgstr "Erstellt am"
+
+#. module: leakage_report
+#: model:ir.model,name:leakage_report.model_leakage_damage
+#: field:leakage.report,damage_id:0
+msgid "Damage"
+msgstr "Schaden"
+
+#. module: leakage_report
+#: field:leakage.report,damage_amount:0
+msgid "Damage Amount"
+msgstr "Schadenhöhe geschätzt"
+
+#. module: leakage_report
+#: help:leakage.report,description:0
+msgid "Damage on arrival / damp areas"
+msgstr "Schadensbild beim Eintreffen vor Ort "
+
+#. module: leakage_report
+#: selection:leakage.report,floormat_state:0
+msgid "Damaged, but enough material for repair"
+msgstr "beschädigt, Ersatz ausreichend f. Schaden vorhanden"
+
+#. module: leakage_report
+#: field:leakage.report,date:0
+msgid "Date"
+msgstr "Datum"
+
+#. module: leakage_report
+#: help:leakage.report,message_last_post:0
+msgid "Date of the last message posted on the record."
+msgstr ""
+
+#. module: leakage_report
+#: field:leakage.report,description:0
+msgid "Description"
+msgstr "Beschreibung"
+
+#. module: leakage_report
+#: field:leakage.report,action_drying:0
+msgid "Drying needed"
+msgstr "Trocknung erforderlich"
+
+#. module: leakage_report
+#: selection:leakage.report.test,status:0
+msgid "Failed"
+msgstr "Fehlgeschlagen"
+
+#. module: leakage_report
+#: field:leakage.report,floormat_name:0
+#: field:leakage.report,floormat_product_id:0
+msgid "Floor Material"
+msgstr "Fliesen/Oberbeläge"
+
+#. module: leakage_report
+#: field:leakage.report,floormat_amount:0
+msgid "Floor Material amount"
+msgstr "Material Menge"
+
+#. module: leakage_report
+#: field:leakage.report,message_follower_ids:0
+msgid "Followers"
+msgstr ""
+
+#. module: leakage_report
+#: field:leakage.report,work_further:0
+msgid "Further Work needed"
+msgstr "Weitere Termine notwendig"
+
+#. module: leakage_report
+#: view:leakage.report:leakage_report.search_leakage_report
+msgid "Group By..."
+msgstr "Gruppiet nach..."
+
+#. module: leakage_report
+#: help:leakage.report,message_summary:0
+msgid ""
+"Holds the Chatter summary (number of messages, ...). This summary is "
+"directly in html format in order to be inserted in kanban views."
+msgstr ""
+
+#. module: leakage_report
+#: field:leakage.damage,id:0 field:leakage.material,id:0
+#: field:leakage.method,id:0 field:leakage.report,id:0
+#: field:leakage.report.test,id:0 field:leakage.test,id:0
+msgid "ID"
+msgstr ""
+
+#. module: leakage_report
+#: help:leakage.report,message_unread:0
+msgid "If checked new messages require your attention."
+msgstr ""
+
+#. module: leakage_report
+#: selection:leakage.report,leakage_state:0
+msgid "Inactive when measured"
+msgstr "nicht aktiv bei Messtermin"
+
+#. module: leakage_report
+#: view:leakage.report:leakage_report.search_leakage_report
+#: field:leakage.report,insurance_id:0
+msgid "Insurance"
+msgstr "Versicherung"
+
+#. module: leakage_report
+#: field:leakage.report,insurance_informed:0
+msgid "Insurance informed"
+msgstr "Versicherung informiert"
+
+#. module: leakage_report
+#: field:leakage.report,insurance_needed:0
+msgid "Insurance needed"
+msgstr "Versicherung erforderlich"
+
+#. module: leakage_report
+#: field:leakage.report,message_is_follower:0
+msgid "Is a Follower"
+msgstr ""
+
+#. module: leakage_report
+#: field:leakage.report,message_last_post:0
+msgid "Last Message Date"
+msgstr ""
+
+#. module: leakage_report
+#: field:leakage.damage,write_uid:0 field:leakage.material,write_uid:0
+#: field:leakage.method,write_uid:0 field:leakage.report,write_uid:0
+#: field:leakage.report.test,write_uid:0 field:leakage.test,write_uid:0
+msgid "Last Updated by"
+msgstr ""
+
+#. module: leakage_report
+#: field:leakage.damage,write_date:0 field:leakage.material,write_date:0
+#: field:leakage.method,write_date:0 field:leakage.report,write_date:0
+#: field:leakage.report.test,write_date:0 field:leakage.test,write_date:0
+msgid "Last Updated on"
+msgstr ""
+
+#. module: leakage_report
+#: model:ir.model,name:leakage_report.model_leakage_method
+#: field:product.template,leakage_method:0
+msgid "Leakage Method"
+msgstr "Messgeräte und Verfahren"
+
+#. module: leakage_report
+#: model:ir.actions.act_window,name:leakage_report.action_leakage_report
+#: model:ir.actions.report.xml,name:leakage_report.report_leakage_report
+#: model:ir.model,name:leakage_report.model_leakage_report
+#: view:leakage.report:leakage_report.form_leakage_report
+#: view:leakage.report:leakage_report.search_leakage_report
+msgid "Leakage Report"
+msgstr "Leckageortung"
+
+#. module: leakage_report
+#: model:ir.ui.menu,name:leakage_report.menu_leakage_report
+#: view:leakage.report:leakage_report.tree_leakage_report
+msgid "Leakage Reports"
+msgstr "Leckageortungen"
+
+#. module: leakage_report
+#: field:leakage.report,leakage_state:0
+msgid "Leakage State"
+msgstr "Leckage ist/war"
+
+#. module: leakage_report
+#: model:ir.actions.act_window,name:leakage_report.action_leakage_test
+#: model:ir.model,name:leakage_report.model_leakage_report_test
+#: model:ir.model,name:leakage_report.model_leakage_test
+#: model:ir.ui.menu,name:leakage_report.menu_leakage_test
+#: view:leakage.test:leakage_report.form_leakage_test
+#: view:leakage.test:leakage_report.search_leakage_test
+msgid "Leakage Test"
+msgstr "Leckortungstest"
+
+#. module: leakage_report
+#: view:leakage.test:leakage_report.tree_leakage_test
+msgid "Leakage Tests"
+msgstr "Leckortungstests"
+
+#. module: leakage_report
+#: model:ir.model,name:leakage_report.model_leakage_material
+#: field:leakage.report,material_ids:0
+msgid "Material"
+msgstr ""
+
+#. module: leakage_report
+#: field:leakage.report,floormat_state:0
+msgid "Material Status"
+msgstr "Fliesen/Oberbeläge"
+
+#. module: leakage_report
+#: selection:leakage.report,floormat_state:0
+msgid "Material available"
+msgstr "Material vorhanden"
+
+#. module: leakage_report
+#: field:leakage.report,measure_from:0
+msgid "Measure From"
+msgstr "Messzeit von"
+
+#. module: leakage_report
+#: field:leakage.report,measure_result:0
+msgid "Measure Result"
+msgstr "Messergebnis"
+
+#. module: leakage_report
+#: field:leakage.report,measure_to:0
+msgid "Measure To"
+msgstr "Messzeit bis"
+
+#. module: leakage_report
+#: field:leakage.report,message_ids:0
+msgid "Messages"
+msgstr ""
+
+#. module: leakage_report
+#: help:leakage.report,message_ids:0
+msgid "Messages and communication history"
+msgstr ""
+
+#. module: leakage_report
+#: field:leakage.report,method_ids:0
+msgid "Methods"
+msgstr "Messgeräte und Verfahren"
+
+#. module: leakage_report
+#: field:leakage.damage,name:0 field:leakage.material,name:0
+#: field:leakage.method,name:0 field:leakage.report,name:0
+#: field:leakage.test,name:0
+msgid "Name"
+msgstr ""
+
+#. module: leakage_report
+#: selection:leakage.report,floormat_state:0
+msgid "No Damage"
+msgstr "nicht beschädigt"
+
+#. module: leakage_report
+#: selection:leakage.report,floormat_state:0
+msgid "No Material"
+msgstr "kein Material"
+
+#. module: leakage_report
+#: selection:leakage.report,open_state:0
+msgid "No Open"
+msgstr "nicht geöffnet"
+
+#. module: leakage_report
+#: field:leakage.report,measure_noresult:0
+msgid "No Result"
+msgstr "Kein Ergebnis"
+
+#. module: leakage_report
+#: selection:leakage.report,leakage_state:0
+msgid "No Statement possible"
+msgstr "Keine Aussage möglich"
+
+#. module: leakage_report
+#: selection:leakage.report,floormat_state:0
+msgid "Not clear"
+msgstr "nicht geklärt"
+
+#. module: leakage_report
+#: selection:leakage.report.test,status:0
+msgid "OK"
+msgstr ""
+
+#. module: leakage_report
+#: field:leakage.report,open_state:0
+msgid "Open State"
+msgstr "Status der Schadensstelle"
+
+#. module: leakage_report
+#: selection:leakage.report,open_state:0
+msgid "Opened by other"
+msgstr "Durch andere geöffnet"
+
+#. module: leakage_report
+#: selection:leakage.report,open_state:0
+msgid "Openend by us"
+msgstr "Durch uns geöffnet"
+
+#. module: leakage_report
+#: field:leakage.report,open_partner_id:0
+msgid "Opener"
+msgstr "Geöffnet von"
+
+#. module: leakage_report
+#: field:leakage.report,order_id:0
+msgid "Order"
+msgstr "Auftrag"
+
+#. module: leakage_report
+#: field:leakage.report,action_drying_order:0
+msgid "Order for Drying"
+msgstr "Angebot Trocknung folgt"
+
+#. module: leakage_report
+#: field:leakage.report,action_other:0
+msgid "Other Actions"
+msgstr "weitere Maßnahmen"
+
+#. module: leakage_report
+#: field:leakage.report,material_other:0
+msgid "Other Material"
+msgstr "Sonstiges Material"
+
+#. module: leakage_report
+#: field:leakage.report,method_other:0
+msgid "Other Method"
+msgstr "Sonstige Methoden"
+
+#. module: leakage_report
+#: field:leakage.report,test_other:0
+msgid "Other Test"
+msgstr "Sonstiger Test"
+
+#. module: leakage_report
+#: view:leakage.report:leakage_report.search_leakage_report
+#: field:leakage.report,partner_id:0
+msgid "Partner"
+msgstr ""
+
+#. module: leakage_report
+#: field:leakage.report,partner_ids:0
+msgid "Present Partners"
+msgstr "Anwesende Personen"
+
+#. module: leakage_report
+#: selection:leakage.test,type:0
+msgid "Pressure Test"
+msgstr "Drucktest"
+
+#. module: leakage_report
+#: field:leakage.method,product_id:0
+msgid "Product"
+msgstr "Produkt"
+
+#. module: leakage_report
+#: model:ir.model,name:leakage_report.model_product_template
+msgid "Product Template"
+msgstr "Produktvorlage"
+
+#. module: leakage_report
+#: field:leakage.report,ref:0
+msgid "Reference"
+msgstr "Referenz"
+
+#. module: leakage_report
+#: field:leakage.report,action_renovation:0
+msgid "Renovation needed"
+msgstr "Sanierungsarbeiten erforderlich"
+
+#. module: leakage_report
+#: field:leakage.report,user_id:0
+msgid "Repairman"
+msgstr "Ausführender Techniker"
+
+#. module: leakage_report
+#: field:leakage.method,report_id:0 field:leakage.report.test,report_id:0
+msgid "Report"
+msgstr "Bericht"
+
+#. module: leakage_report
+#: help:leakage.report,measure_noresult:0
+msgid "Result could not be clarified"
+msgstr "Ursache konnte nicht genau geklärt werden"
+
+#. module: leakage_report
+#: selection:leakage.test,type:0
+msgid "Seal Test"
+msgstr "Dichtheitstest"
+
+#. module: leakage_report
+#: field:leakage.report,affected_order:0
+msgid "See order for details"
+msgstr "Details siehe Trocknungsangebot"
+
+#. module: leakage_report
+#: field:leakage.report,shop_id:0
+msgid "Shop"
+msgstr "Vertriebsshop"
+
+#. module: leakage_report
+#: field:leakage.report.test,status:0
+msgid "Status"
+msgstr ""
+
+#. module: leakage_report
+#: field:leakage.report,message_summary:0
+msgid "Summary"
+msgstr ""
+
+#. module: leakage_report
+#: field:leakage.report,test_ids:0 field:leakage.report.test,test_id:0
+msgid "Test"
+msgstr ""
+
+#. module: leakage_report
+#: field:leakage.test,type:0
+msgid "Type"
+msgstr "Typ"
+
+#. module: leakage_report
+#: field:leakage.method,uom_id:0
+msgid "Unit"
+msgstr "Einheit"
+
+#. module: leakage_report
+#: field:leakage.report,message_unread:0
+msgid "Unread Messages"
+msgstr ""
+
+#. module: leakage_report
+#: field:leakage.report,work_description:0
+msgid "Work Description"
+msgstr "Arbeitsbeschreibung"
