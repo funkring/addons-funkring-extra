@@ -383,9 +383,9 @@ class jdoc_jdoc(osv.AbstractModel):
         model_options = {}
         
         if fields:
-            model_options["fields"] = set(fields)
+            model_options["fields"] = fields
         if compositions:
-            model_options["compositions"] = set(compositions)
+            model_options["compositions"] = compositions
         
         if model_options:
             options["model"] = {
@@ -412,6 +412,15 @@ class jdoc_jdoc(osv.AbstractModel):
         domain_uuid = hashlib.md5()
         domain_uuid.update(simplejson.dumps(syncdomain))
         domain_uuid = domain_uuid.hexdigest()
+        
+        # accelerate and use set 
+        # instead of lists after
+        # create domain_uuid
+        if fields:
+            model_options["fields"] = set(fields)
+        if compositions:
+            model_options["compositions"] = set(compositions)
+        
         
         # get last sync attribs
         lastsync = data.get("lastsync")
