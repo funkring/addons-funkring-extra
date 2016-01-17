@@ -20,6 +20,9 @@
 
 from openerp.osv import fields, osv
 from openerp.addons.at_base import util
+
+from openerp.tools.translate import _
+
 import simplejson
 import openerp
 import uuid
@@ -27,7 +30,6 @@ import couchdb
 import hashlib
 
 import re
-from cherrypy.lib.httputil import urljoin
 
 PATTERN_REV = re.compile("^([0-9]+)-(.*)$")
 
@@ -323,6 +325,11 @@ class jdoc_jdoc(osv.AbstractModel):
         #res["write_date"]=obj.write_date    
         return res
     
+    def _get_uuid(self, data):
+        res = hashlib.md5()
+        res.update(simplejson.dumps(data))
+        return res.hexdigest()
+    
     def jdoc_sync(self, cr, uid, data,  context=None):
         """
         jdoc_sync
@@ -398,21 +405,6 @@ class jdoc_jdoc(osv.AbstractModel):
         if view_name:
             view = getattr(model_obj,view_name)(cr, uid, context=context)
   
-        # build sync domain and checksum
-        syncdomain = {
-            "model" : model            
-        } 
-        if search_domain:
-            syncdomain["domain"] = search_domain
-        if view_name:
-            syncdomain["view"] = view_name
-        if options:
-            syncdomain["options"] = options
-                
-        domain_uuid = hashlib.md5()
-        domain_uuid.update(simplejson.dumps(syncdomain))
-        domain_uuid = domain_uuid.hexdigest()
-        
         # accelerate and use set 
         # instead of lists after
         # create domain_uuid
@@ -421,18 +413,19 @@ class jdoc_jdoc(osv.AbstractModel):
         if compositions:
             model_options["compositions"] = set(compositions)
         
-        
-        # get last sync attribs
+        # get last sync attribs        
         lastsync = data.get("lastsync")
-        last_date = lastsync.get("date",None)
-        seq = lastsync.get("seq",0)
-        lastsync_lastchange = lastsync.get("lastchange",None)
-                   
-        # if domain not equal reset change date
-        if not domain_uuid or domain_uuid != lastsync.get("domain_uuid"):
-            last_date = None   
-            lastsync_lastchange = None    
-            
+        
+        # init last sync default
+        last_date = None
+        seq = 0
+        lastsync_lastchange = None
+        
+        if lastsync:        
+            last_date = lastsync.get("date", None)
+            seq = lastsync.get("seq", 0)
+            lastsync_lastchange = lastsync.get("lastchange", None)
+              
         # create last change if not exist
         if lastsync_lastchange is None:
             lastsync_lastchange = {}
@@ -650,8 +643,7 @@ class jdoc_jdoc(osv.AbstractModel):
         
         lastsync =  {
                        "date" : last_date,
-                       "seq" : seq,
-                       "domain_uuid" : domain_uuid                     
+                       "seq" : seq                  
                     }
     
         if lastchange:
@@ -893,15 +885,26 @@ class jdoc_jdoc(osv.AbstractModel):
             db = server.create(client_db)
         else:
             db = server[client_db]
-
-        
+            
+        # UPDATE/DB SECURITY
+        permissions = db.get("_security") or {"_id" : "_security" }
+        members = permissions.get("members")
+        names = members and members.get("names")
+        if not names or not client_uuid in names:
+            permissions["admins"] = {}
+            permissions["members"] = {"names" : [client_uuid] }
+            db.put(permissions) 
+            db.commit()
+                    
         # SYNC DB
         models = config.get("models")
-        for model_config in models:           
+        for model_config in models:
+            config_uuid = "_local/lastsync_%s" % (self._get_uuid(model_config),)
+                       
             # get lastsync
-            lastsync = db.get("_local/lastsync")
+            lastsync = db.get(config_uuid)
             if not lastsync:
-                lastsync = {"_id" : "_local/lastsync"}
+                lastsync = { "_id" : config_uuid }
                             
             # check if filter exist
             model_obj = self.pool[model_config["model"]]
@@ -937,11 +940,22 @@ class jdoc_jdoc(osv.AbstractModel):
             
             # update documents
             changed_revs = set()
-            result = sync_res["changes"]
-            if result:
-                for update_res in db.update(result):
-                    if update_res[0]:
-                        changed_revs.add((update_res[1], update_res[2]))
+            changes = sync_res["changes"]
+            
+            # determine revision
+            for change in changes:
+                uuid = change.get("_id")
+                if uuid:
+                    doc = db.get(uuid)
+                    if doc:
+                        change["_rev"] = doc["_rev"]
+                
+            # update
+            for update_res in db.update(changes):
+                if update_res[0]:
+                    changed_revs.add((update_res[1], update_res[2]))
+                else:
+                    raise osv.except_osv(_("Error"), _("Sync Error: %s") % update_res[2])
                         
             # second sync            
             if changed_revs:           
@@ -975,7 +989,7 @@ class jdoc_jdoc(osv.AbstractModel):
             cr.commit() 
             # update lastsync
             db.save(lastsync)
-            
+            db.commit()
                         
         return {
             "url" : couchdb_public_url,

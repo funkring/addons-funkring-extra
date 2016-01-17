@@ -23,7 +23,10 @@ from openerp.osv import fields, osv
 class res_users(osv.Model):
     _inherit = "res.users"
     _columns = {
-        "pin" : fields.char("PIN", help="User PIN for fast authentication on Fpos hardware")
+        "pin" : fields.char("PIN", help="User PIN for fast authentication on Fpos hardware"),
+        "pos_role" : fields.selection([("user","User"),
+                                       ("manager","Manager"),
+                                       ("admin","Administrator")], "POS Role")
     }
     _sql_constraints = [
         ("pin_uniq", "unique (pin)","PIN have to be unique for User")
