@@ -34,7 +34,8 @@ oerp.at Fpos
     "category" : "Point of Sale",
     "depends" : ["at_account",
                  "jdoc",
-                 "point_of_sale"
+                 "point_of_sale",
+                 "at_sale"
                 ],
     "data" : ["report/invoice_report.xml",
               "view/pos_config_view.xml",
