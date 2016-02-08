@@ -1,0 +1,63 @@
+<openerp>
+  <data>
+    <!-- group_pos_manager,group_pos_user -->
+    
+    <record id="group_fpos" model="res.groups">
+      <field name="name">Fpos Device</field>
+      <field name="category_id" ref="base.module_category_point_of_sale"/>
+      <field name="implied_ids" eval="[(4, ref('point_of_sale.group_pos_manager'))]"/>
+    </record>
+    
+    <record id="access_fpos_order_group_fpos" model="ir.model.access">
+      <field name="name">fpos_order/pos_manager</field>
+      <field name="model_id" ref="model_fpos_order"/>
+      <field name="group_id" ref="group_fpos"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    <record id="access_fpos_order_line_group_fpos" model="ir.model.access">
+      <field name="name">fpos_order_line/pos_manager</field>
+      <field name="model_id" ref="model_fpos_order_line"/>
+      <field name="group_id" ref="group_fpos"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    <record id="access_fpos_order_tax_group_fpos" model="ir.model.access">
+      <field name="name">fpos_tax/pos_manager</field>
+      <field name="model_id" ref="model_fpos_order_tax"/>
+      <field name="group_id" ref="group_fpos"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    <record id="access_fpos_order_payment_group_fpos" model="ir.model.access">
+      <field name="name">fpos_payment/pos_manager</field>
+      <field name="model_id" ref="model_fpos_order_payment"/>
+      <field name="group_id" ref="group_fpos"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    <record id="rule_fpos_order" model="ir.rule">
+      <field name="name">fpos/order</field>
+      <field name="model_id" ref="model_fpos_order"/>
+      <field name="domain_force">[('fpos_user_id','=',user.id)]</field>
+      <field name="groups" eval="[(4,ref('group_fpos'))]"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_write" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+    </record>
+    
+  </data>
+</openerp>

@@ -27,18 +27,10 @@ class product_product(osv.Model):
     def _fpos_product_get(self, cr, uid, obj, *args, **kwarg):
         mapping_obj = self.pool["res.mapping"]
         
-        # read tax
-        tax_name = ""
-        tax_incl = False
-        tax_amount = 0.0
-        tax_uuid = None
-        
+        # read tax        
+        taxes_id = []
         for tax in obj.taxes_id:
-            tax_name = tax.name or ""
-            tax_incl = tax.price_include
-            tax_amount = tax.amount or 0.0
-            tax_uuid = mapping_obj._get_uuid(cr, uid, tax)
-            break
+            taxes_id.append(mapping_obj._get_uuid(cr, uid, tax));
         
         # build product
         return {
@@ -49,20 +41,15 @@ class product_product(osv.Model):
             "description_sale" : obj.description_sale,
             "price" : obj.lst_price or 0.0,
             "brutto_price" : obj.brutto_price,
-            "uom" : obj.uom_id.name,
-            "uom_code" : obj.uom_id.code,
+            "uom_id" : mapping_obj._get_uuid(cr, uid, obj.uom_id), 
             "code" : obj.code,
             "ean13" : obj.ean13,
-            "image" : obj.image_small,
-            "has_image" : obj.image_small and True or False,
+            "image_small" : obj.image_small,
             "pos_categ_id" : mapping_obj._get_uuid(cr, uid, obj.pos_categ_id),
             "income_pdt" : obj.income_pdt,
             "expense_pdt" : obj.expense_pdt,
             "to_weight" : obj.to_weight,
-            "tax_name" : tax_name,
-            "tax_amount" : tax_amount, 
-            "tax_incl" : tax_incl,
-            "tax_uuid" : tax_uuid
+            "taxes_id" : taxes_id
         }
     
     def _fpos_product_put(self, cr, uid, obj, *args, **kwarg):

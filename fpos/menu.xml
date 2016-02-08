@@ -1,0 +1,13 @@
+<openerp>
+  <data>
+    
+    <menuitem name="Fpos"
+       id="menu_fpos"
+       parent="point_of_sale.menu_point_root" 
+       groups="base.group_system" 
+       sequence="10"/>
+
+        
+    
+  </data>
+</openerp>

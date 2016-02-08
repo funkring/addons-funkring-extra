@@ -37,9 +37,12 @@ oerp.at Fpos
                  "point_of_sale",
                  "at_sale"
                 ],
-    "data" : ["report/invoice_report.xml",
+    "data" : ["security.xml",
+              "menu.xml",
+              "report/invoice_report.xml",
               "view/pos_config_view.xml",
-              "view/user_view.xml"
+              "view/user_view.xml",
+              "view/fpos_order_view.xml"
              ],
     "auto_install" : False,
     "installable": True

@@ -47,6 +47,9 @@ META_FIELDS = set([
 
 from openerp import SUPERUSER_ID
 
+import logging
+_logger = logging.getLogger(__name__)
+
 # Helper
 
 def isMetaField(name):
@@ -103,7 +106,7 @@ class jdoc_jdoc(osv.AbstractModel):
             "fields" : field_defs,
             "model" : model_obj._name            
         }
-
+        
         # get fields
         def getFields(model_obj, m):
             for parent in model_obj._inherits:
@@ -155,58 +158,68 @@ class jdoc_jdoc(osv.AbstractModel):
             if is_computed:
                 field_def["hidden"]=True
             
+            sub_ltype_hint = None
             
             # get sub ltype    
-            sub_ltype_hint = getAttrOrNone(field_obj,"composition") and "c" or "r"
             if field_relation:
                 sub_model_obj = self.pool[field_relation]
-                if getAttrOrNone(sub_model_obj,'_composition'):
+                composition = getAttrOrNone(sub_model_obj,'_composition') 
+                if composition is True:
                     sub_ltype_hint = "c"
+                if composition is False:
+                    sub_ltype_hint = "r"
                  
 
             # determine sub list type
-            if getAttrOrNone(field_obj,"composition"):
+            composition = getAttrOrNone(field_obj,"composition")
+            if composition is True:
                 sub_ltype_hint = "c"
+            if composition is False:
+                sub_ltype_hint = "r"
+                
             sub_ltype = sub_ltype_hint or "r"
                 
             # evaluate type
             if field_type == "many2one":
                 field_def["dtype"]=sub_ltype
-                if field_relation and not is_computed:
-                    rel_fields = all_fields
-                    if not field_relation == model_obj._name:
-                        rel_fields = getFields(self.pool.get(field_relation), {})
-                    for rel_field in rel_fields.itervalues():
-                        if rel_field._obj == model_obj._name and rel_field._type == "one2many":
-                            if rel_field._fields_id == field:
-                                field_def["hidden"]=True
+# DISABLED auto DETECTION                
+#                 if field_relation and not is_computed:
+#                     rel_fields = all_fields
+#                     if not field_relation == model_obj._name:
+#                         rel_fields = getFields(self.pool.get(field_relation), {})
+#                     for rel_field in rel_fields.itervalues():
+#                         if rel_field._obj == model_obj._name and rel_field._type == "one2many":
+#                             if rel_field._fields_id == field:
+#                                 field_def["hidden"]=True
             elif field_type == "one2many":
-                if not sub_ltype_hint and field_relation != model_obj._name:
-                    #check recursion
-                    if recursion_set is None:
-                        recursion_set = set()
-                    recursion_set.add(model_obj._name)
-                    try:
-                        sub_ltype="c"
-                        
-                        #check recursion
-                        sub_model_obj = self.pool.get(field_relation)                        
-                        sub_model_obj._jdoc_create_def(cr, uid, add_description=False,
-                                                            recursion_set=recursion_set, 
-                                                            context=context)
-                        
-                        #check for parent relation
-                        rel_fields = getFields(self.pool.get(field_relation))
-                        for rel_field in rel_fields.values():
-                            if rel_field._type == "one2many" and not isComputed(rel_field) and rel_field._obj == field_relation:
-                                sub_ltype="r"
-                                break
-                         
-                    except DefRecursionException:
-                        sub_ltype="r"
-                    finally:
-                        recursion_set.remove(model_obj._name)
-
+# DISABLED auto DETECTION
+#                 if not sub_ltype_hint and field_relation != model_obj._name:
+#                     #check recursion
+#                     if recursion_set is None:
+#                         recursion_set = set()
+#                     recursion_set.add(model_obj._name)
+#                     try:
+#                         sub_ltype="c"
+#                         
+#                         #check recursion
+#                         sub_model_obj = self.pool.get(field_relation)                        
+#                         self._jdoc_create_def(cr, uid, sub_model_obj,
+#                                                         recursion_set=recursion_set, 
+#                                                         context=context)
+#                         
+#                         #check for parent relation
+#                         rel_fields = getFields(self.pool.get(field_relation))
+#                         for rel_field in rel_fields.values():
+#                             if rel_field._type == "one2many" and not isComputed(rel_field) and rel_field._obj == field_relation:
+#                                 sub_ltype="r"
+#                                 break
+#                          
+#                     except DefRecursionException:
+#                         sub_ltype="r"
+#                     finally:
+#                         recursion_set.remove(model_obj._name)
+                
+                field_def["one2many"]=field_obj._fields_id
                 field_def["dtype"]="l"
                 field_def["ltype"]=sub_ltype
                 field_def["hidden"]=(sub_ltype=="r")
@@ -223,6 +236,10 @@ class jdoc_jdoc(osv.AbstractModel):
                 field_def["dtype"]="t"
             elif field_type == "boolean":
                 field_def["dtype"]="b"
+            elif field_type == "date":
+                field_def["dtype"]="d"
+            elif field_type == "datetime":
+                field_def["dtype"]="dt"
             else:
                 continue
             
@@ -330,7 +347,7 @@ class jdoc_jdoc(osv.AbstractModel):
         res.update(simplejson.dumps(data))
         return res.hexdigest()
     
-    def jdoc_sync(self, cr, uid, data,  context=None):
+    def jdoc_sync(self, cr, uid, data, context=None):
         """
         jdoc_sync
         @param changes: changeset to sync 
@@ -424,7 +441,9 @@ class jdoc_jdoc(osv.AbstractModel):
         if lastsync:        
             last_date = lastsync.get("date", None)
             seq = lastsync.get("seq", 0)
-            lastsync_lastchange = lastsync.get("lastchange", None)
+            # check for resync
+            if not data.get("resync"):
+                lastsync_lastchange = lastsync.get("lastchange", None)
               
         # create last change if not exist
         if lastsync_lastchange is None:
@@ -674,7 +693,7 @@ class jdoc_jdoc(osv.AbstractModel):
             return False
         return self._jdoc_get(cr, uid, obj, refonly=refonly, options=options, context=context)
     
-    def jdoc_put(self, cr, uid, doc, return_id=False, uuid2id_resolver=None, changed_models=None, errors=None, context=None):
+    def jdoc_put(self, cr, uid, doc, return_id=False, return_value=False, uuid2id_resolver=None, changed_models=None, errors=None, model=False, context=None):
         if not doc:
             return False
         
@@ -682,14 +701,14 @@ class jdoc_jdoc(osv.AbstractModel):
         
         obj_id = False
         obj = False
-        model = False
         res = False
 
         if not model:
             model = doc.get(META_MODEL)
             
         if not model:
-            raise osv.except_osv(_("Error"), _("Unable to determine model"))
+            _logger.warning("Unable to determine model of %s" % repr(doc))
+            return False
 
         uuid = doc.get(META_ID, False)
         if uuid:
@@ -706,20 +725,24 @@ class jdoc_jdoc(osv.AbstractModel):
             res = None
             res_uuid = None
             if value:
+                model = attribs.get("model")
+                
                 # check uuid
                 if isinstance(value, basestring):
                     res_uuid = value
-                    res = mapping_obj.get_id(cr, uid, attribs.get("model"), value)
+                    res = mapping_obj.get_id(cr, uid, model, value)
                 
                 # check reference or document
                 elif isinstance(value, dict):                                                        
                     if isReference(value):
                         # get reference
                         res_uuid = value[META_ID]
-                        res = mapping_obj.get_id(cr, uid, value.get(META_MODEL), res_uuid)                        
-                    else:
+                        if not model:
+                            model = value.get(META_MODEL)
+                        res = mapping_obj.get_id(cr, uid, model, res_uuid)                        
+                    #else:
                         # update document and get reference
-                        res = self.jdoc_put(cr, uid, value, return_id=True, changed_models=changed_models, errors=errors, context=context)
+                        #res = self.jdoc_put(cr, uid, value, return_id=True, changed_models=changed_models, errors=errors, context=context)
                         
             # if not found try uuid resolver
             if not res and res_uuid and uuid2id_resolver:
@@ -728,12 +751,13 @@ class jdoc_jdoc(osv.AbstractModel):
             return res
         
         # check for delete
-        if doc.get("_deleted"):
+        if doc.get(META_DELETE):
             try:
                 with cr.savepoint():             
                     mapping_obj.unlink_uuid(cr, uid, uuid, res_model=model, context=context)
                     obj_id = False
             except Exception as e:
+                _logger.exception(e);
                 if not errors is None:
                     errors.append({
                        "model" : model,
@@ -771,7 +795,18 @@ class jdoc_jdoc(osv.AbstractModel):
                     # handle empty value
                     if not value:
                         if dtype == "l":
-                            values[field] = [(6,0,[])]
+                            # handle one2many relation extra
+                            sub_one2many = attribs.get("one2many")
+                            sub_model = attribs.get("model")
+                            if sub_one2many and sub_model:
+                                remove_ids = self.pool[sub_model].search(cr, uid, [(sub_one2many,"=",obj_id)])
+                                if remove_ids:
+                                    values[field] = [(2,oid) for oid in remove_ids]
+                                else:
+                                    values[field] = None
+                            # handle many2many
+                            else:
+                                values[field] = [(6,0,[])]
                         else:
                             values[field] = None
                     # handle list
@@ -779,23 +814,70 @@ class jdoc_jdoc(osv.AbstractModel):
                         if not dtype == "l":
                             raise osv.except_osv(_("Error"), _("Using list for non list type"))
                         
+                        
                         sub_ids = []
+                        sub_update = []
+                        sub_model = attribs.get("model")
+                        sub_one2many = attribs.get("one2many")
+                                                
                         for list_value in value:
+                            # get values
+                            sub_values = None
+                            if ( isinstance(list_value, dict) and not isReference(list_value) ):
+                                sub_values = self.jdoc_put(cr, uid, list_value, return_value=True, model=sub_model, changed_models=changed_models, errors=errors, context=context)
+                                
+                            # get sub id
                             sub_id = get_id(list_value, attribs)
                             if sub_id:
                                 sub_ids.append(sub_id)
+                                if sub_values:
+                                    # update
+                                    sub_update.append((1,sub_id,sub_values))
+                            
+                            elif sub_values:
+                                # create new 
+                                sub_update.append((0,0,sub_values))
                                 
-                        values[field] = [(6,0,sub_ids)]                
+                            # cleanup
+                            if sub_one2many:
+                                if obj_id:
+                                    # remove unused
+                                    for oid in self.pool[sub_model].search(cr, uid, [(sub_one2many,"=",obj_id)]):
+                                        if not oid in sub_ids:
+                                            sub_update.append((2,oid))
+                            else:
+                                # otherwise link many2many
+                                sub_update.insert(0, (6,0,sub_ids))
+                        
+                        # set update                                
+                        values[field] = sub_update              
                         
                 else:
                     values[field] = value
                     
-            if values:           
-                if obj_id:
-                    model_obj.write(cr, uid, obj_id, values, context=context)
-                else:
-                    obj_id = model_obj.create(cr, uid, values, context=context)
+            if return_value:
+                return values
             
+            if values:        
+                try:
+                    with cr.savepoint():             
+                        if obj_id:
+                            model_obj.write(cr, uid, obj_id, values, context=context)
+                        else:
+                            obj_id = model_obj.create(cr, uid, values, context=context)
+                except Exception as e:
+                    _logger.exception(e);
+                    if not errors is None:
+                        errors.append({
+                           "model" : model,
+                           "id" : obj_id,
+                           "uuid" : uuid,
+                           "error" : e.message,
+                           "error_class" : e.__class__.__name__               
+                        })
+                    else:
+                        raise e
+                   
             # validate, create uuid
             # use uuid passed in values if new
             uuid = mapping_obj.get_uuid(cr, uid, model, obj_id, uuid=uuid)
@@ -820,12 +902,12 @@ class jdoc_jdoc(osv.AbstractModel):
  
     
     def jdoc_couchdb_before(self, cr, uid, config, context=None):
-        return self.jdoc_couchdb_sync(cr, uid, config, context=context)
+        return self.jdoc_couchdb_sync(cr, uid, config, config_only=True, context=context)
     
     def jdoc_couchdb_after(self, cr, uid, config, context=None):
-        return self.jdoc_couchdb_sync(cr, uid, config, context=context)
+        return True
        
-    def jdoc_couchdb_sync(self, cr, uid, config, context=None):
+    def jdoc_couchdb_sync(self, cr, uid, config, config_only=False, context=None):
         """ Sync with CouchDB
         
             @param  config: {
@@ -858,6 +940,16 @@ class jdoc_jdoc(osv.AbstractModel):
         couchdb_public_url = param_obj.get_param(cr, uid, "couchdb_public_url")
         if not couchdb_public_url:
             raise osv.except_osv(_("Error"), _("No public couchdb url defined"))
+        
+        
+        res = {
+            "url" : couchdb_public_url,
+            "db" : client_db,
+            "user" : client_uuid
+        } 
+        # CONFIG ONLY 
+        if config_only:
+            return res
         
         # READ/UPDATE USER
         server = couchdb.Server(couchdb_url)
@@ -895,107 +987,161 @@ class jdoc_jdoc(osv.AbstractModel):
             permissions["members"] = {"names" : [client_uuid] }
             db.put(permissions) 
             db.commit()
-                    
-        # SYNC DB
-        models = config.get("models")
+                 
+        
+        # BUILD SYNC CONFIG
+               
+        class SyncConfig(object):
+            def __init__(self, model_config, lastsync, resync=False):
+                self.lastsync = lastsync 
+                self.readonly = model_config.get("readonly")
+                self.config = dict(model_config)
+                self.config["lastsync"] = lastsync
+                self.config["result_format"] = "doc"
+                self.config["resync"] = resync
+                self.model = model_config["model"]
+                self.seq = lastsync.get("seq", 0)
+                self.changed_revs = set()
+                self.resetChanges()
+            
+            def resetChanges(self):
+                self.changes = []
+                self.config["changes"] = self.changes
+            
+            def updateLastSync(self, lastsync):
+                self.lastsync.update(lastsync)
+                
+            def getLastsync(self):
+                self.lastsync["seq"] = self.seq
+                return self.lastsync
+                            
+        
+        # BUILD PROFILES
+        syncConfigs = []
+        syncConfigMap = {}
+        minseq = None
+        models = config.get("models")       
+        resync = config.get("resync", False)
+         
         for model_config in models:
             config_uuid = "_local/lastsync_%s" % (self._get_uuid(model_config),)
-                       
             # get lastsync
             lastsync = db.get(config_uuid)
             if not lastsync:
                 lastsync = { "_id" : config_uuid }
-                            
-            # check if filter exist
-            model_obj = self.pool[model_config["model"]]
-            model_api  ="model_%s" % model_obj._table
-            model_api_id = "_design/%s" % model_api
-            model_doc = db.get(model_api_id)
-            if not model_doc:
-                model_doc = {
-                    "_id" : model_api_id,
-                    "filters" : {
-                        "model" : "function(doc, req) { if (doc.fdoo__ir_model == '%s') { return true; } else { return false; } }" %  model_obj._name                
-                    }
-                }
-                db.save(model_doc)
+                
             
-                          
-            # get changes
-            options = {
-              "filter" : "%s/model" % model_api,
-              "include_docs" : True,
-              "since" : lastsync.get("seq",0)
-            }           
-           
-            sync_config = dict(model_config)
-            sync_config["lastsync"] = lastsync
-            db_changeset = db.changes(**options)
-            sync_config["changes"] = db_changeset["results"]
-            sync_config["result_format"] = "doc"
-
-            # first sync 
-            sync_res = self.jdoc_sync(cr, uid, sync_config, context=context)
-            lastsync.update(sync_res["lastsync"])
+            # prepare config
+            sc = SyncConfig(model_config, lastsync, resync)
+            syncConfigs.append(sc)
+            if minseq is None:
+                minseq = sc.seq
+            else:
+                minseq = min(sc.seq, minseq)            
+        
+            syncConfigMap[sc.model] = sc
+            
+        
+        # CHECK IF THERE ARE MODELS                  
+        if minseq is None:
+            return res
+        
+        mapping_obj = self.pool.get("res.mapping")
+        
+        # validate model for change
+        def validateModel(change):
+            doc = change["doc"]
+            model = doc.get(META_MODEL)
+            if not model:
+                if doc.get(META_DELETE):
+                    model = mapping_obj._get_model(cr, uid, doc["_id"])
+                    if model:
+                        doc[META_MODEL] = model
+            return model
+        
+        # SYNC DB        
+        db_changeset = db.changes(since=minseq, include_docs=True)
+        for change in db_changeset["results"]:      
+            model = validateModel(change) 
+            if not model:
+                continue
+            
+            syncConfig = syncConfigMap.get(model)
+            if not syncConfig:
+                continue
+            
+            if syncConfig.seq >= change["seq"]:
+                continue
+            
+            # ADD CHANGE
+            if not syncConfig.readonly:
+                syncConfig.changes.append(change)
+            
+        # SYNC CHANGES
+        for sc in syncConfigs:
+            sync_res = self.jdoc_sync(cr, uid, sc.config, context=context)            
+            sc.updateLastSync(sync_res["lastsync"])
+            sc.seq = db_changeset["last_seq"]
             
             # update documents
             changed_revs = set()
-            changes = sync_res["changes"]
+            o_changes = sync_res["changes"]
             
-            # determine revision
-            for change in changes:
-                uuid = change.get("_id")
+            # determine revision, for overwrite
+            for o_change in o_changes:
+                uuid = o_change.get("_id")
                 if uuid:
                     doc = db.get(uuid)
                     if doc:
-                        change["_rev"] = doc["_rev"]
-                
-            # update
-            for update_res in db.update(changes):
+                        o_change["_rev"] = doc["_rev"]
+                        
+            # SYNC BACK CHANGES
+            for update_res in db.update(o_changes):
                 if update_res[0]:
                     changed_revs.add((update_res[1], update_res[2]))
-                else:
+                else:                    
                     raise osv.except_osv(_("Error"), _("Sync Error: %s") % update_res[2])
-                        
-            # second sync            
+            
+                
+            # FINALIZE SYNC
+            
             if changed_revs:           
-                # get changes
-                options["since"] = lastsync["seq"]
-                db_changeset = db.changes(**options)
-                
-                # filter changes
-                db_changes = []
-                for db_change in db_changeset["results"]:
-                    already_processed = False
-                    for rev_change in db_change["changes"]:
-                        if (db_change["id"], rev_change["rev"]) in changed_revs:
-                            already_processed = True
-                            break
+                # get changes                
+                sc.resetChanges()
+                # get changes again
+                db_changeset = db.changes(since=sc.seq, include_docs=True)
+                sc.seq = db_changeset["last_seq"]
+                # no sync if readonly
+                if not sc.readonly:
+                    for change in db_changeset["results"]:
+                        # check model
+                        model = validateModel(change)
+                        if not model or model != sc.model:
+                            continue
                         
-                    if not already_processed:
-                        db_changes.append(db_change)
-
-                # only sync if changes                    
-                if db_changes:
-                    sync_config["lastsync"] = lastsync                    
-                    sync_config["changes"] = db_changes
-                    sync_res = self.jdoc_sync(cr, uid, sync_config, context=context)
-                    lastsync.update(sync_res["lastsync"])
+                        # check already process
+                        already_processed = False
+                        for rev_change in change["changes"]:
+                            if (change["id"], rev_change["rev"]) in changed_revs:
+                                already_processed = True
+                                break
+                        
+                        if not already_processed:
+                            sc.changes.append(change) 
                 
-                # update seq
-                lastsync["seq"] = max(lastsync["seq"], db_changeset["last_seq"])
-                    
-            # commit
+                # check if changes exist
+                if sc.changes:
+                    sync_res = self.jdoc_sync(cr, uid, sc.sync_config, context=context)
+                    sc.updateLastSync(sync_res["lastsync"])
+                 
+            # commit            
             cr.commit() 
+            
             # update lastsync
-            db.save(lastsync)
+            db.save(sc.getLastsync())
             db.commit()
-                        
-        return {
-            "url" : couchdb_public_url,
-            "db" : client_db,
-            "user" : client_uuid
-        }
+                                  
+        return res
     
     @openerp.tools.ormcache()
     def _jdoc_def(self, cr, uid, model):

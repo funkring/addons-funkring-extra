@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="form_fpos_order" model="ir.ui.view">
+      <field name="name">fpos.form_fpos_order</field>
+      <field name="model">fpos.order</field>
+      <field name="arch" type="xml">
+        <form string="Order">
+            <header>
+                <field name="state" widget="statusbar" statusbar_visible="draft,paid,done"/>
+            </header>
+            <sheet string="Sales">
+                <group>
+                    <group>
+                        <field name="name"/>
+                        <field name="date"/>
+                        <field name="seq"/>
+                        <field name="fpos_user_id"/>
+                        <field name="user_id"/>
+                    </group>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="currency_id"/>
+                        <field name="ref"/>
+                        <field name="partner_id"/>                                               
+                    </group> 
+                </group>
+                <notebook>
+                    <page string="Lines">
+                        <field name="line_ids">
+                            <tree  editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="name"/>
+                                <field name="product_id"/>
+                                <field name="qty"/>
+                                <field name="uom_id"/>
+                                <field name="brutto_price"/>
+                                <field name="discount"/>                            
+                                <field name="tax_ids" widget="many2many_tags"/>
+                                <field name="subtotal_incl"/>                            
+                            </tree>
+                        </field>
+                        <group class="oe_subtotal_footer oe_right">
+                            <field name="amount_total" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}"/>                            
+                        </group>
+                        <group>
+                        </group>
+                    </page>
+                    <page string="Taxes">
+                        <field name="tax_ids">
+                            <tree editable="bottom" string="Taxes">
+                                <field name="name"/>
+                                <field name="amount_tax"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Payments">
+                        <field name="payment_ids">
+                            <tree string="Payments" editable="buttom"> 
+                                <field name="journal_id"/>
+                                <field name="date"/>
+                                <field name="amount"/>
+                                <field name="payment"/>
+                            </tree>
+                        </field>                     
+                    </page>
+                    <page string="Note">
+                        <field name="note"/>    
+                    </page>
+                </notebook>
+            </sheet>          
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_fpos_order" model="ir.ui.view">
+      <field name="name">fpos.tree_fpos_order</field>
+      <field name="model">fpos.order</field>
+      <field name="arch" type="xml">
+        <tree string="Orders">
+            <field name="date"/>
+            <field name="fpos_user_id"/>
+            <field name="user_id"/>        
+            <field name="name"/>
+            <field name="seq"/>
+            <field name="ref"/>
+            <field name="partner_id"/>
+            <field name="amount_tax"/>
+            <field name="amount_total"/>
+            <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_fpos_order" model="ir.ui.view">
+      <field name="name">fpos.search_fpos_order</field>
+      <field name="model">fpos.order</field>
+      <field name="arch" type="xml">
+        <search string="Order">
+            <field name="name"/>
+            <field name="ref"/>
+            <field name="fpos_user_id"/>
+            <field name="user_id"/>
+            <field name="partner_id"/>
+            <group expand="0" string="Group By...">
+                <filter name="fpos_user_id" context="{'group_by':'fpos_user_id'}"/>
+                <filter name="user_id" context="{'group_by':'user_id'}"/>
+                <filter name="partner_id" context="{'group_by':'partner_id'}"/>
+            </group>
+        </search>
+      </field>
+    </record>
+
+    <record id="action_fpos_order" model="ir.actions.act_window">
+      <field name="name">Order</field>
+      <field name="res_model">fpos.order</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_fpos_order" name="Sales" parent="menu_fpos"
+      sequence="10"
+      action="action_fpos_order"/>
+  </data>
+</openerp>

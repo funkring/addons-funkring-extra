@@ -48,7 +48,6 @@ class pos_category(osv.osv):
         }
     
     
-    
 class pos_config(osv.Model):
 
     _inherit = "pos.config"
@@ -98,55 +97,16 @@ class pos_config(osv.Model):
         return res
     
     def fpos_cur_seq(self, cr, uid, context=None):
-        cr.execute("SELECT MAX(sequence_number) FROM pos_order WHERE fpos_user_id = %s", (uid,))
+        cr.execute("SELECT MAX(seq) FROM fpos_order WHERE fpos_user_id = %s", (uid,))
         row = cr.fetchone()
         return row and row[0] or 0
     
-    def fpos_seq_check(self, cr, uid, fpos_next_seq, context=None):
+    def fpos_seq_check(self, cr, uid, fpos_seq, context=None):
         """ Is called after the end of a sync 
             Action after Sync could be done HERE            
         """
         last_seq = self.fpos_cur_seq(cr, uid, context=context)
-        fpos_last_seq = fpos_next_seq-1
-        if last_seq != fpos_last_seq:
-            raise osv.except_osv(_("Error"), _("Last sequence number differs from server!\nOn device it is %s, on server it is %s\nContact immediately your administrator!") % (last_seq, fpos_last_seq))
+        if last_seq != fpos_seq:
+            raise osv.except_osv(_("Error"), _("Last sequence number differs from server!\nOn device it is %s, on server it is %s\nContact immediately your administrator!") % (last_seq, fpos_seq))
         return True
-        
-
-class pos_order(osv.Model):
-    
-    _inherit = "pos.order"
-    _columns = {
-        "fpos_user_id" : fields.many2one("res.users", "The Fpos user account", select=True, cascade="restrict", readonly=True),
-        "send_invoice" : fields.boolean("Send Invoice")     
-    }
-    
-    def _fpos_order_get(self, cr, uid, obj, *args, **kwarg):
-        mapping_obj = self.pool["res.mapping"]
-     
-        return {
-            "_id" : mapping_obj._get_uuid(cr, uid, obj),
-            META_MODEL : obj._model._name,
-            "name" : obj.name,
-            "date_order" : obj.date_order,
-            "user_id" : mapping_obj._get_uuid(cr, uid, obj.user_id),
-            "fpos_user_id" : mapping_obj._get_uuid(cr, uid, obj.fpos_user_id),
-            "nb_print" : obj.nb_print,
-            "pos_reference" : obj.pos_reference,
-            "partner_id" : mapping_obj._get_uuid(cr, uid, obj.partner_id),
-            "sequence_number" : obj.sequence_number,
-            "state" : obj.state
-        }
-    
-    def _fpos_order_put(self, cr, uid, obj, *args, **kwarg):
-        return None
-    
-    def _fpos_order(self, cr, uid, *args, **kwargs):
-        return {
-            "get" : self._fpos_order_get,
-            "put" : self._fpos_order_put
-        }
-    
-    
-    
         
