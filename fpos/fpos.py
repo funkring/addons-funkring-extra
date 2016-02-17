@@ -75,6 +75,7 @@ class fpos_order_line(models.Model):
     qty = fields.Float("Quantity")
     subtotal_incl = fields.Float("Subtotal")
     discount = fields.Float("Discount %")
+    notice = fields.Text("Notice")
     sequence = fields.Integer("Sequence")
  
 
@@ -94,7 +95,6 @@ class fpos_payment(models.Model):
     
     order_id = fields.Many2one("fpos.order", "Order", required=True, ondelete="cascade", index=True)
     journal_id = fields.Many2one("account.journal", "Journal", required=True)
-    date = fields.Datetime("Date", required=True, index=True)
     amount = fields.Float("Amount")
     payment = fields.Float("Payment")
     

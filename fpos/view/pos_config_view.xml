@@ -8,6 +8,7 @@
       <field name="arch" type="xml">
             <field name="picking_type_id" position="before">
                 <field name="user_id" string="Fpos User"/>
+                <field name="fpos_prefix"/>
             </field>
             <group string="Receipt" position="after">
                 <group string="User" colspan="4">                  

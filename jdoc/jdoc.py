@@ -178,7 +178,7 @@ class jdoc_jdoc(osv.AbstractModel):
                 sub_ltype_hint = "r"
                 
             sub_ltype = sub_ltype_hint or "r"
-                
+
             # evaluate type
             if field_type == "many2one":
                 field_def["dtype"]=sub_ltype
@@ -297,8 +297,6 @@ class jdoc_jdoc(osv.AbstractModel):
         
         fields = definition["fields"]
         for name, attrib in fields.items():
-            if name == "required":
-                pass
             # check for hidden attribute, or not in fields
             if attrib.get("hidden") or (onlyFields and not name in onlyFields):
                 continue
@@ -947,9 +945,6 @@ class jdoc_jdoc(osv.AbstractModel):
             "db" : client_db,
             "user" : client_uuid
         } 
-        # CONFIG ONLY 
-        if config_only:
-            return res
         
         # READ/UPDATE USER
         server = couchdb.Server(couchdb_url)
@@ -987,7 +982,11 @@ class jdoc_jdoc(osv.AbstractModel):
             permissions["members"] = {"names" : [client_uuid] }
             db.put(permissions) 
             db.commit()
-                 
+        
+        # CONFIG ONLY 
+        if config_only:
+            return res
+             
         
         # BUILD SYNC CONFIG
                

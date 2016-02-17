@@ -53,6 +53,7 @@ class pos_config(osv.Model):
     _inherit = "pos.config"
     _columns = {        
         "fpos_seq" : fields.integer("Fpos Sequence", readonly=True),
+        "fpos_prefix" : fields.char("Fpos Prefix"),
         "user_id" : fields.many2one("res.users","Sync User", select=True),
         "user_ids" : fields.many2many("res.users", 
                                       "pos_config_user_rel", 
@@ -76,7 +77,7 @@ class pos_config(osv.Model):
         jdoc_options = {
             "model" : {
                 "pos.config" : {
-                    "compositions" : ["journal_ids","user_ids","company_id"]
+                    "compositions" : ["journal_ids","user_ids","company_id","sequence_id"]
                 },
                 "res.company" : {
                     "compositions" : ["currency_id"]

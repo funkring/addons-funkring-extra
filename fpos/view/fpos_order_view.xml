@@ -37,6 +37,7 @@
                                 <field name="brutto_price"/>
                                 <field name="discount"/>                            
                                 <field name="tax_ids" widget="many2many_tags"/>
+                                <field name="notice"/>
                                 <field name="subtotal_incl"/>                            
                             </tree>
                         </field>
@@ -45,28 +46,33 @@
                             <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}"/>                            
                         </group>
                         <group>
+                            <group string="Taxes">
+                                <div>
+                                    <field name="tax_ids">
+                                        <tree editable="bottom" string="Taxes">
+                                            <field name="name"/>
+                                            <field name="amount_tax"/>
+                                        </tree>
+                                    </field>                            
+                                </div>
+                            </group>
+                            <group string="Payment">
+                                <div>
+                                    <field name="payment_ids">
+                                        <tree string="Payments" editable="buttom"> 
+                                            <field name="journal_id"/>
+                                            <field name="amount"/>
+                                            <field name="payment"/>
+                                        </tree>
+                                    </field>      
+                                </div>
+                            </group>
+                            <group string="Note">
+                                <div>
+                                <field name="note"/>
+                                </div>
+                            </group>
                         </group>
-                    </page>
-                    <page string="Taxes">
-                        <field name="tax_ids">
-                            <tree editable="bottom" string="Taxes">
-                                <field name="name"/>
-                                <field name="amount_tax"/>
-                            </tree>
-                        </field>
-                    </page>
-                    <page string="Payments">
-                        <field name="payment_ids">
-                            <tree string="Payments" editable="buttom"> 
-                                <field name="journal_id"/>
-                                <field name="date"/>
-                                <field name="amount"/>
-                                <field name="payment"/>
-                            </tree>
-                        </field>                     
-                    </page>
-                    <page string="Note">
-                        <field name="note"/>    
                     </page>
                 </notebook>
             </sheet>          
