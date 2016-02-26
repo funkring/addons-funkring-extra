@@ -20,7 +20,6 @@
 
 from openerp.osv import fields, osv
 from openerp.addons.jdoc.jdoc import META_MODEL
-from openerp import SUPERUSER_ID
 
 class pos_category(osv.osv):
     _inherit = "pos.category"
@@ -110,4 +109,29 @@ class pos_config(osv.Model):
         if last_seq != fpos_seq:
             raise osv.except_osv(_("Error"), _("Last sequence number differs from server!\nOn device it is %s, on server it is %s\nContact immediately your administrator!") % (last_seq, fpos_seq))
         return True
+    
+
+class pos_order(osv.Model):
+    
+    _inherit = "pos.order"
+    
+    def reconcile_invoice(self, cr, uid, ids, context=None):
+        ids = self.search(cr, uid, [('state','=','invoiced'),('invoice_id.state','=','open'),("id","in",ids)])
+        move_line_obj = self.pool.get('account.move.line')
+        st_line_obj = self.pool.get("account.bank.statement.line")
+        
+        # check move lines
+        for order in self.browse(cr, uid, ids, context):
+            st_line_obj.confirm_statement(cr, uid, [s.id for s in order.statement_ids], context=context)
+
+        # reconcile
+        for order in self.browse(cr, uid, ids, context):
+            invoice = order.invoice_id
+            data_lines = [x.id for x in invoice.move_id.line_id if x.account_id.id == invoice.account_id.id]
+            for st_line in order.statement_ids:
+                data_lines += [x.id for x in st_line.journal_entry_id.line_id if x.account_id.id == invoice.account_id.id]
+            move_line_obj.reconcile(cr, uid, data_lines, context=context)              
+       
+    def _after_invoice(self, cr, uid, order, context=None):
+        self.reconcile_invoice(cr, uid, [order.id], context=context)
         
