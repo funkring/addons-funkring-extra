@@ -24,6 +24,7 @@ from openerp.exceptions import Warning
 class fpos_order(models.Model):
     _name = "fpos.order"
     _description = "Fpos Order"
+    _order = "date desc"
     
     name = fields.Char("Name")
     fpos_user_id = fields.Many2one("res.users", "Device", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
