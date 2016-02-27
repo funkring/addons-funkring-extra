@@ -42,7 +42,8 @@ oerp.at Fpos
               "report/invoice_report.xml",
               "view/pos_config_view.xml",
               "view/user_view.xml",
-              "view/fpos_order_view.xml"
+              "view/fpos_order_view.xml",
+              "report/session_summary_report.xml"
              ],
     "auto_install" : False,
     "installable": True

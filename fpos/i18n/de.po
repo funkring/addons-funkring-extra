@@ -1,19 +1,20 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* fpos
+# 	* fpos
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-11 15:23+0000\n"
-"PO-Revision-Date: 2016-02-11 15:23+0000\n"
-"Last-Translator: <>\n"
+"POT-Creation-Date: 2016-02-27 13:32+0000\n"
+"PO-Revision-Date: 2016-02-27 14:33+0100\n"
+"Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
+"X-Generator: Poedit 1.5.4\n"
 
 #. module: fpos
 #: selection:res.users,pos_role:0
@@ -36,25 +37,33 @@ msgid "Brutto Price"
 msgstr "Brutto Preis"
 
 #. module: fpos
+#: code:addons/fpos/report/session_summary_report.py:179
+#, python-format
+msgid "Closed"
+msgstr "Abgeschlossen"
+
+#. module: fpos
 #: field:fpos.order,company_id:0
 msgid "Company"
 msgstr "Firma"
 
 #. module: fpos
-#: field:fpos.order,create_uid:0
-#: field:fpos.order.line,create_uid:0
-#: field:fpos.order.payment,create_uid:0
-#: field:fpos.order.tax,create_uid:0
+#: field:fpos.order,create_uid:0 field:fpos.order.line,create_uid:0
+#: field:fpos.order.payment,create_uid:0 field:fpos.order.tax,create_uid:0
 msgid "Created by"
 msgstr "Erstellt von"
 
 #. module: fpos
-#: field:fpos.order,create_date:0
-#: field:fpos.order.line,create_date:0
-#: field:fpos.order.payment,create_date:0
-#: field:fpos.order.tax,create_date:0
+#: field:fpos.order,create_date:0 field:fpos.order.line,create_date:0
+#: field:fpos.order.payment,create_date:0 field:fpos.order.tax,create_date:0
 msgid "Created on"
 msgstr "Erstellt am"
+
+#. module: fpos
+#: code:addons/fpos/report/session_summary_report.py:232
+#, python-format
+msgid "Credits (%s)"
+msgstr "Einnahmen (%s)"
 
 #. module: fpos
 #: field:fpos.order,currency_id:0
@@ -87,13 +96,13 @@ msgid "Draft"
 msgstr "Entwurf"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:111
+#: code:addons/fpos/point_of_sale.py:110
 #, python-format
 msgid "Error"
 msgstr "Fehler"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:96
+#: code:addons/fpos/point_of_sale.py:95
 #, python-format
 msgid "Error!"
 msgstr "Fehler!"
@@ -154,10 +163,8 @@ msgid "Group By..."
 msgstr "Groupiert nach..."
 
 #. module: fpos
-#: field:fpos.order,id:0
-#: field:fpos.order.line,id:0
-#: field:fpos.order.payment,id:0
-#: field:fpos.order.tax,id:0
+#: field:fpos.order,id:0 field:fpos.order.line,id:0
+#: field:fpos.order.payment,id:0 field:fpos.order.tax,id:0
 msgid "ID"
 msgstr ""
 
@@ -172,34 +179,31 @@ msgid "Journal"
 msgstr ""
 
 #. module: fpos
-#: field:fpos.order,write_uid:0
-#: field:fpos.order.line,write_uid:0
-#: field:fpos.order.payment,write_uid:0
-#: field:fpos.order.tax,write_uid:0
+#: field:fpos.order,write_uid:0 field:fpos.order.line,write_uid:0
+#: field:fpos.order.payment,write_uid:0 field:fpos.order.tax,write_uid:0
 msgid "Last Updated by"
 msgstr "Zuletzt aktualisiert von"
 
 #. module: fpos
-#: field:fpos.order,write_date:0
-#: field:fpos.order.line,write_date:0
-#: field:fpos.order.payment,write_date:0
-#: field:fpos.order.tax,write_date:0
+#: field:fpos.order,write_date:0 field:fpos.order.line,write_date:0
+#: field:fpos.order.payment,write_date:0 field:fpos.order.tax,write_date:0
 msgid "Last Updated on"
 msgstr "Zuletzt aktualisiert am"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:111
+#: code:addons/fpos/point_of_sale.py:110
 #, python-format
-msgid "Last sequence number differs from server!\n"
+msgid ""
+"Last sequence number differs from server!\n"
 "On device it is %s, on server it is %s\n"
 "Contact immediately your administrator!"
-msgstr "Die letzte Sequenznummer unterscheidet sich vom server!\n"
+msgstr ""
+"Die letzte Sequenznummer unterscheidet sich vom server!\n"
 "Am Gerät ist sie %s, am Server ist sie %s\n"
 "Bitte kontaktieren sie umgehend ihren Administrator!"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order
-#: field:fpos.order,line_ids:0
+#: view:fpos.order:fpos.form_fpos_order field:fpos.order,line_ids:0
 msgid "Lines"
 msgstr "Positionen"
 
@@ -209,15 +213,13 @@ msgid "Manager"
 msgstr ""
 
 #. module: fpos
-#: field:fpos.order,name:0
-#: field:fpos.order.line,name:0
+#: field:fpos.order,name:0 field:fpos.order.line,name:0
 #: field:fpos.order.tax,name:0
 msgid "Name"
 msgstr ""
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order
-#: field:fpos.order,note:0
+#: view:fpos.order:fpos.form_fpos_order field:fpos.order,note:0
 msgid "Note"
 msgstr "Notiz"
 
@@ -227,10 +229,14 @@ msgid "Notice"
 msgstr "Notiz"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order
-#: view:fpos.order:fpos.search_fpos_order
-#: field:fpos.order.line,order_id:0
-#: field:fpos.order.payment,order_id:0
+#: code:addons/fpos/report/session_summary_report.py:179
+#, python-format
+msgid "Open"
+msgstr "Geöffnet"
+
+#. module: fpos
+#: view:fpos.order:fpos.form_fpos_order view:fpos.order:fpos.search_fpos_order
+#: field:fpos.order.line,order_id:0 field:fpos.order.payment,order_id:0
 #: field:fpos.order.tax,order_id:0
 #: model:ir.actions.act_window,name:fpos.action_fpos_order
 msgid "Order"
@@ -267,14 +273,12 @@ msgid "Partner"
 msgstr "Kunde"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order
-#: field:fpos.order.payment,payment:0
+#: view:fpos.order:fpos.form_fpos_order field:fpos.order.payment,payment:0
 msgid "Payment"
 msgstr "Zahlung"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order
-#: field:fpos.order,payment_ids:0
+#: view:fpos.order:fpos.form_fpos_order field:fpos.order,payment_ids:0
 msgid "Payments"
 msgstr "Zahlungen"
 
@@ -303,6 +307,12 @@ msgstr "Menge"
 #: view:pos.config:fpos.form_pos_config
 msgid "Receipt"
 msgstr "Quittung"
+
+#. module: fpos
+#: code:addons/fpos/report/session_summary_report.py:224
+#, python-format
+msgid "Receipts (%s)"
+msgstr "Ausgaben (%s)"
 
 #. module: fpos
 #: field:fpos.order,ref:0
@@ -351,14 +361,13 @@ msgid "Tax Amount"
 msgstr "Steuerbetrag"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order
-#: field:fpos.order,tax_ids:0
+#: view:fpos.order:fpos.form_fpos_order field:fpos.order,tax_ids:0
 #: field:fpos.order.line,tax_ids:0
 msgid "Taxes"
 msgstr "Steuern"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:96
+#: code:addons/fpos/point_of_sale.py:95
 #, python-format
 msgid "There is no default company for the current user!"
 msgstr "Es existiert keine standard Firma für den aktuellen Benutzer!"
@@ -374,8 +383,7 @@ msgid "Unit"
 msgstr "Einheit"
 
 #. module: fpos
-#: field:fpos.order,user_id:0
-#: view:pos.config:fpos.form_pos_config
+#: field:fpos.order,user_id:0 view:pos.config:fpos.form_pos_config
 #: selection:res.users,pos_role:0
 msgid "User"
 msgstr "Benutzer"
@@ -386,8 +394,7 @@ msgid "User PIN for fast authentication on Fpos hardware"
 msgstr "Benutzer PIN für Schnellanmeldung"
 
 #. module: fpos
-#: model:ir.model,name:fpos.model_res_users
-#: field:pos.config,user_ids:0
+#: model:ir.model,name:fpos.model_res_users field:pos.config,user_ids:0
 msgid "Users"
 msgstr "Benutzer"
 
@@ -395,5 +402,6 @@ msgstr "Benutzer"
 #: code:addons/fpos/fpos.py:57
 #, python-format
 msgid "You cannot delete an order which are not in draft state"
-msgstr "Es kann kein Verkauf gelöscht werden, welcher nicht mehr im Entwurfsstatus ist."
-
+msgstr ""
+"Es kann kein Verkauf gelöscht werden, welcher nicht mehr im Entwurfsstatus "
+"ist."

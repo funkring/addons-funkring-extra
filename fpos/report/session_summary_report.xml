@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+  
+    <report id="point_of_sale.action_report_pos_session_summary"
+      string="Session Summary"
+      name="point_of_sale.report_sessionsummary"
+      auto="False"
+      report_type="aeroo"
+      process_sep="True"
+      model="pos.session"
+      in_format="oo-odt"
+      out_format="oo-pdf" 
+      stylesheet="none"
+      parser="fpos/report/session_summary_report.py"
+      rml="fpos/report/session_summary_report.odt"/>
+      
+  </data>
+</openerp>
