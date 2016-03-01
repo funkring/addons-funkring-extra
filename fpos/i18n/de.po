@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-27 13:32+0000\n"
-"PO-Revision-Date: 2016-02-27 14:33+0100\n"
+"POT-Creation-Date: 2016-02-28 21:50+0000\n"
+"PO-Revision-Date: 2016-02-28 22:51+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -32,20 +32,29 @@ msgid "Amount"
 msgstr "Betrag"
 
 #. module: fpos
+#: selection:fpos.order.line,tag:0
+msgid "Balance"
+msgstr "Kassenstand"
+
+#. module: fpos
 #: field:fpos.order.line,brutto_price:0
 msgid "Brutto Price"
 msgstr "Brutto Preis"
 
 #. module: fpos
-#: code:addons/fpos/report/session_summary_report.py:179
-#, python-format
-msgid "Closed"
-msgstr "Abgeschlossen"
+#: field:fpos.order,cpos:0
+msgid "Cash Position"
+msgstr "Kassenstand"
 
 #. module: fpos
 #: field:fpos.order,company_id:0
 msgid "Company"
 msgstr "Firma"
+
+#. module: fpos
+#: selection:fpos.order.line,tag:0
+msgid "Counter"
+msgstr "Zähler"
 
 #. module: fpos
 #: field:fpos.order,create_uid:0 field:fpos.order.line,create_uid:0
@@ -60,7 +69,7 @@ msgid "Created on"
 msgstr "Erstellt am"
 
 #. module: fpos
-#: code:addons/fpos/report/session_summary_report.py:232
+#: code:addons/fpos/report/session_summary_report.py:234
 #, python-format
 msgid "Credits (%s)"
 msgstr "Einnahmen (%s)"
@@ -96,13 +105,7 @@ msgid "Draft"
 msgstr "Entwurf"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:110
-#, python-format
-msgid "Error"
-msgstr "Fehler"
-
-#. module: fpos
-#: code:addons/fpos/point_of_sale.py:95
+#: code:addons/fpos/point_of_sale.py:111
 #, python-format
 msgid "Error!"
 msgstr "Fehler!"
@@ -191,18 +194,6 @@ msgid "Last Updated on"
 msgstr "Zuletzt aktualisiert am"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:110
-#, python-format
-msgid ""
-"Last sequence number differs from server!\n"
-"On device it is %s, on server it is %s\n"
-"Contact immediately your administrator!"
-msgstr ""
-"Die letzte Sequenznummer unterscheidet sich vom server!\n"
-"Am Gerät ist sie %s, am Server ist sie %s\n"
-"Bitte kontaktieren sie umgehend ihren Administrator!"
-
-#. module: fpos
 #: view:fpos.order:fpos.form_fpos_order field:fpos.order,line_ids:0
 msgid "Lines"
 msgstr "Positionen"
@@ -229,7 +220,7 @@ msgid "Notice"
 msgstr "Notiz"
 
 #. module: fpos
-#: code:addons/fpos/report/session_summary_report.py:179
+#: code:addons/fpos/report/session_summary_report.py:175
 #, python-format
 msgid "Open"
 msgstr "Geöffnet"
@@ -246,6 +237,11 @@ msgstr "Verkauf"
 #: view:fpos.order:fpos.tree_fpos_order
 msgid "Orders"
 msgstr "Verkäufe"
+
+#. module: fpos
+#: selection:fpos.order.line,tag:0
+msgid "Other"
+msgstr "Sonstige"
 
 #. module: fpos
 #: field:res.users,pin:0
@@ -304,12 +300,17 @@ msgid "Quantity"
 msgstr "Menge"
 
 #. module: fpos
+#: selection:fpos.order.line,tag:0
+msgid "Real"
+msgstr "IST-Stand"
+
+#. module: fpos
 #: view:pos.config:fpos.form_pos_config
 msgid "Receipt"
 msgstr "Quittung"
 
 #. module: fpos
-#: code:addons/fpos/report/session_summary_report.py:224
+#: code:addons/fpos/report/session_summary_report.py:226
 #, python-format
 msgid "Receipts (%s)"
 msgstr "Ausgaben (%s)"
@@ -336,7 +337,8 @@ msgid "Sequence"
 msgstr "Sequenz"
 
 #. module: fpos
-#: field:fpos.order,state:0
+#: field:fpos.order,state:0 selection:fpos.order,tag:0
+#: selection:fpos.order.line,tag:0
 msgid "Status"
 msgstr ""
 
@@ -349,6 +351,11 @@ msgstr "Zwischensumme"
 #: field:pos.config,user_id:0
 msgid "Sync User"
 msgstr "Fpos Benutzer"
+
+#. module: fpos
+#: field:fpos.order,tag:0 field:fpos.order.line,tag:0
+msgid "Tag"
+msgstr ""
 
 #. module: fpos
 #: field:fpos.order.tax,amount_tax:0
@@ -367,7 +374,7 @@ msgid "Taxes"
 msgstr "Steuern"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:95
+#: code:addons/fpos/point_of_sale.py:111
 #, python-format
 msgid "There is no default company for the current user!"
 msgstr "Es existiert keine standard Firma für den aktuellen Benutzer!"
@@ -376,6 +383,11 @@ msgstr "Es existiert keine standard Firma für den aktuellen Benutzer!"
 #: field:fpos.order,amount_total:0
 msgid "Total"
 msgstr "Gesamt"
+
+#. module: fpos
+#: field:fpos.order,turnover:0
+msgid "Turnover Count"
+msgstr "Umsatzzähler"
 
 #. module: fpos
 #: field:fpos.order.line,uom_id:0
@@ -399,7 +411,7 @@ msgid "Users"
 msgstr "Benutzer"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:57
+#: code:addons/fpos/fpos.py:61
 #, python-format
 msgid "You cannot delete an order which are not in draft state"
 msgstr ""

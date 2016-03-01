@@ -84,9 +84,25 @@ class pos_config(osv.Model):
             }
         }
             
-        # add last seq    
+        # query config
         res = jdoc_obj.jdoc_by_id(cr, uid, "pos.config", profile_id, options=jdoc_options, context=context)
-        res["last_seq"] = self.fpos_cur_seq(cr, uid, context=context)
+        
+        # get counting values
+        fpos_order_obj = self.pool.get("fpos.order")
+        last_order_values = fpos_order_obj.search_read(cr, uid, 
+                                    [("fpos_user_id","=",uid),("state","!=","draft")], 
+                                    ["seq", "turnover", "cpos"], 
+                                    order="seq desc", limit=1)
+        
+        if last_order_values:
+            last_order_values = last_order_values[0]
+            res["last_seq"] = last_order_values["seq"]
+            res["last_turnover"] = last_order_values["turnover"]
+            res["last_cpos"] = last_order_values["cpos"]
+        else:
+            res["last_seq"] = 0.0
+            res["last_turnover"] = 0.0
+            res["last_cpos"] = 0.0
 
         # add company        
         user_obj = self.pool["res.users"]
@@ -94,21 +110,8 @@ class pos_config(osv.Model):
         if not company_id:
             raise osv.except_osv(_('Error!'), _('There is no default company for the current user!'))
         
+        # finished
         return res
-    
-    def fpos_cur_seq(self, cr, uid, context=None):
-        cr.execute("SELECT MAX(seq) FROM fpos_order WHERE fpos_user_id = %s", (uid,))
-        row = cr.fetchone()
-        return row and row[0] or 0
-    
-    def fpos_seq_check(self, cr, uid, fpos_seq, context=None):
-        """ Is called after the end of a sync 
-            Action after Sync could be done HERE            
-        """
-        last_seq = self.fpos_cur_seq(cr, uid, context=context)
-        if last_seq != fpos_seq:
-            raise osv.except_osv(_("Error"), _("Last sequence number differs from server!\nOn device it is %s, on server it is %s\nContact immediately your administrator!") % (last_seq, fpos_seq))
-        return True
     
 
 class pos_order(osv.Model):

@@ -1130,7 +1130,7 @@ class jdoc_jdoc(osv.AbstractModel):
                 
                 # check if changes exist
                 if sc.changes:
-                    sync_res = self.jdoc_sync(cr, uid, sc.sync_config, context=context)
+                    sync_res = self.jdoc_sync(cr, uid, sc.config, context=context)
                     sc.updateLastSync(sync_res["lastsync"])
                  
             # commit            

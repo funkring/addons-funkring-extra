@@ -27,11 +27,14 @@ class fpos_order(models.Model):
     _order = "date desc"
     
     name = fields.Char("Name")
+    tag = fields.Selection([("s","Status")], string="Tag", readonly=True, states={'draft': [('readonly', False)]}, index=True)    
     fpos_user_id = fields.Many2one("res.users", "Device", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
     user_id = fields.Many2one("res.users", "User", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
     partner_id = fields.Many2one("res.partner","Partner", readonly=True, states={'draft': [('readonly', False)]}, index=True)
     date = fields.Datetime("Date", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
     seq = fields.Integer("Internal Sequence", readonly=True, index=True)
+    cpos = fields.Float("Cash Position", readonly=True)
+    turnover = fields.Float("Turnover Count", readonly=True)
     ref = fields.Char("Reference", readonly=True, states={'draft': [('readonly', False)]})
     tax_ids = fields.One2many("fpos.order.tax", "order_id", "Taxes", readonly=True, states={'draft': [('readonly', False)]}, composition=True)
     payment_ids = fields.One2many("fpos.order.payment","order_id", "Payments", readonly=True, states={'draft': [('readonly', False)]}, composition=True)
@@ -61,7 +64,7 @@ class fpos_order(models.Model):
     @api.model
     def create(self, vals):
         return super(fpos_order, self).create(vals)
-        
+    
 
 class fpos_order_line(models.Model):
     _name = "fpos.order.line"
@@ -70,7 +73,7 @@ class fpos_order_line(models.Model):
     order_id = fields.Many2one("fpos.order", "Order", required=True, ondelete="cascade", index=True)
     name = fields.Char("Name")
     product_id = fields.Many2one("product.product", "Product", index=True)
-    uom_id = fields.Many2one("product.uom", "Unit", required=True)
+    uom_id = fields.Many2one("product.uom", "Unit")
     tax_ids = fields.Many2many("account.tax", "fpos_line_tax_rel", "line_id", "tax_id", "Taxes")
     brutto_price = fields.Float("Brutto Price")
     qty = fields.Float("Quantity")
@@ -78,6 +81,13 @@ class fpos_order_line(models.Model):
     discount = fields.Float("Discount %")
     notice = fields.Text("Notice")
     sequence = fields.Integer("Sequence")
+    tag = fields.Selection([("b","Balance"),
+                            ("r","Real"),
+                            ("c","Counter"),
+                            ("s","Status"),
+                            ("o","Other")],
+                            string="Tag",
+                            index=True)
  
 
 class fpos_tax(models.Model):
