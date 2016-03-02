@@ -52,7 +52,7 @@ class fpos_order(models.Model):
     
     currency_id = fields.Many2one("res.currency", "Currency", related="company_id.currency_id", store=True, readonly=True)
     
-    line_ids = fields.One2many("fpos.order.line", "order_id", "Lines", readonly=True, states={'draft': [('readonly', False)]}, composition=False)
+    line_ids = fields.One2many("fpos.order.line", "order_id", "Lines", readonly=True, states={'draft': [('readonly', False)]}, composition=True)
     
     @api.multi
     def unlink(self):
