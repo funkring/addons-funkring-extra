@@ -85,7 +85,8 @@ class fpos_order_line(models.Model):
                             ("r","Real"),
                             ("c","Counter"),
                             ("s","Status"),
-                            ("o","Other")],
+                            ("o","Expense"),
+                            ("i","Income")],
                             string="Tag",
                             index=True)
  
