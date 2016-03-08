@@ -12,7 +12,17 @@
          </field>
       </field>
     </record>
-
+       
+    <record id="tree_product_template" model="ir.ui.view">
+      <field name="name">fpos.tree_product_template</field>
+      <field name="model">product.template</field>
+      <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="categ_id" position="after">
+                <field name="pos_categ_id"/>
+            </field>      
+        </field>
+    </record>
     
-  </data>
+   </data>
 </openerp>

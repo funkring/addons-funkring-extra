@@ -32,7 +32,8 @@ oerp.at Fpos
     "version" : "1.0",
     "author" :  "funkring.net",
     "category" : "Point of Sale",
-    "depends" : ["at_account",
+    "depends" : ["at_product",
+                 "at_account",
                  "jdoc",
                  "point_of_sale",
                  "at_sale"
