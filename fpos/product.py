@@ -21,9 +21,21 @@
 from openerp.osv import fields, osv
 from openerp.addons.jdoc.jdoc import META_MODEL
 
+class product_template(osv.Model):
+    _inherit = "product.template"    
+    _columns = {
+        "sequence" : fields.integer("Sequence"),
+        "pos_name" : fields.char("Point of Sale Name")
+    }
+    _defaults = {
+        "sequence" : 10
+    }
+    _order = "sequence, name"
+      
+
 class product_product(osv.Model):
     _inherit = "product.product"
-    
+        
     def _fpos_product_get(self, cr, uid, obj, *args, **kwarg):
         mapping_obj = self.pool["res.mapping"]
         
@@ -37,6 +49,7 @@ class product_product(osv.Model):
             "_id" : mapping_obj._get_uuid(cr, uid, obj),
             META_MODEL : obj._model._name,
             "name" : obj.name,
+            "pos_name" : obj.pos_name or obj.name,
             "description" : obj.description,
             "description_sale" : obj.description_sale,
             "price" : obj.lst_price or 0.0,
@@ -49,7 +62,8 @@ class product_product(osv.Model):
             "income_pdt" : obj.income_pdt,
             "expense_pdt" : obj.expense_pdt,
             "to_weight" : obj.to_weight,
-            "taxes_id" : taxes_id
+            "taxes_id" : taxes_id,
+            "sequence" : obj.sequence
         }
     
     def _fpos_product_put(self, cr, uid, obj, *args, **kwarg):

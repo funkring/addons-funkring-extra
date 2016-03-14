@@ -53,6 +53,7 @@ class pos_config(osv.Model):
     _columns = {        
         "fpos_seq" : fields.integer("Fpos Sequence", readonly=True),
         "fpos_prefix" : fields.char("Fpos Prefix"),
+        "iface_nogroup" : fields.boolean("No Grouping", help="If a product is selected twice a new pos line was created"),
         "user_id" : fields.many2one("res.users","Sync User", select=True),
         "user_ids" : fields.many2many("res.users", 
                                       "pos_config_user_rel", 

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-02 10:02+0000\n"
-"PO-Revision-Date: 2016-03-02 11:03+0100\n"
+"POT-Creation-Date: 2016-03-14 06:09+0000\n"
+"PO-Revision-Date: 2016-03-14 07:13+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -69,12 +69,6 @@ msgid "Created on"
 msgstr "Erstellt am"
 
 #. module: fpos
-#: code:addons/fpos/report/session_summary_report.py:234
-#, python-format
-msgid "Credits (%s)"
-msgstr "Einnahmen (%s)"
-
-#. module: fpos
 #: field:fpos.order,currency_id:0
 msgid "Currency"
 msgstr "Währung"
@@ -105,7 +99,7 @@ msgid "Draft"
 msgstr "Entwurf"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:111
+#: code:addons/fpos/point_of_sale.py:112
 #, python-format
 msgid "Error!"
 msgstr "Fehler!"
@@ -168,13 +162,20 @@ msgstr "Fpos Benutzer kann nur einer Kasse zugewiesen werden"
 #. module: fpos
 #: view:fpos.order:fpos.search_fpos_order
 msgid "Group By..."
-msgstr "Groupiert nach..."
+msgstr "Gruppiert nach..."
 
 #. module: fpos
 #: field:fpos.order,id:0 field:fpos.order.line,id:0
 #: field:fpos.order.payment,id:0 field:fpos.order.tax,id:0
 msgid "ID"
 msgstr ""
+
+#. module: fpos
+#: help:pos.config,iface_nogroup:0
+msgid "If a product is selected twice a new pos line was created"
+msgstr ""
+"Wenn ein Produkt mehrmals gewählt wird, wird jeweils eine Verkaufszeile "
+"erstellt."
 
 #. module: fpos
 #: selection:fpos.order.line,tag:0
@@ -220,6 +221,17 @@ msgid "Name"
 msgstr ""
 
 #. module: fpos
+#: field:pos.config,iface_nogroup:0
+msgid "No Grouping"
+msgstr "Keine Gruppierung"
+
+#. module: fpos
+#: code:addons/fpos/report/session_summary_report.py:117
+#, python-format
+msgid "No Tax"
+msgstr ""
+
+#. module: fpos
 #: view:fpos.order:fpos.form_fpos_order field:fpos.order,note:0
 msgid "Note"
 msgstr "Notiz"
@@ -230,7 +242,7 @@ msgid "Notice"
 msgstr "Notiz"
 
 #. module: fpos
-#: code:addons/fpos/report/session_summary_report.py:175
+#: code:addons/fpos/report/session_summary_report.py:171
 #, python-format
 msgid "Open"
 msgstr "Geöffnet"
@@ -295,6 +307,11 @@ msgid "Product"
 msgstr "Produkt"
 
 #. module: fpos
+#: model:ir.model,name:fpos.model_product_template
+msgid "Product Template"
+msgstr "Produktvorlage"
+
+#. module: fpos
 #: model:ir.model,name:fpos.model_pos_category
 msgid "Public Category"
 msgstr "Öffentliche Kategorie"
@@ -315,12 +332,6 @@ msgid "Receipt"
 msgstr "Quittung"
 
 #. module: fpos
-#: code:addons/fpos/report/session_summary_report.py:226
-#, python-format
-msgid "Receipts (%s)"
-msgstr "Ausgaben (%s)"
-
-#. module: fpos
 #: field:fpos.order,ref:0
 msgid "Reference"
 msgstr "Belegreferenz"
@@ -337,7 +348,7 @@ msgid "Send Invoice"
 msgstr "Sende Rechnung"
 
 #. module: fpos
-#: field:fpos.order.line,sequence:0
+#: field:fpos.order.line,sequence:0 field:product.template,sequence:0
 msgid "Sequence"
 msgstr "Sequenz"
 
@@ -379,7 +390,7 @@ msgid "Taxes"
 msgstr "Steuern"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:111
+#: code:addons/fpos/point_of_sale.py:112
 #, python-format
 msgid "There is no default company for the current user!"
 msgstr "Es existiert keine standard Firma für den aktuellen Benutzer!"

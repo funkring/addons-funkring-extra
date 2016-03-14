@@ -6,6 +6,9 @@
       <field name="model">pos.config</field>
       <field name="inherit_id" ref="point_of_sale.view_pos_config_form"/>
       <field name="arch" type="xml">
+            <field name="iface_big_scrollbars" position="after">
+                <field name="iface_nogroup"/>
+            </field>
             <field name="picking_type_id" position="before">
                 <field name="user_id" string="Fpos User"/>
                 <field name="fpos_prefix"/>
