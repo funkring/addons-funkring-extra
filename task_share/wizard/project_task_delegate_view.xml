@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+ <data>
+    
+    <record id="form_project_task_delegate" model="ir.ui.view">
+      <field name="name">task_part.form_project_task_delegate</field>
+      <field name="model">project.task.delegate</field>
+      <field name="inherit_id" ref="project.view_project_task_delegate"/>
+      <field name="arch" type="xml">
+        <field name="planned_hours" position="replace">
+            <field name="planned_hours" on_change="onchange_share(share, planned_hours, context)"/>
+            <field name="share" on_change="onchange_share(share, planned_hours, context)"/>
+        </field>        
+      </field>      
+    </record>
+    
+  </data>
+</openerp>

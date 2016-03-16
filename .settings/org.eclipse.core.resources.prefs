@@ -28,4 +28,7 @@ encoding//price_table/price_table.py=utf-8
 encoding//product_energy/__openerp__.py=utf-8
 encoding//product_energy/product.py=utf-8
 encoding//project_html/__openerp__.py=utf-8
+encoding//task_share/__openerp__.py=utf-8
+encoding//task_share/project.py=utf-8
+encoding//task_share/wizard/project_task_delegate.py=utf-8
 encoding//web_tree_image/__openerp__.py=utf-8
