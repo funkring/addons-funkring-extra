@@ -37,6 +37,7 @@
                                 <field name="tag"/>                          
                                 <field name="product_id"/>
                                 <field name="qty"/>
+                                <field name="tara"/>
                                 <field name="uom_id"/>
                                 <field name="brutto_price"/>
                                 <field name="discount"/>                            
@@ -55,7 +56,8 @@
                                     <field name="tax_ids">
                                         <tree editable="bottom" string="Taxes">
                                             <field name="name"/>
-                                            <field name="amount_tax"/>
+                                            <field name="amount_tax" sum="Tax"/>
+                                            <field name="amount_netto" sum="Netto"/>
                                         </tree>
                                     </field>                            
                                 </div>

@@ -77,6 +77,7 @@ class fpos_order_line(models.Model):
     tax_ids = fields.Many2many("account.tax", "fpos_line_tax_rel", "line_id", "tax_id", "Taxes")
     brutto_price = fields.Float("Brutto Price")
     qty = fields.Float("Quantity")
+    tara = fields.Float("Tara")
     subtotal_incl = fields.Float("Subtotal")
     discount = fields.Float("Discount %")
     notice = fields.Text("Notice")
@@ -98,6 +99,7 @@ class fpos_tax(models.Model):
     order_id = fields.Many2one("fpos.order", "Order", required=True, ondelete="cascade", index=True)
     name = fields.Char("Name")
     amount_tax = fields.Float("Tax")
+    amount_netto = fields.Float("Netto")
     
     
 class fpos_payment(models.Model):
