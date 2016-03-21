@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-14 06:09+0000\n"
-"PO-Revision-Date: 2016-03-14 07:13+0100\n"
+"POT-Creation-Date: 2016-03-21 19:49+0000\n"
+"PO-Revision-Date: 2016-03-21 20:49+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -162,7 +162,7 @@ msgstr "Fpos Benutzer kann nur einer Kasse zugewiesen werden"
 #. module: fpos
 #: view:fpos.order:fpos.search_fpos_order
 msgid "Group By..."
-msgstr "Gruppiert nach..."
+msgstr "Groupiert nach..."
 
 #. module: fpos
 #: field:fpos.order,id:0 field:fpos.order.line,id:0
@@ -221,6 +221,11 @@ msgid "Name"
 msgstr ""
 
 #. module: fpos
+#: view:fpos.order:fpos.form_fpos_order field:fpos.order.tax,amount_netto:0
+msgid "Netto"
+msgstr ""
+
+#. module: fpos
 #: field:pos.config,iface_nogroup:0
 msgid "No Grouping"
 msgstr "Keine Gruppierung"
@@ -229,7 +234,7 @@ msgstr "Keine Gruppierung"
 #: code:addons/fpos/report/session_summary_report.py:117
 #, python-format
 msgid "No Tax"
-msgstr ""
+msgstr "Keine Steuer"
 
 #. module: fpos
 #: view:fpos.order:fpos.form_fpos_order field:fpos.order,note:0
@@ -299,6 +304,11 @@ msgstr "Zahlungen"
 #: model:ir.model,name:fpos.model_pos_order
 msgid "Point of Sale"
 msgstr "Kassa"
+
+#. module: fpos
+#: field:product.template,pos_name:0
+msgid "Point of Sale Name"
+msgstr ""
 
 #. module: fpos
 #: field:fpos.order.line,product_id:0
@@ -374,7 +384,12 @@ msgid "Tag"
 msgstr ""
 
 #. module: fpos
-#: field:fpos.order.tax,amount_tax:0
+#: field:fpos.order.line,tara:0
+msgid "Tara"
+msgstr ""
+
+#. module: fpos
+#: view:fpos.order:fpos.form_fpos_order field:fpos.order.tax,amount_tax:0
 msgid "Tax"
 msgstr "Steuer"
 
