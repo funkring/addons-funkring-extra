@@ -7,7 +7,7 @@
       name="point_of_sale.report_sessionsummary"
       auto="False"
       report_type="aeroo"
-      process_sep="True"
+      process_sep="False"
       model="pos.session"
       in_format="oo-odt"
       out_format="oo-pdf" 

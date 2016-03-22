@@ -25,7 +25,8 @@ class product_template(osv.Model):
     _inherit = "product.template"    
     _columns = {
         "sequence" : fields.integer("Sequence"),
-        "pos_name" : fields.char("Point of Sale Name")
+        "pos_name" : fields.char("Point of Sale Name"),
+        "pos_report" : fields.boolean("Show on Report")
     }
     _defaults = {
         "sequence" : 10

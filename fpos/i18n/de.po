@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-21 19:49+0000\n"
-"PO-Revision-Date: 2016-03-21 20:49+0100\n"
+"POT-Creation-Date: 2016-03-22 22:53+0000\n"
+"PO-Revision-Date: 2016-03-22 23:53+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -231,7 +231,7 @@ msgid "No Grouping"
 msgstr "Keine Gruppierung"
 
 #. module: fpos
-#: code:addons/fpos/report/session_summary_report.py:117
+#: code:addons/fpos/report/session_summary_report.py:154
 #, python-format
 msgid "No Tax"
 msgstr "Keine Steuer"
@@ -247,7 +247,7 @@ msgid "Notice"
 msgstr "Notiz"
 
 #. module: fpos
-#: code:addons/fpos/report/session_summary_report.py:171
+#: code:addons/fpos/report/session_summary_report.py:207
 #, python-format
 msgid "Open"
 msgstr "Geöffnet"
@@ -361,6 +361,11 @@ msgstr "Sende Rechnung"
 #: field:fpos.order.line,sequence:0 field:product.template,sequence:0
 msgid "Sequence"
 msgstr "Sequenz"
+
+#. module: fpos
+#: field:product.template,pos_report:0
+msgid "Show on Report"
+msgstr "Als Detail im Kassenbericht"
 
 #. module: fpos
 #: field:fpos.order,state:0 selection:fpos.order,tag:0

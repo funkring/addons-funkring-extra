@@ -37,6 +37,7 @@
         </field>
         <field name="pos_categ_id" position="after">
             <field name="pos_name"/>
+            <field name="pos_report"/>
         </field>
       </field>
     </record>
