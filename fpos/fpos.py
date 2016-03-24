@@ -28,7 +28,7 @@ class fpos_order(models.Model):
     
     name = fields.Char("Name")
     tag = fields.Selection([("s","Status")], string="Tag", readonly=True, states={'draft': [('readonly', False)]}, index=True)    
-    fpos_user_id = fields.Many2one("res.users", "Device", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
+    fpos_user_id = fields.Many2one("res.users", "Device", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True, copy=False)
     user_id = fields.Many2one("res.users", "User", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
     partner_id = fields.Many2one("res.partner","Partner", readonly=True, states={'draft': [('readonly', False)]}, index=True)
     date = fields.Datetime("Date", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
