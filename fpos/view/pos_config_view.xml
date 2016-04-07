@@ -6,8 +6,15 @@
       <field name="model">pos.config</field>
       <field name="inherit_id" ref="point_of_sale.view_pos_config_form"/>
       <field name="arch" type="xml">
+            <button name="set_deprecate" position="after">
+                <button name="action_liveop" string="Live Operation" type="object" groups="base.group_system"
+                        attrs="{'invisible' : ['|',('user_id','=',False),('liveop','=',True)]}"/>
+                <button name="action_post" string="Post Orders" type="object" groups="point_of_sale.group_pos_manager" 
+                        attrs="{'invisible' : ['|',('user_id','=',False),('liveop','=',False)]}"/>
+            </button>
             <field name="iface_big_scrollbars" position="after">
                 <field name="iface_nogroup"/>
+                <field name="liveop" invisible="1"/>
             </field>
             <field name="picking_type_id" position="before">
                 <field name="user_id" string="Fpos User"/>

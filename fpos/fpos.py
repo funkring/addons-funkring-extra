@@ -20,6 +20,7 @@
 
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning
+from openerp.addons.at_base import format
 
 class fpos_order(models.Model):
     _name = "fpos.order"
@@ -64,6 +65,200 @@ class fpos_order(models.Model):
     @api.model
     def create(self, vals):
         return super(fpos_order, self).create(vals)
+    
+    @api.multi
+    def _post(self):
+        profileDict = {}
+        sessionDict = {}      
+        profile_obj = self.env["pos.config"]
+        data_obj = self.env["ir.model.data"]
+        
+        session_obj = self.pool["pos.session"]                
+        order_obj = self.pool["pos.order"]
+        invoice_obj = self.pool["account.invoice"]
+        st_obj = self.pool["account.bank.statement"]
+        context = self._context and dict(self._context) or {}
+            
+        status_id = data_obj.xmlid_to_res_id("fpos.product_fpos_status",raise_if_not_found=True)
+        for order in self:
+            # get profile
+            profile = profileDict.get(order.fpos_user_id.id)
+            if profile is None:
+                profile = profile_obj.search( [("user_id","=", order.fpos_user_id.id)])
+                if not profile or not profile[0].liveop:
+                    profile = False
+                else:
+                    profile = profile[0]   
+                profileDict[order.fpos_user_id.id] = profile
+            
+            # check if an profile exist
+            # and order is in paid state
+            if not profile or order.state != "paid":
+                continue
+            
+            # init finish flag
+            finish = False
+            
+            # get session
+            sessionCfg = sessionDict.get(profile.id)
+            if sessionCfg is None:
+                # query first from database
+                fpos_uid = profile.user_id.id
+                session_ids = session_obj.search(self._cr, fpos_uid, [("config_id","=",profile.id),("state","=","opened")], context=context)
+                if session_ids:
+                    session = session_obj.browse(self._cr, fpos_uid, session_ids[0], context=context)
+                    sessionCfg = {"session" : session,
+                                  "statements" : {}}
+                    sessionDict[profile.id] = sessionCfg
+                else:
+                    sessionDict[profile.id] = False
+
+            # create session if not exist
+            if not sessionCfg:
+                # new session         
+                session_uid = order.user_id.id  
+                session_id = session_obj.create(self._cr, session_uid, {
+                    "config_id" : profile.id,
+                    "user_id" : session_uid,
+                    "start_at" : order.date,
+                    "sequence_number" : order.seq
+                }, context=context)
+                
+                # write balance start
+                session = session_obj.browse(self._cr, session_uid, session_id, context=context)
+                st_obj.write(self._cr, session_uid, [session.cash_statement_id.id],  {"balance_start" : order.cpos - order.amount_total})
+                
+                # open                
+                session_obj.signal_workflow(self._cr, session_uid, [session_id], "open")
+                session = session_obj.browse(self._cr, session_uid, session_id, context=context)
+                
+                # set new session
+                sessionCfg =  {"session" : session,
+                               "statements" : {}}
+                sessionDict[profile.id] = sessionCfg
+                
+            elif order.tag == "s":
+                # finish session
+                finish = True
+                
+            # get session and check statements  
+            session = sessionCfg["session"]
+            statements = sessionCfg["statements"]
+            if not statements:
+                for st in session.statement_ids:
+                    statements[st.journal_id.id] = st
+
+            # handle order 
+            # and payment
+
+            lines = []
+            order_vals = {
+                "fpos_order_id" : order.id, 
+                "name" : order.name,
+                "company_id" : order.company_id.id,
+                "date_order" : order.date,
+                "user_id" : order.user_id.id,
+                "partner_id" : order.partner_id.id,
+                "sequence_number" : order.seq,
+                "session_id" : session.id,
+                "pos_reference" : order.ref,
+                "note" : order.note,
+                "nb_print" : 1,
+                "lines" : lines
+            }
+            
+            for line in order.line_ids:
+
+                # calc back price per unit
+                price_unit = line.brutto_price
+                if line.tax_ids:
+                    # check if price conversion is needed
+                    convert=False
+                    for tax in line.tax_ids:
+                        if not tax.price_include:
+                            convert=True
+                            break
+                        
+                    if convert:
+                        raise Warning(_("Fpos could only use price with tax included"))
+                        
+                if line.product_id:
+                    # add line with product
+                    lines.append((0,0,{
+                        "fpos_line_id" : line.id,
+                        "company_id" : order.company_id.id,
+                        "name" : line.name,
+                        "product_id" : line.product_id.id,                    
+                        "notice" : line.notice,
+                        "price_unit" : price_unit,
+                        "qty" : line.qty,
+                        "discount" : line.discount,
+                        "create_date" : order.date
+                    }))
+                else:                    
+                    f = format.LangFormat(self._cr, order.user_id.id, context=context)
+                    notice = []
+                    if price_unit:
+                        notice.append("%s %s" % (f.formatLang(price_unit, monetary=True), order.currency_id.symbol))
+                    if line.notice:
+                        notice.append(line.notice)
+                    
+                    # add status
+                    lines.append((0,0,{
+                        "fpos_line_id" : line.id,
+                        "company_id" : order.company_id.id,
+                        "name" : line.name,
+                        "product_id" : status_id,                    
+                        "notice" : "\n".join(notice),
+                        "price_unit" : 0.0,
+                        "qty" : 0.0,
+                        "discount" : 0.0,
+                        "create_date" : order.date
+                    }))
+                
+                
+            # create order      
+            order_uid = order.user_id.id      
+            pos_order_id = order_obj.create(self._cr, order_uid, order_vals, context=context)
+            pos_order_ids = [pos_order_id]
+
+            # correct name
+            order_obj.write(self._cr, order_uid, pos_order_id, { 
+                                    "name" : order.name          
+                                  }, context)
+            
+            # add payment
+            for payment in order.payment_ids:
+                st = statements[payment.journal_id.id]                
+                order_obj.add_payment(self._cr, order_uid, pos_order_id, { 
+                                    "payment_date" : order.date,
+                                    "amount" : payment.amount,
+                                    "journal" : payment.journal_id.id,
+                                    "statement_id" : st.id              
+                                  },
+                                  context)
+            
+           
+            # post order
+            order_obj.signal_workflow(self._cr, order_uid, pos_order_ids, "paid")
+            # check if invoice should be crated
+            if order.send_invoice:
+                # created invoice
+                order_obj.action_invoice(self._cr, order_uid, pos_order_ids, context)
+                pos_order = order_obj.browse(self._cr, order_uid, pos_order_id, context)                
+                invoice_obj.signal_workflow(self._cr, order_uid, [pos_order.invoice_id.id], "invoice_open")
+                # call after invoice
+                self._after_invoice(self._cr, order_uid, pos_order, context=context)
+        
+            # set new fpos order state                        
+            order.state = "done"
+        
+            # check if session should finished
+            if finish:
+                session_obj.signal_workflow(self._cr, session.user_id.id, [session.id], "close")
+                sessionDict[profile.id] = False
+                 
+        return True
     
 
 class fpos_order_line(models.Model):

@@ -20,6 +20,7 @@
 
 from openerp.osv import fields, osv
 from openerp.addons.jdoc.jdoc import META_MODEL
+from openerp.exceptions import Warning
 
 class pos_category(osv.osv):
     _inherit = "pos.category"
@@ -51,9 +52,9 @@ class pos_config(osv.Model):
 
     _inherit = "pos.config"
     _columns = {        
-        "fpos_seq" : fields.integer("Fpos Sequence", readonly=True),
         "fpos_prefix" : fields.char("Fpos Prefix"),
         "iface_nogroup" : fields.boolean("No Grouping", help="If a product is selected twice a new pos line was created"),
+        "liveop" : fields.boolean("Live Operation", readonly=True, select=True, copy=False),
         "user_id" : fields.many2one("res.users","Sync User", select=True, copy=False),
         "user_ids" : fields.many2many("res.users", 
                                       "pos_config_user_rel", 
@@ -64,6 +65,28 @@ class pos_config(osv.Model):
     _sql_constraints = [
         ("user_uniq", "unique (user_id)","Fpos User could only assinged once")
     ]
+    
+    def action_liveop(self, cr, uid, ids, context=None):
+        user_obj = self.pool["res.users"]
+        if not user_obj.has_group(cr, uid, "base.group_system"):
+            raise Warning(_("Only system admin could set pos system into live operation"))
+        
+        for config in self.browse(cr, uid, ids, context):
+            if not config.liveop and config.user_id:                
+                cr.execute("DELETE FROM fpos_order WHERE fpos_user_id = %s AND state IN ('draft','paid')", (config.user_id.id,))
+                self.write(cr, uid, config.id, {"liveop" : True}, context=context)
+                
+    def action_post(self, cr, uid, ids, context=None):
+        fpos_order_obj = self.pool["fpos.order"]
+        for config in self.browse(cr, uid, ids, context=context):
+            if config.liveop and config.user_id:
+                order_ids = fpos_order_obj.search(cr, uid, [("fpos_user_id","=",config.user_id.id),("state","=","paid")], order="seq asc")
+                fpos_order_obj._post(cr, uid, order_ids, context=context)
+        return True
+    
+    def action_post_all(self, cr, uid, context=None):
+        config_ids = self.search(cr, uid, [("liveop","=",True),("user_id","!=",False)])
+        return self.action_post(cr, uid, config_ids, context=context)
     
     def get_profile(self, cr, uid, context=None):
         """
@@ -91,7 +114,7 @@ class pos_config(osv.Model):
         # get counting values
         fpos_order_obj = self.pool.get("fpos.order")
         last_order_values = fpos_order_obj.search_read(cr, uid, 
-                                    [("fpos_user_id","=",uid),("state","!=","draft")], 
+                                    [("user_id","=",uid),("state","!=","draft")], 
                                     ["seq", "turnover", "cpos"], 
                                     order="seq desc", limit=1)
         
@@ -101,7 +124,8 @@ class pos_config(osv.Model):
             res["last_turnover"] = last_order_values["turnover"]
             res["last_cpos"] = last_order_values["cpos"]
         else:
-            res["last_seq"] = 0.0
+            profile = self.browse(cr, uid, profile_id, context=context)
+            res["last_seq"] = -1.0 + profile.sequence_id.number_next
             res["last_turnover"] = 0.0
             res["last_cpos"] = 0.0
 
@@ -118,6 +142,9 @@ class pos_config(osv.Model):
 class pos_order(osv.Model):
     
     _inherit = "pos.order"
+    _columns = {
+        "fpos_order_id" : fields.many2one("fpos.order", "Fpos Order")
+    }
     
     def reconcile_invoice(self, cr, uid, ids, context=None):
         ids = self.search(cr, uid, [('state','=','invoiced'),('invoice_id.state','=','open'),("id","in",ids)])
@@ -139,3 +166,30 @@ class pos_order(osv.Model):
     def _after_invoice(self, cr, uid, order, context=None):
         self.reconcile_invoice(cr, uid, [order.id], context=context)
         
+        
+class pos_order_line(osv.Model):
+    
+    _inherit = "pos.order.line"
+    _columns = {
+        "fpos_line_id" : fields.many2one("fpos.order.line", "Fpos Line")
+    }
+    
+class pos_session(osv.Model):
+    
+    def _cash_statement_id(self, cr, uid, ids, field_name, arg, context=None):
+        res = dict.fromkeys(ids)
+        for session in self.browse(cr, uid, ids, context):
+            for st in session.statement_ids:
+                if st.journal_id.type == "cash":
+                    res[session.id] = st.id 
+        return res
+    
+    _inherit = "pos.session"
+    _columns = {
+        "cash_statement_id" : fields.function(_cash_statement_id,
+                             type='many2one', relation='account.bank.statement',
+                             string='Cash Statement', store=True)
+    }
+    
+  
+    

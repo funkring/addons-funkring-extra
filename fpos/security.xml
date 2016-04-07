@@ -8,6 +8,16 @@
       <field name="implied_ids" eval="[(4, ref('point_of_sale.group_pos_manager'))]"/>
     </record>
     
+    <record id="access_pos_order_pos_user" model="ir.model.access">
+      <field name="name">pos_order/pos_user</field>
+      <field name="model_id" ref="model_fpos_order"/>
+      <field name="group_id" ref="point_of_sale.group_pos_user"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="False"/>
+      <field name="perm_create" eval="False"/>
+      <field name="perm_write" eval="False"/>
+    </record>
+    
     <record id="access_fpos_order_group_fpos" model="ir.model.access">
       <field name="name">fpos_order/pos_manager</field>
       <field name="model_id" ref="model_fpos_order"/>
@@ -27,6 +37,16 @@
       <field name="perm_create" eval="True"/>
       <field name="perm_write" eval="True"/>
     </record>
+    
+    <record id="access_fpos_order_line_pos_user" model="ir.model.access">
+      <field name="name">fpos_order_line/pos_user</field>
+      <field name="model_id" ref="model_fpos_order_line"/>
+      <field name="group_id" ref="point_of_sale.group_pos_user"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="False"/>
+      <field name="perm_create" eval="False"/>
+      <field name="perm_write" eval="False"/>
+    </record>
 
     <record id="access_fpos_order_tax_group_fpos" model="ir.model.access">
       <field name="name">fpos_tax/pos_manager</field>
@@ -37,6 +57,16 @@
       <field name="perm_create" eval="True"/>
       <field name="perm_write" eval="True"/>
     </record>
+    
+    <record id="access_fpos_order_tax_pos_user" model="ir.model.access">
+      <field name="name">fpos_order_tax/pos_user</field>
+      <field name="model_id" ref="model_fpos_order_tax"/>
+      <field name="group_id" ref="point_of_sale.group_pos_user"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="False"/>
+      <field name="perm_create" eval="False"/>
+      <field name="perm_write" eval="False"/>
+    </record>
 
     <record id="access_fpos_order_payment_group_fpos" model="ir.model.access">
       <field name="name">fpos_payment/pos_manager</field>
@@ -46,6 +76,16 @@
       <field name="perm_unlink" eval="True"/>
       <field name="perm_create" eval="True"/>
       <field name="perm_write" eval="True"/>
+    </record>
+    
+    <record id="access_fpos_order_payment_pos_user" model="ir.model.access">
+      <field name="name">fpos_order_payment/fpos_user</field>
+      <field name="model_id" ref="model_fpos_order_payment"/>
+      <field name="group_id" ref="point_of_sale.group_pos_user"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="False"/>
+      <field name="perm_create" eval="False"/>
+      <field name="perm_write" eval="False"/>
     </record>
 
     <record id="rule_fpos_order" model="ir.rule">

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-22 22:53+0000\n"
-"PO-Revision-Date: 2016-03-22 23:53+0100\n"
+"POT-Creation-Date: 2016-04-07 09:20+0000\n"
+"PO-Revision-Date: 2016-04-07 11:21+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -79,6 +79,11 @@ msgid "Date"
 msgstr "Datum"
 
 #. module: fpos
+#: view:pos.order:fpos.form_pos_order
+msgid "Description"
+msgstr "Bezeichnung"
+
+#. module: fpos
 #: field:fpos.order,fpos_user_id:0
 msgid "Device"
 msgstr "Gerät"
@@ -99,7 +104,7 @@ msgid "Draft"
 msgstr "Entwurf"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:112
+#: code:addons/fpos/point_of_sale.py:136
 #, python-format
 msgid "Error!"
 msgstr "Fehler!"
@@ -120,7 +125,12 @@ msgid "Fpos Device"
 msgstr "Fpos Gerät"
 
 #. module: fpos
-#: model:ir.model,name:fpos.model_fpos_order
+#: field:pos.order.line,fpos_line_id:0
+msgid "Fpos Line"
+msgstr ""
+
+#. module: fpos
+#: model:ir.model,name:fpos.model_fpos_order field:pos.order,fpos_order_id:0
 msgid "Fpos Order"
 msgstr "Fpos Verkauf"
 
@@ -145,11 +155,6 @@ msgid "Fpos Prefix"
 msgstr ""
 
 #. module: fpos
-#: field:pos.config,fpos_seq:0
-msgid "Fpos Sequence"
-msgstr "Fpos Sequenz"
-
-#. module: fpos
 #: view:pos.config:fpos.form_pos_config
 msgid "Fpos User"
 msgstr "Fpos Benutzer"
@@ -158,6 +163,12 @@ msgstr "Fpos Benutzer"
 #: sql_constraint:pos.config:0
 msgid "Fpos User could only assinged once"
 msgstr "Fpos Benutzer kann nur einer Kasse zugewiesen werden"
+
+#. module: fpos
+#: code:addons/fpos/fpos.py:174
+#, python-format
+msgid "Fpos could only use price with tax included"
+msgstr ""
 
 #. module: fpos
 #: view:fpos.order:fpos.search_fpos_order
@@ -181,6 +192,11 @@ msgstr ""
 #: selection:fpos.order.line,tag:0
 msgid "Income"
 msgstr "Einzahlung"
+
+#. module: fpos
+#: view:pos.order:fpos.form_pos_order
+msgid "Info"
+msgstr ""
 
 #. module: fpos
 #: field:fpos.order,seq:0
@@ -210,6 +226,16 @@ msgid "Lines"
 msgstr "Positionen"
 
 #. module: fpos
+#: model:ir.model,name:fpos.model_pos_order_line
+msgid "Lines of Point of Sale"
+msgstr "Kassenumsätze"
+
+#. module: fpos
+#: view:pos.config:fpos.form_pos_config field:pos.config,liveop:0
+msgid "Live Operation"
+msgstr "Echtbetrieb"
+
+#. module: fpos
 #: selection:res.users,pos_role:0
 msgid "Manager"
 msgstr ""
@@ -231,7 +257,7 @@ msgid "No Grouping"
 msgstr "Keine Gruppierung"
 
 #. module: fpos
-#: code:addons/fpos/report/session_summary_report.py:154
+#: code:addons/fpos/report/session_summary_report.py:153
 #, python-format
 msgid "No Tax"
 msgstr "Keine Steuer"
@@ -247,7 +273,13 @@ msgid "Notice"
 msgstr "Notiz"
 
 #. module: fpos
-#: code:addons/fpos/report/session_summary_report.py:207
+#: code:addons/fpos/point_of_sale.py:72
+#, python-format
+msgid "Only system admin could set pos system into live operation"
+msgstr "Nur der Systemadministrator kann eine Kasse in Echtbetrieb setzen"
+
+#. module: fpos
+#: code:addons/fpos/report/session_summary_report.py:206
 #, python-format
 msgid "Open"
 msgstr "Geöffnet"
@@ -311,6 +343,11 @@ msgid "Point of Sale Name"
 msgstr ""
 
 #. module: fpos
+#: view:pos.config:fpos.form_pos_config
+msgid "Post Orders"
+msgstr "Verkäufe buchen"
+
+#. module: fpos
 #: field:fpos.order.line,product_id:0
 #: model:ir.model,name:fpos.model_product_product
 msgid "Product"
@@ -370,6 +407,7 @@ msgstr "Als Detail im Kassenbericht"
 #. module: fpos
 #: field:fpos.order,state:0 selection:fpos.order,tag:0
 #: selection:fpos.order.line,tag:0
+#: model:product.template,name:fpos.product_fpos_status_product_template
 msgid "Status"
 msgstr ""
 
@@ -410,7 +448,7 @@ msgid "Taxes"
 msgstr "Steuern"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:112
+#: code:addons/fpos/point_of_sale.py:136
 #, python-format
 msgid "There is no default company for the current user!"
 msgstr "Es existiert keine standard Firma für den aktuellen Benutzer!"

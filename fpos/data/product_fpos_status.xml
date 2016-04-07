@@ -1,0 +1,16 @@
+<openerp>
+  <data>
+    
+    <record id="product_fpos_status" model="product.product">
+      <field name="name">Status</field>
+      <field name="active">false</field>
+      <field name="standard_price">0.0</field>
+      <field name="categ_id" ref="product.product_category_all"/>
+      <field name="taxes_id" eval="[(6,0,[])]"/>
+      <field name="supplier_taxes_id" eval="[(6,0,[])]"/>
+      <field name="list_price">0.0</field>
+      <field name="type">service</field>
+    </record>
+    
+  </data>
+</openerp>

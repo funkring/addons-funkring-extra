@@ -1,0 +1,17 @@
+<openerp>
+  <data noupdate="1">
+    
+    <record id="cron_fpos_post" model="ir.cron">
+        <field name="name">Fpos Post</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">pos.config</field>
+        <field name="function">action_post_all</field>
+        <field name="args">()</field>
+        <field name="active" eval="True"/>
+    </record>
+    
+  </data>
+</openerp>

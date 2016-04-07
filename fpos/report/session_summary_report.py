@@ -50,7 +50,8 @@ class Parser(extreport.basic_parser):
         last_session = sessions[-1]
         session_ids = [s.id for s in sessions]
         
-        cash_statement = last_session.cash_register_id
+        first_cash_statement = first_session.cash_statement_id
+        cash_statement = last_session.cash_statement_id
 
         line_obj = self.pool.get("account.bank.statement.line")
         account_tax_obj = self.pool.get("account.tax")
@@ -121,27 +122,30 @@ class Parser(extreport.basic_parser):
                 
                 # add expense                                                
                 if product.expense_pdt:
-                    expense = expense_dict.get(product.id)
+                    sum_out += total_inc
+                    expense = expense_dict.get(line.name)
                     if not expense:                                        
                         expense = {
                             "name" : product.name,
                             "sum" : total_inc
                         }
-                        expense_dict[product.id] = expense
+                        expense_dict[line.name] = expense
                     else:
                         expense["sum"] = expense["sum"]+total_inc
+                    
                 
                 # add income
                 if product.income_pdt:
-                    income = income_dict.get(product.id)
+                    sum_in += total_inc
+                    income = income_dict.get(line.name)
                     if not income:
                         income = {
                             "name" : product.name,
                             "sum" : total_inc
                         }
-                        income_dict[product.id] = income
+                        income_dict[line.name] = income
                     else:
-                        income["sum"] = income["sum"]+total_inc
+                        income["sum"] = income["sum"]+total_inc                        
                         
                 # add turnover
                 if not product.income_pdt and not product.expense_pdt:
@@ -178,10 +182,12 @@ class Parser(extreport.basic_parser):
         # on the orders
         order_sum_in = sum_in
         order_sum_out = sum_out
+        sum_unexpected = 0.0
              
         # determine in and out of statements
         unexpected_line_ids = line_obj.search(self.cr, self.uid, [("statement_id.pos_session_id","in",session_ids),("pos_statement_id","=",False)])
         for line in line_obj.browse(self.cr, self.uid, unexpected_line_ids, context=self.localcontext):
+            sum_unexpected += line.amount
             if line.amount >= 0:
                 sum_in+=line.amount
             else:
@@ -193,6 +199,7 @@ class Parser(extreport.basic_parser):
                 entry["turnover"] = entry["sum"] - order_sum_in - order_sum_out
                 entry["income"] = sum_in
                 entry["expense"] = sum_out
+                entry["sum"] = entry["sum"] + sum_unexpected
             else:
                 entry["turnover"] = entry["sum"]
         
@@ -210,8 +217,8 @@ class Parser(extreport.basic_parser):
         if first_session != last_session:
             name = "%s - %s" % (first_session.name, last_session.name)
               
-        first_period = first_session.cash_register_id.period_id
-        last_period = last_session.cash_register_id.period_id
+        first_period = first_session.cash_statement_id.period_id
+        last_period = last_session.cash_statement_id.period_id
 
         period = first_period.name        
         if first_period != last_period:
@@ -222,7 +229,7 @@ class Parser(extreport.basic_parser):
             "name" : name,
             "company" : cash_statement.company_id.name,
             "currency" : first_session.currency_id.symbol,
-            "journal" : first_session.cash_journal_id.name,
+            "journal" : cash_statement.journal_id.name,
             "user" : first_session.user_id.name,
             "period" :  period,
             "description" : description,
@@ -231,12 +238,12 @@ class Parser(extreport.basic_parser):
             "statement_sum" : st_sum,
             "cash_income" : cashEntry["income"],
             "cash_expense" : cashEntry["expense"],
-            "cash_sum" : cashEntry["sum"]+cashEntry["income"]+cashEntry["expense"],
+            "cash_sum" : cashEntry["sum"],
             "cash_turnover" : cashEntry["turnover"],
-            "balance" : last_session.cash_register_balance_start+last_session.cash_register_total_entry_encoding,
-            "balance_diff" : last_session.cash_register_difference,
-            "balance_start" : first_session.cash_register_balance_start,
-            "balance_end" : last_session.cash_register_balance_end_real,
+            "balance" : cash_statement.balance_start+cash_statement.total_entry_encoding,
+            "balance_diff" : cash_statement.difference,
+            "balance_start" : first_cash_statement.balance_start,
+            "balance_end" : cash_statement.balance_end_real,
             "expenseList" : expense_dict.values(),
             "incomeList" : income_dict.values(),
             "turnoverList" : turnover_dict.values(),

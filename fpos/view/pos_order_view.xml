@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+ <data>
+    
+    <record id="form_pos_order" model="ir.ui.view">
+      <field name="name">fpos.form_pos_order</field>
+      <field name="model">pos.order</field>
+      <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+      <field name="arch" type="xml">
+            
+            <data>
+                <xpath expr="//field[@name='lines']/tree/field[@name='product_id']" position="after">
+                    <field name="name" string="Description"/>      
+                    <field name="notice" string="Info"/>
+                </xpath>
+            </data>
+                
+      </field>
+    </record>
+    
+  </data>
+</openerp>

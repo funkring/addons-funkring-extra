@@ -64,7 +64,9 @@ class product_product(osv.Model):
             "expense_pdt" : obj.expense_pdt,
             "to_weight" : obj.to_weight,
             "taxes_id" : taxes_id,
-            "sequence" : obj.sequence
+            "sequence" : obj.sequence,
+            "active": obj.active,
+            "available_in_pos" : obj.available_in_pos
         }
     
     def _fpos_product_put(self, cr, uid, obj, *args, **kwarg):
