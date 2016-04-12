@@ -126,7 +126,12 @@ class fpos_order(models.Model):
                 
                 # write balance start
                 session = session_obj.browse(self._cr, session_uid, session_id, context=context)
-                st_obj.write(self._cr, session_uid, [session.cash_statement_id.id],  {"balance_start" : order.cpos - order.amount_total})
+                cash = 0.0
+                for payment in order.payment_ids:
+                    if payment.journal_id.type == "cash":
+                        cash += payment.amount
+                    
+                st_obj.write(self._cr, session_uid, [session.cash_statement_id.id],  {"balance_start" : order.cpos - cash})
                 
                 # open                
                 session_obj.signal_workflow(self._cr, session_uid, [session_id], "open")
