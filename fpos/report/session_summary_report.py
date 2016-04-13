@@ -11,9 +11,12 @@ class Parser(extreport.basic_parser):
     
     def __init__(self, cr, uid, name, context=None):
         super(Parser, self).__init__(cr, uid, name, context=context)
+        if context is None:
+            context = {}
         self.localcontext.update({
             "statistic" : self._statistic,
-            "groupByConfig" : self._groupByConfig
+            "groupByConfig" : self._groupByConfig,
+            "print_detail" : context.get("print_detail",name == "fpos.report_session_detail")
         })
         
     def _groupByConfig(self, sessions):
@@ -27,6 +30,9 @@ class Parser(extreport.basic_parser):
                 sessionByConfig[config.id] = configSessions
             configSessions.append(session)
         return sessionByConfig
+    
+    def _details(self):
+        return False
         
     def _statistic(self, sessions):
         if not sessions:
@@ -39,6 +45,7 @@ class Parser(extreport.basic_parser):
         tax_dict = {}
         
         statements = []      
+        details = []
         
         sum_turnover = 0.0
         sum_in = 0.0
@@ -56,15 +63,19 @@ class Parser(extreport.basic_parser):
         line_obj = self.pool.get("account.bank.statement.line")
         account_tax_obj = self.pool.get("account.tax")
         currency_obj = self.pool.get('res.currency')
-        order_obj = self.pool.get("pos.order")            
+        order_obj = self.pool.get("pos.order")   
+        
+        print_detail = self.localcontext["print_detail"]         
         
         # add turnover
-        def addTurnover(name, amount, line):          
+        def addTurnover(name, amount, line, tax_amount, is_taxed):          
             entry = turnover_dict.get(name, None)
             if entry is None:
                 entry = { 
                     "name" : name,
                     "sum" : 0.0,
+                    "tax_sum" : 0.0,
+                    "is_taxed" :  is_taxed,
                     "detail" : OrderedDict()                 
                 }
                 turnover_dict[name] = entry
@@ -85,6 +96,7 @@ class Parser(extreport.basic_parser):
                     detail["amount"] = detail["amount"] + amount
                     
             entry["sum"] = entry["sum"]+amount
+            entry["tax_sum"] = entry["tax_sum"]+tax_amount
             return entry
             
         # cash entry
@@ -101,13 +113,31 @@ class Parser(extreport.basic_parser):
         statements.append(cashEntry)
         
         # iterate orders        
-        order_ids = order_obj.search(self.cr, self.uid, [("session_id","in",session_ids),("state","in",["paid","done","invoiced"])])
+        first_order = None
+        last_order = None
+        order_ids = order_obj.search(self.cr, self.uid, [("session_id","in",session_ids),("state","in",["paid","done","invoiced"])], order="id asc")
         for order in order_obj.browse(self.cr, self.uid, order_ids, context=self.localcontext):
+            # determine order first 
+            # and order last            
+            last_order = order
+            if first_order is None:
+                first_order = order
+            
+            # details                        
+            if print_detail:
+                detail_lines = []
+                detail_tax = {}
+                detail = {
+                    "order" : order,
+                    "lines" : detail_lines
+                }
+                details.append(detail)
+                
             # iterate line
             for line in order.lines:
                 product = line.product_id                    
-                if line.qty == 0.0:            
-                    continue
+                #if line.qty == 0.0:            
+                #    continue
                 
                 # get taxes
                 taxes = tax_dict.get(product.id,None)
@@ -118,7 +148,22 @@ class Parser(extreport.basic_parser):
                 # compute taxes     
                 price = line.price_unit * (1.0 - (line.discount or 0.0) / 100.0)
                 computed_taxes = account_tax_obj.compute_all(self.cr, self.uid, taxes, price, line.qty)
+                tax_details  = computed_taxes["taxes"]
                 total_inc = currency_obj.round(self.cr, self.uid, first_session.currency_id, computed_taxes['total_included'])
+                
+                # add detail
+                if print_detail:
+                    if tax_details:
+                        for tax in tax_details:
+                            tax_name = tax["name"]
+                            detail_tax[tax_name] = detail_tax.get(tax_name,0.0) + tax["amount"]
+                            
+                    detail_lines.append({
+                        "index" : len(detail_lines),
+                        "line" : line,
+                        "price" : price,
+                        "brutto" : total_inc  
+                    })   
                 
                 # add expense                                                
                 if product.expense_pdt:
@@ -150,12 +195,12 @@ class Parser(extreport.basic_parser):
                 # add turnover
                 if not product.income_pdt and not product.expense_pdt:
                     sum_turnover += total_inc
-                    if taxes:
-                        for tax in taxes:
-                            addTurnover(tax.name, total_inc, line)                                                        
+                    if tax_details:
+                        for tax in tax_details:
+                            addTurnover(tax["name"], total_inc, line, tax["amount"], True)                                                        
                     else:
-                        addTurnover(_("No Tax"), total_inc, line)
-                
+                        addTurnover(_("No Tax"), total_inc, line, 0, False)
+
                 # sum all
                 sum_all += total_inc
                 
@@ -176,6 +221,10 @@ class Parser(extreport.basic_parser):
                 # add line 
                 entry["sum"] = entry["sum"] + st_line.amount
                 st_sum += st_line.amount
+                
+            # details                        
+            if print_detail:
+                detail["taxes"] = sorted(detail_tax.items(), key=lambda v: v[0])
                 
              
         # remember sum_in, sum_out which based
@@ -223,10 +272,14 @@ class Parser(extreport.basic_parser):
         period = first_period.name        
         if first_period != last_period:
             period = "%s - %s" % (first_period.name, last_period.name)
-              
+       
         # stat
         stat = {
             "name" : name,
+            "date_start" : first_session.start_at,
+            "date_end" : last_session.stop_at,
+            "first_order" : first_order,
+            "last_order" : last_order, 
             "company" : cash_statement.company_id.name,
             "currency" : first_session.currency_id.symbol,
             "journal" : cash_statement.journal_id.name,
@@ -248,7 +301,8 @@ class Parser(extreport.basic_parser):
             "incomeList" : income_dict.values(),
             "turnoverList" : turnover_dict.values(),
             "details_start" : first_session.details_ids,
-            "details_end" : last_session.details_ids
+            "details_end" : last_session.details_ids,
+            "details" : details
         }        
         return [stat]
             

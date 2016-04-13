@@ -47,6 +47,7 @@ oerp.at Fpos
               "view/product_view.xml",
               "view/pos_order_view.xml",
               "report/session_summary_report.xml",
+              "report/session_detail_report.xml",
               "data/cron_fpos_post.xml",
               "data/product_fpos_status.xml"
              ],

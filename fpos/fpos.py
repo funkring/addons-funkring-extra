@@ -172,54 +172,68 @@ class fpos_order(models.Model):
                 "lines" : lines
             }
             
-            for line in order.line_ids:
-
-                # calc back price per unit
-                price_unit = line.brutto_price
-                if line.tax_ids:
-                    # check if price conversion is needed
-                    convert=False
-                    for tax in line.tax_ids:
-                        if not tax.price_include:
-                            convert=True
-                            break
+            if not order.line_ids:
+                # if no products book add empty state
+                lines.append((0,0,{
+                    "fpos_line_id" : None,
+                    "company_id" : order.company_id.id,
+                    "name" : _("Empty"),
+                    "product_id" : status_id,                    
+                    "price_unit" : 0.0,
+                    "qty" : 0.0,
+                    "discount" : 0.0,
+                    "create_date" : order.date
+                }))
+                
+            else:
+                for line in order.line_ids:
+    
+                    # calc back price per unit
+                    price_unit = line.brutto_price
+                    if line.tax_ids:
+                        # check if price conversion is needed
+                        convert=False
+                        for tax in line.tax_ids:
+                            if not tax.price_include:
+                                convert=True
+                                break
+                            
+                        if convert:
+                            raise Warning(_("Fpos could only use price with tax included"))
+                            
+                    if line.product_id:
+                        # add line with product
+                        lines.append((0,0,{
+                            "fpos_line_id" : line.id,
+                            "company_id" : order.company_id.id,
+                            "name" : line.name,
+                            "product_id" : line.product_id.id,                    
+                            "notice" : line.notice,
+                            "price_unit" : price_unit,
+                            "qty" : line.qty,
+                            "discount" : line.discount,
+                            "create_date" : order.date
+                        }))
+                    else:                    
+                        f = format.LangFormat(self._cr, order.user_id.id, context=context)
+                        notice = []
+                        if price_unit:
+                            notice.append("%s %s" % (f.formatLang(price_unit, monetary=True), order.currency_id.symbol))
+                        if line.notice:
+                            notice.append(line.notice)
                         
-                    if convert:
-                        raise Warning(_("Fpos could only use price with tax included"))
-                        
-                if line.product_id:
-                    # add line with product
-                    lines.append((0,0,{
-                        "fpos_line_id" : line.id,
-                        "company_id" : order.company_id.id,
-                        "name" : line.name,
-                        "product_id" : line.product_id.id,                    
-                        "notice" : line.notice,
-                        "price_unit" : price_unit,
-                        "qty" : line.qty,
-                        "discount" : line.discount,
-                        "create_date" : order.date
-                    }))
-                else:                    
-                    f = format.LangFormat(self._cr, order.user_id.id, context=context)
-                    notice = []
-                    if price_unit:
-                        notice.append("%s %s" % (f.formatLang(price_unit, monetary=True), order.currency_id.symbol))
-                    if line.notice:
-                        notice.append(line.notice)
-                    
-                    # add status
-                    lines.append((0,0,{
-                        "fpos_line_id" : line.id,
-                        "company_id" : order.company_id.id,
-                        "name" : line.name,
-                        "product_id" : status_id,                    
-                        "notice" : "\n".join(notice),
-                        "price_unit" : 0.0,
-                        "qty" : 0.0,
-                        "discount" : 0.0,
-                        "create_date" : order.date
-                    }))
+                        # add status
+                        lines.append((0,0,{
+                            "fpos_line_id" : line.id,
+                            "company_id" : order.company_id.id,
+                            "name" : line.name,
+                            "product_id" : status_id,                    
+                            "notice" : "\n".join(notice),
+                            "price_unit" : 0.0,
+                            "qty" : 0.0,
+                            "discount" : 0.0,
+                            "create_date" : order.date
+                        }))
                 
                 
             # create order      
@@ -254,13 +268,19 @@ class fpos_order(models.Model):
                 invoice_obj.signal_workflow(self._cr, order_uid, [pos_order.invoice_id.id], "invoice_open")
                 # call after invoice
                 self._after_invoice(self._cr, order_uid, pos_order, context=context)
-        
+                
+            # check order
+            order_vals = order_obj.read(self._cr, order_uid, pos_order_id, ["state","name"], context=context)
+            if not order_vals["state"] in ("done","paid","invoiced"):
+                raise Warning(_("Unable to book order %s") % order_vals["name"])              
+
             # set new fpos order state                        
             order.state = "done"
         
             # check if session should finished
             if finish:
                 session_obj.signal_workflow(self._cr, session.user_id.id, [session.id], "close")
+                session_obj.write(self._cr, session.user_id.id, [session.id], {"stop_at" : order.date})
                 sessionDict[profile.id] = False
                  
         return True
