@@ -27,6 +27,7 @@ Product Energy
 * adds energy attributes for product
     """,
     "version" : "1.0",
+    "api" : [8],
     "author" :  "oerp.at",
     "website" : "http://oerp.at",
     "category" : "Sales Management",

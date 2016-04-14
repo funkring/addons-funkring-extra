@@ -32,6 +32,7 @@ Claim Report
     "version" : "1.0",
     "author" :  "oerp.at",
     "website" : "http://oerp.at",
+    "api" : [8],
     "category" : "Sales Management",
     "depends" : ["at_sale","at_crm","web_tree_image"],
     "data" : ["security.xml",

@@ -25,6 +25,7 @@
 Project with HTML description
 """,
     "version" : "1.0",
+    "api" : [8],
     "author" :  "oerp.at",
     "website" : "http://oerp.at",
     "category" : "Hidden",

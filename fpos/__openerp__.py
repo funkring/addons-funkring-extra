@@ -30,6 +30,7 @@ oerp.at Fpos
 
     """,
     "version" : "1.0",
+    "api" : [8],
     "author" :  "funkring.net",
     "category" : "Point of Sale",
     "depends" : ["at_product",

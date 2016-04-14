@@ -29,6 +29,7 @@ A simple extension which allow to sharing a task
 
     """,
     "version" : "1.0",
+    "api" : [8],
     "author" :  "oerp.at",
     "website" : "http://oerp.at",
     "category" : "Project Management",

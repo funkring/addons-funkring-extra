@@ -29,6 +29,7 @@ Energy Usage Addon
     """,
     "version" : "1.0",
     "author" :  "oerp.at",
+    "api" : [8],
     "website" : "http://oerp.at",
     "category" : "Sales",
     "depends" : ["sale", "at_sale", "product_energy"],
