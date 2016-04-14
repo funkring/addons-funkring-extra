@@ -21,6 +21,7 @@
 from openerp.osv import fields, osv
 from openerp.addons.jdoc.jdoc import META_MODEL
 from openerp.exceptions import Warning
+import openerp
 
 class pos_category(osv.osv):
     _inherit = "pos.category"
@@ -76,13 +77,16 @@ class pos_config(osv.Model):
                 cr.execute("DELETE FROM fpos_order WHERE fpos_user_id = %s AND state IN ('draft','paid')", (config.user_id.id,))
                 self.write(cr, uid, config.id, {"liveop" : True}, context=context)
                 
-    def action_post(self, cr, uid, ids, context=None):
+    def action_post(self, cr, uid, ids, context=None):    
         fpos_order_obj = self.pool["fpos.order"]
         for config in self.browse(cr, uid, ids, context=context):
             if config.liveop and config.user_id:
                 order_ids = fpos_order_obj.search(cr, uid, [("fpos_user_id","=",config.user_id.id),("state","=","paid")], order="seq asc")
                 fpos_order_obj._post(cr, uid, order_ids, context=context)
         return True
+    
+    def run_scheduler(self, cr, uid, context=None): # run post in scheduler
+        return self.action_post_all(cr, uid, context=context)
     
     def action_post_all(self, cr, uid, context=None):
         config_ids = self.search(cr, uid, [("liveop","=",True),("user_id","!=",False)])

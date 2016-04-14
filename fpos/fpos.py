@@ -18,6 +18,7 @@
 #
 ##############################################################################
 
+import openerp
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning
 from openerp.addons.at_base import format

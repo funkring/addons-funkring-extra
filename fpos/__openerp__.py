@@ -29,7 +29,7 @@ oerp.at Fpos
   for the Fpos software
 
     """,
-    "version" : "1.0",
+    "version" : "1.2",
     "api" : [8],
     "author" :  "funkring.net",
     "category" : "Point of Sale",
