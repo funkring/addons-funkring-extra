@@ -118,7 +118,7 @@ class pos_config(osv.Model):
         # get counting values
         fpos_order_obj = self.pool.get("fpos.order")
         last_order_values = fpos_order_obj.search_read(cr, uid, 
-                                    [("user_id","=",uid),("state","!=","draft")], 
+                                    [("fpos_user_id","=",uid),("state","!=","draft")], 
                                     ["seq", "turnover", "cpos"], 
                                     order="seq desc", limit=1)
         
