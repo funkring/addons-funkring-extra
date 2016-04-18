@@ -7,6 +7,7 @@
       <field name="arch" type="xml">
         <form string="Order">
             <header>
+                <button name="correct" type="object" string="Correct"/>
                 <field name="state" widget="statusbar" statusbar_visible="draft,paid,done"/>
             </header>
             <sheet string="Sales">

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-13 04:44+0000\n"
-"PO-Revision-Date: 2016-04-13 06:45+0100\n"
+"POT-Creation-Date: 2016-04-18 09:41+0000\n"
+"PO-Revision-Date: 2016-04-18 11:42+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -55,6 +55,11 @@ msgstr "Barkasse"
 #: field:fpos.order,company_id:0
 msgid "Company"
 msgstr "Firma"
+
+#. module: fpos
+#: view:fpos.order:fpos.form_fpos_order
+msgid "Correct"
+msgstr "Korrigieren"
 
 #. module: fpos
 #: selection:fpos.order.line,tag:0
@@ -109,7 +114,13 @@ msgid "Draft"
 msgstr "Entwurf"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:136
+#: code:addons/fpos/fpos.py:221
+#, python-format
+msgid "Empty"
+msgstr "Leer"
+
+#. module: fpos
+#: code:addons/fpos/point_of_sale.py:140
 #, python-format
 msgid "Error!"
 msgstr "Fehler!"
@@ -170,7 +181,7 @@ msgid "Fpos User could only assinged once"
 msgstr "Fpos Benutzer kann nur einer Kasse zugewiesen werden"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:188
+#: code:addons/fpos/fpos.py:243
 #, python-format
 msgid "Fpos could only use price with tax included"
 msgstr "Fpos kann nur Preise inkl. Steuer verarbeiten"
@@ -278,13 +289,19 @@ msgid "Notice"
 msgstr "Notiz"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:72
+#: code:addons/fpos/fpos.py:70
+#, python-format
+msgid "Only Administrator could correct Fpos orders"
+msgstr "Nur der Administrator darf Fpos Verkäufe korrigieren"
+
+#. module: fpos
+#: code:addons/fpos/point_of_sale.py:73
 #, python-format
 msgid "Only system admin could set pos system into live operation"
 msgstr "Nur der Systemadministrator kann eine Kasse in Echtbetrieb setzen"
 
 #. module: fpos
-#: code:addons/fpos/report/session_summary_report.py:258
+#: code:addons/fpos/report/session_summary_report.py:262
 #, python-format
 msgid "Open"
 msgstr "Geöffnet"
@@ -458,7 +475,7 @@ msgid "Taxes"
 msgstr "Steuern"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:136
+#: code:addons/fpos/point_of_sale.py:140
 #, python-format
 msgid "There is no default company for the current user!"
 msgstr "Es existiert keine standard Firma für den aktuellen Benutzer!"
@@ -472,6 +489,12 @@ msgstr "Gesamt"
 #: field:fpos.order,turnover:0
 msgid "Turnover Count"
 msgstr "Umsatzzähler"
+
+#. module: fpos
+#: code:addons/fpos/fpos.py:316
+#, python-format
+msgid "Unable to book order %s"
+msgstr "Verkauf '%s' kann nicht gebucht werden"
 
 #. module: fpos
 #: field:fpos.order.line,uom_id:0
@@ -495,7 +518,7 @@ msgid "Users"
 msgstr "Benutzer"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:62
+#: code:addons/fpos/fpos.py:64
 #, python-format
 msgid "You cannot delete an order which are not in draft state"
 msgstr ""

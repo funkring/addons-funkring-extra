@@ -22,6 +22,7 @@ import openerp
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning
 from openerp.addons.at_base import format
+from openerp import SUPERUSER_ID
 
 class fpos_order(models.Model):
     _name = "fpos.order"
@@ -62,6 +63,45 @@ class fpos_order(models.Model):
             if order.state not in ("draft"):
                 raise Warning(_("You cannot delete an order which are not in draft state"))
         return super(fpos_order, self).unlink()
+    
+    @api.multi
+    def correct(self):
+        if self._uid != SUPERUSER_ID:
+            raise Warning(_("Only Administrator could correct Fpos orders"))
+        
+        for order in self:
+            cash_payment = None
+            payment_total = 0
+            
+            for payment in order.payment_ids:
+                if payment.journal_id.type == "cash":
+                    cash_payment = payment
+                payment_total += payment.amount
+                
+            # ###################################################
+            # FIX invalid payment BUG, DELETE KASSASTURZ LINES 
+            # ###################################################
+            if cash_payment and not payment_total and order.amount_total:
+                cash_payment.amount = order.amount_total
+                cash_payment.payment = order.amount_total
+                order.cpos = order.cpos + order.amount_total
+                                
+                next_orders = order.search([("fpos_user_id","=",order.fpos_user_id.id),("name",">",order.name)],order="name asc")
+                for next_order in next_orders:
+                    next_order.cpos = next_order.cpos + order.amount_total
+            
+            
+            # ###################################################
+            # FIX invalid status flag
+            # ###################################################
+            has_status = False
+            for line in order.line_ids:
+                if line.tag in ("b","r","c","s"):
+                    has_status = True
+                    
+            if not has_status:
+                order.tag = None
+            
     
     @api.model
     def create(self, vals):
