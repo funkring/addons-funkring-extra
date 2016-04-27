@@ -10,6 +10,9 @@
          <field name="categ_id" position="after">
             <field name="pos_categ_id"/>
          </field>
+         <filter string="Category" position="after">
+            <filter name="pos_category" string="POS Category" domain="[]" context="{'group_by':'pos_categ_id'}"/>
+         </filter>
       </field>
     </record>
        
@@ -23,7 +26,15 @@
             </field>
             <field name="categ_id" position="after">
                 <field name="pos_categ_id"/>
-            </field>      
+            </field>   
+            <field name="uom_id" position="replace">
+                <field name="uom_id"/>
+            </field>            
+            <field name="state" position="replace">
+                <field name="state" invisible="1"/>
+                <field name="netto_price"/>
+                <field name="brutto_price"/>                
+            </field>   
         </field>
     </record>
     
@@ -39,6 +50,17 @@
             <field name="pos_name"/>
             <field name="pos_report"/>
         </field>
+        <group name="pos" position="after">
+            <group string="POS Input">
+                <field name="pos_default"/>
+                <field name="pos_nogroup"/>
+                <field name="pos_minus"/>
+                <field name="pos_price_pre"/>
+                <field name="pos_price_dec"/>
+                <field name="pos_amount_pre"/>
+                <field name="pos_amount_dec"/>
+            </group>
+        </group>
       </field>
     </record>
     

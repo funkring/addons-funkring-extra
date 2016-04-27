@@ -21,10 +21,14 @@
 from openerp.osv import fields, osv
 from openerp.addons.jdoc.jdoc import META_MODEL
 from openerp.exceptions import Warning
-import openerp
+from openerp.addons.fpos.product import COLOR_NAMES
 
 class pos_category(osv.osv):
     _inherit = "pos.category"
+    _columns =  {
+        "pos_color" : fields.selection(COLOR_NAMES, string="Color"),
+        "pos_unavail" : fields.boolean("Unavailable")
+    }
     
     def _fpos_category_get(self, cr, uid, obj, *args, **kwarg):
         mapping_obj = self.pool["res.mapping"]
@@ -147,7 +151,8 @@ class pos_order(osv.Model):
     
     _inherit = "pos.order"
     _columns = {
-        "fpos_order_id" : fields.many2one("fpos.order", "Fpos Order")
+        "fpos_order_id" : fields.many2one("fpos.order", "Fpos Order"),
+        "fpos_place_id" : fields.many2one("fpos.place", "Place")
     }
     
     def reconcile_invoice(self, cr, uid, ids, context=None):

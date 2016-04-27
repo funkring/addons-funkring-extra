@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="form_pos_place" model="ir.ui.view">
+      <field name="name">fpos.form_pos_place</field>
+      <field name="model">fpos.place</field>
+      <field name="arch" type="xml">
+        <form string="Place">
+            <group>
+                <group>
+                    <field name="name"/>
+                    <field name="top_id"/>
+                </group>
+                <group>
+                    <field name="pos_unavail"/>
+                    <field name="pos_color"/>
+                </group>
+            </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_pos_place" model="ir.ui.view">
+      <field name="name">fpos.tree_pos_place</field>
+      <field name="model">fpos.place</field>
+      <field name="arch" type="xml">
+        <tree string="Places">
+            <field name="sequence" widget="handle"/>
+            <field name="top_id"/>
+            <field name="name"/>
+            <field name="pos_color"/>     
+            <field name="pos_unavail"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_pos_place" model="ir.ui.view">
+      <field name="name">fpos.search_pos_place</field>
+      <field name="model">fpos.place</field>
+      <field name="arch" type="xml">
+        <search string="Place">
+          <field string="Top" name="name" filter_domain="[('name','ilike',self)]"/>
+          <filter string="Unavailable" domain="[('pos_unavail','=',True)]"/>
+          <filter string="Available" domain="[('pos_unavail','=',False)]"/>
+        </search>
+      </field>
+    </record>
+
+    <record id="action_pos_place" model="ir.actions.act_window">
+      <field name="name">Places</field>
+      <field name="res_model">fpos.place</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>      
+    </record>
+
+    <menuitem id="menu_pos_place" name="Places" parent="menu_areas"
+      sequence="20"
+      action="action_pos_place"/>
+  </data>
+</openerp>

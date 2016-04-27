@@ -9,6 +9,9 @@
       <field name="arch" type="xml">
             
             <data>
+                <field name="company_id" position="after">
+                    <field name="fpos_place_id"/>
+                </field>
                 <xpath expr="//field[@name='lines']/tree/field[@name='product_id']" position="after">
                     <field name="name" string="Description"/>      
                     <field name="notice" string="Info"/>
@@ -16,6 +19,17 @@
             </data>
                 
       </field>
+    </record>
+
+    <record id="tree_pos_order" model="ir.ui.view">
+      <field name="name">fpos.tree_pos_order</field>
+      <field name="model">pos.order</field>
+      <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="pos_reference" position="after">
+                <field name="fpos_place_id"/>
+            </field>
+        </field>
     </record>
     
   </data>

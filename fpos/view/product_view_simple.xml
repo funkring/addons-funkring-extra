@@ -1,0 +1,118 @@
+<openerp>
+  <data>
+  
+        <!-- base structure of product.template, common with product.product -->
+        <record id="view_product_template_simple" model="ir.ui.view">
+            <field name="name">fpos.view_product_template_simple</field>
+            <field name="model">product.template</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <form string="Product">
+                    <field name="is_product_variant" invisible="1"/>
+                    <field name='product_variant_count' invisible='1'/>
+                    <sheet>
+                        <field name="id" invisible="True"/>
+                        <div class="oe_right oe_button_box" style="width: 300px;" name="buttons">
+                        </div>
+                        <div class="oe_left" style="width: 500px;">
+                            <field name="image_medium" widget="image" class="oe_avatar oe_left"/>
+                            <div class="oe_title" style="width: 390px;">
+                                <label class="oe_edit_only" for="name" string="Product Name"/>
+                                <h1><field name="name" class="oe_inline"/></h1>
+                            </div>
+                            <div class="oe_left" name="options" groups="base.group_user">
+                                <div>
+                                    <field name="sale_ok"/>
+                                    <label for="sale_ok"/>
+                                </div>
+                            </div>
+                        </div>
+                        <notebook>
+                            <page string="Information">
+                                <group>
+                                    <group string="General">
+                                        <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                                        <field name="pos_categ_id"/>
+                                        <field name="uom_id" on_change="onchange_uom(uom_id,uom_po_id)" groups="product.group_uom"/>
+                                        <field name="type" on_change="onchange_type(type)"/>
+                                        <field name="categ_id"/>
+                                    </group>
+                                    <group string="Options">
+                                        <field name="active"/>
+                                        <field name="ean13" attrs="{'invisible': [('product_variant_count', '>', 1)]}"/>
+                                        <field name="default_code" attrs="{'invisible': [('product_variant_count', '>', 1)]}"/>
+                                        <field name="sequence"/>
+                                    </group>
+                                    <group string="Sale">
+                                        <field name="list_price"/>
+                                        <field name="taxes_id" colspan="2" widget="many2many_tags"/>
+                                        <field name="netto_price" readonly="0" on_change="onchange_netto_price(netto_price, taxes_id, company_id)"/>
+                                        <field name="brutto_price" readonly="0" on_change="onchange_brutto_price(brutto_price, taxes_id, company_id)"/>
+                                    </group>
+                                    <group string="Purchase">              
+                                        <field name="standard_price"/>                          
+                                        <field name="supplier_taxes_id" colspan="2" widget="many2many_tags"/>    
+                                        <field name="uom_po_id" invisible="1"/>    
+                                    </group>
+                                    <group string="POS">
+                                        <field name="pos_name"/>    
+                                        <field name="pos_color"/>                                                              
+                                        <field name="available_in_pos"/>
+                                        <field name="pos_report"/>                                                 
+                                        <field name="to_weight" />
+                                        <field name="income_pdt"/>
+                                        <field name="expense_pdt"/>                                        
+                                    </group>
+                                    <group string="POS Input">
+                                        <field name="pos_default"/>
+                                        <field name="pos_nogroup"/>
+                                        <field name="pos_minus"/>
+                                        <field name="pos_price_pre"/>
+                                        <field name="pos_price_dec"/>
+                                        <field name="pos_amount_pre"/>
+                                        <field name="pos_amount_dec"/>
+                                    </group>
+                                </group>
+                                <separator string="Description for Quotations" class="oe_edit_only"/>
+                                <field name="description_sale" placeholder="note to be displayed on quotations..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+    
+        <record id="action_product_simple" model="ir.actions.act_window">
+          <field name="name">Products</field>
+          <field name="res_model">product.template</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+          <field name="view_id" eval="False"/>
+          <field name="search_view_id" ref="product.product_template_search_view"/>
+        </record>
+                
+        <record id="actionview_product_simple_tree" model="ir.actions.act_window.view">
+          <field name="sequence" eval="1"/>
+          <field name="view_mode">tree</field>
+          <field name="view_id" ref="product.product_template_tree_view"/>
+          <field name="act_window_id" ref="action_product_simple"/>
+        </record>
+        
+        <record id="actionview_product_simple_form" model="ir.actions.act_window.view">
+          <field name="sequence" eval="2"/>
+          <field name="view_mode">form</field>
+          <field name="view_id" ref="view_product_template_simple"/>
+          <field name="act_window_id" ref="action_product_simple"/>
+        </record>
+
+        <menuitem
+            id="point_of_sale.menu_pos_products"
+            action="action_product_simple"
+            parent="point_of_sale.menu_point_of_sale_product" sequence="2"/>
+
+  </data>
+</openerp>

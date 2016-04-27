@@ -6,8 +6,18 @@
        parent="point_of_sale.menu_point_root" 
        groups="base.group_system" 
        sequence="10"/>
+       
+    <menuitem name="Areas"
+       id="menu_areas"
+       parent="point_of_sale.menu_point_root" 
+       sequence="18"/>
 
-        
-    
+    <menuitem action="point_of_sale.action_pos_session_opening"
+            parent="point_of_sale.menu_point_of_sale"
+            id="point_of_sale.menu_pos_session_opening" 
+            groups="group_online_user" sequence="0"/>
+
+
   </data>
 </openerp>
+    

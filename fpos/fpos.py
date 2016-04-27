@@ -18,7 +18,6 @@
 #
 ##############################################################################
 
-import openerp
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning
 from openerp.addons.at_base import format
@@ -33,6 +32,7 @@ class fpos_order(models.Model):
     tag = fields.Selection([("s","Status")], string="Tag", readonly=True, states={'draft': [('readonly', False)]}, index=True)    
     fpos_user_id = fields.Many2one("res.users", "Device", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
     user_id = fields.Many2one("res.users", "User", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
+    place_id = fields.Many2one("fpos.place","Place", readonly=True, states={'draft': [('readonly', False)]}, index=True, ondelete="restrict")
     partner_id = fields.Many2one("res.partner","Partner", readonly=True, states={'draft': [('readonly', False)]}, index=True)
     date = fields.Datetime("Date", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
     seq = fields.Integer("Internal Sequence", readonly=True, index=True)
@@ -200,6 +200,7 @@ class fpos_order(models.Model):
             lines = []
             order_vals = {
                 "fpos_order_id" : order.id, 
+                "fpos_place_id" : order.place_id.id,
                 "name" : order.name,
                 "company_id" : order.company_id.id,
                 "date_order" : order.date,

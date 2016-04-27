@@ -21,12 +21,41 @@
 from openerp.osv import fields, osv
 from openerp.addons.jdoc.jdoc import META_MODEL
 
+COLOR_NAMES = [("white", "White"),
+               ("silver","Silver"),
+               ("gray", "Gray"),
+               ("black","Black"),
+               ("red","Red"),
+               ("maroon","Marron"),
+               ("yellow","Yellow"),
+               ("olive","Olive"),
+               ("lime","Lime"),
+               ("green","Green"),
+               ("aqua","Aqua"),
+               ("teal","Teal"),
+               ("blue","Blue"),
+               ("navy","Navy"),
+               ("fuchsia","Fuchsia"),
+               ("purple","Purple")] 
+
+
 class product_template(osv.Model):
     _inherit = "product.template"    
     _columns = {
         "sequence" : fields.integer("Sequence"),
         "pos_name" : fields.char("Point of Sale Name"),
-        "pos_report" : fields.boolean("Show on Report")
+        "pos_report" : fields.boolean("Show on Report"),
+        "pos_color" : fields.selection(COLOR_NAMES, string="Color"),
+        "pos_nogroup" : fields.boolean("No Grouping", help="If product selected again a extra line was created"),
+        "pos_minus" : fields.boolean("Minus", help="Value is negative by default"),
+        "pos_price_pre": fields.integer("Price Predecimal",help="Predicimal digits, -1 is no predecimal, 0 is no restriction"),
+        "pos_price_dec" : fields.integer("Price Decimal",help="Decimal digits, -1 is no decimal, 0 is no restriction"),
+        "pos_amount_pre" : fields.integer("Amount Predecimal",help="Predicimal digits, -1 is no predecimal, 0 is no restriction"),
+        "pos_amount_dec" : fields.integer("Amount Decimal",help="Decimal digits, -1 is no decimal, 0 is no restriction"),
+        "pos_default" : fields.selection([("price","Price"),
+                                          ("amount","Amount")],
+                                          string="Default Input",
+                                          help="Default Input on pos, price or amount")
     }
     _defaults = {
         "sequence" : 10

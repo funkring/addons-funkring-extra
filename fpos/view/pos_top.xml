@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="form_top" model="ir.ui.view">
+      <field name="name">fpos.form_top</field>
+      <field name="model">fpos.top</field>
+      <field name="arch" type="xml">
+        <form string="Top">
+            <group>
+                <group>
+                    <field name="name"/>                                        
+                </group>
+                <group>
+                    <field name="pos_unavail"/>
+                    <field name="pos_color"/>
+                </group>
+            </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_top" model="ir.ui.view">
+      <field name="name">fpos.tree_top</field>
+      <field name="model">fpos.top</field>
+      <field name="arch" type="xml">
+        <tree string="Top">
+            <field name="sequence" widget="handle"/>
+            <field name="name"/>
+            <field name="pos_color"/>     
+            <field name="pos_unavail"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_top" model="ir.ui.view">
+      <field name="name">fpos.search_top</field>
+      <field name="model">fpos.top</field>
+      <field name="arch" type="xml">
+        <search string="Top">
+          <field string="Top" name="name" filter_domain="[('name','ilike',self)]"/>
+          <filter string="Unavailable" domain="[('pos_unavail','=',True)]"/>
+          <filter string="Available" domain="[('pos_unavail','=',False)]"/>
+        </search>
+      </field>
+    </record>
+
+    <record id="action_top" model="ir.actions.act_window">
+      <field name="name">Top</field>
+      <field name="res_model">fpos.top</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_top" name="Top" parent="menu_areas"
+      sequence="10"
+      action="action_top"/>
+  </data>
+</openerp>
