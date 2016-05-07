@@ -35,7 +35,8 @@
                             <tree  editable="bottom">
                                 <field name="sequence" widget="handle"/>
                                 <field name="name"/>      
-                                <field name="tag"/>                          
+                                <field name="tag"/>   
+                                <field name="config"/>                       
                                 <field name="product_id"/>
                                 <field name="qty"/>
                                 <field name="tara"/>

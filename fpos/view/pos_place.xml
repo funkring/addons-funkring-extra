@@ -6,16 +6,22 @@
       <field name="model">fpos.place</field>
       <field name="arch" type="xml">
         <form string="Place">
-            <group>
+            <sheet>
+                <div class="oe_title">
+                    <label class="oe_edit_only" for="name"/>
+                    <h1><field name="name" class="oe_inline"/></h1>
+                    <label class="oe_edit_only" for="top_id"/>
+                    <field name="top_id" class="oe_inline"/>
+                </div>
                 <group>
-                    <field name="name"/>
-                    <field name="top_id"/>
+                    <group>
+                        <field name="pos_unavail"/>
+                        <field name="pos_color"/>
+                    </group>
+                    <group>
+                    </group>
                 </group>
-                <group>
-                    <field name="pos_unavail"/>
-                    <field name="pos_color"/>
-                </group>
-            </group>
+            </sheet>
         </form>
       </field>
     </record>
@@ -25,9 +31,9 @@
       <field name="model">fpos.place</field>
       <field name="arch" type="xml">
         <tree string="Places">
-            <field name="sequence" widget="handle"/>
-            <field name="top_id"/>
+            <field name="sequence" widget="handle"/>            
             <field name="name"/>
+            <field name="top_id"/>
             <field name="pos_color"/>     
             <field name="pos_unavail"/>
         </tree>

@@ -26,7 +26,7 @@ COLOR_NAMES = [("white", "White"),
                ("gray", "Gray"),
                ("black","Black"),
                ("red","Red"),
-               ("maroon","Marron"),
+               ("maroon","Maroon"),
                ("yellow","Yellow"),
                ("olive","Olive"),
                ("lime","Lime"),
@@ -52,10 +52,7 @@ class product_template(osv.Model):
         "pos_price_dec" : fields.integer("Price Decimal",help="Decimal digits, -1 is no decimal, 0 is no restriction"),
         "pos_amount_pre" : fields.integer("Amount Predecimal",help="Predicimal digits, -1 is no predecimal, 0 is no restriction"),
         "pos_amount_dec" : fields.integer("Amount Decimal",help="Decimal digits, -1 is no decimal, 0 is no restriction"),
-        "pos_default" : fields.selection([("price","Price"),
-                                          ("amount","Amount")],
-                                          string="Default Input",
-                                          help="Default Input on pos, price or amount")
+        "pos_price" : fields.boolean("Price Input")        
     }
     _defaults = {
         "sequence" : 10
@@ -75,7 +72,7 @@ class product_product(osv.Model):
             taxes_id.append(mapping_obj._get_uuid(cr, uid, tax));
         
         # build product
-        return {
+        values =  {
             "_id" : mapping_obj._get_uuid(cr, uid, obj),
             META_MODEL : obj._model._name,
             "name" : obj.name,
@@ -85,6 +82,7 @@ class product_product(osv.Model):
             "price" : obj.lst_price or 0.0,
             "brutto_price" : obj.brutto_price,
             "uom_id" : mapping_obj._get_uuid(cr, uid, obj.uom_id), 
+            "nounit" : obj.uom_id.nounit,
             "code" : obj.code,
             "ean13" : obj.ean13,
             "image_small" : obj.image_small,
@@ -95,8 +93,27 @@ class product_product(osv.Model):
             "taxes_id" : taxes_id,
             "sequence" : obj.sequence,
             "active": obj.active,
-            "available_in_pos" : obj.available_in_pos
+            "available_in_pos" : obj.available_in_pos,
+            "sale_ok" : obj.sale_ok,
+            "pos_color" : obj.pos_color
         }
+        
+        if obj.pos_nogroup:
+            values["pos_nogroup"] = True
+        if obj.pos_minus:
+            values["pos_minus"] = True
+        if type(obj.pos_price_pre) in (int,long):
+            values["pos_price_pre"] = obj.pos_price_pre
+        if type(obj.pos_price_dec) in (int,long):
+            values["pos_price_dec"] = obj.pos_price_dec
+        if type(obj.pos_amount_pre) in (int,long):
+            values["pos_amount_pre"] = obj.pos_amount_pre
+        if type(obj.pos_amount_dec) in (int,long):
+            values["pos_amount_dec"] = obj.pos_amount_dec            
+        if obj.pos_price:
+            values["pos_price"] = obj.pos_price        
+        
+        return values  
     
     def _fpos_product_put(self, cr, uid, obj, *args, **kwarg):
         return None

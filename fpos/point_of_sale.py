@@ -40,7 +40,9 @@ class pos_category(osv.osv):
             "name" : obj.name,
             "parent_id" : mapping_obj._get_uuid(cr, uid, obj.parent_id),
             "image_small" : obj.image_small,
-            "sequence" : obj.sequence
+            "sequence" : obj.sequence,
+            "pos_color" : obj.pos_color,
+            "pos_unavail" : obj.pos_unavail
         }
     
     def _fpos_category_put(self, cr, uid, obj, *args, **kwarg):
@@ -59,7 +61,8 @@ class pos_config(osv.Model):
     _columns = {        
         "fpos_prefix" : fields.char("Fpos Prefix"),
         "iface_nogroup" : fields.boolean("No Grouping", help="If a product is selected twice a new pos line was created"),
-        "liveop" : fields.boolean("Live Operation", readonly=True, select=True, copy=False),
+        "iface_place" : fields.boolean("Place Management"),
+        "liveop" : fields.boolean("Live Operation", readonly=True, select=True, copy=False),        
         "user_id" : fields.many2one("res.users","Sync User", select=True, copy=False),
         "user_ids" : fields.many2many("res.users", 
                                       "pos_config_user_rel", 

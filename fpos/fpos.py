@@ -344,6 +344,11 @@ class fpos_order_line(models.Model):
     discount = fields.Float("Discount %")
     notice = fields.Text("Notice")
     sequence = fields.Integer("Sequence")
+    flags = fields.Text("Flags")
+    p_pre = fields.Integer("Price Predecimal")
+    p_dec = fields.Integer("Price Decimal")
+    a_pre = fields.Integer("Amount Predecimal")
+    a_dec = fields.Integer("Amount Decimal")
     tag = fields.Selection([("b","Balance"),
                             ("r","Real"),
                             ("c","Counter"),
@@ -352,6 +357,25 @@ class fpos_order_line(models.Model):
                             ("i","Income")],
                             string="Tag",
                             index=True)
+    
+    config = fields.Text("Config", compute="_config")
+    
+    @api.one
+    @api.depends("flags","p_pre", "p_dec", "a_pre", "a_dec")
+    def _config(self):
+        config = []
+        if self.flags:
+            if "-" in self.flags:
+                config.append(_("Minus"))
+            if "u" in self.flags:
+                config.append(_("No Unit"))
+            if "p" in self.flags:
+                config.append(_("Price"))
+        if self.p_pre or self.p_dec:
+            config.append(_("*-Format: %s,%s") % (self.p_pre or 0, self.p_dec or 0))
+        if self.a_pre or self.a_dec:
+            config.append(_("€-Format: %s,%s") % (self.a_pre or 0, self.a_dec or 0))
+        self.config = ", ".join(config)
  
 
 class fpos_tax(models.Model):

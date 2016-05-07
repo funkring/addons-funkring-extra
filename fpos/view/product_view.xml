@@ -52,7 +52,7 @@
         </field>
         <group name="pos" position="after">
             <group string="POS Input">
-                <field name="pos_default"/>
+                <field name="pos_price"/>
                 <field name="pos_nogroup"/>
                 <field name="pos_minus"/>
                 <field name="pos_price_pre"/>

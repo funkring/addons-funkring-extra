@@ -26,19 +26,56 @@ class fpos_top(models.Model):
     _description = "Top"
     _order = "sequence, name"
     
-    name = fields.Char("Name")
+    name = fields.Char("Name", required=True, index=True)
+    complete_name = fields.Char("Name", compute="_complete_name", store=True)
+    parent_id = fields.Many2one("fpos.top","Parent", index=True)
     sequence = fields.Integer("Sequence", default=10)
     pos_color = fields.Selection(COLOR_NAMES, string="Color")
     pos_unavail = fields.Boolean("Unavailable")
-
+        
+    @api.one
+    @api.depends('name', 'parent_id.name')
+    def _complete_name(self):
+        res = []
+        obj = self
+        while obj:
+            res.append(obj.name)
+            obj = obj.parent_id
+        self.complete_name =  " / ".join(reversed(res))
+        
+    @api.multi
+    def name_get(self):
+        res = []
+        for obj in self:
+            res.append((obj.id, obj.complete_name))
+        return res
+    
     
 class fpos_place(models.Model):
     _name = "fpos.place"
     _description = "Place"
     
-    name = fields.Char("Name")
+    name = fields.Char("Name", required=True)
     sequence = fields.Integer("Sequence", default=10)
-    top_id = fields.Many2one("fpos.top","Top")
+    top_id = fields.Many2one("fpos.top","Top", index=True)
     pos_color = fields.Selection(COLOR_NAMES, string="Color")
     pos_unavail = fields.Boolean("Unavailable")
+    complete_name = fields.Char("Name", compute="_complete_name", store=True)
+    
+    @api.multi
+    def name_get(self):
+        res = []
+        for obj in self:
+            res.append((obj.id, obj.complete_name))
+        return res
+        
+    @api.one
+    @api.depends('name', 'top_id.complete_name')
+    def _complete_name(self):
+        top = self.top_id
+        if top:
+            self.complete_name =  "%s / %s" % (top.complete_name, self.name)
+        else:
+            self.complete_name = self.name 
+        
     

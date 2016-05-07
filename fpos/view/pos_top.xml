@@ -6,15 +6,22 @@
       <field name="model">fpos.top</field>
       <field name="arch" type="xml">
         <form string="Top">
-            <group>
-                <group>
-                    <field name="name"/>                                        
+            <sheet>
+                <div class="oe_title">
+                    <label class="oe_edit_only" for="name"/>
+                    <h1><field name="name" class="oe_inline"/></h1>
+                    <label class="oe_edit_only" for="parent_id"/>
+                    <field name="parent_id" class="oe_inline"/>
+                </div>
+                <group>                   
+                    <group>
+                        <field name="pos_unavail"/>
+                        <field name="pos_color"/>
+                    </group>
+                    <group>
+                    </group>
                 </group>
-                <group>
-                    <field name="pos_unavail"/>
-                    <field name="pos_color"/>
-                </group>
-            </group>
+            </sheet>
         </form>
       </field>
     </record>
@@ -24,8 +31,9 @@
       <field name="model">fpos.top</field>
       <field name="arch" type="xml">
         <tree string="Top">
-            <field name="sequence" widget="handle"/>
+            <field name="sequence" widget="handle"/>            
             <field name="name"/>
+            <field name="parent_id"/>
             <field name="pos_color"/>     
             <field name="pos_unavail"/>
         </tree>
@@ -37,7 +45,7 @@
       <field name="model">fpos.top</field>
       <field name="arch" type="xml">
         <search string="Top">
-          <field string="Top" name="name" filter_domain="[('name','ilike',self)]"/>
+          <field string="Top" name="name" filter_domain="['|',('name','ilike',self),('parent_id.name','ilike',self)]"/>
           <filter string="Unavailable" domain="[('pos_unavail','=',True)]"/>
           <filter string="Available" domain="[('pos_unavail','=',False)]"/>
         </search>

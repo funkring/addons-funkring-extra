@@ -6,14 +6,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-27 16:07+0000\n"
-"PO-Revision-Date: 2016-04-27 16:07+0000\n"
+"POT-Creation-Date: 2016-05-03 16:10+0000\n"
+"PO-Revision-Date: 2016-05-03 16:10+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: fpos
+#: code:addons/fpos/fpos.py:375
+#, python-format
+msgid "*-Format: %s,%s"
+msgstr ""
 
 #. module: fpos
 #: selection:res.users,pos_role:0
@@ -27,16 +33,17 @@ msgstr "Erlaubte Benutzer für diese Kasse"
 
 #. module: fpos
 #: field:fpos.order.payment,amount:0
-#: selection:product.template,pos_default:0
 msgid "Amount"
 msgstr "Betrag"
 
 #. module: fpos
+#: field:fpos.order.line,a_dec:0
 #: field:product.template,pos_amount_dec:0
 msgid "Amount Decimal"
 msgstr "Menge Nachkommastellen"
 
 #. module: fpos
+#: field:fpos.order.line,a_pre:0
 #: field:product.template,pos_amount_pre:0
 msgid "Amount Predecimal"
 msgstr "Menge Vorkommastellen"
@@ -161,16 +168,6 @@ msgid "Decimal digits, -1 is no decimal, 0 is no restriction"
 msgstr "Dezimalstellen, -1 ist keine Dezimalstelle, 0 ist keine Beschränkung"
 
 #. module: fpos
-#: field:product.template,pos_default:0
-msgid "Default Input"
-msgstr "Standard Eingabe"
-
-#. module: fpos
-#: help:product.template,pos_default:0
-msgid "Default Input on pos, price or amount"
-msgstr ""
-
-#. module: fpos
 #: view:pos.order:fpos.form_pos_order
 msgid "Description"
 msgstr "Bezeichnung"
@@ -207,7 +204,7 @@ msgid "Empty"
 msgstr "Leer"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:144
+#: code:addons/fpos/point_of_sale.py:147
 #, python-format
 msgid "Error!"
 msgstr "Fehler!"
@@ -216,6 +213,11 @@ msgstr "Fehler!"
 #: selection:fpos.order.line,tag:0
 msgid "Expense"
 msgstr "Auszahlung"
+
+#. module: fpos
+#: field:fpos.order.line,flags:0
+msgid "Flags"
+msgstr ""
 
 #. module: fpos
 #: model:ir.ui.menu,name:fpos.menu_fpos
@@ -412,7 +414,9 @@ msgid "Marron"
 msgstr "Dunkelrot"
 
 #. module: fpos
+#: code:addons/fpos/fpos.py:369
 #: field:product.template,pos_minus:0
+#, python-format
 msgid "Minus"
 msgstr ""
 
@@ -420,7 +424,9 @@ msgstr ""
 #: field:fpos.order,name:0
 #: field:fpos.order.line,name:0
 #: field:fpos.order.tax,name:0
+#: field:fpos.place,complete_name:0
 #: field:fpos.place,name:0
+#: field:fpos.top,complete_name:0
 #: field:fpos.top,name:0
 msgid "Name"
 msgstr ""
@@ -450,6 +456,12 @@ msgstr "Keine Gruppierung"
 #, python-format
 msgid "No Tax"
 msgstr "Keine Steuer"
+
+#. module: fpos
+#: code:addons/fpos/fpos.py:371
+#, python-format
+msgid "No Unit"
+msgstr "Keine Einheit"
 
 #. module: fpos
 #: view:fpos.order:fpos.form_fpos_order
@@ -482,7 +494,7 @@ msgid "Only Administrator could correct Fpos orders"
 msgstr "Nur der Administrator darf Fpos Verkäufe korrigieren"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:77
+#: code:addons/fpos/point_of_sale.py:80
 #, python-format
 msgid "Only system admin could set pos system into live operation"
 msgstr "Nur der Systemadministrator kann eine Kasse in Echtbetrieb setzen"
@@ -550,6 +562,11 @@ msgid "Paid"
 msgstr "Bezahlt"
 
 #. module: fpos
+#: field:fpos.top,parent_id:0
+msgid "Parent"
+msgstr "Übergeordnet"
+
+#. module: fpos
 #: field:fpos.order,partner_id:0
 msgid "Partner"
 msgstr "Kunde"
@@ -574,6 +591,11 @@ msgstr "Zahlungen"
 #: field:pos.order,fpos_place_id:0
 msgid "Place"
 msgstr "Platz"
+
+#. module: fpos
+#: field:pos.config,iface_place:0
+msgid "Place Management"
+msgstr "Platzverwaltung"
 
 #. module: fpos
 #: view:fpos.place:fpos.tree_pos_place
@@ -604,16 +626,24 @@ msgid "Predicimal digits, -1 is no predecimal, 0 is no restriction"
 msgstr "Vorkommastellen, -1 keine Vorkommastellen, 0 keine Einschränkung"
 
 #. module: fpos
-#: selection:product.template,pos_default:0
+#: code:addons/fpos/fpos.py:373
+#, python-format
 msgid "Price"
 msgstr "Preis"
 
 #. module: fpos
+#: field:fpos.order.line,p_dec:0
 #: field:product.template,pos_price_dec:0
 msgid "Price Decimal"
 msgstr "Preis Nachkommastellen"
 
 #. module: fpos
+#: field:product.template,pos_price:0
+msgid "Price Input"
+msgstr "Preiseingabe"
+
+#. module: fpos
+#: field:fpos.order.line,p_pre:0
 #: field:product.template,pos_price_pre:0
 msgid "Price Predecimal"
 msgstr "Preis Vorkommastellen"
@@ -624,11 +654,6 @@ msgstr "Preis Vorkommastellen"
 #: view:product.template:fpos.view_product_template_simple
 msgid "Product"
 msgstr "Produkt"
-
-#. module: fpos
-#: model:ir.model,name:fpos.model_product_category
-msgid "Product Category"
-msgstr "Produktkategorie"
 
 #. module: fpos
 #: view:product.template:fpos.view_product_template_simple
@@ -789,7 +814,7 @@ msgid "Teal"
 msgstr "Türkis"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:144
+#: code:addons/fpos/point_of_sale.py:147
 #, python-format
 msgid "There is no default company for the current user!"
 msgstr "Es existiert keine standard Firma für den aktuellen Benutzer!"
@@ -885,4 +910,10 @@ msgstr "Es kann kein Verkauf gelöscht werden, welcher nicht mehr im Entwurfssta
 #: view:product.template:fpos.view_product_template_simple
 msgid "note to be displayed on quotations..."
 msgstr "Anmerkungen, die auf den Angeboten ausgegeben werden ..."
+
+#. module: fpos
+#: code:addons/fpos/fpos.py:377
+#, python-format
+msgid "€-Format: %s,%s"
+msgstr ""
 
