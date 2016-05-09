@@ -47,6 +47,7 @@ class fpos_order(models.Model):
     
     note = fields.Text("Note")
     send_invoice = fields.Boolean("Send Invoice", index=True)
+    
     amount_tax = fields.Float("Tax Amount")
     amount_total = fields.Float("Total")
     
@@ -56,6 +57,8 @@ class fpos_order(models.Model):
     currency_id = fields.Many2one("res.currency", "Currency", related="company_id.currency_id", store=True, readonly=True)
     
     line_ids = fields.One2many("fpos.order.line", "order_id", "Lines", readonly=True, states={'draft': [('readonly', False)]}, composition=True)
+    
+    cent_fix = fields.Float("Cent Correction", readonly=True)
     
     @api.multi
     def unlink(self):
@@ -68,6 +71,9 @@ class fpos_order(models.Model):
     def correct(self):
         if self._uid != SUPERUSER_ID:
             raise Warning(_("Only Administrator could correct Fpos orders"))
+        
+        account_tax_obj = self.pool.get('account.tax')
+        precision = self.pool.get('decimal.precision').precision_get(self._cr, self._uid, 'Account')
         
         for order in self:
             cash_payment = None
@@ -98,9 +104,27 @@ class fpos_order(models.Model):
             for line in order.line_ids:
                 if line.tag in ("b","r","c","s"):
                     has_status = True
-                    
             if not has_status:
                 order.tag = None
+                    
+            # ###################################################
+            # FIX invalid tax
+            # ###################################################
+                    
+            cent_fix = 0.0
+            line_total = 0.0
+            for line in order.line_ids:
+                taxes_ids = [tax for tax in line.product_id.taxes_id if tax.company_id.id == line.order_id.company_id.id]
+                price = line.price * (1 - (line.discount or 0.0) / 100.0)
+                taxes = account_tax_obj.compute_all(self._cr, self._uid, taxes_ids, price, line.qty, product=line.product_id, partner=line.order_id.partner_id or False)
+                line_total += taxes["total_included"]
+            
+            diff = round(payment_total, precision) - line_total
+            if diff >= 0.01 and diff < 0.1:
+                cent_fix += diff
+
+            order.cent_fix = cent_fix
+            
             
     
     @api.model
@@ -231,12 +255,12 @@ class fpos_order(models.Model):
                 for line in order.line_ids:
     
                     # calc back price per unit
-                    price_unit = line.brutto_price
+                    price_unit = line.price or line.brutto_price or 0.0
                     if line.tax_ids:
                         # check if price conversion is needed
                         convert=False
                         for tax in line.tax_ids:
-                            if not tax.price_include:
+                            if not tax.price_include and not line.netto:
                                 convert=True
                                 break
                             
@@ -278,6 +302,21 @@ class fpos_order(models.Model):
                         }))
                 
                 
+            # check cent fix
+            if order.cent_fix:
+                # add status
+                lines.append((0,0,{
+                    "fpos_line_id" : line.id,
+                    "company_id" : order.company_id.id,
+                    "name" : _("Cent Correction"),
+                    "product_id" : status_id,                    
+                    "price_unit" : order.cent_fix,
+                    "qty" : 1.0,
+                    "discount" : 0.0,
+                    "create_date" : order.date
+                }))
+                
+                
             # create order      
             order_uid = order.user_id.id      
             pos_order_id = order_obj.create(self._cr, order_uid, order_vals, context=context)
@@ -312,9 +351,10 @@ class fpos_order(models.Model):
                 self._after_invoice(self._cr, order_uid, pos_order, context=context)
                 
             # check order
-            order_vals = order_obj.read(self._cr, order_uid, pos_order_id, ["state","name"], context=context)
+            order_vals = order_obj.read(self._cr, order_uid, pos_order_id, ["state"], context=context)
             if not order_vals["state"] in ("done","paid","invoiced"):
-                raise Warning(_("Unable to book order %s") % order_vals["name"])              
+                order_vals = order_obj.read(self._cr, order_uid, pos_order_id, ["name","amount_total","amount_tax"], context=context)
+                raise Warning(_("Unable to book order %s/%s/%s") % (order_vals["name"],order_vals["amount_total"],order_vals["amount_tax"]))              
 
             # set new fpos order state                        
             order.state = "done"
@@ -337,10 +377,13 @@ class fpos_order_line(models.Model):
     product_id = fields.Many2one("product.product", "Product", index=True)
     uom_id = fields.Many2one("product.uom", "Unit")
     tax_ids = fields.Many2many("account.tax", "fpos_line_tax_rel", "line_id", "tax_id", "Taxes")
-    brutto_price = fields.Float("Brutto Price")
+    brutto_price = fields.Float("Brutto Price", deprecated=True)
+    price = fields.Float("Price")
+    netto = fields.Boolean("Netto")
     qty = fields.Float("Quantity")
     tara = fields.Float("Tara")
-    subtotal_incl = fields.Float("Subtotal")
+    subtotal_incl = fields.Float("Subtotal Incl.")
+    subtotal = fields.Float("Subtotal")
     discount = fields.Float("Discount %")
     notice = fields.Text("Notice")
     sequence = fields.Integer("Sequence")

@@ -27,6 +27,7 @@
                         <field name="turnover"/>
                         <field name="cpos"/>
                         <field name="tag"/>
+                        <field name="cent_fix"/>
                     </group> 
                 </group>
                 <notebook>
@@ -41,7 +42,7 @@
                                 <field name="qty"/>
                                 <field name="tara"/>
                                 <field name="uom_id"/>
-                                <field name="brutto_price"/>
+                                <field name="price"/>
                                 <field name="discount"/>                            
                                 <field name="tax_ids" widget="many2many_tags"/>
                                 <field name="notice"/>
@@ -103,6 +104,7 @@
             <field name="partner_id"/>
             <field name="amount_tax"/>
             <field name="amount_total"/>
+            <field name="cent_fix"/>
             <field name="state"/>
         </tree>
       </field>

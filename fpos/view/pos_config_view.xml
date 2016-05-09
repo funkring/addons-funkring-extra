@@ -15,6 +15,7 @@
             <field name="iface_big_scrollbars" position="after">
                 <field name="iface_nogroup"/>
                 <field name="iface_place"/>
+                <field name="iface_fastuswitch"/>
                 <field name="liveop" invisible="1"/>
             </field>
             <field name="picking_type_id" position="before">

@@ -68,9 +68,14 @@ class product_product(osv.Model):
         
         # read tax        
         taxes_id = []
+        price_include = 0
         for tax in obj.taxes_id:
+            if tax.price_include:
+                price_include += 1
             taxes_id.append(mapping_obj._get_uuid(cr, uid, tax));
-        
+            
+        netto = price_include == 0 and len(taxes_id) > 0
+            
         # build product
         values =  {
             "_id" : mapping_obj._get_uuid(cr, uid, obj),
@@ -80,6 +85,7 @@ class product_product(osv.Model):
             "description" : obj.description,
             "description_sale" : obj.description_sale,
             "price" : obj.lst_price or 0.0,
+            "netto" : netto, 
             "brutto_price" : obj.brutto_price,
             "uom_id" : mapping_obj._get_uuid(cr, uid, obj.uom_id), 
             "nounit" : obj.uom_id.nounit,

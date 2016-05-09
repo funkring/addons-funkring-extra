@@ -62,6 +62,7 @@ class pos_config(osv.Model):
         "fpos_prefix" : fields.char("Fpos Prefix"),
         "iface_nogroup" : fields.boolean("No Grouping", help="If a product is selected twice a new pos line was created"),
         "iface_place" : fields.boolean("Place Management"),
+        "iface_fastuswitch" : fields.boolean("Fast User Switch"),
         "liveop" : fields.boolean("Live Operation", readonly=True, select=True, copy=False),        
         "user_id" : fields.many2one("res.users","Sync User", select=True, copy=False),
         "user_ids" : fields.many2many("res.users", 
