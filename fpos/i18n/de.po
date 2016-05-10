@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-09 20:20+0000\n"
-"PO-Revision-Date: 2016-05-09 22:21+0100\n"
+"POT-Creation-Date: 2016-05-10 12:43+0000\n"
+"PO-Revision-Date: 2016-05-10 14:44+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Generator: Poedit 1.5.4\n"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:433
+#: code:addons/fpos/fpos.py:426
 #, python-format
 msgid "*-Format: %s,%s"
 msgstr ""
@@ -97,9 +97,30 @@ msgid "Blue"
 msgstr "Blau"
 
 #. module: fpos
+#: code:addons/fpos/fpos.py:422
+#, python-format
+msgid "Break"
+msgstr ""
+
+#. module: fpos
 #: field:fpos.order.line,brutto_price:0
 msgid "Brutto Price"
 msgstr "Brutto Preis"
+
+#. module: fpos
+#: view:fpos.order:fpos.search_fpos_order
+msgid "By Device"
+msgstr "Nach Gerät"
+
+#. module: fpos
+#: view:fpos.order:fpos.search_fpos_order
+msgid "By Partner"
+msgstr "Nach Partner"
+
+#. module: fpos
+#: view:fpos.order:fpos.search_fpos_order
+msgid "By User"
+msgstr "Nach Verkäufer"
 
 #. module: fpos
 #: field:fpos.order,cpos:0
@@ -191,6 +212,12 @@ msgid "Description for Quotations"
 msgstr "Beschreibung für Angebote"
 
 #. module: fpos
+#: code:addons/fpos/fpos.py:424
+#, python-format
+msgid "Detail"
+msgstr ""
+
+#. module: fpos
 #: field:fpos.order,fpos_user_id:0
 msgid "Device"
 msgstr "Gerät"
@@ -218,7 +245,7 @@ msgid "Draft"
 msgstr "Entwurf"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:248
+#: code:addons/fpos/fpos.py:229
 #, python-format
 msgid "Empty"
 msgstr "Leer"
@@ -295,7 +322,7 @@ msgid "Fpos User could only assinged once"
 msgstr "Fpos Benutzer kann nur einer Kasse zugewiesen werden"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:270
+#: code:addons/fpos/fpos.py:251
 #, python-format
 msgid "Fpos could only use price with tax included"
 msgstr "Fpos kann nur Preise inkl. Steuer verarbeiten"
@@ -429,7 +456,7 @@ msgid "Maroon"
 msgstr "Dunkelrot"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:427 field:product.template,pos_minus:0
+#: code:addons/fpos/fpos.py:418 field:product.template,pos_minus:0
 #, python-format
 msgid "Minus"
 msgstr ""
@@ -466,7 +493,7 @@ msgid "No Tax"
 msgstr "Keine Steuer"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:429
+#: code:addons/fpos/fpos.py:420
 #, python-format
 msgid "No Unit"
 msgstr "Keine Einheit"
@@ -499,7 +526,7 @@ msgid "Online User"
 msgstr "Online Benutzer"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:75
+#: code:addons/fpos/fpos.py:76
 #, python-format
 msgid "Only Administrator could correct Fpos orders"
 msgstr "Nur der Administrator darf Fpos Verkäufe korrigieren"
@@ -631,8 +658,7 @@ msgid "Predicimal digits, -1 is no predecimal, 0 is no restriction"
 msgstr "Vorkommastellen, -1 keine Vorkommastellen, 0 keine Einschränkung"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:431 field:fpos.order.line,price:0
-#, python-format
+#: field:fpos.order.line,price:0
 msgid "Price"
 msgstr "Preis"
 
@@ -768,7 +794,7 @@ msgstr "Summe"
 #. module: fpos
 #: field:fpos.order.line,subtotal_incl:0
 msgid "Subtotal Incl."
-msgstr "Summe inkl."
+msgstr "Summe (Netto)"
 
 #. module: fpos
 #: field:pos.config,user_id:0
@@ -833,7 +859,7 @@ msgid "Turnover Count"
 msgstr "Umsatzzähler"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:359
+#: code:addons/fpos/fpos.py:350
 #, python-format
 msgid "Unable to book order %s/%s/%s"
 msgstr "Rechnung %s/%s/%s kann nicht gebucht werden"
@@ -884,7 +910,7 @@ msgid "Yellow"
 msgstr "Gelb"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:69
+#: code:addons/fpos/fpos.py:70
 #, python-format
 msgid "You cannot delete an order which are not in draft state"
 msgstr ""
@@ -902,7 +928,7 @@ msgid "or"
 msgstr "oder"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:435
+#: code:addons/fpos/fpos.py:428
 #, python-format
 msgid "€-Format: %s,%s"
 msgstr ""

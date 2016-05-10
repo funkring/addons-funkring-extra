@@ -75,9 +75,6 @@ class fpos_order(models.Model):
         if self._uid != SUPERUSER_ID:
             raise Warning(_("Only Administrator could correct Fpos orders"))
         
-        account_tax_obj = self.pool.get('account.tax')
-        precision = self.pool.get('decimal.precision').precision_get(self._cr, self._uid, 'Account')
-        
         for order in self:
             cash_payment = None
             payment_total = 0
@@ -109,38 +106,6 @@ class fpos_order(models.Model):
                     has_status = True
             if not has_status:
                 order.tag = None
-                    
-            # ###################################################
-            # FIX invalid tax and price
-            # ###################################################
-                    
-            cent_fix = 0.0
-            line_total = 0.0
-            for line in order.line_ids:
-                taxes_ids = [tax for tax in line.product_id.taxes_id if tax.company_id.id == line.order_id.company_id.id]
-                
-                # set brutto price
-                # if price not found
-                price = line.price
-                if not price and line.brutto_price:
-                    line.price = line.brutto_price
-                
-                price = line.price * (1 - (line.discount or 0.0) / 100.0)
-                
-                price_included = 0
-                for tax in taxes_ids:
-                    if tax.price_include:
-                        price_included+=1
-                    
-                taxes = account_tax_obj.compute_all(self._cr, self._uid, taxes_ids, price, line.qty, product=line.product_id, partner=line.order_id.partner_id or False)
-                line_total += taxes["total_included"]
-            
-            diff = round(round(payment_total, precision) - line_total, precision)
-            if (diff >= 0.01 and diff < 0.1) or (diff <= -0.01 and diff > -0.1 ):
-                cent_fix += diff
-
-            order.cent_fix = cent_fix
-                       
             
     
     @api.model
@@ -160,7 +125,9 @@ class fpos_order(models.Model):
         st_obj = self.pool["account.bank.statement"]
         context = self._context and dict(self._context) or {}
             
+        precision = self.pool.get('decimal.precision').precision_get(self._cr, self._uid, 'Account')       
         status_id = data_obj.xmlid_to_res_id("fpos.product_fpos_status",raise_if_not_found=True)
+        
         for order in self:
             # get profile
             profile = profileDict.get(order.fpos_user_id.id)
@@ -317,23 +284,7 @@ class fpos_order(models.Model):
                             "create_date" : order.date
                         }))
                 
-                
-            # check cent fix
-            if order.cent_fix:
-                # add status
-                lines.append((0,0,{
-                    "fpos_line_id" : line.id,
-                    "company_id" : order.company_id.id,
-                    "name" : _("Cent Correction"),
-                    "product_id" : status_id,                    
-                    "price_unit" : order.cent_fix,
-                    "qty" : 1.0,
-                    "discount" : 0.0,
-                    "create_date" : order.date
-                }))
-                
-                
-            # get users
+            # get user
             session_uid = session.user_id.id
                 
             # create order      
@@ -344,6 +295,30 @@ class fpos_order(models.Model):
             order_obj.write(self._cr, session_uid, pos_order_id, { 
                                     "name" : order.name          
                                   }, context)
+            
+            # check cent correction
+            payment_total = 0.0
+            for payment in order.payment_ids:
+                payment_total += payment.amount
+                
+            if payment_total:                
+                order_total = order_obj.read(self._cr, session_uid, pos_order_id, ["amount_total"], context=context)["amount_total"]
+                diff =  round(payment_total - order_total, precision) 
+                if (diff >= 0.01 and diff < 0.1) or (diff <= -0.01 and diff > -0.1 ):
+                    order.cent_fix = diff
+                    order_obj.write(self._cr, session_uid, pos_order_ids, {
+                                        "lines" : [(0,0,{
+                                                    "fpos_line_id" : line.id,
+                                                    "company_id" : order.company_id.id,
+                                                    "name" : _("Cent Correction"),
+                                                    "product_id" : status_id,                    
+                                                    "price_unit" : diff,
+                                                    "qty" : 1.0,
+                                                    "discount" : 0.0,
+                                                    "create_date" : order.date
+                                                    })]
+                                         }, context=context)
+                
             
             # add payment
             for payment in order.payment_ids:

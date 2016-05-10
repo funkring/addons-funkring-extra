@@ -123,9 +123,9 @@
             <field name="user_id"/>
             <field name="partner_id"/>
             <group expand="0" string="Group By...">
-                <filter name="fpos_user_id" context="{'group_by':'fpos_user_id'}"/>
-                <filter name="user_id" context="{'group_by':'user_id'}"/>
-                <filter name="partner_id" context="{'group_by':'partner_id'}"/>
+                <filter string="By Device" name="fpos_user_id" context="{'group_by':'fpos_user_id'}"/>
+                <filter string="By User" name="user_id" context="{'group_by':'user_id'}"/>
+                <filter string="By Partner" name="partner_id" context="{'group_by':'partner_id'}"/>
             </group>
         </search>
       </field>
