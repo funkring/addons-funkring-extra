@@ -22,6 +22,7 @@ from openerp import models, fields, api, _
 from openerp.exceptions import Warning
 from openerp.addons.at_base import format
 from openerp import SUPERUSER_ID
+import openerp.addons.decimal_precision as dp
 
 class fpos_order(models.Model):
     _name = "fpos.order"
@@ -44,6 +45,8 @@ class fpos_order(models.Model):
     state = fields.Selection([("draft","Draft"),
                               ("paid","Paid"),
                               ("done","Done")], "Status", default="draft", readonly=True, index=True)
+    
+    active = fields.Boolean("Active", default=True, index=True, readonly=True)
     
     note = fields.Text("Note")
     send_invoice = fields.Boolean("Send Invoice", index=True)
@@ -119,8 +122,8 @@ class fpos_order(models.Model):
                 taxes = account_tax_obj.compute_all(self._cr, self._uid, taxes_ids, price, line.qty, product=line.product_id, partner=line.order_id.partner_id or False)
                 line_total += taxes["total_included"]
             
-            diff = round(payment_total, precision) - line_total
-            if diff >= 0.01 and diff < 0.1:
+            diff = round(round(payment_total, precision) - line_total, precision)
+            if (diff >= 0.01 and diff < 0.1) or (diff <= -0.01 and diff > -0.1 ):
                 cent_fix += diff
 
             order.cent_fix = cent_fix
@@ -317,9 +320,12 @@ class fpos_order(models.Model):
                 }))
                 
                 
+            # get users
+            order_uid = order.user_id.id
+            session_uid = session.user_id.id
+                
             # create order      
-            order_uid = order.user_id.id      
-            pos_order_id = order_obj.create(self._cr, order_uid, order_vals, context=context)
+            pos_order_id = order_obj.create(self._cr, session_uid, order_vals, context=context)
             pos_order_ids = [pos_order_id]
 
             # correct name
@@ -361,9 +367,22 @@ class fpos_order(models.Model):
         
             # check if session should finished
             if finish:
-                session_obj.signal_workflow(self._cr, session.user_id.id, [session.id], "close")
-                session_obj.write(self._cr, session.user_id.id, [session.id], {"stop_at" : order.date})
+                session_obj.signal_workflow(self._cr, session_uid, [session.id], "close")
+                session_obj.write(self._cr, session_uid, [session.id], {"stop_at" : order.date})
                 sessionDict[profile.id] = False
+                
+                # search finished orders
+                self._cr.execute("SELECT fo.id FROM pos_order o "
+                                 " INNER JOIN pos_session s ON s.id = o.session_id AND s.state = 'closed' "
+                                 " INNER JOIN fpos_order fo ON fo.id = o.fpos_order_id "
+                                 " WHERE fo.active AND fo.fpos_user_id = %s ", (order.fpos_user_id.id,))
+                
+                # set finished orders inactive
+                finish_orders_ids = [r[0] for r in self._cr.fetchall()]
+                if finish_orders_ids:
+                    finish_orders = self.browse(finish_orders_ids)
+                    finish_orders.write({'active' : False})
+                
                  
         return True
     
@@ -380,7 +399,7 @@ class fpos_order_line(models.Model):
     brutto_price = fields.Float("Brutto Price", deprecated=True)
     price = fields.Float("Price")
     netto = fields.Boolean("Netto")
-    qty = fields.Float("Quantity")
+    qty = fields.Float("Quantity",digits=dp.get_precision('Product UoS'))
     tara = fields.Float("Tara")
     subtotal_incl = fields.Float("Subtotal Incl.")
     subtotal = fields.Float("Subtotal")
@@ -412,8 +431,10 @@ class fpos_order_line(models.Model):
                 config.append(_("Minus"))
             if "u" in self.flags:
                 config.append(_("No Unit"))
-            if "p" in self.flags:
-                config.append(_("Price"))
+            if "b" in self.flags:
+                config.append(_("Break"))
+            if "d" in self.flags:
+                config.append(_("Detail"))
         if self.p_pre or self.p_dec:
             config.append(_("*-Format: %s,%s") % (self.p_pre or 0, self.p_dec or 0))
         if self.a_pre or self.a_dec:

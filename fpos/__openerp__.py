@@ -51,6 +51,7 @@ oerp.at Fpos
               "view/pos_top.xml",
               "view/pos_place.xml",     
               "view/pos_category.xml",         
+              "wizard/export_wizard.xml",
               "report/session_summary_report.xml",
               "report/session_detail_report.xml",
               "data/cron_fpos_post.xml",

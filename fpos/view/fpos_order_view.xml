@@ -106,6 +106,7 @@
             <field name="amount_total"/>
             <field name="cent_fix"/>
             <field name="state"/>
+            <field name="active"/>
         </tree>
       </field>
     </record>
