@@ -128,7 +128,7 @@ class pos_config(osv.Model):
         last_order_values = fpos_order_obj.search_read(cr, uid, 
                                     [("fpos_user_id","=",uid),("state","!=","draft")], 
                                     ["seq", "turnover", "cpos"], 
-                                    order="seq desc", limit=1)
+                                    order="seq desc", limit=1, context={"active_test" : False})
         
         if last_order_values:
             last_order_values = last_order_values[0]

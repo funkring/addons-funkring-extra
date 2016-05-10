@@ -111,14 +111,27 @@ class fpos_order(models.Model):
                 order.tag = None
                     
             # ###################################################
-            # FIX invalid tax
+            # FIX invalid tax and price
             # ###################################################
                     
             cent_fix = 0.0
             line_total = 0.0
             for line in order.line_ids:
                 taxes_ids = [tax for tax in line.product_id.taxes_id if tax.company_id.id == line.order_id.company_id.id]
+                
+                # set brutto price
+                # if price not found
+                price = line.price
+                if not price and line.brutto_price:
+                    line.price = line.brutto_price
+                
                 price = line.price * (1 - (line.discount or 0.0) / 100.0)
+                
+                price_included = 0
+                for tax in taxes_ids:
+                    if tax.price_include:
+                        price_included+=1
+                    
                 taxes = account_tax_obj.compute_all(self._cr, self._uid, taxes_ids, price, line.qty, product=line.product_id, partner=line.order_id.partner_id or False)
                 line_total += taxes["total_included"]
             
@@ -127,7 +140,7 @@ class fpos_order(models.Model):
                 cent_fix += diff
 
             order.cent_fix = cent_fix
-            
+                       
             
     
     @api.model
@@ -184,7 +197,7 @@ class fpos_order(models.Model):
             # create session if not exist
             if not sessionCfg:
                 # new session         
-                session_uid = order.user_id.id  
+                session_uid = order.fpos_user_id.id 
                 session_id = session_obj.create(self._cr, session_uid, {
                     "config_id" : profile.id,
                     "user_id" : session_uid,
@@ -321,7 +334,6 @@ class fpos_order(models.Model):
                 
                 
             # get users
-            order_uid = order.user_id.id
             session_uid = session.user_id.id
                 
             # create order      
@@ -329,14 +341,14 @@ class fpos_order(models.Model):
             pos_order_ids = [pos_order_id]
 
             # correct name
-            order_obj.write(self._cr, order_uid, pos_order_id, { 
+            order_obj.write(self._cr, session_uid, pos_order_id, { 
                                     "name" : order.name          
                                   }, context)
             
             # add payment
             for payment in order.payment_ids:
                 st = statements[payment.journal_id.id]                
-                order_obj.add_payment(self._cr, order_uid, pos_order_id, { 
+                order_obj.add_payment(self._cr, session_uid, pos_order_id, { 
                                     "payment_date" : order.date,
                                     "amount" : payment.amount,
                                     "journal" : payment.journal_id.id,
@@ -346,20 +358,20 @@ class fpos_order(models.Model):
             
            
             # post order
-            order_obj.signal_workflow(self._cr, order_uid, pos_order_ids, "paid")
+            order_obj.signal_workflow(self._cr, session_uid, pos_order_ids, "paid")
             # check if invoice should be crated
             if order.send_invoice:
                 # created invoice
-                order_obj.action_invoice(self._cr, order_uid, pos_order_ids, context)
-                pos_order = order_obj.browse(self._cr, order_uid, pos_order_id, context)                
-                invoice_obj.signal_workflow(self._cr, order_uid, [pos_order.invoice_id.id], "invoice_open")
+                order_obj.action_invoice(self._cr, session_uid, pos_order_ids, context)
+                pos_order = order_obj.browse(self._cr, session_uid, pos_order_id, context)                
+                invoice_obj.signal_workflow(self._cr, session_uid, [pos_order.invoice_id.id], "invoice_open")
                 # call after invoice
-                self._after_invoice(self._cr, order_uid, pos_order, context=context)
+                self._after_invoice(self._cr, session_uid, pos_order, context=context)
                 
             # check order
-            order_vals = order_obj.read(self._cr, order_uid, pos_order_id, ["state"], context=context)
+            order_vals = order_obj.read(self._cr, session_uid, pos_order_id, ["state"], context=context)
             if not order_vals["state"] in ("done","paid","invoiced"):
-                order_vals = order_obj.read(self._cr, order_uid, pos_order_id, ["name","amount_total","amount_tax"], context=context)
+                order_vals = order_obj.read(self._cr, session_uid, pos_order_id, ["name","amount_total","amount_tax"], context=context)
                 raise Warning(_("Unable to book order %s/%s/%s") % (order_vals["name"],order_vals["amount_total"],order_vals["amount_tax"]))              
 
             # set new fpos order state                        
