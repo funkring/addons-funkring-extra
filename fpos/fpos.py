@@ -336,12 +336,15 @@ class fpos_order(models.Model):
             order_obj.signal_workflow(self._cr, session_uid, pos_order_ids, "paid")
             # check if invoice should be crated
             if order.send_invoice:
-                # created invoice
-                order_obj.action_invoice(self._cr, session_uid, pos_order_ids, context)
-                pos_order = order_obj.browse(self._cr, session_uid, pos_order_id, context)                
-                invoice_obj.signal_workflow(self._cr, session_uid, [pos_order.invoice_id.id], "invoice_open")
-                # call after invoice
-                self._after_invoice(self._cr, session_uid, pos_order, context=context)
+                if order.partner_id:
+                    # created invoice
+                    order_obj.action_invoice(self._cr, session_uid, pos_order_ids, context)
+                    pos_order = order_obj.browse(self._cr, session_uid, pos_order_id, context)                
+                    invoice_obj.signal_workflow(self._cr, session_uid, [pos_order.invoice_id.id], "invoice_open")
+                    # call after invoice
+                    self._after_invoice(self._cr, session_uid, pos_order, context=context)
+                else:
+                    order.send_invoice = False
                 
             # check order
             order_vals = order_obj.read(self._cr, session_uid, pos_order_id, ["state"], context=context)
