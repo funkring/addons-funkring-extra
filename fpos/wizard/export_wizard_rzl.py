@@ -28,11 +28,11 @@ import re
 import base64
 
 class wizard_export_bmd(models.TransientModel):
-    _name = "fpos.wizard.export.bmd"
-    _description = "BMD Export Wizard"
+    _name = "fpos.wizard.export.rzl"
+    _description = "RZL Export Wizard"
     
-    buerf = fields.Binary("BMD Export", readonly=True)
-    buerf_name = fields.Char("buerf_name", default="buerf")
+    data = fields.Binary("RZL Export", readonly=True)
+    data_name = fields.Char("Export Name", default="kassa.csv")
    
     _beleg_patterns =  [re.compile("^.*[^0-9]([0-9]+)$"),
                        re.compile("^([0-9]+)$")]
@@ -66,19 +66,15 @@ class wizard_export_bmd(models.TransientModel):
                     result = belegNrPattern.match(value)
                     if result:
                         return result.group(1)
-            return None    
+            return None     
         
         def formatSymbol(value):
             if value:
                 value = value.replace("/","")
                 return value
-            return None 
+            return None
      
         
-        # write header
-        line = ";".join(["konto", "gkto", "belegnr", "belegdat", "betrag", "mwst", "steuer", "steucod", "verbuchkz","symbol"]) + ";"
-        lines.append(line)
-          
         #internal_account_id
         for order in orders:      
             # config            
@@ -87,9 +83,10 @@ class wizard_export_bmd(models.TransientModel):
                 raise Warning(_("No cash statement for order %s found") % order.name)
             
             config = order.session_id.config_id
-            symbol = formatSymbol(config.fpos_prefix or config.sequence_number.prefix)
-            belegnr =  formatBelegNr(order.name)         
-            belegdat = helper.strToLocalTimeFormat(self._cr, self._uid, order.date_order,"%Y%m%d", context=self._context)
+            currency = order.pricelist_id.currency_id
+            belegkreis = formatSymbol(config.fpos_prefix or config.sequence_number.prefix)
+            belegnr =  formatBelegNr(order.name)
+            belegdat = helper.strToLocalTimeFormat(self._cr, self._uid, order.date_order,"%d%m%Y", context=self._context)
             journal = cash_statement.journal_id
             debit_account = journal.default_debit_account_id
             credit_account = journal.default_credit_account_id
@@ -100,8 +97,6 @@ class wizard_export_bmd(models.TransientModel):
             bookings = OrderedDict()
             def post(konto, betrag, mwst, steuer):
                 # change sign
-                betrag *= -1
-                steuer *= -1
                 key = (konto,mwst)
                 booking = bookings.get(key)
                 if booking is None:
@@ -122,7 +117,14 @@ class wizard_export_bmd(models.TransientModel):
                 
                 tax_amount =  line.price_subtotal_incl - line.price_subtotal
                 if product.income_pdt or product.expense_pdt:
-                    post(internal_account.code, line.price_subtotal, tax, tax_amount)
+                    account = internal_account
+                    partner = order.partner_id
+                    if partner:
+                        if product.income_pdt:
+                            account = partner.property_account_receivable
+                        else:
+                            account = partner.property_account_payable
+                    post(account.code, line.price_subtotal, tax, tax_amount)
                 else:
                     income_account = product.property_account_income
                     if not income_account:
@@ -138,15 +140,93 @@ class wizard_export_bmd(models.TransientModel):
                     
             # write bookings            
             for (konto, mwst), (betrag, steuer) in bookings.iteritems():
-                # thin about changed sign                
-                account = betrag > 0 and credit_account or debit_account                
-                steucod = "03"
-                steuer = mwst and formatFloat(steuer) or ""
-                line = ";".join([konto, account.code, belegnr, belegdat, formatFloat(betrag), str(mwst), steuer, steucod, "A", symbol]) + ";"
+                sollbetrag = ""
+                habenbetrag = ""
+                gegenkonto = None
+                if betrag < 0:
+                    gegenkonto = credit_account.code
+                    sollbetrag = formatFloat(betrag)                    
+                else:
+                    gegenkonto = debit_account.code
+                    habenbetrag = formatFloat(betrag)
+                    
+                opnummer = ""
+                valuta_datum = ""
+                waehrung = currency.name
+                fremdwaehrung = ""
+                fremdwaehrung_sollbetrag = ""
+                fremdwaehrung_habenbetrag = ""
+                kostenstelle = ""
+                ust_land = "1"
+                ust_prozentsatz = ""
+                ust_code = ""
+                ust_sondercode = "0"
+                buchungsart = "2"
+                steuerbetrag = formatFloat(steuer)
+                if mwst:
+                    ust_prozentsatz = str(mwst)
+                    ust_code = "2"
+                    
+                abweichende_zahlungsfrist = ""
+                abweichende_kontofrist = ""
+                abw_skontoprozentsatz = ""
+                buchungstext = order.name
+                buchungstext2 = ""
+                uid_nummer = ""
+                dienstleistungsnummer = ""
+                dienstleistungsland = ""
+                dienstleistungsexport = ""
+                dms_schluessel = ""
+                kostentraeger = ""
+                fremdbelegnummer = ""
+                wert1 = ""
+                wert2  = ""
+                mahnsperre = ""
+                kundendatenfeld = ""
+                
+                
+                line = ";".join([konto,             #1 
+                                 gegenkonto,        #2
+                                 opnummer,          #3
+                                 belegdat,          #4 
+                                 valuta_datum,      #5
+                                 waehrung,          #6
+                                 sollbetrag,        #7
+                                 habenbetrag,       #8
+                                 steuerbetrag,      #9
+                                 fremdwaehrung,     #10
+                                 fremdwaehrung_sollbetrag,  #11
+                                 fremdwaehrung_habenbetrag, #12
+                                 kostenstelle,      #13
+                                 belegkreis,        #14
+                                 belegnr,           #15
+                                 ust_land,          #16
+                                 ust_prozentsatz,   #17
+                                 ust_code,           #18
+                                 ust_sondercode,     #19
+                                 buchungsart,        #20
+                                 abweichende_zahlungsfrist, #21
+                                 abweichende_kontofrist, #22
+                                 abw_skontoprozentsatz, #23
+                                 buchungstext, #24
+                                 buchungstext2, #25
+                                 uid_nummer, #26
+                                 dienstleistungsnummer, #27
+                                 dienstleistungsland, #28
+                                 dienstleistungsexport, #29
+                                 dms_schluessel, #30
+                                 kostentraeger, #31
+                                 fremdbelegnummer, #32
+                                 wert1, #33
+                                 wert2, #34
+                                 mahnsperre, #35
+                                 kundendatenfeld #36
+                                ]) + ";"
+                                 
                 lines.append(line)
         
         lines = "\r\n".join(lines) + "\r\n"
         charset = "cp1252"
         
-        res["buerf"] = base64.encodestring(lines.encode(charset,"replace"))
+        res["data"] = base64.encodestring(lines.encode(charset,"replace"))
         return res

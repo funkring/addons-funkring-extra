@@ -2,15 +2,15 @@
 <openerp>
   <data>
   
-    <record id="wizard_export_bmd" model="ir.ui.view">
-      <field name="name">fpos.wizard_bmd_export</field>
-      <field name="model">fpos.wizard.export.bmd</field>
+    <record id="wizard_export_rzl" model="ir.ui.view">
+      <field name="name">fpos.wizard_rzl_export</field>
+      <field name="model">fpos.wizard.export.rzl</field>
       <field name="arch" type="xml">
-        <form string="BMD Export">
+        <form string="RZL Export">
           <group>
             <div>
-            <field name="buerf" filename="buerf_name"/>
-            <field name="buerf_name" invisible="1"/>
+            <field name="data" filename="data_name"/>
+            <field name="data_name" invisible="1"/>
             </div>
           </group>
           <footer>
@@ -20,29 +20,29 @@
       </field>
     </record>
     
-    <record id="action_export_bmd" model="ir.actions.act_window">
-      <field name="name">BMD Export</field>
+    <record id="action_export_rzl" model="ir.actions.act_window">
+      <field name="name">RZL Export</field>
       <field name="type">ir.actions.act_window</field>
-      <field name="res_model">fpos.wizard.export.bmd</field>
+      <field name="res_model">fpos.wizard.export.rzl</field>
       <field name="view_type">form</field>
       <field name="view_mode">form</field>
       <field name="target">new</field>
     </record>
     
-   <record id="irconfig_export_bmd_order" model="ir.values">
+   <record id="irconfig_export_rzl_order" model="ir.values">
      <field name="model_id" ref="model_pos_order" />      
-     <field name="name">BMD Export</field>
+     <field name="name">RZL Export</field>
      <field name="key2">client_action_multi</field>
-     <field name="value" eval="'ir.actions.act_window,' + str(ref('action_export_bmd'))" />
+     <field name="value" eval="'ir.actions.act_window,' + str(ref('action_export_rzl'))" />
      <field name="key">action</field>
      <field name="model">pos.order</field>
    </record>
    
-    <record id="irconfig_export_bmd_session" model="ir.values">
+    <record id="irconfig_export_rzl_session" model="ir.values">
      <field name="model_id" ref="model_pos_session" />      
-     <field name="name">BMD Export</field>
+     <field name="name">RZL Export</field>
      <field name="key2">client_action_multi</field>
-     <field name="value" eval="'ir.actions.act_window,' + str(ref('action_export_bmd'))" />
+     <field name="value" eval="'ir.actions.act_window,' + str(ref('action_export_rzl'))" />
      <field name="key">action</field>
      <field name="model">pos.session</field>
     </record>
