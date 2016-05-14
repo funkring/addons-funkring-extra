@@ -339,10 +339,15 @@ class fpos_order(models.Model):
                 if order.partner_id:
                     # created invoice
                     order_obj.action_invoice(self._cr, session_uid, pos_order_ids, context)
-                    pos_order = order_obj.browse(self._cr, session_uid, pos_order_id, context)                
-                    invoice_obj.signal_workflow(self._cr, session_uid, [pos_order.invoice_id.id], "invoice_open")
+                    pos_order = order_obj.browse(self._cr, session_uid, pos_order_id, context)
+                    
+                    # update invoice
+                    invoice_ids = [pos_order.invoice_id.id]
+                    invoice_obj.write(self._cr, session_uid, invoice_ids, {"user_id" : order.user_id.id }, context)
+                    invoice_obj.signal_workflow(self._cr, session_uid, invoice_ids, "invoice_open")
+                    
                     # call after invoice
-                    self._after_invoice(self._cr, session_uid, pos_order, context=context)
+                    order_obj._after_invoice(self._cr, session_uid, pos_order, context=context)
                 else:
                     order.send_invoice = False
                 
