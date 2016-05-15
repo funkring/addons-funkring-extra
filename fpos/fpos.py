@@ -129,6 +129,7 @@ class fpos_order(models.Model):
         status_id = data_obj.xmlid_to_res_id("fpos.product_fpos_status",raise_if_not_found=True)
         
         for order in self:
+            
             # get profile
             profile = profileDict.get(order.fpos_user_id.id)
             if profile is None:
@@ -298,12 +299,16 @@ class fpos_order(models.Model):
             
             # check cent correction
             payment_total = 0.0
+            payments = []
             for payment in order.payment_ids:
-                payment_total += payment.amount
+                st = statements[payment.journal_id.id]
+                payment_amount = round(payment.amount, precision)                
+                payment_total += payment_amount
+                payments.append((st, payment.journal_id, payment_amount))
                 
             if payment_total:                
-                order_total = order_obj.read(self._cr, session_uid, pos_order_id, ["amount_total"], context=context)["amount_total"]
-                diff =  round(payment_total - order_total, precision) 
+                order_total = order_obj.read(self._cr, session_uid, pos_order_id, ["amount_total"], context=context)["amount_total"]               
+                diff = round(payment_total - order_total, precision) 
                 if (diff >= 0.01 and diff < 0.1) or (diff <= -0.01 and diff > -0.1 ):
                     order.cent_fix = diff
                     order_obj.write(self._cr, session_uid, pos_order_ids, {
@@ -321,12 +326,11 @@ class fpos_order(models.Model):
                 
             
             # add payment
-            for payment in order.payment_ids:
-                st = statements[payment.journal_id.id]                
+            for st, journal, amount in payments:
                 order_obj.add_payment(self._cr, session_uid, pos_order_id, { 
                                     "payment_date" : order.date,
-                                    "amount" : payment.amount,
-                                    "journal" : payment.journal_id.id,
+                                    "amount" : amount,
+                                    "journal" : journal.id,
                                     "statement_id" : st.id              
                                   },
                                   context)
