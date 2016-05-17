@@ -101,7 +101,8 @@ class product_product(osv.Model):
             "active": obj.active,
             "available_in_pos" : obj.available_in_pos,
             "sale_ok" : obj.sale_ok,
-            "pos_color" : obj.pos_color
+            "pos_color" : obj.pos_color,
+            "pos_report" : obj.pos_report
         }
         
         if obj.pos_nogroup:
