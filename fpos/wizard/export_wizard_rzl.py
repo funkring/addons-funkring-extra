@@ -94,10 +94,16 @@ class wizard_export_bmd(models.TransientModel):
             if not internal_account:
                 raise Warning(_("No internal account defined on Journal %s for cash transfers") % journal.name)
              
+            name = [order.name]
+            if order.partner_id:
+                name.append(order.partner_id.name)                
+            name = " ".join(name)
+            
+             
             bookings = OrderedDict()
-            def post(konto, betrag, mwst, steuer):
+            def post(konto, betrag, mwst, steuer, text):
                 # change sign
-                key = (konto,mwst)
+                key = (konto, mwst, text)
                 booking = bookings.get(key)
                 if booking is None:
                     booking = (betrag, steuer)
@@ -124,22 +130,22 @@ class wizard_export_bmd(models.TransientModel):
                             account = partner.property_account_receivable
                         else:
                             account = partner.property_account_payable
-                    post(account.code, line.price_subtotal, tax, tax_amount)
+                    post(account.code, line.price_subtotal, tax, tax_amount, order.name)
                 else:
                     income_account = product.property_account_income
                     if not income_account:
                         income_account = product.categ_id.property_account_income_categ
                     if not income_account:
                         raise Warning(_("No income account for product %s defined") % product.name)
-                    post(income_account.code, line.price_subtotal, tax, tax_amount)
+                    post(income_account.code, line.price_subtotal, tax, tax_amount, name)
         
             # post payment
             for payment in order.statement_ids:                
                 if payment.statement_id.id != cash_statement.id:
-                    post(internal_account.code, -payment.amount, 0, 0)
+                    post(internal_account.code, -payment.amount, 0, 0, payment.statement_id.journal_id.name)
                     
             # write bookings            
-            for (konto, mwst), (betrag, steuer) in bookings.iteritems():
+            for (konto, mwst, text), (betrag, steuer) in bookings.iteritems():
                 sollbetrag = ""
                 habenbetrag = ""
                 gegenkonto = None
@@ -170,7 +176,7 @@ class wizard_export_bmd(models.TransientModel):
                 abweichende_zahlungsfrist = ""
                 abweichende_kontofrist = ""
                 abw_skontoprozentsatz = ""
-                buchungstext = order.name
+                buchungstext = text
                 buchungstext2 = ""
                 uid_nummer = ""
                 dienstleistungsnummer = ""

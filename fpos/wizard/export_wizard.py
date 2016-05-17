@@ -76,7 +76,7 @@ class wizard_export_bmd(models.TransientModel):
      
         
         # write header
-        line = ";".join(["konto", "gkto", "belegnr", "belegdat", "betrag", "mwst", "steuer", "steucod", "verbuchkz","symbol"]) + ";"
+        line = ";".join(["konto", "gkto", "belegnr", "belegdat", "betrag", "mwst", "steuer", "steucod", "verbuchkz","symbol","text"]) + ";"
         lines.append(line)
           
         #internal_account_id
@@ -97,12 +97,17 @@ class wizard_export_bmd(models.TransientModel):
             if not internal_account:
                 raise Warning(_("No internal account defined on Journal %s for cash transfers") % journal.name)
              
+            name = [order.name]
+            if order.partner_id:
+                name.append(order.partner_id.name)                
+            name = " ".join(name)
+             
             bookings = OrderedDict()
-            def post(konto, betrag, mwst, steuer):
+            def post(konto, betrag, mwst, steuer, text):
                 # change sign
                 betrag *= -1
                 steuer *= -1
-                key = (konto,mwst)
+                key = (konto, mwst, text)
                 booking = bookings.get(key)
                 if booking is None:
                     booking = (betrag, steuer)
@@ -122,27 +127,27 @@ class wizard_export_bmd(models.TransientModel):
                 
                 tax_amount =  line.price_subtotal_incl - line.price_subtotal
                 if product.income_pdt or product.expense_pdt:
-                    post(internal_account.code, line.price_subtotal, tax, tax_amount)
+                    post(internal_account.code, line.price_subtotal, tax, tax_amount, name)
                 else:
                     income_account = product.property_account_income
                     if not income_account:
                         income_account = product.categ_id.property_account_income_categ
                     if not income_account:
                         raise Warning(_("No income account for product %s defined") % product.name)
-                    post(income_account.code, line.price_subtotal, tax, tax_amount)
+                    post(income_account.code, line.price_subtotal, tax, tax_amount, name)
         
             # post payment
             for payment in order.statement_ids:                
                 if payment.statement_id.id != cash_statement.id:
-                    post(internal_account.code, -payment.amount, 0, 0)
+                    post(internal_account.code, -payment.amount, 0, 0, payment.statement_id.journal_id.name)
                     
             # write bookings            
-            for (konto, mwst), (betrag, steuer) in bookings.iteritems():
+            for (konto, mwst, text), (betrag, steuer) in bookings.iteritems():
                 # thin about changed sign                
                 account = betrag > 0 and credit_account or debit_account                
                 steucod = "03"
                 steuer = mwst and formatFloat(steuer) or ""
-                line = ";".join([konto, account.code, belegnr, belegdat, formatFloat(betrag), str(mwst), steuer, steucod, "A", symbol]) + ";"
+                line = ";".join([konto, account.code, belegnr, belegdat, formatFloat(betrag), str(mwst), steuer, steucod, "A", symbol, text]) + ";"
                 lines.append(line)
         
         lines = "\r\n".join(lines) + "\r\n"
