@@ -72,9 +72,11 @@ class fpos_order(models.Model):
     
     @api.multi
     def correct(self):
+        
         if self._uid != SUPERUSER_ID:
             raise Warning(_("Only Administrator could correct Fpos orders"))
         
+        tax_obj = self.pool["account.tax"]
         for order in self:
             cash_payment = None
             payment_total = 0
@@ -84,6 +86,7 @@ class fpos_order(models.Model):
                     cash_payment = payment
                 payment_total += payment.amount
                 
+                
             # ###################################################
             # FIX invalid payment BUG, DELETE KASSASTURZ LINES 
             # ###################################################
@@ -91,22 +94,82 @@ class fpos_order(models.Model):
                 cash_payment.amount = order.amount_total
                 cash_payment.payment = order.amount_total
                 order.cpos = order.cpos + order.amount_total
-                                
-                next_orders = order.search([("fpos_user_id","=",order.fpos_user_id.id),("name",">",order.name)],order="name asc")
+                next_orders = order.search([("fpos_user_id","=",order.fpos_user_id.id),("seq",">",order.seq)],order="seq asc")
                 for next_order in next_orders:
                     next_order.cpos = next_order.cpos + order.amount_total
             
-            
+          
             # ###################################################
             # FIX invalid status flag
             # ###################################################
+            
             has_status = False
-            for line in order.line_ids:
+            order_total = 0
+            
+            for line in order.line_ids:                
                 if line.tag in ("b","r","c","s"):
                     has_status = True
+                else:
+                    order_total += line.subtotal_incl
+                
+                # FIX PRICE
+                if not line.price and line.brutto_price:
+                    line.price = line.brutto_price
+                
             if not has_status:
-                order.tag = None
+                order.tag = None    
             
+            
+            # ###################################################
+            # FIX invalid calc
+            # ###################################################
+            
+            if abs(payment_total-order_total) > 0.01:
+                taxes = {}
+                fpos_taxes = []
+                order_tax = 0
+                for line in order.line_ids:                    
+                    taxes_ids = [tax for tax in line.product_id.taxes_id if tax.company_id.id == line.order_id.company_id.id]
+                    price = line.price
+                    calc = tax_obj.compute_all(self._cr, self._uid, taxes_ids, price, line.qty, product=line.product_id, partner=line.order_id.partner_id or False)
+                    if taxes_ids:
+                        tax_rec = taxes_ids[0]
+                        tax = taxes.get(tax_rec.id)
+                        tax_amount = calc["total_included"] - calc["total"]
+                        order_tax += tax_amount
+                        if tax is None:                            
+                            tax = {
+                                "name" : tax_rec.name,
+                                "amount_tax" : tax_amount,
+                                "amount_netto" : calc["total"]                                
+                            }
+                            taxes[tax_rec.id] = tax
+                            fpos_taxes.append(tax)
+                        else:
+                            tax["amount_tax"] =  tax["amount_tax"] + tax_amount
+                            tax["amount_netto"] = tax["amount_netto"] + calc["total"]
+                      
+                # correct tax
+                order.tax_ids.unlink()
+                order.tax_ids = [(0,0,t) for t in fpos_taxes]
+                
+                # correct payment
+                diff = order_total-payment_total
+                for payment in order.payment_ids:
+                    payment.amount = payment.amount + diff 
+                    break
+                
+                # correct turnover, cpos
+                order.cpos = order.cpos + diff
+                order.turnover = order.turnover + diff
+                next_orders = order.search([("fpos_user_id","=",order.fpos_user_id.id),("seq",">",order.seq)],order="seq asc")
+                for next_order in next_orders:
+                    next_order.cpos = next_order.cpos + diff
+                    next_order.turnover = next_order.turnover + diff
+                     
+                order.amount_total = order_total
+                order.amount_tax = order_tax
+                
     
     @api.model
     def create(self, vals):
