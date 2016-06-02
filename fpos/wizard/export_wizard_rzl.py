@@ -55,25 +55,15 @@ class wizard_export_bmd(models.TransientModel):
         lines = []
         
         # formats
-        
+
         def formatFloat(inValue):
             return ("%.2f" % inValue).replace(".",",")
-        
-        def formatBelegNr(value):
-            if value:
-                value = value.replace("/","")
-                for belegNrPattern in self._beleg_patterns:
-                    result = belegNrPattern.match(value)
-                    if result:
-                        return result.group(1)
-            return None     
         
         def formatSymbol(value):
             if value:
                 value = value.replace("/","")
                 return value
             return None
-     
         
         #internal_account_id
         for order in orders:      
@@ -85,7 +75,7 @@ class wizard_export_bmd(models.TransientModel):
             config = order.session_id.config_id
             currency = order.pricelist_id.currency_id
             belegkreis = formatSymbol(config.fpos_prefix or config.sequence_number.prefix)
-            belegnr =  formatBelegNr(order.name)
+            belegnr = order.name.split(config.fpos_prefix)[-1]
             belegdat = helper.strToLocalTimeFormat(self._cr, self._uid, order.date_order,"%d%m%Y", context=self._context)
             journal = cash_statement.journal_id
             debit_account = journal.default_debit_account_id
@@ -94,21 +84,22 @@ class wizard_export_bmd(models.TransientModel):
             if not internal_account:
                 raise Warning(_("No internal account defined on Journal %s for cash transfers") % journal.name)
              
-            name = [order.name]
+            name = []
+            if order.pos_reference:
+                name.append(order.pos_reference)
             if order.partner_id:
-                name.append(order.partner_id.name)                
+                name.append(order.partner_id.name)          
             name = " ".join(name)
-            
              
             bookings = OrderedDict()
-            def post(konto, betrag, mwst, steuer, text):
+            def post(konto, betrag, betrag_gegenbuchung, mwst, steuer, text):
                 # change sign
                 key = (konto, mwst, text)
                 booking = bookings.get(key)
                 if booking is None:
-                    booking = (betrag, steuer)
+                    booking = (betrag, steuer, betrag_gegenbuchung)
                 else:
-                    booking = (booking[0] + betrag, booking[1] + steuer)
+                    booking = (booking[0] + betrag, booking[1] + steuer, booking[2] + betrag_gegenbuchung)
                 bookings[key] = booking
             
             # post sale            
@@ -130,31 +121,36 @@ class wizard_export_bmd(models.TransientModel):
                             account = partner.property_account_receivable
                         else:
                             account = partner.property_account_payable
-                    post(account.code, line.price_subtotal, tax, tax_amount, order.name)
+                    post(account.code, line.price_subtotal, line.price_subtotal_incl, tax, tax_amount, name)
                 else:
                     income_account = product.property_account_income
                     if not income_account:
                         income_account = product.categ_id.property_account_income_categ
                     if not income_account:
                         raise Warning(_("No income account for product %s defined") % product.name)
-                    post(income_account.code, line.price_subtotal, tax, tax_amount, name)
+                    post(income_account.code, line.price_subtotal, line.price_subtotal_incl, tax, tax_amount, name)
         
             # post payment
             for payment in order.statement_ids:                
                 if payment.statement_id.id != cash_statement.id:
-                    post(internal_account.code, -payment.amount, 0, 0, payment.statement_id.journal_id.name)
+                    post(internal_account.code, -payment.amount, -payment.amount, 0, 0, payment.statement_id.journal_id.name)
                     
             # write bookings            
-            for (konto, mwst, text), (betrag, steuer) in bookings.iteritems():
+            for (konto, mwst, text), (betrag, steuer, betrag_gegenbuchung) in bookings.iteritems():
                 sollbetrag = ""
                 habenbetrag = ""
+                sollbetrag_gegenbuchung = ""
+                habenbetrag_gegenbuchung = ""
                 gegenkonto = None
+                
                 if betrag < 0:
                     gegenkonto = credit_account.code
-                    sollbetrag = formatFloat(betrag)                    
+                    sollbetrag = formatFloat(abs(betrag))
+                    habenbetrag_gegenbuchung = formatFloat(abs(betrag_gegenbuchung))
                 else:
                     gegenkonto = debit_account.code
-                    habenbetrag = formatFloat(betrag)
+                    habenbetrag = formatFloat(abs(betrag))
+                    sollbetrag_gegenbuchung = formatFloat(abs(betrag_gegenbuchung))
                     
                 opnummer = ""
                 valuta_datum = ""
@@ -167,7 +163,7 @@ class wizard_export_bmd(models.TransientModel):
                 ust_prozentsatz = ""
                 ust_code = ""
                 ust_sondercode = "0"
-                buchungsart = "2"
+                buchungsart = "1"
                 steuerbetrag = formatFloat(steuer)
                 if mwst:
                     ust_prozentsatz = str(mwst)
@@ -176,8 +172,8 @@ class wizard_export_bmd(models.TransientModel):
                 abweichende_zahlungsfrist = ""
                 abweichende_kontofrist = ""
                 abw_skontoprozentsatz = ""
-                buchungstext = text
-                buchungstext2 = ""
+                buchungstext = order.name
+                buchungstext2 = text
                 uid_nummer = ""
                 dienstleistungsnummer = ""
                 dienstleistungsland = ""
@@ -190,7 +186,7 @@ class wizard_export_bmd(models.TransientModel):
                 mahnsperre = ""
                 kundendatenfeld = ""
                 
-                
+                # buchung
                 line = ";".join([konto,             #1 
                                  gegenkonto,        #2
                                  opnummer,          #3
@@ -228,8 +224,50 @@ class wizard_export_bmd(models.TransientModel):
                                  mahnsperre, #35
                                  kundendatenfeld #36
                                 ]) + ";"
-                                 
+                                                                 
                 lines.append(line)
+                
+                # gegen buchung
+                line = ";".join([gegenkonto,        #1 
+                                 konto,             #2
+                                 opnummer,          #3
+                                 belegdat,          #4 
+                                 valuta_datum,      #5
+                                 waehrung,          #6
+                                 sollbetrag_gegenbuchung,        #7
+                                 habenbetrag_gegenbuchung,       #8
+                                 "",                #9
+                                 fremdwaehrung,     #10
+                                 fremdwaehrung_sollbetrag,  #11
+                                 fremdwaehrung_habenbetrag, #12
+                                 kostenstelle,       #13
+                                 belegkreis,         #14
+                                 belegnr,            #15
+                                 ust_land,           #16
+                                 "",                 #17
+                                 "",                 #18
+                                 ust_sondercode,     #19
+                                 buchungsart,        #20
+                                 abweichende_zahlungsfrist, #21
+                                 abweichende_kontofrist,    #22
+                                 abw_skontoprozentsatz,     #23
+                                 buchungstext,  #24
+                                 buchungstext2, #25
+                                 uid_nummer,    #26
+                                 dienstleistungsnummer, #27
+                                 dienstleistungsland,   #28
+                                 dienstleistungsexport, #29
+                                 dms_schluessel,   #30
+                                 kostentraeger,    #31
+                                 fremdbelegnummer, #32
+                                 wert1, #33
+                                 wert2, #34
+                                 mahnsperre,     #35
+                                 kundendatenfeld #36
+                                ]) + ";"
+
+                lines.append(line)
+                
         
         lines = "\r\n".join(lines) + "\r\n"
         charset = "cp1252"

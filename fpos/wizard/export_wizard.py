@@ -37,12 +37,12 @@ class wizard_export_bmd(models.TransientModel):
     _beleg_patterns =  [re.compile("^.*[^0-9]([0-9]+)$"),
                        re.compile("^([0-9]+)$")]
 
-   
     @api.model
     def default_get(self, fields_list):
         res = super(wizard_export_bmd, self).default_get(fields_list)
         order_obj = self.env["pos.order"]
         orders = []
+        status_id = self.env["ir.model.data"].xmlid_to_res_id("fpos.product_fpos_status",raise_if_not_found=True)
         
         session_ids = util.active_ids(self._context, "pos.session")
         if session_ids:
@@ -58,15 +58,6 @@ class wizard_export_bmd(models.TransientModel):
         
         def formatFloat(inValue):
             return ("%.2f" % inValue).replace(".",",")
-        
-        def formatBelegNr(value):
-            if value:
-                value = value.replace("/","")
-                for belegNrPattern in self._beleg_patterns:
-                    result = belegNrPattern.match(value)
-                    if result:
-                        return result.group(1)
-            return None    
         
         def formatSymbol(value):
             if value:
@@ -88,7 +79,7 @@ class wizard_export_bmd(models.TransientModel):
             
             config = order.session_id.config_id
             symbol = formatSymbol(config.fpos_prefix or config.sequence_number.prefix)
-            belegnr =  formatBelegNr(order.name)         
+            belegnr = order.name.split(config.fpos_prefix)[-1]
             belegdat = helper.strToLocalTimeFormat(self._cr, self._uid, order.date_order,"%Y%m%d", context=self._context)
             journal = cash_statement.journal_id
             debit_account = journal.default_debit_account_id
@@ -97,9 +88,11 @@ class wizard_export_bmd(models.TransientModel):
             if not internal_account:
                 raise Warning(_("No internal account defined on Journal %s for cash transfers") % journal.name)
              
-            name = [order.name]
+            name = []
+            if order.pos_reference:
+                name.append(order.pos_reference)
             if order.partner_id:
-                name.append(order.partner_id.name)                
+                name.append(order.partner_id.name)          
             name = " ".join(name)
              
             bookings = OrderedDict()
@@ -118,6 +111,8 @@ class wizard_export_bmd(models.TransientModel):
             # post sale            
             for line in order.lines:
                 product = line.product_id
+                if product.id == status_id:
+                    continue
                 
                 # get tax
                 tax = 0
@@ -125,9 +120,12 @@ class wizard_export_bmd(models.TransientModel):
                 if taxes:
                     tax = int(taxes[0].amount * 100)
                 
-                tax_amount =  line.price_subtotal_incl - line.price_subtotal
+                tax_amount = line.price_subtotal_incl - line.price_subtotal
                 if product.income_pdt or product.expense_pdt:
-                    post(internal_account.code, line.price_subtotal, tax, tax_amount, name)
+                    income_account = product.property_account_income
+                    if not income_account:
+                        income_account = internal_account
+                    post(income_account.code, line.price_subtotal, tax, tax_amount, name)
                 else:
                     income_account = product.property_account_income
                     if not income_account:
@@ -145,9 +143,10 @@ class wizard_export_bmd(models.TransientModel):
             for (konto, mwst, text), (betrag, steuer) in bookings.iteritems():
                 # thin about changed sign                
                 account = betrag > 0 and credit_account or debit_account                
-                steucod = "03"
                 steuer = mwst and formatFloat(steuer) or ""
-                line = ";".join([konto, account.code, belegnr, belegdat, formatFloat(betrag), str(mwst), steuer, steucod, "A", symbol, text]) + ";"
+                steucod = steuer and "03" or ""
+                steuerproz = mwst and str(mwst) or ""
+                line = ";".join([konto, account.code, belegnr, belegdat, formatFloat(betrag), steuerproz, steuer, steucod, "A", symbol, text]) + ";"
                 lines.append(line)
         
         lines = "\r\n".join(lines) + "\r\n"

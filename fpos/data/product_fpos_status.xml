@@ -3,7 +3,7 @@
     
     <record id="product_fpos_status" model="product.product">
       <field name="name">Status</field>
-      <field name="active" eval="False"/>
+      <field name="available_in_pos" eval="False"/>
       <field name="standard_price">0.0</field>
       <field name="categ_id" ref="product.product_category_all"/>
       <field name="taxes_id" eval="[(6,0,[])]"/>
