@@ -4,3 +4,4 @@ import res_users
 import product
 import fpos
 import wizard
+import report

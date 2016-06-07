@@ -1,0 +1,14 @@
+<openerp>
+  <!-- IS NOT USED -->
+  <data>
+    <template id="report_style_fpos" inherit_id="report.style">
+          <xpath expr=".">
+            <t>
+              .fpos-header {
+                line-height: 0.6em;
+              }
+            </t>
+          </xpath>
+    </template>
+  </data>
+</openerp>

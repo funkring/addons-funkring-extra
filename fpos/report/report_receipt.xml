@@ -1,0 +1,153 @@
+<openerp>
+  <data>
+    <template id="report_receipt">
+          <t t-call="report.html_container">
+            <t t-set="attrib_width" t-value="'34%'"/>
+            <t t-set="price_col_width" t-value="'32%'"/>
+            <t t-foreach="docs" t-as="o">
+                <t t-foreach="get_order(o)" t-as="oo">
+                <div style="line-height: 6pt; font-size:10pt; font-family: 'Ubuntu Monospace', Courier, monospace;" class="page">
+                    <t t-raw="header(o)"/>
+                    <br/>
+                    <br/>
+                    <table width="100%">
+                        <tr>
+                            <td t-att-width="attrib_width">Receipt:</td>
+                            <td t-esc="o.name"/>
+                        </tr>
+                        <tr>
+                            <td t-att-width="attrib_width">Date:</td>
+                            <td><span t-field="o.date_order"/></td>
+                        </tr>
+                        <tr>
+                            <td t-att-width="attrib_width">User:</td>
+                            <td><span t-field="o.user_id"/></td>
+                        </tr>
+                        <tr>
+                            <td t-att-width="attrib_width">Reference:</td>
+                            <td><span t-field="o.pos_reference"/></td>
+                        </tr>
+                    </table>
+                    <table t-if="o.partner_id" width="100%">
+                        <tr>
+                             <td colspan="2"><hr style="margin: 2pt 0 2pt 0;"/></td>
+                        </tr>
+                        <tr>
+                            <td>P A R T N E R</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><hr style="margin: 2pt 0 2pt 0;"/></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <t t-esc="o.partner_id.name"/>                                
+                                <t t-if="o.partner_id.street"><br/><t t-esc="o.partner_id.street"/></t>
+                                <t t-if="o.partner_id.street2"><br/><t t-esc="o.partner_id.street2"/></t>
+                                <t t-if="o.partner_id.zip and o.partner_id.city"><br/><t t-esc="o.partner_id.zip"/> <t t-esc="o.partner_id.city"/></t>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <table width="100%">
+                        <tr>
+                           <td colspan="2"><hr style="margin: 2pt 0 2pt 0;"/></td>
+                        </tr>
+                        <tr>
+                            <td>Description</td>
+                            <td align="right" t-att-width="price_col_width">Amount <t t-esc="oo['cur']"/></td>
+                        </tr>
+                        <tr>
+                           <td colspan="2"><hr style="margin: 2pt 0 2pt 0;"/></td>
+                        </tr>
+                        <t t-foreach="oo['lines']" t-as="line">
+                            <t t-if="line['tag'] == 'c'">
+                                <tr>
+                                    <td colspan="2"><t t-esc="line['l'].name"/></td>
+                                </tr>
+                            </t>
+                            <t t-if="line['tag'] != 'c'">
+                                <tr>
+                                    <td><t t-esc="line['l'].name"/></td>
+                                    <td align="right" t-att-width="price_col_width"><t t-esc="formatLang(line['l'].price_subtotal_incl)"/></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <table width="100%">
+                                        <tr>
+                                            <td width="5%">&#160;</td>
+                                            <td>
+                                                <t t-esc="formatLang(line['l'].qty, digits=line['a_dec'])"/> <t t-esc="line['unit']"/>
+                                                <t t-if="line['l'].qty != 1.0">
+                                                    * <t t-esc="formatLang(line['l'].price_unit)"/> <t t-esc="oo['cur']"/> 
+                                                    <t t-if="line['netto']">
+                                                        NETTO 
+                                                    </t>
+                                                </t>
+                                                <t t-if="line['l'].discount">
+                                                    - <t t-esc="formatLang(line['l'].discount)"/>% 
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr t-if="line['l'].notice">
+                                    <td colspan="2">
+                                        <t t-foreach="line['l'].notice.split('\n')" t-as="nl">
+                                            <t t-esc="nl"/>
+                                            <br/>
+                                        </t>
+                                    </td>
+                                </tr>
+                                <tr t-if="'b' in line['flags']">
+                                    <td colspan="2"><hr style="margin: 2pt 0 2pt 0;"/></td>
+                                </tr>                                
+                            </t>
+                        </t>
+                        <tr>
+                           <td colspan="2"><hr style="margin: 2pt 0 2pt 0;"/></td>
+                        </tr>
+                        <tr>
+                           <td align="right"><b>S U M M E</b></td>
+                           <td align="right" t-att-width="price_col_width"><b><t t-esc="formatLang(o.amount_total)"/></b></td>
+                        </tr>
+                        <tr t-foreach="oo['payment']" t-as="payment">
+                           <td align="right"><t t-esc="payment['name']"/></td>
+                           <td align="right" t-att-width="price_col_width"><t t-esc="formatLang(payment['amount'])"/></td>
+                        </tr>
+                    </table>
+                    <t t-if="oo['taxes']">
+                        <br/>
+                        <table width="100%">
+                            <tr>
+                                <td width="70%">Tax</td>
+                                <td align="right" width="30%">Netto</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><hr style="margin: 2pt 0 2pt 0;"/></td>
+                            </tr>
+                            <t t-foreach="oo['taxes']" t-as="tax">
+                            <tr>
+                                <td width="70%"><t t-esc="tax['name']"/> <t t-esc="formatLang(tax['amount_tax'])"/> <t t-esc="oo['cur']"/></td>
+                                <td align="right" width="30%"><t t-esc="formatLang(tax['amount_netto'])"/></td>
+                            </tr>
+                            </t>
+                        </table>
+                    </t>               
+                </div>
+                </t>
+            </t>
+        </t>
+    </template>
+    
+    <report
+           id="point_of_sale.action_report_pos_receipt"
+           string="Receipt"
+           model="pos.order"
+           report_type="qweb-pdf"
+           name="fpos.report_receipt"
+           file="fpos.report_receipt"
+     />
+     
+  </data>
+</openerp>

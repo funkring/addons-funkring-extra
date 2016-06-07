@@ -319,7 +319,7 @@ class fpos_order(models.Model):
                         lines.append((0,0,{
                             "fpos_line_id" : line.id,
                             "company_id" : order.company_id.id,
-                            "name" : line.name,
+                            "name" : line.name or _("Empty"),
                             "product_id" : line.product_id.id,                    
                             "notice" : line.notice,
                             "price_unit" : price_unit,
@@ -339,7 +339,7 @@ class fpos_order(models.Model):
                         lines.append((0,0,{
                             "fpos_line_id" : line.id,
                             "company_id" : order.company_id.id,
-                            "name" : line.name,
+                            "name" : line.name or _("Empty"),
                             "product_id" : status_id,                    
                             "notice" : "\n".join(notice),
                             "price_unit" : 0.0,
@@ -497,6 +497,12 @@ class fpos_order_line(models.Model):
                 config.append(_("Break"))
             if "d" in self.flags:
                 config.append(_("Detail"))
+            if "l" in self.flags:
+                config.append(_("Line"))
+            if "1" in self.flags:
+                config.append(_("Section"))
+            if "2" in self.flags:
+                config.append(_("Subsection"))
         if self.p_pre or self.p_dec:
             config.append(_("*-Format: %s,%s") % (self.p_pre or 0, self.p_dec or 0))
         if self.a_pre or self.a_dec:

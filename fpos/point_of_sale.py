@@ -63,6 +63,8 @@ class pos_config(osv.Model):
         "iface_nogroup" : fields.boolean("No Grouping", help="If a product is selected twice a new pos line was created"),
         "iface_place" : fields.boolean("Place Management"),
         "iface_fastuswitch" : fields.boolean("Fast User Switch"),
+        "fpos_income_id" : fields.many2one("product.product","Cashstate Income", domain=[("income_pdt","=",True)], help="Income product for auto income on cashstate"),
+        "fpos_expense_id" : fields.many2one("product.product","Cashstate Expense", domain=[("expense_pdt","=",True)], help="Expense product for auto expense on cashstate"),
         "liveop" : fields.boolean("Live Operation", readonly=True, select=True, copy=False),        
         "user_id" : fields.many2one("res.users","Sync User", select=True, copy=False),
         "user_ids" : fields.many2many("res.users", 

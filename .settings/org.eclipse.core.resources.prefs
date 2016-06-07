@@ -18,6 +18,7 @@ encoding//fpos/migrations/1.2/pre-10-migrate-fpos-scheduler.py=utf-8
 encoding//fpos/point_of_sale.py=utf-8
 encoding//fpos/product.py=utf-8
 encoding//fpos/report/account_invoice_report.py=utf-8
+encoding//fpos/report/report_receipt.py=utf-8
 encoding//fpos/res_users.py=utf-8
 encoding//fpos/wizard/__init__.py=utf-8
 encoding//fpos/wizard/export_wizard.py=utf-8

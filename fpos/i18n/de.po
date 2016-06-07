@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-10 12:43+0000\n"
-"PO-Revision-Date: 2016-05-10 14:44+0100\n"
+"POT-Creation-Date: 2016-06-07 09:02+0000\n"
+"PO-Revision-Date: 2016-06-07 11:07+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Generator: Poedit 1.5.4\n"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:426
+#: code:addons/fpos/fpos.py:503
 #, python-format
 msgid "*-Format: %s,%s"
 msgstr ""
@@ -38,7 +38,7 @@ msgid "Allowed users for the Point of Sale"
 msgstr "Erlaubte Benutzer für diese Kasse"
 
 #. module: fpos
-#: field:fpos.order.payment,amount:0
+#: field:fpos.order.payment,amount:0 view:website:fpos.report_receipt
 msgid "Amount"
 msgstr "Betrag"
 
@@ -64,12 +64,18 @@ msgid "Areas"
 msgstr "Bereiche"
 
 #. module: fpos
+#: view:pos.config:fpos.form_pos_config
+msgid "Auto Income/Expense"
+msgstr "Automatische Ein/Auszahlung"
+
+#. module: fpos
 #: view:fpos.place:fpos.search_pos_place view:fpos.top:fpos.search_top
 msgid "Available"
 msgstr "Verfügbar"
 
 #. module: fpos
 #: view:fpos.wizard.export.bmd:fpos.wizard_export_bmd
+#: field:fpos.wizard.export.bmd,buerf:0
 #: model:ir.actions.act_window,name:fpos.action_export_bmd
 msgid "BMD Export"
 msgstr ""
@@ -97,7 +103,7 @@ msgid "Blue"
 msgstr "Blau"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:422
+#: code:addons/fpos/fpos.py:497
 #, python-format
 msgid "Break"
 msgstr ""
@@ -133,18 +139,29 @@ msgid "Cash Statement"
 msgstr "Barkasse"
 
 #. module: fpos
+#: field:pos.config,fpos_expense_id:0
+msgid "Cashstate Expense"
+msgstr "Kassenabschluss Auszahlung"
+
+#. module: fpos
+#: field:pos.config,fpos_income_id:0
+msgid "Cashstate Income"
+msgstr "Kassenabschluss Einzahlung"
+
+#. module: fpos
 #: view:product.template:fpos.search_product_template
 msgid "Category"
 msgstr "Kategorie"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:313 field:fpos.order,cent_fix:0
+#: code:addons/fpos/fpos.py:381 field:fpos.order,cent_fix:0
 #, python-format
 msgid "Cent Correction"
 msgstr "Cent Korrektur"
 
 #. module: fpos
 #: view:fpos.wizard.export.bmd:fpos.wizard_export_bmd
+#: view:fpos.wizard.export.rzl:fpos.wizard_export_rzl
 msgid "Close"
 msgstr "Schließen"
 
@@ -174,6 +191,7 @@ msgstr "Zähler"
 #: field:fpos.order.payment,create_uid:0 field:fpos.order.tax,create_uid:0
 #: field:fpos.place,create_uid:0 field:fpos.top,create_uid:0
 #: field:fpos.wizard.export.bmd,create_uid:0
+#: field:fpos.wizard.export.rzl,create_uid:0
 msgid "Created by"
 msgstr "Erstellt von"
 
@@ -182,6 +200,7 @@ msgstr "Erstellt von"
 #: field:fpos.order.payment,create_date:0 field:fpos.order.tax,create_date:0
 #: field:fpos.place,create_date:0 field:fpos.top,create_date:0
 #: field:fpos.wizard.export.bmd,create_date:0
+#: field:fpos.wizard.export.rzl,create_date:0
 msgid "Created on"
 msgstr "Erstellt am"
 
@@ -196,13 +215,18 @@ msgid "Date"
 msgstr "Datum"
 
 #. module: fpos
+#: view:website:fpos.report_receipt
+msgid "Date:"
+msgstr "Datum:"
+
+#. module: fpos
 #: help:product.template,pos_amount_dec:0
 #: help:product.template,pos_price_dec:0
 msgid "Decimal digits, -1 is no decimal, 0 is no restriction"
 msgstr "Dezimalstellen, -1 ist keine Dezimalstelle, 0 ist keine Beschränkung"
 
 #. module: fpos
-#: view:pos.order:fpos.form_pos_order
+#: view:pos.order:fpos.form_pos_order view:website:fpos.report_receipt
 msgid "Description"
 msgstr "Bezeichnung"
 
@@ -212,7 +236,7 @@ msgid "Description for Quotations"
 msgstr "Beschreibung für Angebote"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:424
+#: code:addons/fpos/fpos.py:499
 #, python-format
 msgid "Detail"
 msgstr ""
@@ -233,25 +257,18 @@ msgid "Done"
 msgstr "Erledigt"
 
 #. module: fpos
-#: code:addons/fpos/wizard/export_wizard.py:38
-#: view:fpos.wizard.export.bmd:fpos.wizard_export_bmd
-#, python-format
-msgid "Download"
-msgstr ""
-
-#. module: fpos
 #: selection:fpos.order,state:0
 msgid "Draft"
 msgstr "Entwurf"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:229
+#: code:addons/fpos/fpos.py:293
 #, python-format
 msgid "Empty"
 msgstr "Leer"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:148
+#: code:addons/fpos/point_of_sale.py:150
 #, python-format
 msgid "Error!"
 msgstr "Fehler!"
@@ -260,6 +277,16 @@ msgstr "Fehler!"
 #: selection:fpos.order.line,tag:0
 msgid "Expense"
 msgstr "Auszahlung"
+
+#. module: fpos
+#: help:pos.config,fpos_expense_id:0
+msgid "Expense product for auto expense on cashstate"
+msgstr "Produkt für automatische Auszahlung bei Kassenabschluss"
+
+#. module: fpos
+#: field:fpos.wizard.export.rzl,data_name:0
+msgid "Export Name"
+msgstr ""
 
 #. module: fpos
 #: field:pos.config,iface_fastuswitch:0
@@ -322,7 +349,7 @@ msgid "Fpos User could only assinged once"
 msgstr "Fpos Benutzer kann nur einer Kasse zugewiesen werden"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:251
+#: code:addons/fpos/fpos.py:315
 #, python-format
 msgid "Fpos could only use price with tax included"
 msgstr "Fpos kann nur Preise inkl. Steuer verarbeiten"
@@ -359,6 +386,7 @@ msgstr "Groupiert nach..."
 #: field:fpos.order,id:0 field:fpos.order.line,id:0
 #: field:fpos.order.payment,id:0 field:fpos.order.tax,id:0
 #: field:fpos.place,id:0 field:fpos.top,id:0 field:fpos.wizard.export.bmd,id:0
+#: field:fpos.wizard.export.rzl,id:0 field:report.fpos.report_receipt,id:0
 msgid "ID"
 msgstr ""
 
@@ -382,6 +410,11 @@ msgid "Income"
 msgstr "Einzahlung"
 
 #. module: fpos
+#: help:pos.config,fpos_income_id:0
+msgid "Income product for auto income on cashstate"
+msgstr "Produkt für automatische Einzahlung bei Kassenabschluss"
+
+#. module: fpos
 #: view:pos.order:fpos.form_pos_order
 msgid "Info"
 msgstr ""
@@ -402,16 +435,11 @@ msgid "Journal"
 msgstr ""
 
 #. module: fpos
-#: view:fpos.wizard.export.bmd:fpos.wizard_export_bmd
-#: field:fpos.wizard.export.bmd,journal_ids:0
-msgid "Journals"
-msgstr "Journale"
-
-#. module: fpos
 #: field:fpos.order,write_uid:0 field:fpos.order.line,write_uid:0
 #: field:fpos.order.payment,write_uid:0 field:fpos.order.tax,write_uid:0
 #: field:fpos.place,write_uid:0 field:fpos.top,write_uid:0
 #: field:fpos.wizard.export.bmd,write_uid:0
+#: field:fpos.wizard.export.rzl,write_uid:0
 msgid "Last Updated by"
 msgstr "Zuletzt aktualisiert von"
 
@@ -420,6 +448,7 @@ msgstr "Zuletzt aktualisiert von"
 #: field:fpos.order.payment,write_date:0 field:fpos.order.tax,write_date:0
 #: field:fpos.place,write_date:0 field:fpos.top,write_date:0
 #: field:fpos.wizard.export.bmd,write_date:0
+#: field:fpos.wizard.export.rzl,write_date:0
 msgid "Last Updated on"
 msgstr "Zuletzt aktualisiert am"
 
@@ -428,6 +457,12 @@ msgstr "Zuletzt aktualisiert am"
 #: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
 msgid "Lime"
 msgstr "Hellgrün"
+
+#. module: fpos
+#: code:addons/fpos/fpos.py:501
+#, python-format
+msgid "Line"
+msgstr "Position"
 
 #. module: fpos
 #: view:fpos.order:fpos.form_fpos_order field:fpos.order,line_ids:0
@@ -456,9 +491,14 @@ msgid "Maroon"
 msgstr "Dunkelrot"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:418 field:product.template,pos_minus:0
+#: code:addons/fpos/fpos.py:493 field:product.template,pos_minus:0
 #, python-format
 msgid "Minus"
+msgstr ""
+
+#. module: fpos
+#: view:website:fpos.report_receipt
+msgid "NETTO"
 msgstr ""
 
 #. module: fpos
@@ -477,7 +517,7 @@ msgstr "Dunkelblau"
 
 #. module: fpos
 #: view:fpos.order:fpos.form_fpos_order field:fpos.order.line,netto:0
-#: field:fpos.order.tax,amount_netto:0
+#: field:fpos.order.tax,amount_netto:0 view:website:fpos.report_receipt
 msgid "Netto"
 msgstr ""
 
@@ -493,16 +533,33 @@ msgid "No Tax"
 msgstr "Keine Steuer"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:420
+#: code:addons/fpos/fpos.py:495
 #, python-format
 msgid "No Unit"
 msgstr "Keine Einheit"
 
 #. module: fpos
-#: code:addons/fpos/wizard/export_wizard.py:67
+#: code:addons/fpos/wizard/export_wizard.py:78
+#: code:addons/fpos/wizard/export_wizard_rzl.py:73
 #, python-format
-msgid "No data to export"
-msgstr "Keine Daten für den Export"
+msgid "No cash statement for order %s found"
+msgstr "Es wurde keine Zahlung for den Verkauf %s gefunden"
+
+#. module: fpos
+#: code:addons/fpos/wizard/export_wizard.py:134
+#: code:addons/fpos/wizard/export_wizard_rzl.py:130
+#, python-format
+msgid "No income account for product %s defined"
+msgstr "Es wurde kein Eingangskonto für Produkt %s definiert"
+
+#. module: fpos
+#: code:addons/fpos/wizard/export_wizard.py:89
+#: code:addons/fpos/wizard/export_wizard_rzl.py:85
+#, python-format
+msgid "No internal account defined on Journal %s for cash transfers"
+msgstr ""
+"Es wurde kein Konto für Schwebende Geldbewegungen für das Journal %s "
+"definiert"
 
 #. module: fpos
 #: view:fpos.order:fpos.form_fpos_order field:fpos.order,note:0
@@ -526,13 +583,13 @@ msgid "Online User"
 msgstr "Online Benutzer"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:76
+#: code:addons/fpos/fpos.py:77
 #, python-format
 msgid "Only Administrator could correct Fpos orders"
 msgstr "Nur der Administrator darf Fpos Verkäufe korrigieren"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:81
+#: code:addons/fpos/point_of_sale.py:83
 #, python-format
 msgid "Only system admin could set pos system into live operation"
 msgstr "Nur der Systemadministrator kann eine Kasse in Echtbetrieb setzen"
@@ -551,7 +608,7 @@ msgstr "Kennzeichnung"
 #. module: fpos
 #: view:fpos.order:fpos.form_fpos_order view:fpos.order:fpos.search_fpos_order
 #: field:fpos.order.line,order_id:0 field:fpos.order.payment,order_id:0
-#: field:fpos.order.tax,order_id:0 field:fpos.wizard.export.bmd,order_ids:0
+#: field:fpos.order.tax,order_id:0
 #: model:ir.actions.act_window,name:fpos.action_fpos_order
 msgid "Order"
 msgstr "Verkauf"
@@ -560,6 +617,11 @@ msgstr "Verkauf"
 #: view:fpos.order:fpos.tree_fpos_order
 msgid "Orders"
 msgstr "Verkäufe"
+
+#. module: fpos
+#: view:website:fpos.report_receipt
+msgid "P A R T N E R"
+msgstr ""
 
 #. module: fpos
 #: field:res.users,pin:0
@@ -721,6 +783,18 @@ msgid "Quantity"
 msgstr "Menge"
 
 #. module: fpos
+#: view:fpos.wizard.export.rzl:fpos.wizard_export_rzl
+#: field:fpos.wizard.export.rzl,data:0
+#: model:ir.actions.act_window,name:fpos.action_export_rzl
+msgid "RZL Export"
+msgstr ""
+
+#. module: fpos
+#: model:ir.model,name:fpos.model_fpos_wizard_export_rzl
+msgid "RZL Export Wizard"
+msgstr ""
+
+#. module: fpos
 #: selection:fpos.order.line,tag:0
 msgid "Real"
 msgstr "IST-Stand"
@@ -729,6 +803,11 @@ msgstr "IST-Stand"
 #: view:pos.config:fpos.form_pos_config
 msgid "Receipt"
 msgstr "Quittung"
+
+#. module: fpos
+#: view:website:fpos.report_receipt
+msgid "Receipt:"
+msgstr "Beleg:"
 
 #. module: fpos
 #: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
@@ -740,6 +819,16 @@ msgstr "Rot"
 #: field:fpos.order,ref:0
 msgid "Reference"
 msgstr "Belegreferenz"
+
+#. module: fpos
+#: view:website:fpos.report_receipt
+msgid "Reference:"
+msgstr "Referenz:"
+
+#. module: fpos
+#: view:website:fpos.report_receipt
+msgid "S U M M E"
+msgstr ""
 
 #. module: fpos
 #: view:product.template:fpos.view_product_template_simple
@@ -794,7 +883,7 @@ msgstr "Summe"
 #. module: fpos
 #: field:fpos.order.line,subtotal_incl:0
 msgid "Subtotal Incl."
-msgstr "Summe (Netto)"
+msgstr "Zwischensumme"
 
 #. module: fpos
 #: field:pos.config,user_id:0
@@ -813,6 +902,7 @@ msgstr ""
 
 #. module: fpos
 #: view:fpos.order:fpos.form_fpos_order field:fpos.order.tax,amount_tax:0
+#: view:website:fpos.report_receipt
 msgid "Tax"
 msgstr "Steuer"
 
@@ -834,7 +924,7 @@ msgid "Teal"
 msgstr "Türkis"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:148
+#: code:addons/fpos/point_of_sale.py:150
 #, python-format
 msgid "There is no default company for the current user!"
 msgstr "Es existiert keine standard Firma für den aktuellen Benutzer!"
@@ -859,7 +949,7 @@ msgid "Turnover Count"
 msgstr "Umsatzzähler"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:350
+#: code:addons/fpos/fpos.py:425
 #, python-format
 msgid "Unable to book order %s/%s/%s"
 msgstr "Rechnung %s/%s/%s kann nicht gebucht werden"
@@ -886,6 +976,11 @@ msgstr "Benutzer"
 #: help:res.users,pin:0
 msgid "User PIN for fast authentication on Fpos hardware"
 msgstr "Benutzer PIN für Schnellanmeldung"
+
+#. module: fpos
+#: view:website:fpos.report_receipt
+msgid "User:"
+msgstr "Bediener:"
 
 #. module: fpos
 #: model:ir.model,name:fpos.model_res_users field:pos.config,user_ids:0
@@ -918,17 +1013,17 @@ msgstr ""
 "ist."
 
 #. module: fpos
+#: field:fpos.wizard.export.bmd,buerf_name:0
+msgid "buerf_name"
+msgstr ""
+
+#. module: fpos
 #: view:product.template:fpos.view_product_template_simple
 msgid "note to be displayed on quotations..."
 msgstr "Anmerkungen, die auf den Angeboten ausgegeben werden ..."
 
 #. module: fpos
-#: view:fpos.wizard.export.bmd:fpos.wizard_export_bmd
-msgid "or"
-msgstr "oder"
-
-#. module: fpos
-#: code:addons/fpos/fpos.py:428
+#: code:addons/fpos/fpos.py:505
 #, python-format
 msgid "€-Format: %s,%s"
 msgstr ""

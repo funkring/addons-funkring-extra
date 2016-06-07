@@ -52,9 +52,10 @@ oerp.at Fpos
               "view/pos_place.xml",     
               "view/pos_category.xml",         
               "wizard/export_wizard.xml",
-              "wizard/export_wizard_rzl.xml",
+              "wizard/export_wizard_rzl.xml",             
               "report/session_summary_report.xml",
               "report/session_detail_report.xml",
+              "report/report_receipt.xml",
               "data/cron_fpos_post.xml",
               "data/product_fpos_status.xml"
              ],

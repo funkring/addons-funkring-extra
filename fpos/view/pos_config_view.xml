@@ -22,7 +22,13 @@
                 <field name="user_id" string="Fpos User"/>
                 <field name="fpos_prefix"/>
             </field>
-            <group string="Receipt" position="after">
+            <group string="Features" position="inside">
+                <group string="Auto Income/Expense">
+                    <field name="fpos_income_id"/>
+                    <field name="fpos_expense_id"/>
+                </group>
+            </group>
+            <group string="Receipt" position="after">               
                 <group string="User" colspan="4">                  
                     <div>
                         <field name="user_ids"/>
