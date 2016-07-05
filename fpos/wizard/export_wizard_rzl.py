@@ -128,7 +128,10 @@ class wizard_export_bmd(models.TransientModel):
                         income_account = product.categ_id.property_account_income_categ
                     if not income_account:
                         raise Warning(_("No income account for product %s defined") % product.name)
-                    post(income_account.code, line.price_subtotal, line.price_subtotal_incl, tax, tax_amount, name)
+                    account = income_account
+                    if not line.price_subtotal:
+                        account = internal_account
+                    post(account.code, line.price_subtotal, line.price_subtotal_incl, tax, tax_amount, name)
         
             # post payment
             for payment in order.statement_ids:                
