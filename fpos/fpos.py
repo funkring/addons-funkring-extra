@@ -30,7 +30,7 @@ class fpos_order(models.Model):
     _order = "date desc"
     
     name = fields.Char("Name")
-    tag = fields.Selection([("s","Status")], string="Tag", readonly=True, states={'draft': [('readonly', False)]}, index=True)    
+    tag = fields.Selection([("s","Status"),("t","Temp")], string="Tag", readonly=True, states={'draft': [('readonly', False)]}, index=True)    
     fpos_user_id = fields.Many2one("res.users", "Device", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
     user_id = fields.Many2one("res.users", "User", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
     place_id = fields.Many2one("fpos.place","Place", readonly=True, states={'draft': [('readonly', False)]}, index=True, ondelete="restrict")
@@ -117,7 +117,7 @@ class fpos_order(models.Model):
                     line.price = line.brutto_price
                 
             if not has_status:
-                order.tag = None    
+                order.tag = ""    
             
             
             # ###################################################
@@ -461,7 +461,7 @@ class fpos_order_line(models.Model):
     brutto_price = fields.Float("Brutto Price", deprecated=True)
     price = fields.Float("Price")
     netto = fields.Boolean("Netto")
-    qty = fields.Float("Quantity",digits=dp.get_precision('Product UoS'))
+    qty = fields.Float("Quantity", digits=dp.get_precision('Product UoS'))
     tara = fields.Float("Tara")
     subtotal_incl = fields.Float("Subtotal Incl.")
     subtotal = fields.Float("Subtotal")
@@ -526,9 +526,25 @@ class fpos_payment(models.Model):
     _rec_name = "journal_id"
     
     order_id = fields.Many2one("fpos.order", "Order", required=True, ondelete="cascade", index=True)
-    journal_id = fields.Many2one("account.journal", "Journal", required=True)
+    journal_id = fields.Many2one("account.journal", "Journal", required=True, index=True)
     amount = fields.Float("Amount")
     payment = fields.Float("Payment")
     
+    
+class fpos_printer(models.Model):
+    _name = "fpos.printer"
+    _description = "Printer"
+    
+    name = fields.Char("Name", required=True, index=True)
+    local = fields.Boolean("Local", help="Print on local printer")
+    queue = fields.Boolean("Queue", help="Print to queue where printer agent is listening on")
+    pos_category_ids = fields.Many2many("pos.category", "fpos_printer_pos_category_rel", "printer_id", "category_id", string="Categories", 
+                                    help="If no category is given all products are printed, otherwise only the products in the categories")
+    
+class fpos_dist(models.Model):
+    _name = "fpos.dist"
+    _description =  "Distributor"
+    
+    name = fields.Char("Name", required=True, index=True)
     
     

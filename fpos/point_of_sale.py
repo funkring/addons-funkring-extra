@@ -23,6 +23,9 @@ from openerp.addons.jdoc.jdoc import META_MODEL
 from openerp.exceptions import Warning
 from openerp.addons.fpos.product import COLOR_NAMES
 
+from openerp.addons.at_base import util
+from openerp.addons.at_base import helper
+
 class pos_category(osv.osv):
     _inherit = "pos.category"
     _columns =  {
@@ -63,9 +66,12 @@ class pos_config(osv.Model):
         "iface_nogroup" : fields.boolean("No Grouping", help="If a product is selected twice a new pos line was created"),
         "iface_place" : fields.boolean("Place Management"),
         "iface_fastuswitch" : fields.boolean("Fast User Switch"),
+        "fpos_printer_ids" : fields.many2many("fpos.printer", "fpos_config_printer_rel", "config_id", "printer_id", "Printer", copy=True, composition=True),
+        "fpos_dist_ids" : fields.many2many("fpos.dist","fpos_config_dist_rel","config_id","dist_id","Distributor", copy=True, composition=True),
         "fpos_income_id" : fields.many2one("product.product","Cashstate Income", domain=[("income_pdt","=",True)], help="Income product for auto income on cashstate"),
         "fpos_expense_id" : fields.many2one("product.product","Cashstate Expense", domain=[("expense_pdt","=",True)], help="Expense product for auto expense on cashstate"),
-        "liveop" : fields.boolean("Live Operation", readonly=True, select=True, copy=False),        
+        "liveop" : fields.boolean("Live Operation", readonly=True, select=True, copy=False),
+        "fpos_dist" : fields.char("Distributor", copy=True),
         "user_id" : fields.many2one("res.users","Sync User", select=True, copy=False),
         "user_ids" : fields.many2many("res.users", 
                                       "pos_config_user_rel", 
@@ -129,7 +135,7 @@ class pos_config(osv.Model):
         fpos_order_obj = self.pool.get("fpos.order")
         last_order_values = fpos_order_obj.search_read(cr, uid, 
                                     [("fpos_user_id","=",uid),("state","!=","draft")], 
-                                    ["seq", "turnover", "cpos"], 
+                                    ["seq", "turnover", "cpos", "date"], 
                                     order="seq desc", limit=1, context={"active_test" : False})
         
         if last_order_values:
@@ -137,11 +143,13 @@ class pos_config(osv.Model):
             res["last_seq"] = last_order_values["seq"]
             res["last_turnover"] = last_order_values["turnover"]
             res["last_cpos"] = last_order_values["cpos"]
+            res["last_date"] = last_order_values["date"]
         else:
             profile = self.browse(cr, uid, profile_id, context=context)
             res["last_seq"] = -1.0 + profile.sequence_id.number_next
             res["last_turnover"] = 0.0
             res["last_cpos"] = 0.0
+            res["last_date"] = helper.strToLocalTimeStr(cr, uid, util.currentDateTime(), context=context)
 
         # add company        
         user_obj = self.pool["res.users"]

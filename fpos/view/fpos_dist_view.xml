@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="form_fpos_dist" model="ir.ui.view">
+      <field name="name">fpos.form_fpos_dist</field>
+      <field name="model">fpos.dist</field>
+      <field name="arch" type="xml">
+        <form string="Distributor">
+          <group>
+              <field name="name"/>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_fpos_dist" model="ir.ui.view">
+      <field name="name">fpos.tree_fpos_dist</field>
+      <field name="model">fpos.dist</field>
+      <field name="arch" type="xml">
+        <tree string="Distributor" editable="buttom">
+            <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_fpos_dist" model="ir.ui.view">
+      <field name="name">fpos.search_fpos_dist</field>
+      <field name="model">fpos.dist</field>
+      <field name="arch" type="xml">
+        <search string="Distributor">
+            <field name="name"/>
+        </search>
+      </field>
+    </record>
+
+    <record id="action_fpos_dist" model="ir.actions.act_window">
+      <field name="name">Distributor</field>
+      <field name="res_model">fpos.dist</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_fpos_dist" name="Distributor" parent="menu_fpos"
+      sequence="10"
+      action="action_fpos_dist"/>
+  </data>
+</openerp>

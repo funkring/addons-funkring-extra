@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="form_fpos_printer" model="ir.ui.view">
+      <field name="name">fpos.form_fpos_printer</field>
+      <field name="model">fpos.printer</field>
+      <field name="arch" type="xml">
+        <form string="Printer">
+          <group>
+            <group>
+                <field name="name"/>
+                <field name="pos_category_ids" widget="many2many_tags"/>            
+            </group>
+            <group>
+                <field name="local"/>
+                <field name="queue"/>                
+            </group>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_fpos_printer" model="ir.ui.view">
+      <field name="name">fpos.tree_fpos_printer</field>
+      <field name="model">fpos.printer</field>
+      <field name="arch" type="xml">
+        <tree string="Printer">
+            <field name="name"/>
+            <field name="local"/>
+            <field name="queue"/>
+            <field name="pos_category_ids" widget="many2many_tags"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_fpos_printer" model="ir.ui.view">
+      <field name="name">fpos.search_fpos_printer</field>
+      <field name="model">fpos.printer</field>
+      <field name="arch" type="xml">
+        <search string="Printer">
+            <field name="name"/>
+        </search>
+      </field>
+    </record>
+
+    <record id="action_fpos_printer" model="ir.actions.act_window">
+      <field name="name">Printer</field>
+      <field name="res_model">fpos.printer</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_fpos_printer" name="Printer" parent="menu_fpos"
+      sequence="12"
+      action="action_fpos_printer"/>
+  </data>
+</openerp>

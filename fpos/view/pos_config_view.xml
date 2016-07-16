@@ -27,6 +27,10 @@
                     <field name="fpos_income_id"/>
                     <field name="fpos_expense_id"/>
                 </group>
+                <group string="Distribution">
+                    <field name="fpos_printer_ids" widget="many2many_tags"/>
+                    <field name="fpos_dist_ids" widget="many2many_tags"/>
+                </group>
             </group>
             <group string="Receipt" position="after">               
                 <group string="User" colspan="4">                  

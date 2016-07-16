@@ -144,5 +144,45 @@
       <field name="perm_write" eval="True"/>
     </record>
     
+    <record id="access_fpos_printer_pos_user" model="ir.model.access">
+      <field name="name">fpos_printer/pos_user</field>
+      <field name="model_id" ref="model_fpos_printer"/>
+      <field name="group_id" ref="point_of_sale.group_pos_user"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="False"/>
+      <field name="perm_create" eval="False"/>
+      <field name="perm_write" eval="False"/>
+    </record>
+
+    <record id="access_fpos_printer_pos_manager" model="ir.model.access">
+      <field name="name">fpos_printer/pos_manager</field>
+      <field name="model_id" ref="model_fpos_printer"/>
+      <field name="group_id" ref="point_of_sale.group_pos_manager"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+    
+    <record id="access_fpos_dist_pos_user" model="ir.model.access">
+      <field name="name">fpos_dist/pos_user</field>
+      <field name="model_id" ref="model_fpos_dist"/>
+      <field name="group_id" ref="point_of_sale.group_pos_user"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="False"/>
+      <field name="perm_create" eval="False"/>
+      <field name="perm_write" eval="False"/>
+    </record>
+    
+    <record id="access_fpos_dist_pos_manager" model="ir.model.access">
+      <field name="name">fpos_dist/pos_manager</field>
+      <field name="model_id" ref="model_fpos_dist"/>
+      <field name="group_id" ref="point_of_sale.group_pos_manager"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+    
   </data>
 </openerp>
