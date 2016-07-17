@@ -24,7 +24,6 @@ from openerp.exceptions import Warning
 from openerp.addons.fpos.product import COLOR_NAMES
 
 from openerp.addons.at_base import util
-from openerp.addons.at_base import helper
 
 class pos_category(osv.osv):
     _inherit = "pos.category"
@@ -149,7 +148,7 @@ class pos_config(osv.Model):
             res["last_seq"] = -1.0 + profile.sequence_id.number_next
             res["last_turnover"] = 0.0
             res["last_cpos"] = 0.0
-            res["last_date"] = helper.strToLocalTimeStr(cr, uid, util.currentDateTime(), context=context)
+            res["last_date"] = util.currentDateTime()
 
         # add company        
         user_obj = self.pool["res.users"]
