@@ -64,16 +64,52 @@
                                         </tree>
                                     </field>                            
                                 </div>
-                            </group>
+                            </group>                            
                             <group string="Payment">
                                 <div>
                                     <field name="payment_ids">
                                         <tree string="Payments" editable="buttom"> 
                                             <field name="journal_id"/>
-                                            <field name="amount"/>
-                                            <field name="payment"/>
+                                            <field name="amount" sum="Amount"/>
+                                            <field name="payment" sum="Payment"/>
                                         </tree>
                                     </field>      
+                                </div>
+                            </group>
+                            <group string="Log">
+                                <div>
+                                    <field name="log_ids">
+                                        <tree string="Log">
+                                            <field name="date"/>
+                                            <field name="fpos_user_id"/>
+                                            <field name="user_id"/>
+                                        </tree>
+                                        <form string="Log">
+                                                <group>
+                                                    <group>
+                                                        <group>
+                                                            <field name="date"/>
+                                                        </group>
+                                                        <group>
+                                                            <field name="fpos_user_id"/>
+                                                            <field name="user_id"/>                                                
+                                                        </group>
+                                                    </group>
+                                                </group>
+                                                <div>
+                                                    <field name="line_ids">
+                                                        <tree>                                                    
+                                                            <field name="product_id"/>
+                                                            <field name="name"/>
+                                                            <field name="qty"/>
+                                                            <field name="uom_id"/>                                                   
+                                                            <field name="notice"/>
+                                                        </tree>
+                                                    </field>
+                                                </div>
+                                            
+                                        </form>
+                                    </field >
                                 </div>
                             </group>
                             <group string="Note">
@@ -102,8 +138,8 @@
             <field name="tag"/>
             <field name="ref"/>
             <field name="partner_id"/>
-            <field name="amount_tax"/>
-            <field name="amount_total"/>
+            <field name="amount_tax" sum="Tax"/>
+            <field name="amount_total" sum="Amount"/>
             <field name="cent_fix"/>
             <field name="state"/>
             <field name="active"/>

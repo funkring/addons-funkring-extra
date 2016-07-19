@@ -184,5 +184,46 @@
       <field name="perm_write" eval="True"/>
     </record>
     
+    <record id="access_fpos_order_log_pos_user" model="ir.model.access">
+      <field name="name">fpos_order_log/user</field>
+      <field name="model_id" ref="model_fpos_order_log"/>
+      <field name="group_id" ref="point_of_sale.group_pos_user"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="False"/>
+      <field name="perm_create" eval="False"/>
+      <field name="perm_write" eval="False"/>
+    </record>
+    
+    <record id="access_fpos_order_log_group_fpos" model="ir.model.access">
+      <field name="name">fpos_order_log/group_fpos</field>
+      <field name="model_id" ref="model_fpos_order_log"/>
+      <field name="group_id" ref="group_fpos"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+    
+    <record id="access_fpos_order_log_line_pos_user" model="ir.model.access">
+      <field name="name">fpos_order_log_line/pos_user</field>
+      <field name="model_id" ref="model_fpos_order_log_line"/>
+      <field name="group_id" ref="point_of_sale.group_pos_user"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="False"/>
+      <field name="perm_create" eval="False"/>
+      <field name="perm_write" eval="False"/>
+    </record>
+
+    <record id="access_fpos_order_log_line_fpos" model="ir.model.access">
+      <field name="name">fpos_order_log_line/fpos</field>
+      <field name="model_id" ref="model_fpos_order_log_line"/>
+      <field name="group_id" ref="group_fpos"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
+    
   </data>
 </openerp>

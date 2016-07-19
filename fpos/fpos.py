@@ -61,6 +61,8 @@ class fpos_order(models.Model):
     
     line_ids = fields.One2many("fpos.order.line", "order_id", "Lines", readonly=True, states={'draft': [('readonly', False)]}, composition=True)
     
+    log_ids = fields.One2many("fpos.order.log", "order_id", "Order", readonly=True, states={'draft': [('readonly', False)]}, composition=True)
+    
     cent_fix = fields.Float("Cent Correction", readonly=True)
     
     @api.multi
@@ -537,7 +539,6 @@ class fpos_printer(models.Model):
     
     name = fields.Char("Name", required=True, index=True)
     local = fields.Boolean("Local", help="Print on local printer")
-    queue = fields.Boolean("Queue", help="Print to queue where printer agent is listening on")
     pos_category_ids = fields.Many2many("pos.category", "fpos_printer_pos_category_rel", "printer_id", "category_id", string="Categories", 
                                     help="If no category is given all products are printed, otherwise only the products in the categories")
     
@@ -547,4 +548,27 @@ class fpos_dist(models.Model):
     
     name = fields.Char("Name", required=True, index=True)
     
+
+class fpos_order_log(models.Model):
+    _name = "fpos.order.log"
+    _description = "Order Log"
+    _rec_name = "date"
+    
+    date = fields.Datetime("Date", required=True, index=True)
+    order_id = fields.Many2one("fpos.order", "Order", required=True, index=True, ondelete="cascade")
+    user_id = fields.Many2one("res.users", "User", required=True, index=True)
+    fpos_user_id = fields.Many2one("res.users", "Device", required=True, index=True)
+    line_ids = fields.One2many("fpos.order.log.line", "log_id", "Lines", composition=True)
+    
+    
+class fpos_order_log_line(models.Model):
+    _name = "fpos.order.log.line"
+    _description = "Order Log Line"
+    
+    log_id = fields.Many2one("fpos.order.log","Log", required=True, index=True, ondelete="cascade")
+    name = fields.Char("Name")
+    product_id = fields.Many2one("product.product", "Product", index=True)
+    uom_id = fields.Many2one("product.uom", "Unit")
+    qty = fields.Float("Quantity", digits=dp.get_precision('Product UoS'))
+    notice = fields.Text("Notice")
     
