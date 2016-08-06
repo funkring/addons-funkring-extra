@@ -23,6 +23,7 @@ encoding//fpos/res_users.py=utf-8
 encoding//fpos/wizard/__init__.py=utf-8
 encoding//fpos/wizard/export_wizard.py=utf-8
 encoding//fpos/wizard/export_wizard_rzl.py=utf-8
+encoding//fpos/wizard/report_wizard.py=utf-8
 encoding//hr_sale/__openerp__.py=utf-8
 encoding//hr_sale/timesheet.py=utf-8
 encoding//leakage_report/__openerp__.py=utf-8

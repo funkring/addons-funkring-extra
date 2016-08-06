@@ -16,7 +16,11 @@ class Parser(extreport.basic_parser):
         self.localcontext.update({
             "statistic" : self._statistic,
             "groupByConfig" : self._groupByConfig,
-            "print_detail" : context.get("print_detail",name == "fpos.report_session_detail")
+            "getSessionGroups" : self._getSessionGroups,
+            "print_detail" : context.get("print_detail",name == "fpos.report_session_detail"),
+            "no_group" : context.get("no_group", False),
+            "cashreport_name" : context.get("cashreport_name",""),
+            "getCashboxNames" : self._getCashboxNames
         })
         
     def _groupByConfig(self, sessions):
@@ -31,9 +35,21 @@ class Parser(extreport.basic_parser):
             configSessions.append(session)
         return sessionByConfig
     
-    def _details(self):
-        return False
-        
+    def _getCashboxNames(self, sessions):
+        configNames = set()
+        for session in sessions:
+            configNames.add(session.config_id.name)
+        return ", ".join(sorted(list(configNames)))
+    
+    def _getSessionGroups(self, sessions):
+        if self.localcontext.get("no_group"):
+            res = []
+            for session in sessions:
+                res.append([session])
+            return res
+        else:
+            return self._groupByConfig(sessions).values()
+    
     def _statistic(self, sessions):
         if not sessions:
             return []
@@ -115,13 +131,19 @@ class Parser(extreport.basic_parser):
         # iterate orders        
         first_order = None
         last_order = None
+        user = None
         order_ids = order_obj.search(self.cr, self.uid, [("session_id","in",session_ids),("state","in",["paid","done","invoiced"])], order="id asc")
+        order_count = 0
+        
         for order in order_obj.browse(self.cr, self.uid, order_ids, context=self.localcontext):
             # determine order first 
             # and order last            
             last_order = order
             if first_order is None:
                 first_order = order
+                user = order.user_id
+            
+            order_count += 1
             
             # details                        
             if print_detail:
@@ -261,10 +283,17 @@ class Parser(extreport.basic_parser):
         if cash_statement.state  != "confirm":
             dates.append(_("Open"))
         description  = " - ".join(dates)
-              
-        name = first_session.name
-        if first_session != last_session:
-            name = "%s - %s" % (first_session.name, last_session.name)
+             
+        name = ""
+        if self.localcontext.get("no_group"):
+            name = self.formatLang(first_session.start_at, date=True)
+        else: 
+            name = self.localcontext.get("cashreport_name")
+            if not name:
+                if first_session != last_session:
+                    name = "%s - %s" % (self.formatLang(first_session.start_at, date=True), self.formatLang(last_session.start_at, date=True))
+                else:
+                    name = self.formatLang(first_session.start_at, date=True)
               
         first_period = first_session.cash_statement_id.period_id
         last_period = last_session.cash_statement_id.period_id
@@ -273,9 +302,14 @@ class Parser(extreport.basic_parser):
         if first_period != last_period:
             period = "%s - %s" % (first_period.name, last_period.name)
        
+        if not user:
+            user = first_session.user_id
+            
         # stat
         stat = {
             "name" : name,
+            "first_session" : first_session.name,
+            "last_session" : last_session.name,
             "date_start" : first_session.start_at,
             "date_end" : last_session.stop_at,
             "first_order" : first_order,
@@ -283,7 +317,8 @@ class Parser(extreport.basic_parser):
             "company" : cash_statement.company_id.name,
             "currency" : first_session.currency_id.symbol,
             "journal" : cash_statement.journal_id.name,
-            "user" : first_session.user_id.name,
+            "pos" :  first_session.config_id.name,
+            "user" : user.name,
             "period" :  period,
             "description" : description,
             "turnover" : sum_turnover,
@@ -302,7 +337,8 @@ class Parser(extreport.basic_parser):
             "turnoverList" : turnover_dict.values(),
             "details_start" : first_session.details_ids,
             "details_end" : last_session.details_ids,
-            "details" : details
+            "details" : details,
+            "order_count" : order_count
         }        
         return [stat]
             

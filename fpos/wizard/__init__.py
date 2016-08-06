@@ -20,3 +20,4 @@
 
 import export_wizard
 import export_wizard_rzl
+import report_wizard
