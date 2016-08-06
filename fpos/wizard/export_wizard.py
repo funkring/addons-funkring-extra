@@ -137,7 +137,9 @@ class wizard_export_bmd(models.TransientModel):
             # post payment
             for payment in order.statement_ids:                
                 if payment.statement_id.id != cash_statement.id:
-                    post(internal_account.code, -payment.amount, 0, 0, payment.statement_id.journal_id.name)
+                    payment_internal_account = payment.statement_id.journal_id.internal_account_id
+                    payment_account = payment_internal_account or internal_account
+                    post(payment_account.code, -payment.amount, 0, 0, payment.statement_id.journal_id.name)
                     
             # write bookings            
             for (konto, mwst, text), (betrag, steuer) in bookings.iteritems():
