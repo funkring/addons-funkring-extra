@@ -17,6 +17,7 @@ class Parser(extreport.basic_parser):
             "statistic" : self._statistic,
             "groupByConfig" : self._groupByConfig,
             "getSessionGroups" : self._getSessionGroups,
+            "getSessions" : self._getSessions,
             "print_detail" : context.get("print_detail",name == "fpos.report_session_detail"),
             "no_group" : context.get("no_group", False),
             "cashreport_name" : context.get("cashreport_name",""),
@@ -34,6 +35,18 @@ class Parser(extreport.basic_parser):
                 sessionByConfig[config.id] = configSessions
             configSessions.append(session)
         return sessionByConfig
+    
+    def _getSessions(self, objects):
+        sessions = objects
+        if objects:
+            model_name = objects[0]._model._name
+            if model_name == "fpos.report.email":            
+                email_report = objects[0]  
+                report_range = email_report._cashreport_range(self.localcontext.get("start_date"))
+                session_ids = email_report._session_ids(report_range)
+                sessions = self.pool["pos.session"].browse(self.cr, self.uid, session_ids, self.localcontext)
+                
+        return sessions
     
     def _getCashboxNames(self, sessions):
         configNames = set()

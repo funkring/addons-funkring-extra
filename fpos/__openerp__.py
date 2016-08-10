@@ -59,9 +59,11 @@ oerp.at Fpos
               "wizard/report_wizard.xml",             
               "report/session_summary_report.xml",
               "report/session_detail_report.xml",
+              "report/session_email_report.xml",
               "report/report_receipt.xml",
               "data/cron_fpos_post.xml",
-              "data/product_fpos_status.xml"
+              "data/product_fpos_status.xml",
+              "data/report_email_template.xml"
              ],
     "auto_install" : False,
     "installable": True

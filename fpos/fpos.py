@@ -21,8 +21,12 @@
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning
 from openerp.addons.at_base import format
+from openerp.addons.at_base import util
+from openerp.addons.at_base import helper
 from openerp import SUPERUSER_ID
 import openerp.addons.decimal_precision as dp
+
+from dateutil.relativedelta import relativedelta
 
 class fpos_order(models.Model):
     _name = "fpos.order"
@@ -576,6 +580,7 @@ class fpos_order_log_line(models.Model):
 class fpos_report_email(models.Model):
     _name = "fpos.report.email"
     _description = "E-Mail Report"
+    _inherit = ['mail.thread']
     
     name = fields.Char("Name", required=True)
     range = fields.Selection([("month","Month"),
@@ -583,16 +588,129 @@ class fpos_report_email(models.Model):
                               ("day", "Day")],
                               string="Range", default="month", required=True)
     
-    pos_ids = fields.Many2many("pos.config", "fpos_report_email_config_rel", "report_id", "config_id", "POS",
-                               required=True, 
-                               default=lambda self: self.env["pos.config"].search([]))
+    pos_ids = fields.Many2many("pos.config", "fpos_report_email_config_rel", "report_id", "config_id", "POS")
     
     detail = fields.Boolean("Detail")
     separate = fields.Boolean("Separate")
     
-    partner_ids = fields.Many2many("res.partner", "fpos_report_email_partner_rel", "report_id", "partner_id", "Partner", required=True)
+    bmd_export = fields.Boolean("BMD Export")
+    rzl_export = fields.Boolean("RZL Export") 
+    
+    partner_id = fields.Many2one("res.partner","Partner", required=True)
+    company_id = fields.Many2one("res.company", string="Company", change_default=True, required=True, 
+                                 default=lambda self: self.env["res.company"]._company_default_get())
+    
+    @api.multi
+    def _send_mail(self, start_date=None):
+        if not start_date:
+            start_date = start_date = util.currentDate()
+        
+        mail_obj = self.pool["mail.mail"]
+        mail_tmpl_obj = self.pool["email.template"]    
+        att_obj = self.pool["ir.attachment"]
+        rzl_obj = self.env["fpos.wizard.export.rzl"]
+        bmd_obj = self.env["fpos.wizard.export.bmd"]
+        
+        data_obj = self.pool["ir.model.data"]        
+        template_id = data_obj.xmlid_to_res_id(self._cr, self._uid, "fpos.email_report", raise_if_not_found=True)
+       
+        for report_mail in self:
+            mail_context = self._context and dict(self._context) or {}
+            mail_context["start_date"] = start_date
+            mail_range =  report_mail._cashreport_range(start_date)
+            mail_context["cashreport_name"] = mail_range[2]
+            
+            attachment_ids = []
+            mail_context["default_attachment_ids"] = attachment_ids
+            
+            if report_mail.rzl_export or report_mail.bmd_export:
+                session_ids = report_mail._session_ids(mail_range)
+                
+                # export rzl
+                if report_mail.rzl_export:
+                    rzl_data = rzl_obj.with_context(
+                                    active_model="pos.session",
+                                    active_ids = session_ids                        
+                                ).default_get(["data","data_name"])
+                    attachment_ids.append( att_obj.create(self._cr, self._uid, {
+                                                'name': rzl_data["data_name"],
+                                                'datas_fname': rzl_data["data_name"],
+                                                'datas': rzl_data["data"]
+                                            }, context=self._context))
+                                                    
+                # export bmd
+                if report_mail.bmd_export:
+                    bmd_data = bmd_obj.with_context(
+                                    active_model="pos.session",
+                                    active_ids = session_ids                        
+                                ).default_get(["data","data_name"])
+                    attachment_ids.append( att_obj.create(self._cr, self._uid, {
+                                                'name': "buerf",
+                                                'datas_fname': "buerf",
+                                                'datas': bmd_data["buerf"]
+                                           }, context=self._context))
+                
+            # write
+            msg_id = mail_tmpl_obj.send_mail(self._cr, self._uid, template_id, report_mail.id, force_send=False, context=mail_context)
+            if attachment_ids:
+                mail = mail_obj.browse(self._cr, self._uid, msg_id, context=self._context )
+                # link with message
+                att_obj.write(self._cr, self._uid, attachment_ids, { 
+                        "res_model": "mail.message",
+                        "res_id": mail.mail_message_id.id }, context=self._context)
+                # add attachment ids to message
+                mail_obj.write(self._cr,  self._uid, [msg_id], {
+                                "attachment_ids" : [(4,oid) for oid in attachment_ids]
+                              }, context=self._context)
+            # send
+            mail_obj.send(self._cr,  self._uid, [msg_id], context=mail_context)
+            
+        return True
+    
+    def _session_ids(self, report_range):
+        # get sessions
+        session_obj = self.pool["pos.session"]
+        # build domain
+        domain = [("start_at",">=",report_range[0]),("start_at","<=",report_range[1])]
+        pos_list = self.pos_ids
+        if pos_list:
+            config_ids = [c.id for c in pos_list]
+            domain.append(("config_id","in",config_ids))
+        # search
+        return session_obj.search(self._cr, self._uid, domain, context=self._context)
+    
+    def _cashreport_range(self, start_date=None):
+        if not start_date:
+            start_date = util.currentDate()
+        
+        cashreport_name = _("Cashreport")
+        date_from = start_date
+        date_till = start_date
+        f = format.LangFormat(self._cr, self._uid, self._context)
+        
+        # calc month
+        if self.range == "month":
+            date_from = util.getFirstOfMonth(start_date)
+            date_till = util.getEndOfMonth(start_date)
+            dt_date_from = util.strToDate(date_from)
+            month_name = helper.getMonthName(self._cr, self._uid, dt_date_from.month, context=self._context)
+            cashreport_name = "%s - %s %s" % (cashreport_name, month_name, dt_date_from.year)
+            
+        # calc week
+        elif  self.range == "week":
+            dt_date_from = util.strToDate(date_from)
+            weekday = dt_date_from.weekday()
+            dt_date_from  = dt_date_from + relativedelta(days=-weekday)
+            kw = dt_date_from.isocalendar()[1]
+            date_from = util.dateToStr(dt_date_from)
+            date_till = util.dateToStr(dt_date_from + relativedelta(days=weekday+(6-weekday)))
+            cashreport_name = _("%s - CW %s %s") % (cashreport_name, kw, dt_date_from.year)
+            
+        # calc date
+        else:
+            cashreport_name = _("%s - %s") % (cashreport_name, f.formatLang(date_from, date=True))
+        return (date_from, date_till, cashreport_name)
     
     @api.multi
     def action_test_email(self):
-        return {}
-    
+        return self._send_mail()
