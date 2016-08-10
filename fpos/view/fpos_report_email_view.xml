@@ -19,11 +19,12 @@
                         <field name="partner_id"/>
                         <field name="pos_ids" widget="many2many_tags"/>
                     </group>
-                    <group>
+                    <group>                        
                         <field name="detail"/>
                         <field name="separate"/>
                         <field name="bmd_export"/>
                         <field name="rzl_export"/>
+                        <field name="range_start"/>
                     </group>
                 </group>
             </sheet>
