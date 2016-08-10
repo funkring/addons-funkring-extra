@@ -78,7 +78,7 @@ class report_wizard(models.TransientModel):
         return res
     
     @api.multi
-    def action_report(self):        
+    def action_report(self):
         session_obj = self.pool["pos.session"]
         for wizard in self:
             # get ids

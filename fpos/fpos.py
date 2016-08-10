@@ -572,3 +572,27 @@ class fpos_order_log_line(models.Model):
     qty = fields.Float("Quantity", digits=dp.get_precision('Product UoS'))
     notice = fields.Text("Notice")
     
+    
+class fpos_report_email(models.Model):
+    _name = "fpos.report.email"
+    _description = "E-Mail Report"
+    
+    name = fields.Char("Name", required=True)
+    range = fields.Selection([("month","Month"),
+                              ("week","Week"),
+                              ("day", "Day")],
+                              string="Range", default="month", required=True)
+    
+    pos_ids = fields.Many2many("pos.config", "fpos_report_email_config_rel", "report_id", "config_id", "POS",
+                               required=True, 
+                               default=lambda self: self.env["pos.config"].search([]))
+    
+    detail = fields.Boolean("Detail")
+    separate = fields.Boolean("Separate")
+    
+    partner_ids = fields.Many2many("res.partner", "fpos_report_email_partner_rel", "report_id", "partner_id", "Partner", required=True)
+    
+    @api.multi
+    def action_test_email(self):
+        return {}
+    
