@@ -35,18 +35,18 @@ class account_analytic_account(osv.Model):
         cr.execute("SELECT a.id, al.id FROM account_analytic_account a "
                 "      INNER JOIN account_analytic_line al ON al.account_id=a.id AND al.to_invoice IS NOT NULL " 
                 "             AND ( (a.expense_alert_date IS NULL AND al.date=%s) " 
-                "                OR (a.expense_alert_date IS NOT NULL AND al.date > a.expense_alert_date) ) " 
+                "                OR (a.expense_alert_date IS NOT NULL AND al.date > a.expense_alert_date AND al.date<=%s) ) " 
                 "      WHERE a.expense_alert AND a.id IN %s AND NOT a.partner_id IS NULL " 
                 "      GROUP BY 1,2 "
                 "      ORDER BY a.id, al.date ",
-                (alert_date, tuple(ids)))
+                (alert_date, alert_date, tuple(ids)))
         
         for account_id, line_id in cr.fetchall():
             line_ids = res[account_id]
             if line_ids is None:
                 res[account_id] = line_ids = []
             line_ids.append(line_id)
-            
+
         return res
     
     _inherit = "account.analytic.account"
@@ -68,10 +68,10 @@ class account_analytic_account(osv.Model):
         cr.execute("SELECT a.id FROM account_analytic_account a " 
                     "      INNER JOIN account_analytic_line al ON al.account_id=a.id AND al.to_invoice IS NOT NULL " 
                     "             AND ( (a.expense_alert_date IS NULL AND al.date=%s) " 
-                    "                OR (a.expense_alert_date IS NOT NULL AND al.date > a.expense_alert_date) ) " 
+                    "                OR (a.expense_alert_date IS NOT NULL AND al.date > a.expense_alert_date AND al.date<=%s) ) " 
                     "      WHERE a.expense_alert AND NOT a.partner_id IS NULL " 
                     "      GROUP BY 1 ",
-                   (alert_date,))
+                   (alert_date, alert_date))
         
         # send alerts
         report_ctx = context and dict(context) or {}
