@@ -2,8 +2,8 @@
   <data>
     
     <record id="cron_expense_alert" model="ir.cron">
-      <field name="name">Expense Alert</field>
-       <field name="interval_number">1</field>
+        <field name="name">Expense Alert</field>
+        <field name="interval_number">1</field>
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>
