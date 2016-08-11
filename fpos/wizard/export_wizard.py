@@ -96,11 +96,11 @@ class wizard_export_bmd(models.TransientModel):
             name = " ".join(name)
              
             bookings = OrderedDict()
-            def post(konto, betrag, mwst, steuer, text):
+            def post(account, betrag, mwst, steuer, text):
                 # change sign
                 betrag *= -1
                 steuer *= -1
-                key = (konto, mwst, text)
+                key = (account.code, account.user_type.code, mwst, text)
                 booking = bookings.get(key)
                 if booking is None:
                     booking = (betrag, steuer)
@@ -125,30 +125,35 @@ class wizard_export_bmd(models.TransientModel):
                     income_account = product.property_account_income
                     if not income_account:
                         income_account = internal_account
-                    post(income_account.code, line.price_subtotal, tax, tax_amount, name)
+                    post(income_account, line.price_subtotal, tax, tax_amount, name)
                 else:
                     income_account = product.property_account_income
                     if not income_account:
                         income_account = product.categ_id.property_account_income_categ
                     if not income_account:
                         raise Warning(_("No income account for product %s defined") % product.name)
-                    post(income_account.code, line.price_subtotal, tax, tax_amount, name)
+                    post(income_account, line.price_subtotal, tax, tax_amount, name)
         
             # post payment
             for payment in order.statement_ids:                
                 if payment.statement_id.id != cash_statement.id:
                     payment_internal_account = payment.statement_id.journal_id.internal_account_id
                     payment_account = payment_internal_account or internal_account
-                    post(payment_account.code, -payment.amount, 0, 0, payment.statement_id.journal_id.name)
+                    post(payment_account, -payment.amount, 0, 0, payment.statement_id.journal_id.name)
                     
             # write bookings            
-            for (konto, mwst, text), (betrag, steuer) in bookings.iteritems():
+            for (account, user_type_code, mwst, text), (betrag, steuer) in bookings.iteritems():                
                 # thin about changed sign                
-                account = betrag > 0 and credit_account or debit_account                
+                journal_account = betrag > 0 and credit_account or debit_account                
                 steuer = mwst and formatFloat(steuer) or ""
-                steucod = steuer and "03" or ""
+                steucod = ""
+                if steuer:
+                    if user_type_code == "expense":
+                        steucod = "00" # VST
+                    else:
+                        steucod = "03" # UST
                 steuerproz = mwst and str(mwst) or ""
-                line = ";".join([konto, account.code, belegnr, belegdat, formatFloat(betrag), steuerproz, steuer, steucod, "A", symbol, text]) + ";"
+                line = ";".join([account, journal_account.code, belegnr, belegdat, formatFloat(betrag), steuerproz, steuer, steucod, "A", symbol, text]) + ";"
                 lines.append(line)
         
         lines = "\r\n".join(lines) + "\r\n"
