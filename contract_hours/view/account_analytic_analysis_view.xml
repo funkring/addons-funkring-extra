@@ -34,6 +34,17 @@
         </field>
     </record>
     
-    
+    <record id="search_account_analytic_account" model="ir.ui.view">
+      <field name="name">contract_hours.search_account_analytic_account</field>
+      <field name="model">account.analytic.account</field>
+      <field name="inherit_id" ref="account_analytic_analysis.view_account_analytic_account_overdue_search"/>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+         <filter name="has_partner" position="after">
+            <filter string="Maintenance Contracts" name="maintenance_contracts" domain="[('ct_month_hours','>',0)]"/>   
+         </filter>
+      </field>
+    </record>
+
   </data>
 </openerp>
