@@ -42,8 +42,9 @@ class account_analytic_analysis(osv.Model):
         return res 
    
     def _get_analytic_account_used_hours_rel(self, cr, uid, ids, context=None):
-        cr.execute("SELECT l.account_id FROM account_analytic_line l WHERE l.id IN %s GROUP BY 1 "
-                   " INNER JOIN account_analytic_account a ON a.id = l.account_id AND a.ct_month_hours > 0 ", (tuple(ids),))
+        cr.execute("SELECT l.account_id FROM account_analytic_line l  "
+                   " INNER JOIN account_analytic_account a ON a.id = l.account_id AND a.ct_month_hours > 0 "
+                   " WHERE l.id IN %s GROUP BY 1 ", (tuple(ids),))
         account_ids = [r[0] for r in cr.fetchall()]
         return account_ids
     
