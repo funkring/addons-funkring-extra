@@ -19,6 +19,7 @@ class Parser(extreport.basic_parser):
             "getSessionGroups" : self._getSessionGroups,
             "getSessions" : self._getSessions,
             "print_detail" : context.get("print_detail",name == "fpos.report_session_detail"),
+            "print_product" : context.get("print_product", False),
             "no_group" : context.get("no_group", False),
             "cashreport_name" : context.get("cashreport_name",""),
             "getCashboxNames" : self._getCashboxNames
@@ -54,14 +55,119 @@ class Parser(extreport.basic_parser):
             configNames.add(session.config_id.name)
         return ", ".join(sorted(list(configNames)))
     
+    def _formatTime(self, timeStr):
+        return self.formatLang(timeStr, date_time=True).split(" ")[1]
+    
     def _getSessionGroups(self, sessions):
+        byConfig = {}     
         if self.localcontext.get("no_group"):
-            res = []
             for session in sessions:
-                res.append([session])
-            return res
+                configSessions = byConfig.get(session.config_id.id)
+                if configSessions is None:
+                    configSessions = []
+                    byConfig[session.config_id.id] = configSessions
+                configSessions.append(session)
         else:
-            return self._groupByConfig(sessions).values()
+            byConfig = self._groupByConfig(sessions)
+        
+        # get used config
+        domain = []
+        report_info = self.localcontext.get("pos_report_info")
+        if report_info:
+            domain.append(("id","in",report_info["config_ids"]))
+        else:
+            domain.append(("id","in",byConfig.keys()))   
+            
+        # query config     
+        config_obj = self.pool.get("pos.config")    
+        config_ids = config_obj.search(self.cr, self.uid, domain)
+        
+        order_obj = self.pool.get("pos.order")
+        
+        # build result
+        res = []
+        for config in config_obj.browse(self.cr, self.uid, config_ids, context=self.localcontext):
+            # get days
+            daystat = []
+            if report_info:
+                days = config_obj._get_orders_per_day(self.cr, self.uid, config.id, report_info["from"], report_info["till"], context=self.localcontext)
+                prev_fpos_order = None                
+                for day, orders in days:
+                    if orders:
+                        # check order
+                        first_order = orders[0]
+                        first_fpos_order = first_order.fpos_order_id
+                        if not first_fpos_order:
+                            continue
+                        
+                        # get last oder                   
+                        last_order = orders[-1]
+                        last_fpos_order = last_order.fpos_order_id
+                        
+                        # check previous order                        
+                        seq = first_fpos_order.seq                        
+                        if not prev_fpos_order and not seq == 1:
+                            prev_order_id = order_obj.search_id(self.cr, self.uid, [("session_id.config_id","=",config.id),("fpos_order_id.seq","=",seq-1)])
+                            if prev_order_id:
+                                prev_order = order_obj.browse(self.cr, self.uid, prev_order_id, context=self.localcontext)
+                                prev_fpos_order = prev_order.fpos_order_id
+                            
+                        turnover = 0.0
+                        for order in orders:
+                            for line in order.lines:
+                                product = line.product_id
+                                if product.income_pdt or product.expense_pdt:
+                                    continue
+                                turnover += line.price_subtotal_incl
+                            
+                        
+                            
+                        daystat.append((day,{
+                           "first_time" : self._formatTime(first_order.date_order),
+                           "first" : first_order,
+                           "first_cpos" : prev_fpos_order and prev_fpos_order.cpos or 0.0,
+                           "last_time" : self._formatTime(last_order.date_order),
+                           "last" : last_order,
+                           "last_cpos" : last_fpos_order and last_fpos_order.cpos or 0.0,
+                           "turnover" : turnover
+                        }))
+                        
+                        prev_fpos_order = first_fpos_order
+                    else:
+                        daystat.append((day,None))
+                    
+            
+            # append
+            configSessions =  byConfig.get(config.id) or []
+            if configSessions or days:
+                res.append({
+                    "config" : config,
+                    "sessions" : configSessions,
+                    "description" : self._getName(configSessions),
+                    "days" : daystat
+                })
+            
+        return res
+    
+    def _getName(self, sessions):
+        name = self.localcontext.get("cashreport_name","")
+        if not name:
+            report_info = self.localcontext.get("pos_report_info")
+            if report_info:
+                name = report_info["name"]
+
+        if sessions:
+            first_session = sessions[0]
+            last_session = sessions[-1]
+            if self.localcontext.get("no_group"):
+                name = self.formatLang(first_session.start_at, date=True)
+            elif not name: 
+                if first_session != last_session:
+                    name = "%s - %s" % (self.formatLang(first_session.start_at, date=True), self.formatLang(last_session.start_at, date=True))
+                else:
+                    name = self.formatLang(first_session.start_at, date=True)
+                    
+        return name
     
     def _statistic(self, sessions):
         if not sessions:
@@ -94,7 +200,8 @@ class Parser(extreport.basic_parser):
         currency_obj = self.pool.get('res.currency')
         order_obj = self.pool.get("pos.order")   
         
-        print_detail = self.localcontext["print_detail"]         
+        print_detail = self.localcontext["print_detail"]     
+        print_product = self.localcontext["print_product"]    
         
         # add turnover
         def addTurnover(name, amount, line, tax_amount, is_taxed):          
@@ -110,7 +217,7 @@ class Parser(extreport.basic_parser):
                 turnover_dict[name] = entry
             
             product = line.product_id
-            if product.pos_report:
+            if product.pos_report or print_product:
                 detailDict = entry["detail"]
                 detail = detailDict.get(product.id)
                 if detail is None:
@@ -297,24 +404,17 @@ class Parser(extreport.basic_parser):
             dates.append(_("Open"))
         description  = " - ".join(dates)
              
-        name = ""
-        if self.localcontext.get("no_group"):
-            name = self.formatLang(first_session.start_at, date=True)
-        else: 
-            name = self.localcontext.get("cashreport_name")
-            if not name:
-                if first_session != last_session:
-                    name = "%s - %s" % (self.formatLang(first_session.start_at, date=True), self.formatLang(last_session.start_at, date=True))
-                else:
-                    name = self.formatLang(first_session.start_at, date=True)
-              
+        # name
+        name = self._getName(sessions)
+        
+        # get period
         first_period = first_session.cash_statement_id.period_id
         last_period = last_session.cash_statement_id.period_id
-
         period = first_period.name        
         if first_period != last_period:
             period = "%s - %s" % (first_period.name, last_period.name)
        
+        # check user
         if not user:
             user = first_session.user_id
             

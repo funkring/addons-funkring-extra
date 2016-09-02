@@ -24,6 +24,8 @@ from openerp.exceptions import Warning
 from openerp.addons.fpos.product import COLOR_NAMES
 
 from openerp.addons.at_base import util
+from openerp.addons.at_base import helper
+
 
 class pos_category(osv.osv):
     _inherit = "pos.category"
@@ -158,6 +160,26 @@ class pos_config(osv.Model):
             raise osv.except_osv(_('Error!'), _('There is no default company for the current user!'))
         
         # finished
+        return res
+    
+    def _get_orders_per_day(self, cr, uid, config_id, date_from, date_till, context=None):
+        order_obj = self.pool("pos.order")
+        res = []
+        while date_from <= date_till:
+            
+            # calc time
+            time_from = helper.strDateToUTCTimeStr(cr, uid, date_from, context=context)
+            next_date = util.getNextDayDate(date_from)            
+            time_to = helper.strDateToUTCTimeStr(cr, uid, next_date, context=context)
+            
+            # get orders
+            order_ids = order_obj.search(cr, uid, [("session_id.config_id","=",config_id),("date_order",">=",time_from),("date_order","<",time_to)], order="name asc")
+            orders = order_obj.browse(cr, uid, order_ids, context=context)           
+            res.append((date_from, orders))
+            
+            # go to next
+            date_from = next_date
+            
         return res
     
 

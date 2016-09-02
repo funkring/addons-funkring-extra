@@ -35,10 +35,11 @@ class report_wizard(models.TransientModel):
                               string="Range", default="month", required=True)
     
     pos_ids = fields.Many2many("pos.config", "report_wizard_pos_config_rel", "wizard_id", "config_id", "POS", 
-                               default=lambda self: self.env["pos.config"].search([]))
+                               default=lambda self: self.env["pos.config"].search([("liveop","=",True)]))
     
-    detail = fields.Boolean("Detail")
-    separate = fields.Boolean("Separate")
+    detail = fields.Boolean("Detail", help="Print detail")
+    separate = fields.Boolean("Separate", help="Cashreport for every single day")
+    product = fields.Boolean("Products", help="Print product overview")
        
     date_from = fields.Date("From")
     date_till = fields.Date("Till")
@@ -130,10 +131,20 @@ class report_wizard(models.TransientModel):
           
             # check options
             if wizard.detail:
-                report_ctx["print_detail"] = True
+                report_ctx["print_detail"] = True            
             if wizard.separate:
                 report_ctx["no_group"] = True
-                                
+            if wizard.product:
+                report_ctx["print_product"] = True
+
+            # add report info                
+            report_ctx["pos_report_info"] = {
+                "name" : report_name,
+                "from" : wizard.date_from,
+                "till" : wizard.date_till,
+                "config_ids" : config_ids
+            }
+                
             # return
             return  {
                 "type": "ir.actions.report.xml",

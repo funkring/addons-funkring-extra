@@ -13,6 +13,7 @@
                   <field name="pos_ids" widget="many2many_tags"/>
                   <field name="detail"/>
                   <field name="separate"/>
+                  <field name="product"/>
                 </group>
                 <group>
                   <field name="date_from" on_change="onchange_range(range, date_from, date_till)"/>

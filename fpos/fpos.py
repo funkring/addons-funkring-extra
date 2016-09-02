@@ -596,7 +596,8 @@ class fpos_report_email(models.Model):
     
     detail = fields.Boolean("Detail")
     separate = fields.Boolean("Separate")
-    
+    product = fields.Boolean("Products", help="Print product overview")
+     
     bmd_export = fields.Boolean("BMD Export")
     rzl_export = fields.Boolean("RZL Export") 
     
@@ -615,6 +616,7 @@ class fpos_report_email(models.Model):
         att_obj = self.pool["ir.attachment"]
         rzl_obj = self.env["fpos.wizard.export.rzl"]
         bmd_obj = self.env["fpos.wizard.export.bmd"]
+        config_obj = self.env["pos.config"]
         
         data_obj = self.pool["ir.model.data"]        
         template_id = data_obj.xmlid_to_res_id(self._cr, self._uid, "fpos.email_report", raise_if_not_found=True)
@@ -623,6 +625,32 @@ class fpos_report_email(models.Model):
         mail_context["start_date"] = start_date
         mail_range =  self._cashreport_range(start_date)
         mail_context["cashreport_name"] = mail_range[2]
+        
+        # check options
+        if self.detail:
+            mail_context["print_detail"] = True            
+        if self.separate:
+            mail_context["no_group"] = True
+        if self.product:
+            mail_context["print_product"] = True
+            
+        # build config
+        config_ids = []
+        if self.pos_ids:
+            for pos in self.pos_ids:
+                config_ids.append(pos.id)
+        else:
+            for config in config_obj.search([("liveop","=",True)]):
+                config_ids.append(config.id)
+            
+        # add report info                
+        mail_context["pos_report_info"] = {            
+            "from" : mail_range[0],
+            "till" : mail_range[1],
+            "name" : mail_range[2],
+            "config_ids" : config_ids
+        }
+                
         
         attachment_ids = []
         if self.rzl_export or self.bmd_export:
@@ -747,5 +775,5 @@ class fpos_report_email(models.Model):
     @api.multi
     def action_test_email(self):
         for report_mail in self:
-            report_mail._send_mail()
+            report_mail._send_mail(start_date=self.range_start)
         return True
