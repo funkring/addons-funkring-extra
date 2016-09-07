@@ -52,7 +52,9 @@ class product_template(osv.Model):
         "pos_price_dec" : fields.integer("Price Decimal",help="Decimal digits, -1 is no decimal, 0 is no restriction"),
         "pos_amount_pre" : fields.integer("Amount Predecimal",help="Predicimal digits, -1 is no predecimal, 0 is no restriction"),
         "pos_amount_dec" : fields.integer("Amount Decimal",help="Decimal digits, -1 is no decimal, 0 is no restriction"),
-        "pos_price" : fields.boolean("Price Input")        
+        "pos_price" : fields.boolean("Price Input"),
+        "pos_categ2_id" : fields.many2one("pos.category","Category 2",help="Show the product also in this category"),
+        "pos_fav" : fields.boolean("Favorite"),        
     }
     _defaults = {
         "sequence" : 10
@@ -102,7 +104,9 @@ class product_product(osv.Model):
             "available_in_pos" : obj.available_in_pos,
             "sale_ok" : obj.sale_ok,
             "pos_color" : obj.pos_color,
-            "pos_report" : obj.pos_report
+            "pos_report" : obj.pos_report,
+            "pos_fav" : obj.pos_fav,
+            "pos_categ2_id" : mapping_obj._get_uuid(cr, uid, obj.pos_categ2_id)
         }
         
         if obj.pos_nogroup:

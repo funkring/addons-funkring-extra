@@ -30,8 +30,14 @@ from openerp.addons.at_base import helper
 class pos_category(osv.osv):
     _inherit = "pos.category"
     _columns =  {
+        "pos_main" : fields.boolean("Main Category"),
         "pos_color" : fields.selection(COLOR_NAMES, string="Color"),
-        "pos_unavail" : fields.boolean("Unavailable")
+        "pos_unavail" : fields.boolean("Unavailable"),
+        "after_product" : fields.selection([("parent","to parent"),
+                                            ("main","to main"),
+                                            ("root","to root")],
+                                         string="After product", 
+                                         help="Action after product selection") 
     }
     
     def _fpos_category_get(self, cr, uid, obj, *args, **kwarg):
@@ -46,7 +52,9 @@ class pos_category(osv.osv):
             "image_small" : obj.image_small,
             "sequence" : obj.sequence,
             "pos_color" : obj.pos_color,
-            "pos_unavail" : obj.pos_unavail
+            "pos_unavail" : obj.pos_unavail,
+            "pos_main" : obj.pos_main,
+            "after_product" : obj.after_product
         }
     
     def _fpos_category_put(self, cr, uid, obj, *args, **kwarg):

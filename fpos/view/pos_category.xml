@@ -7,8 +7,10 @@
       <field name="model">pos.category</field>
       <field name="inherit_id" ref="point_of_sale.product_pos_category_tree_view"/>
         <field name="arch" type="xml">
-           <field name="complete_name" position="after">
-                <field name="pos_color"/> 
+           <field name="complete_name" position="after">                
+                <field name="pos_color"/>
+                <field name="after_product"/> 
+                <field name="pos_main"/>
                 <field name="pos_unavail"/>
            </field>
         </field>
@@ -18,9 +20,11 @@
        <field name="name">fpos.form_pos_category</field>
        <field name="model">pos.category</field>
        <field name="inherit_id" ref="point_of_sale.product_pos_category_form_view"/>
-       <field name="arch" type="xml">
+       <field name="arch" type="xml">       
             <field name="parent_id" position="after">
                 <field name="pos_color"/>
+                <field name="after_product"/>
+                <field name="pos_main"/>
                 <field name="pos_unavail"/>
             </field>
        </field>

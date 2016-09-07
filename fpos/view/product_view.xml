@@ -48,6 +48,9 @@
         </field>
         <field name="pos_categ_id" position="after">
             <field name="pos_name"/>
+            <field name="pos_categ2_id"/>
+            <field name="pos_color"/>   
+            <field name="pos_fav"/>
             <field name="pos_report"/>
         </field>
         <group name="pos" position="after">

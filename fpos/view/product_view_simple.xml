@@ -56,8 +56,10 @@
                                     </group>
                                     <group string="POS">
                                         <field name="pos_name"/>    
+                                        <field name="pos_categ2_id"/>
                                         <field name="pos_color"/>                                                              
                                         <field name="available_in_pos"/>
+                                        <field name="pos_fav"/>
                                         <field name="pos_report"/>                                                 
                                         <field name="to_weight" />
                                         <field name="income_pdt"/>
