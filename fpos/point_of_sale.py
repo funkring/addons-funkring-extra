@@ -204,9 +204,19 @@ class pos_order(osv.Model):
         for order in self.browse(cr, uid, ids, context):
             invoice = order.invoice_id
             data_lines = [x.id for x in invoice.move_id.line_id if x.account_id.id == invoice.account_id.id]
+                        
+            partial = False
             for st_line in order.statement_ids:
-                data_lines += [x.id for x in st_line.journal_entry_id.line_id if x.account_id.id == invoice.account_id.id]
-            move_line_obj.reconcile(cr, uid, data_lines, context=context)              
+                if not st_line.journal_id.fpos_noreconcile:
+                    data_lines += [x.id for x in st_line.journal_entry_id.line_id if x.account_id.id == invoice.account_id.id]
+                else:
+                    partial = True
+            
+            if partial:
+                move_line_obj.reconcile_partial(cr, uid, data_lines, context=context)
+            else:
+                move_line_obj.reconcile(cr, uid, data_lines, context=context)              
+                
        
     def _after_invoice(self, cr, uid, order, context=None):
         self.reconcile_invoice(cr, uid, [order.id], context=context)

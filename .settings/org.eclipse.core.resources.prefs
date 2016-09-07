@@ -16,6 +16,7 @@ encoding//fclipboard/controller/main.py=utf-8
 encoding//fclipboard/fclipboard.py=utf-8
 encoding//fclipboard/pricelist.py=utf-8
 encoding//fpos/__openerp__.py=utf-8
+encoding//fpos/account_bank_statement.py=utf-8
 encoding//fpos/fpos.py=utf-8
 encoding//fpos/fpos_top.py=utf-8
 encoding//fpos/invoice.py=utf-8

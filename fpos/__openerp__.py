@@ -54,6 +54,7 @@ oerp.at Fpos
               "view/fpos_dist_view.xml",
               "view/fpos_printer_view.xml", 
               "view/fpos_report_email_view.xml",
+              "view/journal_view.xml",
               "wizard/export_wizard.xml",
               "wizard/export_wizard_rzl.xml",
               "wizard/report_wizard.xml",             

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+ <data>
+    <record id="form_account_journal" model="ir.ui.view">
+      <field name="name">fpos.form_account_journal</field>
+      <field name="model">account.journal</field>
+      <field name="inherit_id" ref="point_of_sale.view_account_journal_pos_user_form"/>
+      <field name="arch" type="xml">
+        <field name="amount_authorized_diff" position="after">
+            <field name="fpos_noreconcile"/>
+        </field>
+      </field>
+    </record>
+  </data>
+</openerp>
