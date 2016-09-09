@@ -544,12 +544,24 @@ class fpos_payment(models.Model):
 class fpos_printer(models.Model):
     _name = "fpos.printer"
     _description = "Printer"
+    _rec_name = "complete_name"
     
-    name = fields.Char("Name", required=True, index=True)
+    name = fields.Char("Name", required=True)    
+    description = fields.Char("Description")
+    complete_name =fields.Char("Name", compute="_complete_name", store=True, index=True)
     local = fields.Boolean("Local", help="Print on local printer")
     pos_category_ids = fields.Many2many("pos.category", "fpos_printer_pos_category_rel", "printer_id", "category_id", string="Categories", 
                                     help="If no category is given all products are printed, otherwise only the products in the categories")
     
+    @api.one
+    @api.depends("name","description")
+    def _complete_name(self):
+        if self.description:
+            self.complete_name = "%s [%s]" % (self.name, self.description)
+        else:
+            self.complete_name = self.name
+
+   
 class fpos_dist(models.Model):
     _name = "fpos.dist"
     _description =  "Distributor"
