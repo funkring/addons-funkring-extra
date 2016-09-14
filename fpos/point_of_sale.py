@@ -75,6 +75,8 @@ class pos_config(osv.Model):
         "iface_nogroup" : fields.boolean("No Grouping", help="If a product is selected twice a new pos line was created"),
         "iface_place" : fields.boolean("Place Management"),
         "iface_fastuswitch" : fields.boolean("Fast User Switch"),
+        "iface_nosearch" : fields.boolean("No Search"),
+        "iface_printleft" : fields.boolean("Print Button Left"),
         "fpos_printer_ids" : fields.many2many("fpos.printer", "fpos_config_printer_rel", "config_id", "printer_id", "Printer", copy=True, composition=True),
         "fpos_dist_ids" : fields.many2many("fpos.dist","fpos_config_dist_rel","config_id","dist_id","Distributor", copy=True, composition=True),
         "fpos_income_id" : fields.many2one("product.product","Cashstate Income", domain=[("income_pdt","=",True)], help="Income product for auto income on cashstate"),
