@@ -31,6 +31,12 @@ class account_analytic_analysis(osv.Model):
 
     def _ct_remaining_hours(self, cr, uid, ids, fieldnames, args, context=None):
         res = dict.fromkeys(ids, 0)
+        
+        # assign all hours
+        for account in self.browse(cr, uid, ids, context=context):
+            res[account.id] = account.ct_year_hours
+        
+        # calc used
         cr.execute("SELECT a.id, (a.ct_month_hours * 12)-SUM(l.unit_amount) FROM account_analytic_line l " 
                    " INNER JOIN account_analytic_account a ON a.id = l.account_id AND a.id IN %s AND a.ct_month_hours > 0 "  
                    " INNER JOIN account_analytic_journal j ON j.id = l.journal_id AND j.type = 'general' " 
@@ -39,6 +45,7 @@ class account_analytic_analysis(osv.Model):
                    " GROUP BY 1 ",(tuple(ids),))
         for rec_id, rec_used_hours in cr.fetchall():
             res[rec_id] = rec_used_hours
+            
         return res 
    
     def _get_analytic_account_used_hours_rel(self, cr, uid, ids, context=None):
