@@ -55,6 +55,9 @@ class product_template(osv.Model):
         "pos_price" : fields.boolean("Price Input"),
         "pos_categ2_id" : fields.many2one("pos.category","Category 2",help="Show the product also in this category"),
         "pos_fav" : fields.boolean("Favorite"),        
+        "pos_cm" : fields.boolean("Comment"),
+        "pos_sec" : fields.selection([("1","Section 1"),
+                                      ("2","Section 2")], string="Section", help="Section Flag")
     }
     _defaults = {
         "sequence" : 10
@@ -122,7 +125,11 @@ class product_product(osv.Model):
         if type(obj.pos_amount_dec) in (int,long):
             values["pos_amount_dec"] = obj.pos_amount_dec            
         if obj.pos_price:
-            values["pos_price"] = obj.pos_price        
+            values["pos_price"] = obj.pos_price
+        if obj.pos_sec:
+            values["pos_sec"] = obj.pos_sec
+        if obj.pos_cm:
+            values["pos_cm"] = obj.pos_cm
         
         return values  
     
