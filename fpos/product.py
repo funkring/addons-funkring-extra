@@ -20,6 +20,8 @@
 
 from openerp.osv import fields, osv
 from openerp.addons.jdoc.jdoc import META_MODEL
+from openerp.exceptions import Warning
+from openerp.tools.translate import _
 
 COLOR_NAMES = [("white", "White"),
                ("silver","Silver"),
@@ -157,4 +159,16 @@ class product_product(osv.Model):
             "put" : self._fpos_product_put,
             "lastchange" : self._jdoc_product_lastchange
         }
-    
+        
+    def fpos_scan(self, cr, uid, code, context=None):
+        product_id = self.search_id(cr, uid, [("ean13","=",code)], context=context)
+        if not product_id:
+            raise Warning(_('Product with EAN %s not found') % code)
+        
+        product = self.browse(cr, uid, product_id, context=context)
+        if not product:
+            raise Warning(_('No access for product with EAN %s') % code)
+        
+        jdoc_obj = self.pool["jdoc.jdoc"]
+        jdoc_obj._jdoc_access(cr, uid, "product.product", product_id, auto=True, context=context)
+        return self._fpos_product_get(cr, uid, product, context=context)
