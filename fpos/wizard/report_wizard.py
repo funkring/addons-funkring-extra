@@ -110,8 +110,6 @@ class report_wizard(models.TransientModel):
                     report_name = _("%s - %s %s") % (report_name, 
                                                      helper.getMonthName(self._cr, self._uid, dt_till.month, context=self._context),
                                                      dt_till.year)
-                     
-                report_ctx["cashreport_name"] = report_name
                 
             elif wizard.range == "week":
                 dt = util.strToDate(wizard.date_from)
@@ -127,7 +125,16 @@ class report_wizard(models.TransientModel):
                 if dt_till.year != dt.year or kw != kw_till:
                     report_name = _("%s - CW %s %s") % (report_name, kw_till, dt_till.year)
                     
-                report_ctx["cashreport_name"] = report_name  
+            else:
+                if wizard.date_from == wizard.date_till:
+                    report_name = f.formatLang(wizard.date_from, date=True)
+                else:
+                    report_name = "%s - %s" %  (f.formatLang(wizard.date_from, date=True), 
+                                                f.formatLang(wizard.date_till, date=True))
+                
+                
+            # report name
+            report_ctx["cashreport_name"] = report_name  
           
             # check options
             if wizard.detail:
