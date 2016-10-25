@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-02 16:50+0000\n"
-"PO-Revision-Date: 2016-10-02 18:53+0100\n"
+"POT-Creation-Date: 2016-10-20 13:29+0000\n"
+"PO-Revision-Date: 2016-10-20 15:32+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,7 +31,7 @@ msgid ""
 "               <p>${object.company_id.name}</p>\n"
 "            </div>\n"
 "        "
-msgstr  ""
+msgstr ""
 "\n"
 "            <div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, "
 "Verdana, sans-serif; font-size: 11pt;\">\n"
@@ -51,7 +51,7 @@ msgid "${ctx.get('cashreport_name','Cashreport')}"
 msgstr "${ctx.get('cashreport_name','Kassenbericht')}"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:765
+#: code:addons/fpos/fpos.py:787
 #, python-format
 msgid "%s - %s"
 msgstr ""
@@ -69,19 +69,19 @@ msgid "%s - %s / %s %s"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/wizard/report_wizard.py:122
+#: code:addons/fpos/wizard/report_wizard.py:120
 #, python-format
 msgid "%s - %s / CW %s %s"
 msgstr "%s - %s / KW %s %s"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:755 code:addons/fpos/wizard/report_wizard.py:128
+#: code:addons/fpos/fpos.py:777 code:addons/fpos/wizard/report_wizard.py:126
 #, python-format
 msgid "%s - CW %s %s"
 msgstr "%s - KW %s %s"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:518
+#: code:addons/fpos/fpos.py:540
 #, python-format
 msgid "*-Format: %s,%s"
 msgstr ""
@@ -181,7 +181,7 @@ msgid "Blue"
 msgstr "Blau"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:508
+#: code:addons/fpos/fpos.py:530
 #, python-format
 msgid "Break"
 msgstr ""
@@ -222,7 +222,7 @@ msgid "Cashbox Trigger"
 msgstr "Kassenladenöffner"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:727
+#: code:addons/fpos/fpos.py:749
 #: model:ir.actions.report.xml,name:fpos.report_session_email
 #, python-format
 msgid "Cashreport"
@@ -260,7 +260,7 @@ msgid "Category 2"
 msgstr "Kassen Kategorie 2"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:387 field:fpos.order,cent_fix:0
+#: code:addons/fpos/fpos.py:401 field:fpos.order,cent_fix:0
 #, python-format
 msgid "Cent Correction"
 msgstr "Cent Korrektur"
@@ -379,7 +379,7 @@ msgid "Description for Quotations"
 msgstr "Beschreibung für Angebote"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:510 field:fpos.report.email,detail:0
+#: code:addons/fpos/fpos.py:532 field:fpos.report.email,detail:0
 #: field:fpos.report.wizard,detail:0
 #, python-format
 msgid "Detail"
@@ -430,6 +430,11 @@ msgid "Distributor"
 msgstr "Verteiler"
 
 #. module: fpos
+#: help:pos.config,iface_fold:0
+msgid "Don't show foldable categories"
+msgstr "Zusammenfassbare Kategorien werden nicht gezeigt"
+
+#. module: fpos
 #: selection:fpos.order,state:0
 msgid "Done"
 msgstr "Erledigt"
@@ -445,14 +450,14 @@ msgid "E-Mail Report"
 msgstr "E-Mail Bericht"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:299 code:addons/fpos/fpos.py:328
-#: code:addons/fpos/fpos.py:348
+#: code:addons/fpos/fpos.py:315 code:addons/fpos/fpos.py:344
+#: code:addons/fpos/fpos.py:364
 #, python-format
 msgid "Empty"
 msgstr "Leer"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:170
+#: code:addons/fpos/point_of_sale.py:172
 #, python-format
 msgid "Error!"
 msgstr "Fehler!"
@@ -496,6 +501,16 @@ msgstr "Funktionen"
 #: field:fpos.order.line,flags:0
 msgid "Flags"
 msgstr ""
+
+#. module: fpos
+#: field:pos.config,iface_fold:0
+msgid "Fold"
+msgstr "Kategorien zusammenfassen"
+
+#. module: fpos
+#: field:pos.category,foldable:0
+msgid "Foldable"
+msgstr "Zusammenfassbar"
 
 #. module: fpos
 #: field:fpos.report.email,message_follower_ids:0
@@ -553,7 +568,7 @@ msgid "Fpos User could only assinged once"
 msgstr "Fpos Benutzer kann nur einer Kasse zugewiesen werden"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:321
+#: code:addons/fpos/fpos.py:337
 #, python-format
 msgid "Fpos could only use price with tax included"
 msgstr "Fpos kann nur Preise inkl. Steuer verarbeiten"
@@ -733,7 +748,7 @@ msgid "Lime"
 msgstr "Hellgrün"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:512
+#: code:addons/fpos/fpos.py:534
 #, python-format
 msgid "Line"
 msgstr "Position"
@@ -791,7 +806,7 @@ msgid "Messages and communication history"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:504 field:product.product,pos_minus:0
+#: code:addons/fpos/fpos.py:526 field:product.product,pos_minus:0
 #: field:product.template,pos_minus:0
 #, python-format
 msgid "Minus"
@@ -847,7 +862,7 @@ msgid "No Tax"
 msgstr "Keine Steuer"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:506
+#: code:addons/fpos/fpos.py:528
 #, python-format
 msgid "No Unit"
 msgstr "Keine Einheit"
@@ -856,7 +871,7 @@ msgstr "Keine Einheit"
 #: code:addons/fpos/product.py:170
 #, python-format
 msgid "No access for product with EAN %s"
-msgstr ""
+msgstr "Kein Zugriff auf Produkt mit EAN %s"
 
 #. module: fpos
 #: code:addons/fpos/wizard/export_wizard.py:78
@@ -914,7 +929,7 @@ msgid "Only Administrator could correct Fpos orders"
 msgstr "Nur der Administrator darf Fpos Verkäufe korrigieren"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:101
+#: code:addons/fpos/point_of_sale.py:103
 #, python-format
 msgid "Only system admin could set pos system into live operation"
 msgstr "Nur der Systemadministrator kann eine Kasse in Echtbetrieb setzen"
@@ -1251,7 +1266,7 @@ msgid "Sales"
 msgstr "Verkauf"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:514 field:product.product,pos_sec:0
+#: code:addons/fpos/fpos.py:536 field:product.product,pos_sec:0
 #: field:product.template,pos_sec:0
 #, python-format
 msgid "Section"
@@ -1318,7 +1333,7 @@ msgid "Status"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:516
+#: code:addons/fpos/fpos.py:538
 #, python-format
 msgid "Subsection"
 msgstr "Unterabschnitt"
@@ -1387,7 +1402,7 @@ msgid "Test"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:170
+#: code:addons/fpos/point_of_sale.py:172
 #, python-format
 msgid "There is no default company for the current user!"
 msgstr "Es existiert keine standard Firma für den aktuellen Benutzer!"
@@ -1417,7 +1432,7 @@ msgid "Turnover Count"
 msgstr "Umsatzzähler"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:431
+#: code:addons/fpos/fpos.py:453
 #, python-format
 msgid "Unable to book order %s/%s/%s"
 msgstr "Rechnung %s/%s/%s kann nicht gebucht werden"
@@ -1521,7 +1536,7 @@ msgid "to root"
 msgstr "zur Basis"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:520
+#: code:addons/fpos/fpos.py:542
 #, python-format
 msgid "€-Format: %s,%s"
 msgstr ""

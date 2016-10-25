@@ -14,6 +14,7 @@
             </button>
             <field name="iface_big_scrollbars" position="after">
                 <field name="iface_nogroup"/>
+                <field name="iface_fold"/>
                 <field name="iface_place"/>
                 <field name="iface_fastuswitch"/>
                 <field name="iface_nosearch"/>

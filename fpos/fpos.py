@@ -271,6 +271,9 @@ class fpos_order(models.Model):
                 for st in session.statement_ids:
                     statements[st.journal_id.id] = st
 
+            # get user
+            session_uid = session.user_id.id
+            
             # handle order 
             # and payment
 
@@ -290,6 +293,19 @@ class fpos_order(models.Model):
                 "nb_print" : 1,
                 "lines" : lines
             }
+            
+            invoice_id = None
+            if order.ref:
+                inv_type = ["out_invoice","in_refund"]
+                if order.amount_total < 0.0:
+                    inv_type = ["in_invoice","out_refund"]
+                invoice_vals = invoice_obj.search_read(self._cr, session_uid, [("number","=",order.ref),("type","in",inv_type),("state","=","open"),("residual","=",order.amount_total)], ["partner_id"], context=context)
+                if invoice_vals:
+                    invoice_vals = invoice_vals[0]   
+                    invoice_id = invoice_vals["id"]
+                    # connect invoice         
+                    order_vals["partner_id"] =  invoice_vals["partner_id"][0]
+      
             
             if not order.line_ids:
                 # if no products book add empty state
@@ -354,8 +370,6 @@ class fpos_order(models.Model):
                             "create_date" : order.date
                         }))
                 
-            # get user
-            session_uid = session.user_id.id
                 
             # create order      
             pos_order_id = order_obj.create(self._cr, session_uid, order_vals, context=context)
@@ -407,7 +421,7 @@ class fpos_order(models.Model):
            
             # post order
             order_obj.signal_workflow(self._cr, session_uid, pos_order_ids, "paid")
-            # check if invoice should be crated
+            # check if invoice should be created
             if order.send_invoice:
                 if order.partner_id:
                     # created invoice
@@ -423,6 +437,14 @@ class fpos_order(models.Model):
                     order_obj._after_invoice(self._cr, session_uid, pos_order, context=context)
                 else:
                     order.send_invoice = False
+            # check pos reference
+            elif invoice_id:
+                # connect invoice            
+                order_obj.write(self._cr, session_uid, [pos_order_id], {"invoice_id": invoice_id, 
+                                                                        "state": "invoiced" }, context=context)
+                # reread order and do after invoice
+                pos_order = order_obj.browse(self._cr, session_uid, pos_order_id, context=context)
+                order_obj._after_invoice(self._cr, session_uid, pos_order, context=context)
                 
             # check order
             order_vals = order_obj.read(self._cr, session_uid, pos_order_id, ["state"], context=context)

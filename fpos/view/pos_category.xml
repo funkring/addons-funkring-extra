@@ -11,6 +11,7 @@
                 <field name="pos_color"/>
                 <field name="after_product"/> 
                 <field name="pos_main"/>
+                <field name="foldable"/>
                 <field name="pos_unavail"/>
            </field>
         </field>
@@ -25,6 +26,7 @@
                 <field name="pos_color"/>
                 <field name="after_product"/>
                 <field name="pos_main"/>
+                <field name="foldable"/>
                 <field name="pos_unavail"/>
             </field>
        </field>

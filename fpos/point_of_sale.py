@@ -37,7 +37,8 @@ class pos_category(osv.osv):
                                             ("main","to main"),
                                             ("root","to root")],
                                          string="After product", 
-                                         help="Action after product selection") 
+                                         help="Action after product selection"),
+        "foldable" : fields.boolean("Foldable")
     }
     
     def _fpos_category_get(self, cr, uid, obj, *args, **kwarg):
@@ -54,7 +55,8 @@ class pos_category(osv.osv):
             "pos_color" : obj.pos_color,
             "pos_unavail" : obj.pos_unavail,
             "pos_main" : obj.pos_main,
-            "after_product" : obj.after_product
+            "after_product" : obj.after_product,
+            "foldable" : obj.foldable
         }
     
     def _fpos_category_put(self, cr, uid, obj, *args, **kwarg):
@@ -73,6 +75,7 @@ class pos_config(osv.Model):
     _columns = {        
         "fpos_prefix" : fields.char("Fpos Prefix"),
         "iface_nogroup" : fields.boolean("No Grouping", help="If a product is selected twice a new pos line was created"),
+        "iface_fold" : fields.boolean("Fold",help="Don't show foldable categories"),
         "iface_place" : fields.boolean("Place Management"),
         "iface_fastuswitch" : fields.boolean("Fast User Switch"),
         "iface_nosearch" : fields.boolean("No Search"),
@@ -168,6 +171,15 @@ class pos_config(osv.Model):
         company_id = user_obj._get_company(cr, uid, context=context)
         if not company_id:
             raise osv.except_osv(_('Error!'), _('There is no default company for the current user!'))
+        
+        # get company infos
+        company = self.pool["res.company"].browse(cr, uid, company_id, context=context)
+        banks = company.bank_ids
+        if banks:
+            accounts = []
+            for bank in banks:
+                accounts.append(bank.acc_number) 
+            res["bank_accounts"] = accounts
         
         # finished
         return res
