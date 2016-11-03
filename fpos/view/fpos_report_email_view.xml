@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+  
+    <record id="form_fpos_report_email" model="ir.ui.view">
+      <field name="name">fpos.form_fpos_report_email</field>
+      <field name="model">fpos.report.email</field>
+      <field name="arch" type="xml">
+        <form string="Report E-Mail">
+            <header>
+                <button type="object" name="action_test_email" string="Test"/>
+            </header>
+            <sheet>
+                <group>
+                    <group>
+                        <field name="name"/>
+                        <field name="range"/>
+                        <field name="company_id" invisible="1"/>
+                        <field name="partner_id"/>
+                        <field name="pos_ids" widget="many2many_tags"/>
+                    </group>
+                    <group>                        
+                        <field name="detail"/>
+                        <field name="separate"/>
+                        <field name="product"/>
+                        <field name="bmd_export"/>
+                        <field name="rzl_export"/>
+                        <field name="range_start"/>
+                    </group>
+                </group>
+            </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_fpos_report_email" model="ir.ui.view">
+      <field name="name">fpos.tree_fpos_report_email</field>
+      <field name="model">fpos.report.email</field>
+      <field name="arch" type="xml">
+        <tree string="Report E-Mails">
+            <field name="name"/>            
+            <field name="range"/>
+            <field name="partner_id"/>            
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_fpos_report_email" model="ir.ui.view">
+      <field name="name">fpos.search_fpos_report_email</field>
+      <field name="model">fpos.report.email</field>
+      <field name="arch" type="xml">
+        <search string="Report E-Mail">
+            <field name="name"/>
+            <field name="partner_id"/>       
+        </search>
+      </field>
+    </record>
+
+    <record id="action_fpos_report_email" model="ir.actions.act_window">
+      <field name="name">Report E-Mail</field>
+      <field name="res_model">fpos.report.email</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>     
+    </record>
+
+    <menuitem id="menu_fpos_report_email" name="Report E-Mail" parent="point_of_sale.menu_point_config_product"
+      sequence="20"
+      action="action_fpos_report_email"/>
+      
+  </data>
+</openerp>

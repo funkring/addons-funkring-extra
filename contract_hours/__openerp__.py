@@ -18,6 +18,24 @@
 #
 ##############################################################################
 
-import export_wizard
-import export_wizard_rzl
-import report_wizard
+{
+    "name" : "oerp.at Contract Hours",
+    "summary" : "Define contract hours per month",
+    "description":"""
+Contract Hours
+==============
+
+* Adds a field for defining the hours per month on an analytic contract
+* Adds a function field to show the used hours per year
+ 
+    """,
+    "version" : "1.0",
+    "author" :  "oerp.at",
+    "website" : "http://oerp.at",
+    "category" : "Contracts Management",
+    "depends" : ["project_timesheet","analytic","account_analytic_analysis","at_project_sale"],
+    "data" : ["view/account_analytic_analysis_view.xml",
+              "view/project_view.xml"],
+    "auto_install" : False,
+    "installable": True
+}

@@ -20,6 +20,8 @@
 
 from openerp.osv import fields, osv
 from openerp.addons.jdoc.jdoc import META_MODEL
+from openerp.exceptions import Warning
+from openerp.tools.translate import _
 
 COLOR_NAMES = [("white", "White"),
                ("silver","Silver"),
@@ -52,7 +54,12 @@ class product_template(osv.Model):
         "pos_price_dec" : fields.integer("Price Decimal",help="Decimal digits, -1 is no decimal, 0 is no restriction"),
         "pos_amount_pre" : fields.integer("Amount Predecimal",help="Predicimal digits, -1 is no predecimal, 0 is no restriction"),
         "pos_amount_dec" : fields.integer("Amount Decimal",help="Decimal digits, -1 is no decimal, 0 is no restriction"),
-        "pos_price" : fields.boolean("Price Input")        
+        "pos_price" : fields.boolean("Price Input"),
+        "pos_categ2_id" : fields.many2one("pos.category","Category 2",help="Show the product also in this category"),
+        "pos_fav" : fields.boolean("Favorite"),        
+        "pos_cm" : fields.boolean("Comment"),
+        "pos_sec" : fields.selection([("1","Section 1"),
+                                      ("2","Section 2")], string="Section", help="Section Flag")
     }
     _defaults = {
         "sequence" : 10
@@ -102,7 +109,9 @@ class product_product(osv.Model):
             "available_in_pos" : obj.available_in_pos,
             "sale_ok" : obj.sale_ok,
             "pos_color" : obj.pos_color,
-            "pos_report" : obj.pos_report
+            "pos_report" : obj.pos_report,
+            "pos_fav" : obj.pos_fav,
+            "pos_categ2_id" : mapping_obj._get_uuid(cr, uid, obj.pos_categ2_id)
         }
         
         if obj.pos_nogroup:
@@ -118,7 +127,11 @@ class product_product(osv.Model):
         if type(obj.pos_amount_dec) in (int,long):
             values["pos_amount_dec"] = obj.pos_amount_dec            
         if obj.pos_price:
-            values["pos_price"] = obj.pos_price        
+            values["pos_price"] = obj.pos_price
+        if obj.pos_sec:
+            values["pos_sec"] = obj.pos_sec
+        if obj.pos_cm:
+            values["pos_cm"] = obj.pos_cm
         
         return values  
     
@@ -146,4 +159,16 @@ class product_product(osv.Model):
             "put" : self._fpos_product_put,
             "lastchange" : self._jdoc_product_lastchange
         }
-    
+        
+    def fpos_scan(self, cr, uid, code, context=None):
+        product_id = self.search_id(cr, uid, [("ean13","=",code)], context=context)
+        if not product_id:
+            raise Warning(_('Product with EAN %s not found') % code)
+        
+        product = self.browse(cr, uid, product_id, context=context)
+        if not product:
+            raise Warning(_('No access for product with EAN %s') % code)
+        
+        jdoc_obj = self.pool["jdoc.jdoc"]
+        jdoc_obj._jdoc_access(cr, uid, "product.product", product_id, auto=True, context=context)
+        return self._fpos_product_get(cr, uid, product, context=context)

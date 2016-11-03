@@ -18,6 +18,10 @@
 #
 ##############################################################################
 
-import export_wizard
-import export_wizard_rzl
-import report_wizard
+from openerp.osv import fields, osv
+
+class account_journal(osv.Model):
+    _inherit = "account.journal"
+    _columns = {
+        "fpos_noreconcile" : fields.boolean("No invoice reconciliation")
+    }

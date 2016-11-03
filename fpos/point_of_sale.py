@@ -24,12 +24,21 @@ from openerp.exceptions import Warning
 from openerp.addons.fpos.product import COLOR_NAMES
 
 from openerp.addons.at_base import util
+from openerp.addons.at_base import helper
+
 
 class pos_category(osv.osv):
     _inherit = "pos.category"
     _columns =  {
+        "pos_main" : fields.boolean("Main Category"),
         "pos_color" : fields.selection(COLOR_NAMES, string="Color"),
-        "pos_unavail" : fields.boolean("Unavailable")
+        "pos_unavail" : fields.boolean("Unavailable"),
+        "after_product" : fields.selection([("parent","to parent"),
+                                            ("main","to main"),
+                                            ("root","to root")],
+                                         string="After product",
+                                         help="Action after product selection"),
+        "foldable" : fields.boolean("Foldable")
     }
 
     def _fpos_category_get(self, cr, uid, obj, *args, **kwarg):
@@ -44,7 +53,10 @@ class pos_category(osv.osv):
             "image_small" : obj.image_small,
             "sequence" : obj.sequence,
             "pos_color" : obj.pos_color,
-            "pos_unavail" : obj.pos_unavail
+            "pos_unavail" : obj.pos_unavail,
+            "pos_main" : obj.pos_main,
+            "after_product" : obj.after_product,
+            "foldable" : obj.foldable
         }
 
     def _fpos_category_put(self, cr, uid, obj, *args, **kwarg):
@@ -63,9 +75,12 @@ class pos_config(osv.Model):
     _columns = {
         "fpos_prefix" : fields.char("Fpos Prefix"),
         "iface_nogroup" : fields.boolean("No Grouping", help="If a product is selected twice a new pos line was created"),
+        "iface_fold" : fields.boolean("Fold",help="Don't show foldable categories"),
         "iface_place" : fields.boolean("Place Management"),
         "iface_fastuswitch" : fields.boolean("Fast User Switch"),
         "iface_ponline" : fields.boolean("Search Partner Online"),
+        "iface_nosearch" : fields.boolean("No Search"),
+        "iface_printleft" : fields.boolean("Print Button Left"),
         "fpos_printer_ids" : fields.many2many("fpos.printer", "fpos_config_printer_rel", "config_id", "printer_id", "Printer", copy=True, composition=True),
         "fpos_dist_ids" : fields.many2many("fpos.dist","fpos_config_dist_rel","config_id","dist_id","Distributor", copy=True, composition=True),
         "fpos_income_id" : fields.many2one("product.product","Cashstate Income", domain=[("income_pdt","=",True)], help="Income product for auto income on cashstate"),
@@ -157,10 +172,46 @@ class pos_config(osv.Model):
         company_id = user_obj._get_company(cr, uid, context=context)
         if not company_id:
             raise osv.except_osv(_('Error!'), _('There is no default company for the current user!'))
+<<<<<<< HEAD
 
         # finished
         return res
 
+=======
+
+        # get company infos
+        company = self.pool["res.company"].browse(cr, uid, company_id, context=context)
+        banks = company.bank_ids
+        if banks:
+            accounts = []
+            for bank in banks:
+                accounts.append(bank.acc_number)
+            res["bank_accounts"] = accounts
+
+        # finished
+        return res
+
+    def _get_orders_per_day(self, cr, uid, config_id, date_from, date_till, context=None):
+        order_obj = self.pool("pos.order")
+        res = []
+        while date_from <= date_till:
+
+            # calc time
+            time_from = helper.strDateToUTCTimeStr(cr, uid, date_from, context=context)
+            next_date = util.getNextDayDate(date_from)
+            time_to = helper.strDateToUTCTimeStr(cr, uid, next_date, context=context)
+
+            # get orders
+            order_ids = order_obj.search(cr, uid, [("session_id.config_id","=",config_id),("date_order",">=",time_from),("date_order","<",time_to)], order="name asc")
+            orders = order_obj.browse(cr, uid, order_ids, context=context)
+            res.append((date_from, orders))
+
+            # go to next
+            date_from = next_date
+
+        return res
+
+>>>>>>> be0520e83f41a5f179d6c8e11e17f2966e911538
 
 class pos_order(osv.Model):
 
@@ -183,10 +234,26 @@ class pos_order(osv.Model):
         for order in self.browse(cr, uid, ids, context):
             invoice = order.invoice_id
             data_lines = [x.id for x in invoice.move_id.line_id if x.account_id.id == invoice.account_id.id]
+
+            partial = False
             for st_line in order.statement_ids:
+<<<<<<< HEAD
                 data_lines += [x.id for x in st_line.journal_entry_id.line_id if x.account_id.id == invoice.account_id.id]
             move_line_obj.reconcile(cr, uid, data_lines, context=context)
 
+=======
+                if not st_line.journal_id.fpos_noreconcile:
+                    data_lines += [x.id for x in st_line.journal_entry_id.line_id if x.account_id.id == invoice.account_id.id]
+                else:
+                    partial = True
+
+            if partial:
+                move_line_obj.reconcile_partial(cr, uid, data_lines, context=context)
+            else:
+                move_line_obj.reconcile(cr, uid, data_lines, context=context)
+
+
+>>>>>>> be0520e83f41a5f179d6c8e11e17f2966e911538
     def _after_invoice(self, cr, uid, order, context=None):
         self.reconcile_invoice(cr, uid, [order.id], context=context)
 

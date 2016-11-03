@@ -21,8 +21,12 @@
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning
 from openerp.addons.at_base import format
+from openerp.addons.at_base import util
+from openerp.addons.at_base import helper
 from openerp import SUPERUSER_ID
 import openerp.addons.decimal_precision as dp
+
+from dateutil.relativedelta import relativedelta
 
 class fpos_order(models.Model):
     _name = "fpos.order"
@@ -267,6 +271,9 @@ class fpos_order(models.Model):
                 for st in session.statement_ids:
                     statements[st.journal_id.id] = st
 
+            # get user
+            session_uid = session.user_id.id
+            
             # handle order 
             # and payment
 
@@ -286,6 +293,19 @@ class fpos_order(models.Model):
                 "nb_print" : 1,
                 "lines" : lines
             }
+            
+            invoice_id = None
+            if order.ref:
+                inv_type = ["out_invoice","in_refund"]
+                if order.amount_total < 0.0:
+                    inv_type = ["in_invoice","out_refund"]
+                invoice_vals = invoice_obj.search_read(self._cr, session_uid, [("number","=",order.ref),("type","in",inv_type),("state","=","open"),("residual","=",order.amount_total)], ["partner_id"], context=context)
+                if invoice_vals:
+                    invoice_vals = invoice_vals[0]   
+                    invoice_id = invoice_vals["id"]
+                    # connect invoice         
+                    order_vals["partner_id"] =  invoice_vals["partner_id"][0]
+      
             
             if not order.line_ids:
                 # if no products book add empty state
@@ -350,8 +370,6 @@ class fpos_order(models.Model):
                             "create_date" : order.date
                         }))
                 
-            # get user
-            session_uid = session.user_id.id
                 
             # create order      
             pos_order_id = order_obj.create(self._cr, session_uid, order_vals, context=context)
@@ -403,7 +421,7 @@ class fpos_order(models.Model):
            
             # post order
             order_obj.signal_workflow(self._cr, session_uid, pos_order_ids, "paid")
-            # check if invoice should be crated
+            # check if invoice should be created
             if order.send_invoice:
                 if order.partner_id:
                     # created invoice
@@ -419,6 +437,14 @@ class fpos_order(models.Model):
                     order_obj._after_invoice(self._cr, session_uid, pos_order, context=context)
                 else:
                     order.send_invoice = False
+            # check pos reference
+            elif invoice_id:
+                # connect invoice            
+                order_obj.write(self._cr, session_uid, [pos_order_id], {"invoice_id": invoice_id, 
+                                                                        "state": "invoiced" }, context=context)
+                # reread order and do after invoice
+                pos_order = order_obj.browse(self._cr, session_uid, pos_order_id, context=context)
+                order_obj._after_invoice(self._cr, session_uid, pos_order, context=context)
                 
             # check order
             order_vals = order_obj.read(self._cr, session_uid, pos_order_id, ["state"], context=context)
@@ -446,6 +472,10 @@ class fpos_order(models.Model):
                 if finish_orders_ids:
                     finish_orders = self.browse(finish_orders_ids)
                     finish_orders.write({'active' : False})
+                    
+                # send report
+                start_at = helper.strToLocalDateStr(self._cr, self._uid, session.start_at, context=self._context)
+                self.env["fpos.report.email"]._send_report(start_at)
                 
                  
         return True
@@ -480,7 +510,8 @@ class fpos_order_line(models.Model):
                             ("c","Counter"),
                             ("s","Status"),
                             ("o","Expense"),
-                            ("i","Income")],
+                            ("i","Income"),
+                            ("#","Comment")],
                             string="Tag",
                             index=True)
     
@@ -536,12 +567,24 @@ class fpos_payment(models.Model):
 class fpos_printer(models.Model):
     _name = "fpos.printer"
     _description = "Printer"
+    _rec_name = "complete_name"
     
-    name = fields.Char("Name", required=True, index=True)
+    name = fields.Char("Name", required=True)    
+    description = fields.Char("Description")
+    complete_name =fields.Char("Name", compute="_complete_name", store=True, index=True)
     local = fields.Boolean("Local", help="Print on local printer")
     pos_category_ids = fields.Many2many("pos.category", "fpos_printer_pos_category_rel", "printer_id", "category_id", string="Categories", 
                                     help="If no category is given all products are printed, otherwise only the products in the categories")
     
+    @api.one
+    @api.depends("name","description")
+    def _complete_name(self):
+        if self.description:
+            self.complete_name = "%s [%s]" % (self.name, self.description)
+        else:
+            self.complete_name = self.name
+
+   
 class fpos_dist(models.Model):
     _name = "fpos.dist"
     _description =  "Distributor"
@@ -572,3 +615,200 @@ class fpos_order_log_line(models.Model):
     qty = fields.Float("Quantity", digits=dp.get_precision('Product UoS'))
     notice = fields.Text("Notice")
     
+    
+class fpos_report_email(models.Model):
+    _name = "fpos.report.email"
+    _description = "E-Mail Report"
+    _inherit = ['mail.thread']
+    
+    name = fields.Char("Name", required=True)
+    range = fields.Selection([("month","Month"),
+                              ("week","Week"),
+                              ("day", "Day")],
+                              string="Range", default="month", required=True)
+    
+    pos_ids = fields.Many2many("pos.config", "fpos_report_email_config_rel", "report_id", "config_id", "POS")
+    
+    detail = fields.Boolean("Detail")
+    separate = fields.Boolean("Separate")
+    product = fields.Boolean("Products", help="Print product overview")
+     
+    bmd_export = fields.Boolean("BMD Export")
+    rzl_export = fields.Boolean("RZL Export") 
+    
+    partner_id = fields.Many2one("res.partner","Partner", required=True)
+    company_id = fields.Many2one("res.company", string="Company", change_default=True, required=True, 
+                                 default=lambda self: self.env["res.company"]._company_default_get())
+    
+    range_start = fields.Date("Last Range")
+    
+    def _send_mail(self, start_date=None):
+        if not start_date:
+            start_date = start_date = util.currentDate()
+        
+        mail_obj = self.pool["mail.mail"]
+        mail_tmpl_obj = self.pool["email.template"]    
+        att_obj = self.pool["ir.attachment"]
+        rzl_obj = self.env["fpos.wizard.export.rzl"]
+        bmd_obj = self.env["fpos.wizard.export.bmd"]
+        config_obj = self.env["pos.config"]
+        
+        data_obj = self.pool["ir.model.data"]        
+        template_id = data_obj.xmlid_to_res_id(self._cr, self._uid, "fpos.email_report", raise_if_not_found=True)
+       
+        mail_context = self._context and dict(self._context) or {}
+        mail_context["start_date"] = start_date
+        mail_range =  self._cashreport_range(start_date)
+        mail_context["cashreport_name"] = mail_range[2]
+        
+        # check options
+        if self.detail:
+            mail_context["print_detail"] = True            
+        if self.separate:
+            mail_context["no_group"] = True
+        if self.product:
+            mail_context["print_product"] = True
+            
+        # build config
+        config_ids = []
+        if self.pos_ids:
+            for pos in self.pos_ids:
+                config_ids.append(pos.id)
+        else:
+            for config in config_obj.search([("liveop","=",True)]):
+                config_ids.append(config.id)
+            
+        # add report info                
+        mail_context["pos_report_info"] = {            
+            "from" : mail_range[0],
+            "till" : mail_range[1],
+            "name" : mail_range[2],
+            "config_ids" : config_ids
+        }
+                
+        
+        attachment_ids = []
+        if self.rzl_export or self.bmd_export:
+            session_ids = self._session_ids(mail_range)
+            
+            # export rzl
+            if self.rzl_export:
+                rzl_data = rzl_obj.with_context(
+                                active_model="pos.session",
+                                active_ids = session_ids                        
+                            ).default_get(["data","data_name"])
+                attachment_ids.append( att_obj.create(self._cr, self._uid, {
+                                            'name': rzl_data["data_name"],
+                                            'datas_fname': rzl_data["data_name"],
+                                            'datas': rzl_data["data"]
+                                        }, context=self._context))
+                                                
+            # export bmd
+            if self.bmd_export:
+                bmd_data = bmd_obj.with_context(
+                                active_model="pos.session",
+                                active_ids = session_ids                        
+                            ).default_get(["data","data_name"])
+                attachment_ids.append( att_obj.create(self._cr, self._uid, {
+                                            'name': "buerf",
+                                            'datas_fname': "buerf",
+                                            'datas': bmd_data["buerf"]
+                                       }, context=self._context))
+            
+        # write
+        msg_id = mail_tmpl_obj.send_mail(self._cr, self._uid, template_id, self.id, force_send=False, context=mail_context)
+        if attachment_ids:
+            mail = mail_obj.browse(self._cr, self._uid, msg_id, context=self._context )
+            # link with message
+            att_obj.write(self._cr, self._uid, attachment_ids, { 
+                    "res_model": "mail.message",
+                    "res_id": mail.mail_message_id.id }, context=self._context)
+            # add attachment ids to message
+            mail_obj.write(self._cr,  self._uid, [msg_id], {
+                            "attachment_ids" : [(4,oid) for oid in attachment_ids]
+                          }, context=self._context)
+        # send
+        mail_obj.send(self._cr,  self._uid, [msg_id], context=mail_context)
+    
+    def _session_ids(self, report_range):
+        # get sessions
+        session_obj = self.pool["pos.session"]
+        # build domain
+        domain = [("start_at",">=",report_range[0]),("start_at","<=",report_range[1])]
+        pos_list = self.pos_ids
+        if pos_list:
+            config_ids = [c.id for c in pos_list]
+            domain.append(("config_id","in",config_ids))
+        # search
+        return session_obj.search(self._cr, self._uid, domain, context=self._context)
+    
+    def _cashreport_range(self, start_date=None, offset=0):
+        if not start_date:
+            start_date = util.currentDate()
+        
+        cashreport_name = _("Cashreport")
+        date_from = start_date
+        date_till = start_date
+        f = format.LangFormat(self._cr, self._uid, self._context)
+        
+        # calc month
+        if self.range == "month":
+            dt_date_from = util.strToDate(util.getFirstOfMonth(start_date))
+            if offset:
+                dt_date_from += relativedelta(months=offset)
+            
+            date_from = util.dateToStr(dt_date_from)
+            date_till = util.getEndOfMonth(dt_date_from)
+                
+            month_name = helper.getMonthName(self._cr, self._uid, dt_date_from.month, context=self._context)
+            cashreport_name = "%s - %s %s" % (cashreport_name, month_name, dt_date_from.year)
+            
+        # calc week
+        elif  self.range == "week":
+            dt_date_from = util.strToDate(start_date)
+            if offset:
+                dt_date_from += relativedelta(weeks=offset)
+                
+            weekday = dt_date_from.weekday()
+            dt_date_from  = dt_date_from + relativedelta(days=-weekday)
+            kw = dt_date_from.isocalendar()[1]
+            date_from = util.dateToStr(dt_date_from)
+            date_till = util.dateToStr(dt_date_from + relativedelta(days=weekday+(6-weekday)))
+            cashreport_name = _("%s - CW %s %s") % (cashreport_name, kw, dt_date_from.year)
+            
+        # calc date
+        else:
+            if offset:
+                dt_date_from = util.strToDate(start_date)
+                dt_date_from += relativedelta(days=offset)
+                date_from = util.dateToStr(dt_date_from)
+                date_till = date_from
+                
+            cashreport_name = _("%s - %s") % (cashreport_name, f.formatLang(date_from, date=True))
+            
+        return (date_from, date_till, cashreport_name)
+    
+    def _send_report(self, start_date=None):
+        if not start_date:
+            start_date = start_date = util.currentDate()        
+        for report_email in self.search([]):
+            # send last
+            mail_range = report_email._cashreport_range(start_date,-1)
+            if (report_email.range_start < mail_range[0]) and mail_range[1] < start_date:
+                report_email._send_mail(mail_range[0])
+                range_start = mail_range[0]
+                # send other
+                if report_email.range_start:
+                    while True:
+                        mail_range = report_email._cashreport_range(mail_range[0],-1)
+                        if report_email.range_start < mail_range[0]:
+                            report_email._send_mail(mail_range[0])
+                        else:
+                            break
+                report_email.range_start = range_start
+    
+    @api.multi
+    def action_test_email(self):
+        for report_mail in self:
+            report_mail._send_mail(start_date=self.range_start)
+        return True

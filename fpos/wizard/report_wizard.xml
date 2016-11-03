@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+  
+       <record id="wizard_report" model="ir.ui.view">
+          <field name="name">fpos.wizard_report</field>
+          <field name="model">fpos.report.wizard</field>
+          <field name="arch" type="xml">
+            <form string="Report">
+              <group>
+                <group>
+                  <field name="range" on_change="onchange_range(range, date_from, date_till, True)"/>
+                  <field name="pos_ids" widget="many2many_tags"/>
+                  <field name="detail"/>
+                  <field name="separate"/>
+                  <field name="product"/>
+                </group>
+                <group>
+                  <field name="date_from" on_change="onchange_range(range, date_from, date_till)"/>
+                  <field name="date_till"/>
+                </group>
+              </group>
+              <footer>
+                <button icon="gtk-go-forward" name="action_report" string="Create"  type="object" class="oe_highlight" />
+                or
+                <button special="cancel" string="Close" class="oe_link" />
+              </footer>
+            </form>
+          </field>
+      </record>
+ 
+  
+      <record id="action_report_wizard" model="ir.actions.act_window">
+        <field name="name">Report Wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">fpos.report.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+      </record>
+    
+      <menuitem id="menu_report_wizard" name="Report Wizard" parent="point_of_sale.menu_point_of_sale"
+            sequence="30"
+            action="action_report_wizard"/>
+    
+   </data> 
+</openerp>

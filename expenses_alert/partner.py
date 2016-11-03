@@ -18,6 +18,10 @@
 #
 ##############################################################################
 
-import export_wizard
-import export_wizard_rzl
-import report_wizard
+from openerp.osv import fields, osv
+
+class res_partner(osv.Model):
+    _inherit = "res.partner"
+    _columns = {
+        "expense_alert_date" : fields.date("Alert Date", help="Last expense alert date")
+    }

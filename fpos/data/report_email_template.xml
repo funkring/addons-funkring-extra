@@ -1,0 +1,25 @@
+<openerp>
+  <data>
+    
+    <record id="email_report" model="email.template">
+        <field name="name">Cashreport</field>
+        <field name="lang">${object.partner_id.lang}</field>
+        <field name="email_from">${(user.email or '')|safe}</field>
+        <field name="partner_to">${object.partner_id.id}</field>
+        <field name="model_id" ref="fpos.model_fpos_report_email"/>
+        <field name="report_template" ref="report_session_email"/>
+        <field name="subject">${ctx.get('cashreport_name','Cashreport')}</field>
+        <field name="report_name">${ctx.get('cashreport_name','Cashreport')}</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 11pt;">
+               <p>${object.partner_id.mail_salutation}, </p>
+               <p>as attachment the <strong>${ctx.get('cashreport_name','Cashreport')}.</strong></p>
+               <p></p>                                               
+               <p>Best Regards</p>
+               <p>${object.company_id.name}</p>
+            </div>
+        ]]></field>
+    </record>
+    
+  </data>
+</openerp>

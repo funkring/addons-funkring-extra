@@ -7,8 +7,10 @@
       <field name="arch" type="xml">
         <form string="Printer">
           <group>
-            <group>
+            <group>            
                 <field name="name"/>
+                <field name="description"/>
+                <field name="complete_name" invisible="1"/>
                 <field name="pos_category_ids" widget="many2many_tags"/>            
             </group>
             <group>
@@ -24,7 +26,7 @@
       <field name="model">fpos.printer</field>
       <field name="arch" type="xml">
         <tree string="Printer">
-            <field name="name"/>
+            <field name="complete_name"/>
             <field name="local"/>
             <field name="pos_category_ids" widget="many2many_tags"/>
         </tree>
@@ -36,7 +38,7 @@
       <field name="model">fpos.printer</field>
       <field name="arch" type="xml">
         <search string="Printer">
-            <field name="name"/>
+            <field name="complete_name"/>
         </search>
       </field>
     </record>

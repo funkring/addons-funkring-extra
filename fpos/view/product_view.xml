@@ -48,7 +48,12 @@
         </field>
         <field name="pos_categ_id" position="after">
             <field name="pos_name"/>
+            <field name="pos_categ2_id"/>
+            <field name="pos_color"/>   
+            <field name="pos_fav"/>
+            <field name="pos_sec"/>       
             <field name="pos_report"/>
+            <field name="pos_cm"/>
         </field>
         <group name="pos" position="after">
             <group string="POS Input">
@@ -58,9 +63,10 @@
                 <field name="pos_price_pre"/>
                 <field name="pos_price_dec"/>
                 <field name="pos_amount_pre"/>
-                <field name="pos_amount_dec"/>
+                <field name="pos_amount_dec"/>                
             </group>
         </group>
+        
       </field>
     </record>
     

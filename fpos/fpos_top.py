@@ -54,6 +54,7 @@ class fpos_top(models.Model):
 class fpos_place(models.Model):
     _name = "fpos.place"
     _description = "Place"
+    _order = "sequence, name"
     
     name = fields.Char("Name", required=True)
     sequence = fields.Integer("Sequence", default=10)

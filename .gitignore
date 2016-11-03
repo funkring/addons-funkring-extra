@@ -1,6 +1,7 @@
 # sphinx build directories
 _build/
 build/
+.settings/
 addons-custom*
 
 # dotfiles

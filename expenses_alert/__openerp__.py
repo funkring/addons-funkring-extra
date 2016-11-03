@@ -18,6 +18,25 @@
 #
 ##############################################################################
 
-import export_wizard
-import export_wizard_rzl
-import report_wizard
+{
+    "name" : "oerp.at Expenses Alert",
+    "summary" : "Expenses alert for analytic accounts",
+    "description":"""
+Expenses Alert
+==============
+Adds an option for automatically send an email to the customer,
+after an time expense for the analytic account happens
+""",
+    "version" : "1.0",
+    "author" :  "oerp.at",
+    "website" : "http://oerp.at",
+    "category" : "Sales Management/Project Management",
+    "depends" : ["at_project_sale","account_analytic_analysis","analytic"],
+    "data" : [
+        "view/account_analytic_view.xml",
+        "data/expense_alert_email_template.xml",
+        "data/expense_alert_cron.xml"
+    ],
+    "auto_install" : False,
+    "installable": True
+}

@@ -53,13 +53,18 @@ oerp.at Fpos
               "view/pos_category.xml",
               "view/fpos_dist_view.xml",
               "view/fpos_printer_view.xml", 
+              "view/fpos_report_email_view.xml",
+              "view/journal_view.xml",
               "wizard/export_wizard.xml",
-              "wizard/export_wizard_rzl.xml",             
+              "wizard/export_wizard_rzl.xml",
+              "wizard/report_wizard.xml",             
               "report/session_summary_report.xml",
               "report/session_detail_report.xml",
+              "report/session_email_report.xml",
               "report/report_receipt.xml",
               "data/cron_fpos_post.xml",
-              "data/product_fpos_status.xml"
+              "data/product_fpos_status.xml",
+              "data/report_email_template.xml"
              ],
     "auto_install" : False,
     "installable": True
