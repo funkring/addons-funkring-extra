@@ -29,7 +29,7 @@ oerp.at Fpos
   for the Fpos software
 
     """,
-    "version" : "1.2",
+    "version" : "1.3",
     "api" : [8],
     "author" :  "funkring.net",
     "category" : "Point of Sale",
@@ -55,6 +55,7 @@ oerp.at Fpos
               "view/fpos_printer_view.xml", 
               "view/fpos_report_email_view.xml",
               "view/journal_view.xml",
+              "view/partner_view.xml",
               "wizard/export_wizard.xml",
               "wizard/export_wizard_rzl.xml",
               "wizard/report_wizard.xml",             
