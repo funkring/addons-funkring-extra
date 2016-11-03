@@ -172,12 +172,6 @@ class pos_config(osv.Model):
         company_id = user_obj._get_company(cr, uid, context=context)
         if not company_id:
             raise osv.except_osv(_('Error!'), _('There is no default company for the current user!'))
-<<<<<<< HEAD
-
-        # finished
-        return res
-
-=======
 
         # get company infos
         company = self.pool["res.company"].browse(cr, uid, company_id, context=context)
@@ -211,7 +205,6 @@ class pos_config(osv.Model):
 
         return res
 
->>>>>>> be0520e83f41a5f179d6c8e11e17f2966e911538
 
 class pos_order(osv.Model):
 
@@ -237,11 +230,6 @@ class pos_order(osv.Model):
 
             partial = False
             for st_line in order.statement_ids:
-<<<<<<< HEAD
-                data_lines += [x.id for x in st_line.journal_entry_id.line_id if x.account_id.id == invoice.account_id.id]
-            move_line_obj.reconcile(cr, uid, data_lines, context=context)
-
-=======
                 if not st_line.journal_id.fpos_noreconcile:
                     data_lines += [x.id for x in st_line.journal_entry_id.line_id if x.account_id.id == invoice.account_id.id]
                 else:
@@ -253,7 +241,6 @@ class pos_order(osv.Model):
                 move_line_obj.reconcile(cr, uid, data_lines, context=context)
 
 
->>>>>>> be0520e83f41a5f179d6c8e11e17f2966e911538
     def _after_invoice(self, cr, uid, order, context=None):
         self.reconcile_invoice(cr, uid, [order.id], context=context)
 
