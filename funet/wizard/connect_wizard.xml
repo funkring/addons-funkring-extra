@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="wizard_connect" model="ir.ui.view">
+      <field name="name">funet.wizard_connect</field>
+      <field name="model">funet.connect.wizard</field>
+      <field name="arch" type="xml">
+        <form string="connect">
+          <group>
+            <group>
+              <field name="node_id"/>
+              <field name="device_id"/>
+            </group>
+            <group>
+              <field name="dst_node_id"/>
+              <field name="dst_device_id"/>
+            </group>
+          </group>
+          <footer>
+            <button name="action_connect" string="Connect"  type="object" class="oe_highlight" />
+            or
+            <button special="cancel" string="Close" class="oe_link" />
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_connect_wizard" model="ir.actions.act_window">
+      <field name="name">Connect</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">funet.connect.wizard</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+    </record>
+
+    <record id="irconfig_connect_wizard" model="ir.values">
+      <field name="model_id" ref="funet.model_funet_connect_wizard" />
+      <field name="name">title</field>
+      <field name="key2">client_action_multi</field>
+      <field name="value" eval="'ir.actions.act_window,' + str(ref('action_connect_wizard'))" />
+      <field name="key">action</field>
+      <field name="model">funet.dev</field>
+    </record>
+
+
+
+    <!--
+    <menuitem id="menu_node_connect" name="Connect Nodes" parent="menu_management"
+      sequence="20"
+      action="action_connect_wizard"/> -->
+
+
+  </data>
+</openerp>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="form_funet_vpn" model="ir.ui.view">
+      <field name="name">modul.form_funet_vpn</field>
+      <field name="model">funet.vpn</field>
+      <field name="arch" type="xml">
+        <form string="VPN">
+          <sheet>
+            <group>
+                <field name="name"/>
+                <field name="network_id"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_funet_vpn" model="ir.ui.view">
+      <field name="name">modul.tree_funet_vpn</field>
+      <field name="model">funet.vpn</field>
+      <field name="arch" type="xml">
+        <tree string="more">
+            <field name="name"/>
+            <field name="network_id"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_funet_vpn" model="ir.ui.view">
+      <field name="name">modul.search_funet_vpn</field>
+      <field name="model">funet.vpn</field>
+      <field name="arch" type="xml">
+        <search string="VPN">
+          <!--field name="name" filter_domain="['|', ('name','ilike',self), ('otherfield','ilike',self)]" string="VPN"/ -->
+          <!--filter string="Some State" domain="[('state','=','draft')]" icon="terp-camera_test"/ -->
+          <!--field name="state"/ -->
+          <!--
+          <group expand="0" string="Group By...">
+            <filter string="Status" context="{'group_by': 'state'}" icon="terp-stock_effects-object-colorize"/>
+          </group>
+          -->
+        </search>
+      </field>
+    </record>
+
+    <record id="action_funet_vpn" model="ir.actions.act_window">
+      <field name="name">VPN</field>
+      <field name="res_model">funet.vpn</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_funet_vpn" name="VPN" parent="menu_config"
+      sequence="40"
+      action="action_funet_vpn"/>
+  </data>
+</openerp>

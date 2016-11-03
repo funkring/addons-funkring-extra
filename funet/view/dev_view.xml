@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="form_funet_dev" model="ir.ui.view">
+      <field name="name">funet.form_funet_dev</field>
+      <field name="model">funet.dev</field>
+      <field name="arch" type="xml">
+        <form string="Device">
+          <header>
+            <button name="action_validate" type="object" string="Validate" states="draft"/>
+            <button name="action_activate" type="object" string="Configure" states="valid"/>
+            <button name="action_reset" type="object" string="Reset" states="valid,active"/>
+            <field name="state" widget="statusbar"/>
+          </header>
+          <sheet>
+            <group>
+                <group>
+                    <field name="node_id"/>
+                    <field name="type_id"/>
+                </group>
+                <group>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="last_config"/>
+                </group>
+            </group>
+            <notebook>
+                <page name="password_entry" string="Password Entry">
+                    <group>
+                        <field name="login"/>
+                        <field name="password"/>
+                        <field name="group_id"/>
+                    </group>
+                </page>
+                <page name="network" string="Network">
+                    <div>
+                       <field name="network_ids">
+                            <tree editable="buttom">
+                                <field name="network_id"/>
+                                <field name="type"/>
+                                <field name="name"/>
+                            </tree>
+                       </field>
+                    </div>
+                </page>
+                <page name="coord" string="Coordinates">
+                    <group>
+                        <group string="Position">
+                            <field name="coord_lat"/>
+                            <field name="coord_long"/>
+                        </group>
+                        <group string="Direction">
+                            <field name="coord_dir"/>
+                            <field name="coord_vert"/>
+                            <field name="coord_horiz"/>
+                        </group>
+                    </group>
+                </page>
+            </notebook>
+          </sheet>
+        <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers"/>
+            <field name="message_ids" widget="mail_thread"/>
+        </div>
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_funet_dev" model="ir.ui.view">
+      <field name="name">funet.tree_funet_dev</field>
+      <field name="model">funet.dev</field>
+      <field name="arch" type="xml">
+        <tree string="Devices">
+            <field name="name"/>
+            <field name="node_id"/>
+            <field name="type_id"/>
+            <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_funet_dev" model="ir.ui.view">
+      <field name="name">funet.search_funet_dev</field>
+      <field name="model">funet.dev</field>
+      <field name="arch" type="xml">
+        <search string="Device">
+            <field name="name"/>
+          <!--field name="name" filter_domain="['|', ('name','ilike',self), ('otherfield','ilike',self)]" string="Device"/ -->
+          <!--filter string="Some State" domain="[('state','=','draft')]" icon="terp-camera_test"/ -->
+          <!--field name="state"/ -->
+          <!--
+          <group expand="0" string="Group By...">
+            <filter string="Status" context="{'group_by': 'state'}" icon="terp-stock_effects-object-colorize"/>
+          </group>
+          -->
+        </search>
+      </field>
+    </record>
+
+    <record id="action_funet_dev" model="ir.actions.act_window">
+      <field name="name">Device</field>
+      <field name="res_model">funet.dev</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_funet_dev" name="Device" parent="menu_management"
+      sequence="30"
+      action="action_funet_dev"/>
+  </data>
+</openerp>

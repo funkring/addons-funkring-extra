@@ -1,0 +1,563 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* funet
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Language: de_DE\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-10-24 07:41+0000\n"
+"PO-Revision-Date: 2016-10-24 07:41+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: funet
+#: help:funet.dev,coord_dir:0
+msgid "0 is North"
+msgstr "0 ist Norden"
+
+#. module: funet
+#: help:funet.dev,coord_horiz:0
+#: help:funet.dev,coord_vert:0
+msgid "0 is no fall"
+msgstr "0 ist keine Neigung"
+
+#. module: funet
+#: selection:funet.dev,state:0
+msgid "Active"
+msgstr "Aktiv"
+
+#. module: funet
+#: view:funet.connect.wizard:funet.wizard_connect
+msgid "Close"
+msgstr "Schließen"
+
+#. module: funet
+#: field:funet.dev,code:0
+#: field:funet.dev.driver,code:0
+#: field:funet.dev.fw,code:0
+#: field:funet.dev.type,code:0
+#: field:funet.provider,code:0
+msgid "Code"
+msgstr "ID"
+
+#. module: funet
+#: field:funet.dev,company_id:0
+msgid "Company"
+msgstr ""
+
+#. module: funet
+#: model:ir.ui.menu,name:funet.menu_config
+msgid "Configuration"
+msgstr "Konfiguration"
+
+#. module: funet
+#: view:funet.dev:funet.form_funet_dev
+msgid "Configure"
+msgstr "Konfigurieren"
+
+#. module: funet
+#: view:funet.connect.wizard:funet.wizard_connect
+#: model:ir.actions.act_window,name:funet.action_connect_wizard
+msgid "Connect"
+msgstr "Verbinden"
+
+#. module: funet
+#: selection:funet.dev.network,type:0
+msgid "Connection"
+msgstr ""
+
+#. module: funet
+#: model:ir.model,name:funet.model_funet_connect_wizard
+msgid "Connection Wizard"
+msgstr "Verbindungs Assistent"
+
+#. module: funet
+#: view:funet.dev:funet.form_funet_dev
+msgid "Coordinates"
+msgstr "Koordinaten"
+
+#. module: funet
+#: field:funet.connect.wizard,create_uid:0
+#: field:funet.dev,create_uid:0
+#: field:funet.dev.driver,create_uid:0
+#: field:funet.dev.fw,create_uid:0
+#: field:funet.dev.network,create_uid:0
+#: field:funet.dev.type,create_uid:0
+#: field:funet.network,create_uid:0
+#: field:funet.node,create_uid:0
+#: field:funet.provider,create_uid:0
+#: field:funet.vpn,create_uid:0
+msgid "Created by"
+msgstr "Erstellt von"
+
+#. module: funet
+#: field:funet.connect.wizard,create_date:0
+#: field:funet.dev,create_date:0
+#: field:funet.dev.driver,create_date:0
+#: field:funet.dev.fw,create_date:0
+#: field:funet.dev.network,create_date:0
+#: field:funet.dev.type,create_date:0
+#: field:funet.network,create_date:0
+#: field:funet.node,create_date:0
+#: field:funet.provider,create_date:0
+#: field:funet.vpn,create_date:0
+msgid "Created on"
+msgstr "Verstellt am"
+
+#. module: funet
+#: help:funet.dev,message_last_post:0
+msgid "Date of the last message posted on the record."
+msgstr ""
+
+#. module: funet
+#: field:funet.dev,description:0
+msgid "Description"
+msgstr ""
+
+#. module: funet
+#: field:funet.connect.wizard,dst_device_id:0
+msgid "Destination Device"
+msgstr "Ziel Gerät"
+
+#. module: funet
+#: field:funet.connect.wizard,dst_node_id:0
+msgid "Destination Node"
+msgstr "Ziel Knoten"
+
+#. module: funet
+#: field:funet.connect.wizard,device_id:0
+#: view:funet.dev:funet.form_funet_dev
+#: view:funet.dev:funet.search_funet_dev
+#: field:funet.dev.network,device_id:0
+#: model:ir.actions.act_window,name:funet.action_funet_dev
+#: model:ir.model,name:funet.model_funet_dev
+#: model:ir.ui.menu,name:funet.menu_funet_dev
+msgid "Device"
+msgstr "Gerät"
+
+#. module: funet
+#: model:ir.model,name:funet.model_funet_dev_driver
+msgid "Device Driver"
+msgstr "Geräte Treiber"
+
+#. module: funet
+#: view:funet.dev.fw:funet.form_funet_dev_fw
+#: view:funet.dev.fw:funet.search_funet_dev_fw
+#: model:ir.actions.act_window,name:funet.action_funet_dev_fw
+#: model:ir.model,name:funet.model_funet_dev_fw
+#: model:ir.ui.menu,name:funet.menu_funet_dev_fw
+msgid "Device Firmware"
+msgstr "Geräte Firmware"
+
+#. module: funet
+#: field:funet.node,device_info:0
+msgid "Device Infos"
+msgstr "Geräte Info"
+
+#. module: funet
+#: model:ir.model,name:funet.model_funet_dev_network
+msgid "Device Network"
+msgstr ""
+
+#. module: funet
+#: view:funet.dev.type:funet.form_funet_dev_type
+#: view:funet.dev.type:funet.search_funet_dev_type
+#: model:ir.actions.act_window,name:funet.action_funet_dev_type
+#: model:ir.model,name:funet.model_funet_dev_type
+#: model:ir.ui.menu,name:funet.menu_funet_dev_type
+msgid "Device Type"
+msgstr "Geräte Typ"
+
+#. module: funet
+#: view:funet.dev:funet.tree_funet_dev
+#: view:funet.node:funet.form_node
+#: field:funet.node,device_ids:0
+msgid "Devices"
+msgstr "Geräte "
+
+#. module: funet
+#: view:funet.dev:funet.form_funet_dev
+#: field:funet.dev,coord_dir:0
+msgid "Direction"
+msgstr "Richtung"
+
+#. module: funet
+#: field:funet.connect.wizard,display_name:0
+#: field:funet.dev,display_name:0
+#: field:funet.dev.driver,display_name:0
+#: field:funet.dev.fw,display_name:0
+#: field:funet.dev.network,display_name:0
+#: field:funet.dev.type,display_name:0
+#: field:funet.network,display_name:0
+#: field:funet.node,display_name:0
+#: field:funet.provider,display_name:0
+#: field:funet.vpn,display_name:0
+msgid "Display Name"
+msgstr "Anzeige Name"
+
+#. module: funet
+#: selection:funet.dev,state:0
+msgid "Draft"
+msgstr "Entwurf"
+
+#. module: funet
+#: view:funet.dev.driver:funet.form_funet_dev_driver
+#: view:funet.dev.driver:funet.search_funet_dev_driver
+#: field:funet.dev.type,driver:0
+#: model:ir.actions.act_window,name:funet.action_funet_dev_driver
+#: model:ir.ui.menu,name:funet.menu_funet_dev_driver
+msgid "Driver"
+msgstr "Treiber"
+
+#. module: funet
+#: code:addons/funet/funet.py:94
+#: code:addons/funet/funet.py:124
+#, python-format
+msgid "Field code must not contain special chars or whitespaces"
+msgstr "Das Feld ID darf keine Sonderzeichen beinhalten."
+
+#. module: funet
+#: code:addons/funet/funet.py:41
+#: code:addons/funet/funet.py:167
+#, python-format
+msgid "Field name must not contain special chars or whitespaces"
+msgstr "Das Feld Name darf keine Sonderzeichen beinhalten."
+
+#. module: funet
+#: field:funet.dev.fw,url:0
+#: field:funet.dev.type,firmware_id:0
+msgid "Firmware"
+msgstr ""
+
+#. module: funet
+#: field:funet.dev,message_follower_ids:0
+msgid "Followers"
+msgstr ""
+
+#. module: funet
+#: model:ir.module.category,name:funet.module_categ_funet
+msgid "Funet"
+msgstr ""
+
+#. module: funet
+#: model:res.groups,name:funet.group_funet_manager
+msgid "Funet Manager"
+msgstr "Manager"
+
+#. module: funet
+#: model:res.groups,name:funet.group_funet_provider
+msgid "Funet Provider"
+msgstr "Provider"
+
+#. module: funet
+#: model:res.groups,name:funet.group_funet_user
+msgid "Funet User"
+msgstr "Benutzer"
+
+#. module: funet
+#: field:funet.dev,coord_horiz:0
+msgid "Grade Horizontal"
+msgstr "Neigung Horizontal"
+
+#. module: funet
+#: field:funet.dev,coord_vert:0
+msgid "Grade Vertical"
+msgstr "Neigung Vertikal"
+
+#. module: funet
+#: field:funet.dev,group_id:0
+msgid "Group"
+msgstr ""
+
+#. module: funet
+#: help:funet.dev,message_summary:0
+msgid "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
+msgstr ""
+
+#. module: funet
+#: field:funet.connect.wizard,id:0
+#: field:funet.dev,id:0
+#: field:funet.dev.driver,id:0
+#: field:funet.dev.fw,id:0
+#: field:funet.dev.network,id:0
+#: field:funet.dev.type,id:0
+#: field:funet.network,id:0
+#: field:funet.node,id:0
+#: field:funet.provider,id:0
+#: field:funet.vpn,id:0
+msgid "ID"
+msgstr ""
+
+#. module: funet
+#: help:funet.dev,message_unread:0
+msgid "If checked new messages require your attention."
+msgstr ""
+
+#. module: funet
+#: field:funet.dev,info:0
+msgid "Info"
+msgstr ""
+
+#. module: funet
+#: field:funet.dev.fw,init_url:0
+msgid "Initiale Firmware"
+msgstr "Basis Software"
+
+#. module: funet
+#: field:funet.dev,message_is_follower:0
+msgid "Is a Follower"
+msgstr ""
+
+#. module: funet
+#: field:funet.dev,last_config:0
+msgid "Last Configuration"
+msgstr ""
+
+#. module: funet
+#: field:funet.dev,message_last_post:0
+msgid "Last Message Date"
+msgstr ""
+
+#. module: funet
+#: field:funet.connect.wizard,__last_update:0
+#: field:funet.dev,__last_update:0
+#: field:funet.dev.driver,__last_update:0
+#: field:funet.dev.fw,__last_update:0
+#: field:funet.dev.network,__last_update:0
+#: field:funet.dev.type,__last_update:0
+#: field:funet.network,__last_update:0
+#: field:funet.node,__last_update:0
+#: field:funet.provider,__last_update:0
+#: field:funet.vpn,__last_update:0
+msgid "Last Modified on"
+msgstr ""
+
+#. module: funet
+#: field:funet.connect.wizard,write_uid:0
+#: field:funet.dev,write_uid:0
+#: field:funet.dev.driver,write_uid:0
+#: field:funet.dev.fw,write_uid:0
+#: field:funet.dev.network,write_uid:0
+#: field:funet.dev.type,write_uid:0
+#: field:funet.network,write_uid:0
+#: field:funet.node,write_uid:0
+#: field:funet.provider,write_uid:0
+#: field:funet.vpn,write_uid:0
+msgid "Last Updated by"
+msgstr ""
+
+#. module: funet
+#: field:funet.connect.wizard,write_date:0
+#: field:funet.dev,write_date:0
+#: field:funet.dev.driver,write_date:0
+#: field:funet.dev.fw,write_date:0
+#: field:funet.dev.network,write_date:0
+#: field:funet.dev.type,write_date:0
+#: field:funet.network,write_date:0
+#: field:funet.node,write_date:0
+#: field:funet.provider,write_date:0
+#: field:funet.vpn,write_date:0
+msgid "Last Updated on"
+msgstr ""
+
+#. module: funet
+#: field:funet.dev,coord_lat:0
+#: field:res.partner,coord_lat:0
+msgid "Latitude"
+msgstr "Breitengrad"
+
+#. module: funet
+#: selection:funet.dev.network,type:0
+msgid "Local"
+msgstr ""
+
+#. module: funet
+#: field:funet.dev,login:0
+msgid "Login"
+msgstr ""
+
+#. module: funet
+#: code:addons/funet/funet.py:77
+#, python-format
+msgid "Login: %s / %s"
+msgstr ""
+
+#. module: funet
+#: field:funet.dev,coord_long:0
+#: field:res.partner,coord_long:0
+msgid "Longitude"
+msgstr "Längengrad"
+
+#. module: funet
+#: model:ir.ui.menu,name:funet.menu_management
+msgid "Management"
+msgstr ""
+
+#. module: funet
+#: field:funet.dev,message_ids:0
+msgid "Messages"
+msgstr ""
+
+#. module: funet
+#: help:funet.dev,message_ids:0
+msgid "Messages and communication history"
+msgstr ""
+
+#. module: funet
+#: field:funet.dev,name:0
+#: field:funet.dev,subject:0
+#: field:funet.dev.driver,name:0
+#: field:funet.dev.fw,name:0
+#: field:funet.dev.network,name:0
+#: field:funet.dev.type,name:0
+#: field:funet.network,name:0
+#: field:funet.node,name:0
+#: field:funet.vpn,name:0
+msgid "Name"
+msgstr ""
+
+#. module: funet
+#: view:funet.dev:funet.form_funet_dev
+#: field:funet.dev.network,network_id:0
+#: view:funet.network:funet.form_funet_network
+#: view:funet.network:funet.search_funet_network
+#: field:funet.vpn,network_id:0
+#: model:ir.actions.act_window,name:funet.action_funet_network
+#: model:ir.model,name:funet.model_funet_network
+#: model:ir.ui.menu,name:funet.menu_funet_network
+#: model:ir.ui.menu,name:funet.menu_network
+msgid "Network"
+msgstr "Netzwerk"
+
+#. module: funet
+#: field:funet.dev,network_ids:0
+msgid "Networks"
+msgstr ""
+
+#. module: funet
+#: field:funet.connect.wizard,node_id:0
+#: field:funet.dev,node_id:0
+#: view:funet.node:funet.form_node
+#: view:funet.node:funet.search_node
+#: model:ir.actions.act_window,name:funet.action_node
+#: model:ir.model,name:funet.model_funet_node
+#: model:ir.ui.menu,name:funet.menu_node
+msgid "Node"
+msgstr "Knoten"
+
+#. module: funet
+#: sql_constraint:funet.node:0
+msgid "Node with the same name already exist"
+msgstr "Knoten mit der selben ID existiert bereits."
+
+#. module: funet
+#: view:funet.node:funet.tree_node
+msgid "Nodes"
+msgstr "Knoten"
+
+#. module: funet
+#: field:funet.dev,partner_id:0
+#: field:funet.node,partner_id:0
+#: field:funet.provider,partner_id:0
+#: model:ir.model,name:funet.model_res_partner
+msgid "Partner"
+msgstr ""
+
+#. module: funet
+#: field:funet.dev,password:0
+#: field:funet.dev,password_id:0
+msgid "Password"
+msgstr ""
+
+#. module: funet
+#: view:funet.dev:funet.form_funet_dev
+msgid "Password Entry"
+msgstr ""
+
+#. module: funet
+#: view:funet.dev:funet.form_funet_dev
+msgid "Position"
+msgstr ""
+
+#. module: funet
+#: field:funet.node,provider_id:0
+#: view:funet.provider:funet.form_funet_provider
+#: view:funet.provider:funet.search_funet_provider
+#: model:ir.actions.act_window,name:funet.action_funet_provider
+#: model:ir.model,name:funet.model_funet_provider
+#: model:ir.ui.menu,name:funet.menu_funet_provider
+msgid "Provider"
+msgstr ""
+
+#. module: funet
+#: sql_constraint:funet.provider:0
+msgid "Provider with the same code already exist"
+msgstr "Provider mit der selben ID existiert bereits."
+
+#. module: funet
+#: view:funet.dev:funet.form_funet_dev
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#. module: funet
+#: field:funet.dev,state:0
+msgid "State"
+msgstr "Status"
+
+#. module: funet
+#: field:funet.dev,message_summary:0
+msgid "Summary"
+msgstr ""
+
+#. module: funet
+#: field:funet.dev,type_id:0
+#: field:funet.dev.network,type:0
+msgid "Type"
+msgstr "Typ"
+
+#. module: funet
+#: field:funet.dev,message_unread:0
+msgid "Unread Messages"
+msgstr ""
+
+#. module: funet
+#: view:funet.vpn:funet.form_funet_vpn
+#: view:funet.vpn:funet.search_funet_vpn
+#: model:ir.actions.act_window,name:funet.action_funet_vpn
+#: model:ir.model,name:funet.model_funet_vpn
+#: model:ir.ui.menu,name:funet.menu_funet_vpn
+msgid "VPN"
+msgstr ""
+
+#. module: funet
+#: view:funet.dev:funet.form_funet_dev
+#: selection:funet.dev,state:0
+msgid "Validate"
+msgstr "Überprüft"
+
+#. module: funet
+#: view:funet.connect.wizard:funet.wizard_connect
+msgid "connect"
+msgstr "verbinden"
+
+#. module: funet
+#: view:funet.dev.driver:funet.tree_funet_dev_driver
+#: view:funet.dev.fw:funet.tree_funet_dev_fw
+#: view:funet.dev.type:funet.tree_funet_dev_type
+#: view:funet.network:funet.tree_funet_network
+#: view:funet.provider:funet.tree_funet_provider
+#: view:funet.vpn:funet.tree_funet_vpn
+msgid "more"
+msgstr "mehr"
+
+#. module: funet
+#: view:funet.connect.wizard:funet.wizard_connect
+msgid "or"
+msgstr "oder"
+
