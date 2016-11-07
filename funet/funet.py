@@ -34,6 +34,7 @@ class funet_node(models.Model):
     device_ids = fields.One2many("funet.dev","node_id", "Devices")
     device_info = fields.One2many("funet.dev","node_id", "Device Infos")
 
+
     @api.one
     @api.constrains('name')
     def _check_name(self):
@@ -113,7 +114,7 @@ class funet_dev_type(models.Model):
     _description = "Device Type"
 
     name = fields.Char("Name", required=True)
-    driver = fields.Many2one("funet.dev.driver", "Driver")
+    driver_id = fields.Many2one("funet.dev.driver", "Driver")
     firmware_id = fields.Many2one("funet.dev.fw", "Firmware")
     code = fields.Char("Code", required=True)
 

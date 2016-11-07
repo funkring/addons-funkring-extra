@@ -13,7 +13,7 @@
                     <field name="code"/>
                 </group>
                 <group>
-                    <field name="driver"/>
+                    <field name="driver_id"/>
                     <field name="firmware_id"/>
                 </group>
             </group>
@@ -28,7 +28,7 @@
       <field name="arch" type="xml">
         <tree string="more">
             <field name="name"/>
-            <field name="driver"/>
+            <field name="driver_id"/>
             <field name="firmware_id"/>
             <field name="code"/>
 
