@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-24 07:41+0000\n"
-"PO-Revision-Date: 2016-10-24 07:41+0000\n"
+"POT-Creation-Date: 2016-11-07 15:33+0000\n"
+"PO-Revision-Date: 2016-11-07 15:33+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -209,22 +209,22 @@ msgstr "Entwurf"
 #. module: funet
 #: view:funet.dev.driver:funet.form_funet_dev_driver
 #: view:funet.dev.driver:funet.search_funet_dev_driver
-#: field:funet.dev.type,driver:0
+#: field:funet.dev.type,driver_id:0
 #: model:ir.actions.act_window,name:funet.action_funet_dev_driver
 #: model:ir.ui.menu,name:funet.menu_funet_dev_driver
 msgid "Driver"
 msgstr "Treiber"
 
 #. module: funet
-#: code:addons/funet/funet.py:94
-#: code:addons/funet/funet.py:124
+#: code:addons/funet/funet.py:95
+#: code:addons/funet/funet.py:125
 #, python-format
 msgid "Field code must not contain special chars or whitespaces"
 msgstr "Das Feld ID darf keine Sonderzeichen beinhalten."
 
 #. module: funet
-#: code:addons/funet/funet.py:41
-#: code:addons/funet/funet.py:167
+#: code:addons/funet/funet.py:42
+#: code:addons/funet/funet.py:168
 #, python-format
 msgid "Field name must not contain special chars or whitespaces"
 msgstr "Das Feld Name darf keine Sonderzeichen beinhalten."
@@ -383,7 +383,7 @@ msgid "Login"
 msgstr ""
 
 #. module: funet
-#: code:addons/funet/funet.py:77
+#: code:addons/funet/funet.py:78
 #, python-format
 msgid "Login: %s / %s"
 msgstr ""
