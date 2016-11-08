@@ -475,7 +475,7 @@ class fpos_order(models.Model):
                     
                 # send report
                 start_at = helper.strToLocalDateStr(self._cr, self._uid, session.start_at, context=self._context)
-                self.env["fpos.report.email"]._send_report(start_at)
+                self.env["fpos.report.email"]._send_report(start_at, session=session)
                 
                  
         return True
@@ -628,6 +628,7 @@ class fpos_report_email(models.Model):
                               string="Range", default="month", required=True)
     
     pos_ids = fields.Many2many("pos.config", "fpos_report_email_config_rel", "report_id", "config_id", "POS")
+    pos_id = fields.Many2one("pos.config", "Finishing POS", help="Send email after finished this POS")
     
     detail = fields.Boolean("Detail")
     separate = fields.Boolean("Separate")
@@ -788,19 +789,33 @@ class fpos_report_email(models.Model):
             
         return (date_from, date_till, cashreport_name)
     
-    def _send_report(self, start_date=None):
+    def _send_report(self, start_date=None, session=None):
         if not start_date:
-            start_date = start_date = util.currentDate()        
+            start_date = util.currentDate()        
         for report_email in self.search([]):
-            # send last
-            mail_range = report_email._cashreport_range(start_date,-1)
-            if (report_email.range_start < mail_range[0]) and mail_range[1] < start_date:
+            offset = -1
+            has_pos = False
+            
+            # check for main pos to send, or delay one day            
+            pos = report_email.pos_id
+            if pos and session and session.config_id.id == pos.id:
+                has_pos = True
+                offset = 0
+            
+            # send last...                    
+            mail_range = report_email._cashreport_range(start_date, offset)
+            has_report = report_email.range_start < mail_range[0] and mail_range[1] < start_date
+            # ... or current
+            if has_pos and mail_range[1] == start_date:
+                has_report = True
+            
+            if has_report:
                 report_email._send_mail(mail_range[0])
                 range_start = mail_range[0]
                 # send other
                 if report_email.range_start:
                     while True:
-                        mail_range = report_email._cashreport_range(mail_range[0],-1)
+                        mail_range = report_email._cashreport_range(mail_range[0], -1)
                         if report_email.range_start < mail_range[0]:
                             report_email._send_mail(mail_range[0])
                         else:

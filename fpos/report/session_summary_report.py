@@ -22,7 +22,10 @@ class Parser(extreport.basic_parser):
             "print_product" : context.get("print_product", False),
             "no_group" : context.get("no_group", False),
             "cashreport_name" : context.get("cashreport_name",""),
-            "getCashboxNames" : self._getCashboxNames
+            "getCashboxNames" : self._getCashboxNames,
+            "getDetailName" : self._getDetailName,
+            "getLineName" : self._getLineName,
+            "sortedDetail" : self._sortedDetail
         })
         
     def _groupByConfig(self, sessions):
@@ -169,6 +172,47 @@ class Parser(extreport.basic_parser):
                     
         return name
     
+    def _getDetailName(self, detail):
+        product = detail.get("product")
+        qty = detail.get("qty",0.0)
+        uom = product.uom_id
+        if uom.nounit or product.income_pdt or product.expense_pdt:
+            return product.name
+        else:
+            qtyStr = ""
+            if product.pos_amount_dec < 0:
+                qtyStr = str(int(qty))
+            elif product.pos_amount_dec == 0:
+                qtyStr = self.formatLang(qty, digits=3)
+            else:
+                qtyStr = self.formatLang(qty, digits=product.pos_amount_dec)
+            return "%s %s %s" % (qtyStr, uom.name, product.name)
+    
+    def _getLineName(self, line):
+        product = line.product_id
+        qty = line.qty
+        uom = product.uom_id
+        fpos_line = line.fpos_line_id
+        flags = ""
+        tag = ""
+        if fpos_line:
+            tag = fpos_line.tag or ""
+            flags = fpos_line.flags or ""
+        if uom.nounit or product.income_pdt or product.expense_pdt or tag or "u" in flags:
+            return line.name
+        else:
+            qtyStr = ""
+            if product.pos_amount_dec < 0:
+                qtyStr = str(int(qty))
+            elif product.pos_amount_dec == 0:
+                qtyStr = self.formatLang(qty, digits=3)
+            else:
+                qtyStr = self.formatLang(qty, digits=product.pos_amount_dec)
+            return "%s %s %s" % (qtyStr, uom.name, line.name)
+    
+    def _sortedDetail(self, details):
+        return sorted(details, key=lambda val: val.get("amount",0.0), reverse=True)
+    
     def _statistic(self, sessions):
         if not sessions:
             return []
@@ -176,6 +220,7 @@ class Parser(extreport.basic_parser):
         turnover_dict = {}
         expense_dict = {}
         income_dict = {}
+        io_dict = {}
         st_dict = {}
         tax_dict = {}
         
@@ -203,6 +248,7 @@ class Parser(extreport.basic_parser):
         print_detail = self.localcontext["print_detail"]     
         print_product = self.localcontext["print_product"]    
         
+          
         # add turnover
         def addTurnover(name, amount, line, tax_amount, is_taxed):          
             entry = turnover_dict.get(name, None)
@@ -256,6 +302,23 @@ class Parser(extreport.basic_parser):
         order_count = 0
         
         for order in order_obj.browse(self.cr, self.uid, order_ids, context=self.localcontext):
+            
+            # add io 
+            def addIo(ioType, data, amount):
+                fpos_order = order.fpos_order_id
+                if order.pos_reference and (not fpos_order or not fpos_order.tag):
+                    key = (ioType, order.date_order, order.pos_reference)
+                    values = io_dict.get(key, None)
+                    if values is None:
+                        values = {
+                            "name" : "%s - %s" % (self.formatLang(order.date_order, date=True), order.pos_reference),
+                            "total" : amount 
+                        }
+                        io_dict[key] = values
+                        data["lines"].append(values)
+                    else:
+                        values["total"] = values["total"] + amount 
+   
             # determine order first 
             # and order last            
             last_order = order
@@ -310,15 +373,17 @@ class Parser(extreport.basic_parser):
                 # add expense                                                
                 if product.expense_pdt:
                     sum_out += total_inc
-                    expense = expense_dict.get(line.name)
+                    expense = expense_dict.get(line.name)                    
                     if not expense:                                        
                         expense = {
                             "name" : product.name,
-                            "sum" : total_inc
+                            "sum" : total_inc,
+                            "lines" : []
                         }
                         expense_dict[line.name] = expense
-                    else:
-                        expense["sum"] = expense["sum"]+total_inc
+
+                    # add output
+                    addIo("o", expense, total_inc)
                     
                 
                 # add income
@@ -328,11 +393,13 @@ class Parser(extreport.basic_parser):
                     if not income:
                         income = {
                             "name" : product.name,
-                            "sum" : total_inc
+                            "sum" : total_inc,
+                            "lines" : []
                         }
                         income_dict[line.name] = income
-                    else:
-                        income["sum"] = income["sum"]+total_inc                        
+                    
+                    # add input
+                    addIo("i", income, total_inc)
                         
                 # add turnover
                 if not product.income_pdt and not product.expense_pdt:
