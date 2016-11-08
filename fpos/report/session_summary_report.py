@@ -373,14 +373,16 @@ class Parser(extreport.basic_parser):
                 # add expense                                                
                 if product.expense_pdt:
                     sum_out += total_inc
-                    expense = expense_dict.get(line.name)                    
-                    if not expense:                                        
+                    expense = expense_dict.get(line.name, None)                    
+                    if expense is None:                                        
                         expense = {
                             "name" : product.name,
                             "sum" : total_inc,
                             "lines" : []
                         }
                         expense_dict[line.name] = expense
+                    else:
+                        expense["sum"] =  expense["sum"] + total_inc
 
                     # add output
                     addIo("o", expense, total_inc)
@@ -389,14 +391,16 @@ class Parser(extreport.basic_parser):
                 # add income
                 if product.income_pdt:
                     sum_in += total_inc
-                    income = income_dict.get(line.name)
-                    if not income:
+                    income = income_dict.get(line.name, None)
+                    if income is None:
                         income = {
                             "name" : product.name,
                             "sum" : total_inc,
                             "lines" : []
                         }
                         income_dict[line.name] = income
+                    else:
+                        income["sum"] = income["sum"] + total_inc
                     
                     # add input
                     addIo("i", income, total_inc)
