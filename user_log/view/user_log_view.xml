@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="form_user_log" model="ir.ui.view">
+      <field name="name">user_log.form_user_log</field>
+      <field name="model">res.user.log</field>
+      <field name="arch" type="xml">
+        <form string="Log">
+          <group>
+            <group>
+                <field name="date"/>
+                <field name="user_id"/>
+            </group>
+            <group>
+                <field name="name"/>
+            </group>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_user_log" model="ir.ui.view">
+      <field name="name">user_log.tree_user_log</field>
+      <field name="model">res.user.log</field>
+      <field name="arch" type="xml">
+        <tree string="Logs">
+            <field name="date"/>
+            <field name="user_id"/>
+            <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_user_log" model="ir.ui.view">
+      <field name="name">user_log.search_user_log</field>
+      <field name="model">res.user.log</field>
+      <field name="arch" type="xml">
+        <search string="Log">
+            <field name="name"/>
+            <field name="user_id"/>
+            <group expand="0" string="Group By">
+                <filter string="User" context="{'group_by':'user_id'}"/>
+                <filter string="Name" context="{'group_by':'name'}"/>
+            </group>
+        </search>
+      </field>
+    </record>
+   
+    <record id="action_user_log" model="ir.actions.act_window">
+      <field name="name">Log</field>
+      <field name="res_model">res.user.log</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_user_log" name="Log" parent="base.menu_users" groups="base.group_no_one"
+      sequence="23"
+      action="action_user_log"/>
+      
+  </data>
+</openerp>

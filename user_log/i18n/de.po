@@ -1,0 +1,101 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* user_log
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Language: de_DE\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-11-14 10:37+0000\n"
+"PO-Revision-Date: 2016-11-14 11:39+0100\n"
+"Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 1.5.4\n"
+
+#. module: user_log
+#: field:res.user.log,create_uid:0
+msgid "Created by"
+msgstr "Erstellt von"
+
+#. module: user_log
+#: field:res.user.log,create_date:0
+msgid "Created on"
+msgstr "Erstellt am"
+
+#. module: user_log
+#: field:res.user.log,display_name:0
+msgid "Display Name"
+msgstr "Anzeigename"
+
+#. module: user_log
+#: view:res.user.log:user_log.search_user_log
+msgid "Group By"
+msgstr "Gruppiert nach"
+
+#. module: user_log
+#: field:res.user.log,id:0
+msgid "ID"
+msgstr ""
+
+#. module: user_log
+#: field:res.user.log,__last_update:0
+msgid "Last Modified on"
+msgstr "Zuletzt modifiziert am"
+
+#. module: user_log
+#: field:res.user.log,write_uid:0
+msgid "Last Updated by"
+msgstr "Zuletzt aktualisiert von"
+
+#. module: user_log
+#: field:res.user.log,write_date:0
+msgid "Last Updated on"
+msgstr "Zuletzt aktualisiert am"
+
+#. module: user_log
+#: model:ir.actions.act_window,name:user_log.action_user_log
+#: model:ir.ui.menu,name:user_log.menu_user_log
+#: view:res.user.log:user_log.form_user_log
+#: view:res.user.log:user_log.search_user_log
+msgid "Log"
+msgstr "Protokoll"
+
+#. module: user_log
+#: view:res.user.log:user_log.tree_user_log
+msgid "Logs"
+msgstr "Protokoll"
+
+#. module: user_log
+#: view:res.user.log:user_log.search_user_log
+msgid "Name"
+msgstr ""
+
+#. module: user_log
+#: field:res.user.log,name:0
+msgid "Site"
+msgstr "Bereich"
+
+#. module: user_log
+#: field:res.user.log,date:0
+msgid "Timestamp"
+msgstr "Zeitstempel"
+
+#. module: user_log
+#: view:res.user.log:user_log.search_user_log field:res.user.log,user_id:0
+msgid "User"
+msgstr "Benutzer"
+
+#. module: user_log
+#: model:ir.model,name:user_log.model_res_user_log
+msgid "User Log"
+msgstr "Zugriffsprotokoll"
+
+#. module: user_log
+#: model:ir.model,name:user_log.model_res_users
+msgid "Users"
+msgstr "Benutzer"
