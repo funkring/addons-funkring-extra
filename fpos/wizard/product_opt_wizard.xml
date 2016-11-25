@@ -8,6 +8,7 @@
       <field name="arch" type="xml">
         <form string="product_opt">
           <p>Optimize your products to find your products faster!</p>
+          <!--
           <group>
             <group>
                 <field name="date"/>
@@ -16,6 +17,7 @@
             
             </group>
           </group>
+          -->
           <footer>
             <button name="action_sort" string="Sort"  type="object" class="oe_highlight" />
             <!-- button name="action_report" string="Report" type="object" /-->
