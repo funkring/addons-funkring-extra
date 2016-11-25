@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+  
+    <record id="wizard_product_opt" model="ir.ui.view">
+      <field name="name">fpos.wizard_product_opt</field>
+      <field name="model">product.opt.wizard</field>
+      <field name="arch" type="xml">
+        <form string="product_opt">
+          <p>Optimize your products to find your products faster!</p>
+          <group>
+            <group>
+                <field name="date"/>
+            </group>
+            <group>
+            
+            </group>
+          </group>
+          <footer>
+            <button name="action_sort" string="Sort"  type="object" class="oe_highlight" />
+            <!-- button name="action_report" string="Report" type="object" /-->
+            or
+            <button special="cancel" string="Close" class="oe_link" />
+          </footer>
+        </form>
+      </field>
+    </record>
+  
+    <record id="action_product_opt" model="ir.actions.act_window">
+      <field name="name">Product Optimization</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">product.opt.wizard</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+    </record>
+
+    <menuitem name="Optimizer" id="menu_product_opt" parent="point_of_sale.menu_point_of_sale_product" sequence="16" action="action_product_opt"/>
+    
+  </data>
+</openerp>

@@ -81,6 +81,7 @@ class pos_config(osv.Model):
         "iface_ponline" : fields.boolean("Search Partner Online"),
         "iface_nosearch" : fields.boolean("No Search"),
         "iface_printleft" : fields.boolean("Print Button Left"),
+        "iface_autofav" : fields.boolean("Auto Favorites"),
         "fpos_printer_ids" : fields.many2many("fpos.printer", "fpos_config_printer_rel", "config_id", "printer_id", "Printer", copy=True, composition=True),
         "fpos_dist_ids" : fields.many2many("fpos.dist","fpos_config_dist_rel","config_id","dist_id","Distributor", copy=True, composition=True),
         "fpos_income_id" : fields.many2one("product.product","Cashstate Income", domain=[("income_pdt","=",True)], help="Income product for auto income on cashstate"),

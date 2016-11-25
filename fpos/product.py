@@ -59,7 +59,9 @@ class product_template(osv.Model):
         "pos_fav" : fields.boolean("Favorite"),        
         "pos_cm" : fields.boolean("Comment"),
         "pos_sec" : fields.selection([("1","Section 1"),
-                                      ("2","Section 2")], string="Section", help="Section Flag")
+                                      ("2","Section 2"),
+                                      ("g","Group"),
+                                      ("a","Addition")], string="Section", help="Section Flag")
     }
     _defaults = {
         "sequence" : 10
@@ -69,6 +71,31 @@ class product_template(osv.Model):
 
 class product_product(osv.Model):
     _inherit = "product.product"
+    _columns = {
+        "pos_rate" : fields.float("POS Sale Rate %", select=True)
+    }
+    
+    def _update_pos_rate(self, cr, uid, context=None):
+        cr.execute("SELECT pt.id, COUNT(l) FROM product_product p  "
+                   " INNER JOIN product_template pt ON pt.id = p.product_tmpl_id " 
+                   " LEFT JOIN pos_order_line l ON l.product_id = p.id "  
+                   " WHERE pt.available_in_pos " 
+                   " GROUP BY 1 ")
+        
+        res = cr.fetchall()
+        total = 0.0        
+        
+        for product_id, qty in res:
+            if qty:
+                total += qty
+                
+        if total:
+            for product_id, qty in res:
+                if qty:
+                    rate = qty / total
+                    self.write(cr, uid, [product_id], {"pos_rate" : rate}, context=context)
+                else:
+                    self.write(cr, uid, [product_id], {"pos_rate" : 0.0}, context=context)
         
     def _fpos_product_get(self, cr, uid, obj, *args, **kwarg):
         mapping_obj = self.pool["res.mapping"]
@@ -111,7 +138,8 @@ class product_product(osv.Model):
             "pos_color" : obj.pos_color,
             "pos_report" : obj.pos_report,
             "pos_fav" : obj.pos_fav,
-            "pos_categ2_id" : mapping_obj._get_uuid(cr, uid, obj.pos_categ2_id)
+            "pos_categ2_id" : mapping_obj._get_uuid(cr, uid, obj.pos_categ2_id),
+            "pos_rate" : obj.pos_rate
         }
         
         if obj.pos_nogroup:
