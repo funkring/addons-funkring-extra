@@ -32,15 +32,15 @@ class res_users(osv.Model):
         lastLogKey = (db, uid)
         lastLog = self._uid_lastlog.get(lastLogKey)
         curTime = datetime.now()
-        logAccess = not lastLog or (curTime - lastLog).seconds >= 600
-        path = request.httprequest.path 
+        logAccess = not lastLog or (curTime - lastLog).seconds >= 600         
         if logAccess:
+            url = request.httprequest.url
             self._uid_lastlog[lastLogKey] = curTime
             cr =  self.pool.cursor()
             try:
                 self.pool.get("res.user.log").create(cr, uid, {"user_id" : uid, 
                                                                "date" :  util.timeToStr(curTime), 
-                                                               "name" : path } )
+                                                               "name" : url } )
                 cr.commit()
             finally:
                 cr.rollback()                
