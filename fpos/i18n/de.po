@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-22 09:18+0000\n"
-"PO-Revision-Date: 2016-11-22 10:20+0100\n"
+"POT-Creation-Date: 2016-11-30 13:08+0000\n"
+"PO-Revision-Date: 2016-11-30 14:11+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -51,7 +51,7 @@ msgid "${ctx.get('cashreport_name','Cashreport')}"
 msgstr "${ctx.get('cashreport_name','Kassenbericht')}"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:793
+#: code:addons/fpos/fpos.py:792
 #, python-format
 msgid "%s - %s"
 msgstr ""
@@ -75,16 +75,21 @@ msgid "%s - %s / CW %s %s"
 msgstr "%s - %s / KW %s %s"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:783 code:addons/fpos/wizard/report_wizard.py:126
+#: code:addons/fpos/fpos.py:782 code:addons/fpos/wizard/report_wizard.py:126
 #, python-format
 msgid "%s - CW %s %s"
 msgstr "%s - KW %s %s"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:545
+#: code:addons/fpos/fpos.py:544
 #, python-format
 msgid "*-Format: %s,%s"
 msgstr ""
+
+#. module: fpos
+#: field:product.product,pos_action:0 field:product.template,pos_action:0
+msgid "Action"
+msgstr "Aktion"
 
 #. module: fpos
 #: help:pos.category,after_product:0
@@ -92,12 +97,17 @@ msgid "Action after product selection"
 msgstr "Aktion nach Produktauswahl"
 
 #. module: fpos
+#: help:product.product,pos_action:0 help:product.template,pos_action:0
+msgid "Action on product selection"
+msgstr "Aktion wenn ein Produkt"
+
+#. module: fpos
 #: field:fpos.order,active:0
 msgid "Active"
 msgstr "Aktiv"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:543 selection:product.template,pos_sec:0
+#: code:addons/fpos/fpos.py:542 selection:product.template,pos_sec:0
 #, python-format
 msgid "Addition"
 msgstr "Zusatz"
@@ -197,7 +207,7 @@ msgid "Blue"
 msgstr "Blau"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:531
+#: code:addons/fpos/fpos.py:530
 #, python-format
 msgid "Break"
 msgstr ""
@@ -238,7 +248,7 @@ msgid "Cashbox Trigger"
 msgstr "Kassenladenöffner"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:755
+#: code:addons/fpos/fpos.py:754
 #: model:ir.actions.report.xml,name:fpos.report_session_email
 #, python-format
 msgid "Cashreport"
@@ -398,7 +408,7 @@ msgid "Description for Quotations"
 msgstr "Beschreibung für Angebote"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:533 field:fpos.report.email,detail:0
+#: code:addons/fpos/fpos.py:532 field:fpos.report.email,detail:0
 #: field:fpos.report.wizard,detail:0
 #, python-format
 msgid "Detail"
@@ -627,8 +637,7 @@ msgid "Green"
 msgstr "Grün"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:541 field:fpos.order.line,group:0
-#: selection:product.template,pos_sec:0
+#: code:addons/fpos/fpos.py:540 selection:product.template,pos_sec:0
 #, python-format
 msgid "Group"
 msgstr "Gruppe"
@@ -783,7 +792,7 @@ msgid "Lime"
 msgstr "Hellgrün"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:535
+#: code:addons/fpos/fpos.py:534
 #, python-format
 msgid "Line"
 msgstr "Position"
@@ -841,7 +850,7 @@ msgid "Messages and communication history"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:527 field:product.product,pos_minus:0
+#: code:addons/fpos/fpos.py:526 field:product.product,pos_minus:0
 #: field:product.template,pos_minus:0
 #, python-format
 msgid "Minus"
@@ -897,13 +906,13 @@ msgid "No Tax"
 msgstr "Keine Steuer"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:529
+#: code:addons/fpos/fpos.py:528
 #, python-format
 msgid "No Unit"
 msgstr "Keine Einheit"
 
 #. module: fpos
-#: code:addons/fpos/product.py:200
+#: code:addons/fpos/product.py:212
 #, python-format
 msgid "No access for product with EAN %s"
 msgstr "Kein Zugriff auf Produkt mit EAN %s"
@@ -1204,7 +1213,7 @@ msgid "Product Template"
 msgstr "Produktvorlage"
 
 #. module: fpos
-#: code:addons/fpos/product.py:196
+#: code:addons/fpos/product.py:208
 #, python-format
 msgid "Product with EAN %s not found"
 msgstr "Produkt mit EAN %s wurde nicht gefunden"
@@ -1287,7 +1296,6 @@ msgstr "Referenz:"
 
 #. module: fpos
 #: view:fpos.report.wizard:fpos.wizard_report
-#: view:product.opt.wizard:fpos.wizard_product_opt
 msgid "Report"
 msgstr "Bericht"
 
@@ -1328,12 +1336,17 @@ msgid "Sales"
 msgstr "Verkauf"
 
 #. module: fpos
+#: selection:product.template,pos_action:0
+msgid "Scan"
+msgstr "Scannen"
+
+#. module: fpos
 #: field:pos.config,iface_ponline:0
 msgid "Search Partner Online"
 msgstr "Online Partnersuche"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:537 field:product.product,pos_sec:0
+#: code:addons/fpos/fpos.py:536 field:product.product,pos_sec:0
 #: field:product.template,pos_sec:0
 #, python-format
 msgid "Section"
@@ -1382,6 +1395,11 @@ msgid "Session Detail"
 msgstr "Kassenbericht (detailliert)"
 
 #. module: fpos
+#: selection:product.template,pos_action:0
+msgid "Show Partner"
+msgstr "Partner anzeigen"
+
+#. module: fpos
 #: field:product.product,pos_report:0 field:product.template,pos_report:0
 msgid "Show on Report"
 msgstr "Als Detail im Kassenbericht"
@@ -1410,7 +1428,7 @@ msgid "Status"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:539
+#: code:addons/fpos/fpos.py:538
 #, python-format
 msgid "Subsection"
 msgstr "Unterabschnitt"
@@ -1619,7 +1637,7 @@ msgid "to root"
 msgstr "zur Basis"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:547
+#: code:addons/fpos/fpos.py:546
 #, python-format
 msgid "€-Format: %s,%s"
 msgstr ""

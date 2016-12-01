@@ -57,5 +57,12 @@ class product_opt_wizard(models.TransientModel):
             
         # sort without category
         sequence = sortProducts(None, sequence)
+        
+        # sort non available
+        products = self.env["product.template"].search([("available_in_pos","!=",True)], order="sequence asc")
+        for product in products:
+            sequence+=1
+            product.sequence = sequence     
+        
         return True
         

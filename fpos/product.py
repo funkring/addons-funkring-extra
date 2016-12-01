@@ -58,6 +58,9 @@ class product_template(osv.Model):
         "pos_categ2_id" : fields.many2one("pos.category","Category 2",help="Show the product also in this category"),
         "pos_fav" : fields.boolean("Favorite"),        
         "pos_cm" : fields.boolean("Comment"),
+        "pos_action" : fields.selection([("pact_partner","Show Partner"),
+                                         ("pact_scan","Scan")
+                                         ], string="Action", help="Action on product selection"),
         "pos_sec" : fields.selection([("1","Section 1"),
                                       ("2","Section 2"),
                                       ("g","Group"),
@@ -160,6 +163,8 @@ class product_product(osv.Model):
             values["pos_sec"] = obj.pos_sec
         if obj.pos_cm:
             values["pos_cm"] = obj.pos_cm
+        if obj.pos_action:
+            values["pos_action"] = obj.pos_action
         
         return values  
     
@@ -189,9 +194,18 @@ class product_product(osv.Model):
         }
         
     def fpos_scan(self, cr, uid, code, context=None):
+        # check for active product
         product_id = self.search_id(cr, uid, [("ean13","=",code)], context=context)
+         
+        # check for inactive product
         if not product_id:
-            raise Warning(_('Product with EAN %s not found') % code)
+            searchContext = context and dict(context) or {}
+            searchContext["active_test"] = True
+            product_id = self.search_id(cr, uid, [("ean13","=",code)], context=searchContext)
+            
+        # check if found
+        if not product_id:
+            raise Warning(_('Product with EAN %s not found') % code)    
         
         product = self.browse(cr, uid, product_id, context=context)
         if not product:

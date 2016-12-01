@@ -51,7 +51,8 @@
             <field name="pos_categ2_id"/>
             <field name="pos_color"/>   
             <field name="pos_fav"/>
-            <field name="pos_sec"/>       
+            <field name="pos_sec"/>
+            <field name="pos_action"/>    
             <field name="pos_report"/>
             <field name="pos_cm"/>
         </field>

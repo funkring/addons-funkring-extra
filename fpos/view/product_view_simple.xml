@@ -55,17 +55,18 @@
                                         <field name="uom_po_id" invisible="1"/>    
                                     </group>
                                     <group string="POS">
-                                        <field name="pos_name"/>    
+                                        <field name="pos_name"/>
                                         <field name="pos_categ2_id"/>
                                         <field name="pos_color"/>    
-                                        <field name="pos_sec"/>                                                          
+                                        <field name="pos_sec"/> 
+                                        <field name="pos_action"/>
                                         <field name="available_in_pos"/>
                                         <field name="pos_fav"/>
-                                        <field name="pos_report"/>                                                 
-                                        <field name="to_weight" />                                        
+                                        <field name="pos_report"/>                                           
+                                        <field name="to_weight" />
                                         <field name="income_pdt"/>
                                         <field name="expense_pdt"/>
-                                        <field name="pos_cm"/>                                        
+                                        <field name="pos_cm"/>                                   
                                     </group>
                                     <group string="POS Input">
                                         <field name="pos_price"/>
