@@ -194,16 +194,8 @@ class product_product(osv.Model):
         }
         
     def fpos_scan(self, cr, uid, code, context=None):
-        # check for active product
+        # check for product
         product_id = self.search_id(cr, uid, [("ean13","=",code)], context=context)
-         
-        # check for inactive product
-        if not product_id:
-            searchContext = context and dict(context) or {}
-            searchContext["active_test"] = True
-            product_id = self.search_id(cr, uid, [("ean13","=",code)], context=searchContext)
-            
-        # check if found
         if not product_id:
             raise Warning(_('Product with EAN %s not found') % code)    
         
