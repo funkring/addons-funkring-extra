@@ -86,7 +86,3 @@ class account_analytic_account(osv.Model):
             self.write(cr, uid, [account_id], {"expense_alert_date" : alert_date}, context=context) 
     
         return True
-       
-            
-    def test_expense_alert(self, cr, uid, ids, context=None):
-        return self._expense_alert(cr, uid, context=context)
