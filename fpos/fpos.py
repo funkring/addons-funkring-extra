@@ -175,6 +175,8 @@ class fpos_order(models.Model):
                      
                 order.amount_total = order_total
                 order.amount_tax = order_tax
+
+        return True
                 
     
     @api.model

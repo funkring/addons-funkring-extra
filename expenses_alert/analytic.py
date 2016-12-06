@@ -35,7 +35,9 @@ class account_analytic_account(osv.Model):
         cr.execute("SELECT a.id, al.id FROM account_analytic_account a "
                 "      INNER JOIN account_analytic_line al ON al.account_id=a.id AND al.to_invoice IS NOT NULL " 
                 "             AND ( (a.expense_alert_date IS NULL AND al.date=%s) " 
-                "                OR (a.expense_alert_date IS NOT NULL AND al.date > a.expense_alert_date AND al.date<=%s) ) " 
+                "                OR (a.expense_alert_date IS NOT NULL AND al.date > a.expense_alert_date AND al.date<=%s) ) "
+                "      INNER JOIN resource_resource r ON r.user_id = al.user_id "      
+                "      INNER JOIN hr_employee e ON e.resource_id = r.id AND e.journal_id = al.journal_id "  
                 "      WHERE a.expense_alert AND a.id IN %s AND NOT a.partner_id IS NULL " 
                 "      GROUP BY 1,2 "
                 "      ORDER BY a.id, al.date ",
@@ -68,7 +70,9 @@ class account_analytic_account(osv.Model):
         cr.execute("SELECT a.id FROM account_analytic_account a " 
                     "      INNER JOIN account_analytic_line al ON al.account_id=a.id AND al.to_invoice IS NOT NULL " 
                     "             AND ( (a.expense_alert_date IS NULL AND al.date=%s) " 
-                    "                OR (a.expense_alert_date IS NOT NULL AND al.date > a.expense_alert_date AND al.date<=%s) ) " 
+                    "                OR (a.expense_alert_date IS NOT NULL AND al.date > a.expense_alert_date AND al.date<=%s) ) "
+                    "      INNER JOIN resource_resource r ON r.user_id = al.user_id "      
+                    "      INNER JOIN hr_employee e ON e.resource_id = r.id AND e.journal_id = al.journal_id "  
                     "      WHERE a.expense_alert AND NOT a.partner_id IS NULL " 
                     "      GROUP BY 1 ",
                    (alert_date, alert_date))
@@ -79,4 +83,10 @@ class account_analytic_account(osv.Model):
         for (account_id, ) in cr.fetchall():
             _logger.debug("Sending expense alert for account %s" % account_id)
             email_obj.send_mail(cr, uid, template_id, account_id, force_send=True, context=report_ctx)
-            self.write(cr, uid, [account_id], {"expense_alert_date" : alert_date}, context=context)
+            self.write(cr, uid, [account_id], {"expense_alert_date" : alert_date}, context=context) 
+    
+        return True
+       
+            
+    def test_expense_alert(self, cr, uid, ids, context=None):
+        return self._expense_alert(cr, uid, context=context)
