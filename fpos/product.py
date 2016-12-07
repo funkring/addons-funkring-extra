@@ -25,7 +25,7 @@ from openerp.tools.translate import _
 
 COLOR_NAMES = [("white", "White"),
                ("silver","Silver"),
-               ("gray", "Gray"),
+               ("grey", "Gray"),
                ("black","Black"),
                ("red","Red"),
                ("maroon","Maroon"),
@@ -38,7 +38,28 @@ COLOR_NAMES = [("white", "White"),
                ("blue","Blue"),
                ("navy","Navy"),
                ("fuchsia","Fuchsia"),
-               ("purple","Purple")] 
+               ("purple","Purple"),
+               #("orange","Orange"),
+               ("darkbrown","Dark Brown"),
+               ("brown","Brown"),
+               ("lightbrown","Light Brown"),
+               ("lightred","Light Red"),
+               ("lightyellow","Light Yellow"),
+               ("lightgreen","Light Green"),
+               ("lightblue","Light Blue"),
+               ("lightestblue","Lightest Blue"),
+               ("lightteal","Light Teal"),
+               ("lightestteal","Lightest Teal"),
+               ("darkestbrown","Darkest Brown"),
+               ("darkestred","Darkest Red"),
+               ("lightestyellow","Lightest Yellow"),
+               ("lightestgreen","Lightest Green"),
+               ("lightestred","Lightest Red"),
+               ("lightestgrey","Lightest Grey"),
+               ("darkestgrey","Darkest Grey"),
+               ("schoko","Schoko"),
+               ("lightgold","Light Gold"),
+               ("lightestgold","Lightest Gold")] 
 
 
 class product_template(osv.Model):
