@@ -12,19 +12,22 @@
                 <button name="action_post" string="Post Orders" type="object" groups="point_of_sale.group_pos_manager" 
                         attrs="{'invisible' : ['|',('user_id','=',False),('liveop','=',False)]}"/>
             </button>
+            <field name="iface_invoicing" position="before">
+                <field name="iface_place"/>
+                <field name="iface_user_nobalance"/>
+                <field name="iface_user_printsales"/>
+                <field name="liveop" invisible="1"/>        
+            </field>
             <field name="iface_big_scrollbars" position="after">
                 <field name="iface_nogroup"/>
                 <field name="iface_autofav"/>
-                <field name="iface_fold"/>
-                <field name="iface_place"/>
+                <field name="iface_fold"/>                
                 <field name="iface_fastuswitch"/>
                 <field name="iface_nosearch"/>
                 <field name="iface_printleft"/>
                 <field name="iface_ponline"/>        
-                <field name="iface_user_nobalance"/>
-                <field name="iface_user_printsales"/>        
-                <field name="liveop" invisible="1"/>
-            </field>
+                <field name="iface_test"/>                
+            </field>            
             <field name="picking_type_id" position="before">
                 <field name="user_id" string="Fpos User"/>
                 <field name="fpos_prefix"/>
@@ -48,6 +51,7 @@
             </group>       
             <field name="iface_cashdrawer" position="after">
                 <field name="iface_trigger"/>
+                <field name="iface_cashmachine"/>
             </field> 
       </field>
     </record>

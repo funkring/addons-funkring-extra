@@ -568,6 +568,7 @@ class fpos_payment(models.Model):
     journal_id = fields.Many2one("account.journal", "Journal", required=True, index=True)
     amount = fields.Float("Amount")
     payment = fields.Float("Payment")
+    code = fields.Char("Code")
     
     
 class fpos_printer(models.Model):

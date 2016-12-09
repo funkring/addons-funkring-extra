@@ -70,8 +70,9 @@
                                     <field name="payment_ids">
                                         <tree string="Payments" editable="buttom"> 
                                             <field name="journal_id"/>
+                                            <field name="code"/>
                                             <field name="amount" sum="Amount"/>
-                                            <field name="payment" sum="Payment"/>
+                                            <field name="payment" sum="Payment"/>                                            
                                         </tree>
                                     </field>      
                                 </div>
