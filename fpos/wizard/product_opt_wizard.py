@@ -25,7 +25,7 @@ class product_opt_wizard(models.TransientModel):
     _description = "Product Optimizer"
     
     @api.multi
-    def action_sort(self):
+    def _action_sort(self, optimize=False):
         product_obj = self.env["product.product"]
         product_obj._update_pos_rate()
       
@@ -38,7 +38,8 @@ class product_opt_wizard(models.TransientModel):
                 sequence+=1
                 product.sequence = sequence             
                 
-            products = product_obj.search([("available_in_pos","=",True),("pos_categ_id","=",category.id),("pos_sec","=",False)], order="pos_rate desc")
+            order = optimize and "pos_rate desc" or "sequence asc"
+            products = product_obj.search([("available_in_pos","=",True),("pos_categ_id","=",category.id),("pos_sec","=",False)], order=order)
             for product in products:
                 sequence+=1
                 product.sequence =  sequence         
@@ -65,4 +66,12 @@ class product_opt_wizard(models.TransientModel):
             product.sequence = sequence     
         
         return True
+    
+    @api.multi
+    def action_sort(self):
+        return self._action_sort(optimize=False)
+    
+    @api.multi
+    def action_optimize(self):
+        return self._action_sort(optimize=True)
         

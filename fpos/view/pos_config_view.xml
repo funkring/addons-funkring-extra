@@ -20,7 +20,9 @@
                 <field name="iface_fastuswitch"/>
                 <field name="iface_nosearch"/>
                 <field name="iface_printleft"/>
-                <field name="iface_ponline"/>                
+                <field name="iface_ponline"/>        
+                <field name="iface_user_nobalance"/>
+                <field name="iface_user_printsales"/>        
                 <field name="liveop" invisible="1"/>
             </field>
             <field name="picking_type_id" position="before">

@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-07 13:04+0000\n"
-"PO-Revision-Date: 2016-12-07 14:08+0100\n"
+"POT-Creation-Date: 2016-12-09 06:34+0000\n"
+"PO-Revision-Date: 2016-12-09 07:38+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -123,6 +123,11 @@ msgid "After product"
 msgstr "Nach Produktauswahl"
 
 #. module: fpos
+#: field:pos.config,iface_user_printsales:0
+msgid "Allowed to print sales"
+msgstr "Druck eigener Kassenumsätze"
+
+#. module: fpos
 #: help:pos.config,user_ids:0
 msgid "Allowed users for the Point of Sale"
 msgstr "Erlaubte Benutzer für diese Kasse"
@@ -193,6 +198,11 @@ msgstr ""
 #: selection:fpos.order.line,tag:0
 msgid "Balance"
 msgstr "Kassenstand"
+
+#. module: fpos
+#: help:pos.config,iface_user_nobalance:0
+msgid "Balancing deactivated for User"
+msgstr "Deaktivieren des Kassenabschluss für Benutzer"
 
 #. module: fpos
 #: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
@@ -517,7 +527,7 @@ msgid "Empty"
 msgstr "Leer"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:175
+#: code:addons/fpos/point_of_sale.py:177
 #, python-format
 msgid "Error!"
 msgstr "Fehler!"
@@ -1003,6 +1013,11 @@ msgid "Netto"
 msgstr ""
 
 #. module: fpos
+#: field:pos.config,iface_user_nobalance:0
+msgid "No Balancing"
+msgstr "Kein Kassenabschluss"
+
+#. module: fpos
 #: field:pos.config,iface_nogroup:0 field:product.product,pos_nogroup:0
 #: field:product.template,pos_nogroup:0
 msgid "No Grouping"
@@ -1087,7 +1102,7 @@ msgid "Only Administrator could correct Fpos orders"
 msgstr "Nur der Administrator darf Fpos Verkäufe korrigieren"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:106
+#: code:addons/fpos/point_of_sale.py:108
 #, python-format
 msgid "Only system admin could set pos system into live operation"
 msgstr "Nur der Systemadministrator kann eine Kasse in Echtbetrieb setzen"
@@ -1097,6 +1112,11 @@ msgstr "Nur der Systemadministrator kann eine Kasse in Echtbetrieb setzen"
 #, python-format
 msgid "Open"
 msgstr "Geöffnet"
+
+#. module: fpos
+#: view:product.opt.wizard:fpos.wizard_product_opt
+msgid "Optimieren"
+msgstr ""
 
 #. module: fpos
 #: view:product.opt.wizard:fpos.wizard_product_opt
@@ -1617,7 +1637,7 @@ msgid "Test"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:175
+#: code:addons/fpos/point_of_sale.py:177
 #, python-format
 msgid "There is no default company for the current user!"
 msgstr "Es existiert keine standard Firma für den aktuellen Benutzer!"
@@ -1679,6 +1699,11 @@ msgstr "Benutzer"
 #: help:res.users,pin:0
 msgid "User PIN for fast authentication on Fpos hardware"
 msgstr "Benutzer PIN für Schnellanmeldung"
+
+#. module: fpos
+#: help:pos.config,iface_user_printsales:0
+msgid "User allowed to print own sales"
+msgstr "Benutzer darf Kassenumsätze ausdrucken"
 
 #. module: fpos
 #: view:website:fpos.report_receipt

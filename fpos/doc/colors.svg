@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="393.84235"
-     inkscape:cy="-75.563492"
+     inkscape:cx="232.21795"
+     inkscape:cy="328.49753"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false" />
@@ -353,5 +353,23 @@
          id="tspan4404"
          x="666.15631"
          y="1302.0061">Text</tspan></text>
+    <rect
+       y="390.61462"
+       x="851.81598"
+       height="228.57143"
+       width="228.57143"
+       id="rect4406"
+       style="opacity:1;fill:#fff09e;fill-opacity:1;stroke:none;stroke-width:6;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text4408"
+       y="529.28021"
+       x="898.88727"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:69.54040527px;line-height:125%;font-family:Roboto;-inkscape-font-specification:'Roboto, Medium';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       xml:space="preserve"><tspan
+         y="529.28021"
+         x="898.88727"
+         id="tspan4410"
+         sodipodi:role="line">Text</tspan></text>
   </g>
 </svg>
