@@ -20,6 +20,7 @@
           -->
           <footer>
             <button name="action_sort" string="Sort"  type="object" class="oe_highlight" />
+            <button name="action_optimize" string="Optimieren"  type="object"/>
             <!-- button name="action_report" string="Report" type="object" /-->
             or
             <button special="cancel" string="Close" class="oe_link" />

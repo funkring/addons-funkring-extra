@@ -87,6 +87,8 @@ class pos_config(osv.Model):
         "fpos_income_id" : fields.many2one("product.product","Cashstate Income", domain=[("income_pdt","=",True)], help="Income product for auto income on cashstate"),
         "fpos_expense_id" : fields.many2one("product.product","Cashstate Expense", domain=[("expense_pdt","=",True)], help="Expense product for auto expense on cashstate"),
         "iface_trigger" : fields.boolean("Cashbox Trigger", help="External cashbox trigger"),
+        "iface_user_nobalance" : fields.boolean("No Balancing",  help="Balancing deactivated for User"),
+        "iface_user_printsales" : fields.boolean("Allowed to print sales", help="User allowed to print own sales"),
         "liveop" : fields.boolean("Live Operation", readonly=True, select=True, copy=False),
         "fpos_dist" : fields.char("Distributor", copy=True),
         "user_id" : fields.many2one("res.users","Sync User", select=True, copy=False),
