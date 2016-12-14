@@ -87,10 +87,10 @@ class pos_config(osv.Model):
         "fpos_income_id" : fields.many2one("product.product","Cashstate Income", domain=[("income_pdt","=",True)], help="Income product for auto income on cashstate"),
         "fpos_expense_id" : fields.many2one("product.product","Cashstate Expense", domain=[("expense_pdt","=",True)], help="Expense product for auto expense on cashstate"),
         "iface_trigger" : fields.boolean("Cashbox Trigger", help="External cashbox trigger"),
-        "iface_cashmachine" : fields.boolean("Cash Machine"),
-        "iface_user_nobalance" : fields.boolean("No Balancing",  help="Balancing deactivated for User"),
-        "iface_user_printsales" : fields.boolean("Allowed to print sales", help="User allowed to print own sales"),
+        "iface_user_nobalance" : fields.boolean("User: no Balancing",  help="Balancing deactivated for User"),
+        "iface_user_printsales" : fields.boolean("User: print sales", help="User allowed to print own sales"),
         "iface_test" : fields.boolean("Test"),
+        "iface_waiterkey" : fields.boolean("Waiter Key"),
         "liveop" : fields.boolean("Live Operation", readonly=True, select=True, copy=False),
         "fpos_dist" : fields.char("Distributor", copy=True),
         "user_id" : fields.many2one("res.users","Sync User", select=True, copy=False),
@@ -98,7 +98,8 @@ class pos_config(osv.Model):
                                       "pos_config_user_rel",
                                       "config_id", "user_id",
                                       "Users",
-                                      help="Allowed users for the Point of Sale")
+                                      help="Allowed users for the Point of Sale"),                
+        "payment_iface_ids" : fields.one2many("fpos.payment.iface","config_id","Payment Interfaces", copy=True, composition=True)
     }
     _sql_constraints = [
         ("user_uniq", "unique (user_id)","Fpos User could only assinged once")
@@ -275,4 +276,13 @@ class pos_session(osv.Model):
     }
 
 
+class fpos_payment_iface(osv.Model):
+    _name = "fpos.payment.iface"
+    _rec_name = "journal_id"
+    _columns = {
+        "config_id" : fields.many2one("pos.config","Config", required=True, select=True),
+        "journal_id" : fields.many2one("account.journal","Journal", required=True),
+        "iface" : fields.selection([("mcashier","mCashier"),
+                                    ("tim","TIM")], string="Interface", required=True)
+    }
 

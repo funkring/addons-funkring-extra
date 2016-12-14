@@ -12,8 +12,9 @@
                 <button name="action_post" string="Post Orders" type="object" groups="point_of_sale.group_pos_manager" 
                         attrs="{'invisible' : ['|',('user_id','=',False),('liveop','=',False)]}"/>
             </button>
-            <field name="iface_invoicing" position="before">
-                <field name="iface_place"/>
+            <field name="iface_invoicing" position="before">                
+                <field name="iface_waiterkey"/>
+                <field name="iface_place"/>                
                 <field name="iface_user_nobalance"/>
                 <field name="iface_user_printsales"/>
                 <field name="liveop" invisible="1"/>        
@@ -42,17 +43,26 @@
                     <field name="fpos_dist_ids" widget="many2many_tags"/>
                 </group>
             </group>
+            <field name="iface_cashdrawer" position="after">
+                <field name="iface_trigger"/>
+            </field> 
             <group string="Receipt" position="after">               
                 <group string="User" colspan="4">                  
                     <div>
                         <field name="user_ids"/>
                     </div>
                 </group>
-            </group>       
-            <field name="iface_cashdrawer" position="after">
-                <field name="iface_trigger"/>
-                <field name="iface_cashmachine"/>
-            </field> 
+                <group string="Payment Interfaces">                        
+                    <div>
+                        <field name="payment_iface_ids">
+                            <tree editable="buttom">
+                                <field name="journal_id" domain="[('id','in',parent.journal_ids[0][2]),('type','!=','cash')]"/>
+                                <field name="iface"/>
+                            </tree>
+                        </field>
+                    </div>
+                </group>
+            </group>
       </field>
     </record>
   </data>
