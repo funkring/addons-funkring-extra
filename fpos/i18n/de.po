@@ -967,8 +967,8 @@ msgstr "Helltürkis"
 #: selection:fpos.top,pos_color:0
 #: selection:pos.category,pos_color:0
 #: selection:product.template,pos_color:0
-msgid "Light Yellow"
-msgstr "Hellgelp"
+msgid "Light-Yellow"
+msgstr "Hellgelb"
 
 #. module: fpos
 #: selection:fpos.place,pos_color:0
@@ -1023,8 +1023,8 @@ msgstr "hellstes Türkis"
 #: selection:fpos.top,pos_color:0
 #: selection:pos.category,pos_color:0
 #: selection:product.template,pos_color:0
-msgid "Lightest Yellow"
-msgstr "hellstes Gelp"
+msgid "Lightest-Yellow"
+msgstr "hellstes Gelb"
 
 #. module: fpos
 #: selection:fpos.place,pos_color:0
