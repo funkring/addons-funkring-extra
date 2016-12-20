@@ -145,7 +145,7 @@ class report_wizard(models.TransientModel):
                 report_ctx["no_group"] = True
             if wizard.product:
                 report_ctx["print_product"] = True
-            if wizard.product:
+            if wizard.summary:
                 report_ctx["summary"] = True
             if wizard.daily_overview:
                 report_ctx["daily_overview"] = True

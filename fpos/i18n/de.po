@@ -8,7 +8,7 @@ msgstr ""
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-20 09:43+0000\n"
-"PO-Revision-Date: 2016-12-20 10:44+0100\n"
+"PO-Revision-Date: 2016-12-20 11:54+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1608,7 +1608,7 @@ msgstr ""
 #: field:fpos.report.email,message_summary:0
 #: field:fpos.report.wizard,summary:0 help:fpos.report.wizard,summary:0
 msgid "Summary"
-msgstr ""
+msgstr "Übersicht"
 
 #. module: fpos
 #: field:pos.config,user_id:0

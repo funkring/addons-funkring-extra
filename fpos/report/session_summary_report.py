@@ -23,6 +23,7 @@ class Parser(extreport.basic_parser):
             "print_detail" : context.get("print_detail",name == "fpos.report_session_detail"),
             "print_product" : context.get("print_product", False),
             "no_group" : context.get("no_group", False),
+            "summary" : context.get("summary", False),
             "cashreport_name" : context.get("cashreport_name",""),
             "getCashboxNames" : self._getCashboxNames,
             "getLineName" : self._getLineName,
@@ -66,20 +67,6 @@ class Parser(extreport.basic_parser):
         return self.formatLang(timeStr, date_time=True).split(" ")[1]
 
     def _getSessionGroups(self, sessions):
-        
-        # check no group
-        if self.localcontext.get("no_group"):
-            res = []
-            for session in sessions:
-                singleSession = [session]
-                res.append({
-                    "config" : session.config_id,
-                    "sessions" : singleSession,
-                    "description" : self._getName(singleSession)
-                })
-            return res
-                    
-        
         # group by config
         byConfig = self._groupByConfig(sessions)
         
@@ -115,16 +102,13 @@ class Parser(extreport.basic_parser):
             if report_info:
                 name = report_info["name"]
 
-        if sessions:
+        if sessions and not name:
             first_session = sessions[0]
             last_session = sessions[-1]
-            if self.localcontext.get("no_group"):
+            if first_session != last_session:
+                name = "%s - %s" % (self.formatLang(first_session.start_at, date=True), self.formatLang(last_session.start_at, date=True))
+            else:
                 name = self.formatLang(first_session.start_at, date=True)
-            elif not name:
-                if first_session != last_session:
-                    name = "%s - %s" % (self.formatLang(first_session.start_at, date=True), self.formatLang(last_session.start_at, date=True))
-                else:
-                    name = self.formatLang(first_session.start_at, date=True)
 
         return name
 
@@ -597,7 +581,8 @@ class Parser(extreport.basic_parser):
             "details_start" : first_session.details_ids,
             "details_end" : last_session.details_ids,
             "details" : details,
-            "order_count" : order_count
+            "order_count" : order_count,
+            "days" : []
         }
         return stat
 
@@ -631,38 +616,56 @@ class Parser(extreport.basic_parser):
         
         return stopTime
 
-    def _statistic(self, sessions, daily=False):
+    def _statistic(self, sessions, daily=False, no_group=False):               
         sessions = sorted(sessions, key=lambda session: (session.start_at or "", session.stop_at or ""))
+        
+        # check no group
+        if no_group:
+            res = []
+            for session in sessions:
+                stat = self._buildStatistic([session])
+                if stat:
+                    res.append(stat)
+            return res 
+        
         stat = self._buildStatistic(sessions)
         if not stat:
             return []
         
-        sessionsPerDay = []
-        stat["days"] = sessionsPerDay
-        
         if not daily and self.localcontext.get("daily_overview"):
+            sessionsPerDay = stat["days"]
             report_info = self.localcontext.get("pos_report_info")
             report_info["from"], report_info["till"]
             
             def selectDay(day):
                 if not day:
                     return None
+                
                 selDay = None
+                
+                # get sel day
                 if sessionsPerDay:
                     dayEntry = sessionsPerDay[-1]
                     selDay = dayEntry["day"]
-                while not selDay or selDay > day:
+                else:
+                    selDay = day     
+                    dayEntry = {
+                        "day": selDay,
+                        "sessions" : []
+                    }           
+                    sessionsPerDay.append(dayEntry)
+                    
+                # fill gap    
+                while selDay < day:
                     dayEntry = {
                         "day": selDay,
                         "sessions" : []
                     }
                     sessionsPerDay.append(dayEntry)
-                    if not selDay:
-                        selDay = day
-                    else:
-                        selDay = util.getNextDayDate(day)
-                
-                if dayEntry["day"] == day:
+                    selDay = util.getNextDayDate(selDay)
+
+                # check result                
+                if selDay == day:
                     return dayEntry
                 
                 return None
