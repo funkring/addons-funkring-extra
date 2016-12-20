@@ -14,6 +14,8 @@
                   <field name="detail"/>
                   <field name="separate"/>
                   <field name="product"/>
+                  <field name="daily_overview"/>
+                  <field name="summary"/>
                 </group>
                 <group>
                   <field name="date_from" on_change="onchange_range(range, date_from, date_till)"/>

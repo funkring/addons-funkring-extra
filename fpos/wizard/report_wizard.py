@@ -38,6 +38,8 @@ class report_wizard(models.TransientModel):
                                default=lambda self: self.env["pos.config"].search([("liveop","=",True)]))
     
     detail = fields.Boolean("Detail", help="Print detail")
+    daily_overview = fields.Boolean("Daily Overview", help="Adds an daily overview")
+    summary = fields.Boolean("Summary", help="Summary")
     separate = fields.Boolean("Separate", help="Cashreport for every single day")
     product = fields.Boolean("Products", help="Print product overview")
        
@@ -143,6 +145,10 @@ class report_wizard(models.TransientModel):
                 report_ctx["no_group"] = True
             if wizard.product:
                 report_ctx["print_product"] = True
+            if wizard.product:
+                report_ctx["summary"] = True
+            if wizard.daily_overview:
+                report_ctx["daily_overview"] = True
 
             # add report info                
             report_ctx["pos_report_info"] = {
