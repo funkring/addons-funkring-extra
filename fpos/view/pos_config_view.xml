@@ -31,6 +31,7 @@
             </field>            
             <field name="picking_type_id" position="before">
                 <field name="user_id" string="Fpos User"/>
+                <field name="parent_user_id" string="Fpos Parent User"/>
                 <field name="fpos_prefix"/>
             </field>
             <group string="Features" position="inside">

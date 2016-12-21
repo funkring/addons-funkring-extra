@@ -100,7 +100,8 @@ class pos_config(osv.Model):
                                       "pos_config_user_rel",
                                       "config_id", "user_id",
                                       "Users",
-                                      help="Allowed users for the Point of Sale"),                
+                                      help="Allowed users for the Point of Sale"),
+        "parent_user_id" : fields.many2one("res.users","Parent Sync User", help="Transfer all open orders to this user before pos is closing", copy=True),           
         "payment_iface_ids" : fields.one2many("fpos.payment.iface","config_id","Payment Interfaces", copy=True, composition=True)
     }
     _sql_constraints = [
