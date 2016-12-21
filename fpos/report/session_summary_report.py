@@ -657,12 +657,12 @@ class Parser(extreport.basic_parser):
                     
                 # fill gap    
                 while selDay < day:
+                    selDay = util.getNextDayDate(selDay)
                     dayEntry = {
                         "day": selDay,
                         "sessions" : []
                     }
-                    sessionsPerDay.append(dayEntry)
-                    selDay = util.getNextDayDate(selDay)
+                    sessionsPerDay.append(dayEntry)                    
 
                 # check result                
                 if selDay == day:
