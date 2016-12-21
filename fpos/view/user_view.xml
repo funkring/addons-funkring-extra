@@ -8,7 +8,8 @@
       <field name="inherit_id" ref="point_of_sale.res_users_form_view"/>
       <field name="arch" type="xml">
         <field name="pos_config" position="after">
-            <field name="pin"/>
+            <field name="code"/>
+            <field name="pin"/>            
             <field name="pos_role"/>
         </field>
       </field>

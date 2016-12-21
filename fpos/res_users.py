@@ -26,7 +26,8 @@ class res_users(osv.Model):
         "pin" : fields.char("PIN", help="User PIN for fast authentication on Fpos hardware", copy=False),
         "pos_role" : fields.selection([("user","User"),
                                        ("manager","Manager"),
-                                       ("admin","Administrator")], "POS Role")
+                                       ("admin","Administrator")], "POS Role"),
+        "code" : fields.char("Code")
     }
     _sql_constraints = [
         ("pin_uniq", "unique (pin)","PIN have to be unique for User")

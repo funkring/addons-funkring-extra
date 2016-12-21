@@ -490,6 +490,7 @@ class fpos_order_line(models.Model):
     order_id = fields.Many2one("fpos.order", "Order", required=True, ondelete="cascade", index=True)
     name = fields.Char("Name")
     product_id = fields.Many2one("product.product", "Product", index=True)
+    group_id = fields.Many2one("product.product", "Group", index=True)
     uom_id = fields.Many2one("product.uom", "Unit")
     tax_ids = fields.Many2many("account.tax", "fpos_line_tax_rel", "line_id", "tax_id", "Taxes")
     brutto_price = fields.Float("Brutto Price", deprecated=True)

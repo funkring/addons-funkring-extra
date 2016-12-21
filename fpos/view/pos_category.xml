@@ -8,11 +8,12 @@
       <field name="inherit_id" ref="point_of_sale.product_pos_category_tree_view"/>
         <field name="arch" type="xml">
            <field name="complete_name" position="after">                
-                <field name="pos_color"/>
+                <field name="pos_color"/>                
                 <field name="after_product"/> 
                 <field name="pos_main"/>
                 <field name="foldable"/>
                 <field name="pos_unavail"/>
+                <field name="link_id"/>
            </field>
         </field>
      </record>
@@ -23,6 +24,7 @@
        <field name="inherit_id" ref="point_of_sale.product_pos_category_form_view"/>
        <field name="arch" type="xml">       
             <field name="parent_id" position="after">
+                <field name="link_id"/>
                 <field name="pos_color"/>
                 <field name="after_product"/>
                 <field name="pos_main"/>

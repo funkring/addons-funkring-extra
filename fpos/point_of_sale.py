@@ -38,7 +38,8 @@ class pos_category(osv.osv):
                                             ("root","to root")],
                                          string="After product",
                                          help="Action after product selection"),
-        "foldable" : fields.boolean("Foldable")
+        "foldable" : fields.boolean("Foldable"),
+        "link_id" : fields.many2one("pos.category", "Link", ondelete="set null", index=True)
     }
 
     def _fpos_category_get(self, cr, uid, obj, *args, **kwarg):
@@ -56,7 +57,8 @@ class pos_category(osv.osv):
             "pos_unavail" : obj.pos_unavail,
             "pos_main" : obj.pos_main,
             "after_product" : obj.after_product,
-            "foldable" : obj.foldable
+            "foldable" : obj.foldable,
+            "link_id" :  mapping_obj._get_uuid(cr, uid, obj.link_id)
         }
 
     def _fpos_category_put(self, cr, uid, obj, *args, **kwarg):
@@ -98,7 +100,8 @@ class pos_config(osv.Model):
                                       "pos_config_user_rel",
                                       "config_id", "user_id",
                                       "Users",
-                                      help="Allowed users for the Point of Sale"),                
+                                      help="Allowed users for the Point of Sale"),
+        "parent_user_id" : fields.many2one("res.users","Parent Sync User", help="Transfer all open orders to this user before pos is closing", copy=True),           
         "payment_iface_ids" : fields.one2many("fpos.payment.iface","config_id","Payment Interfaces", copy=True, composition=True)
     }
     _sql_constraints = [
