@@ -641,6 +641,9 @@ class fpos_report_email(models.Model):
     detail = fields.Boolean("Detail")
     separate = fields.Boolean("Separate")
     product = fields.Boolean("Products", help="Print product overview")
+    
+    daily_overview = fields.Boolean("Daily Overview", help="Adds an daily overview")
+    summary = fields.Boolean("Summary", help="Summary")
      
     bmd_export = fields.Boolean("BMD Export")
     rzl_export = fields.Boolean("RZL Export") 
@@ -677,6 +680,10 @@ class fpos_report_email(models.Model):
             mail_context["no_group"] = True
         if self.product:
             mail_context["print_product"] = True
+        if self.summary:
+            mail_context["summary"] = True
+        if self.daily_overview:
+            mail_context["daily_overview"] = True
             
         # build config
         config_ids = []

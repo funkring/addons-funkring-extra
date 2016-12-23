@@ -24,6 +24,8 @@
                         <field name="detail"/>
                         <field name="separate"/>
                         <field name="product"/>
+                        <field name="daily_overview"/>
+                        <field name="summary"/>
                         <field name="bmd_export"/>
                         <field name="rzl_export"/>
                         <field name="range_start"/>
