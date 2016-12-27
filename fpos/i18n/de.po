@@ -155,7 +155,7 @@ msgstr "Menge Vorkommastellen"
 #: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
 #: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
 msgid "Aqua"
-msgstr "Hellblau"
+msgstr "Aqua"
 
 #. module: fpos
 #: model:ir.ui.menu,name:fpos.menu_areas
