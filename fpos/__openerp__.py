@@ -65,6 +65,7 @@ oerp.at Fpos
               "report/session_email_report.xml",
               "report/report_receipt.xml",
               "data/cron_fpos_post.xml",
+              "data/cron_fpos_product.xml",
               "data/product_fpos_status.xml",
               "data/report_email_template.xml"
              ],

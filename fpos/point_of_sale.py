@@ -123,7 +123,8 @@ class pos_config(osv.Model):
         for config in self.browse(cr, uid, ids, context=context):
             if config.liveop and config.user_id:
                 order_ids = fpos_order_obj.search(cr, uid, [("fpos_user_id","=",config.user_id.id),("state","=","paid")], order="seq asc")
-                fpos_order_obj._post(cr, uid, order_ids, context=context)
+                if order_ids:
+                    fpos_order_obj._post(cr, uid, order_ids, context=context)
         return True
 
     def run_scheduler(self, cr, uid, context=None): # run post in scheduler

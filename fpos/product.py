@@ -22,6 +22,10 @@ from openerp.osv import fields, osv
 from openerp.addons.jdoc.jdoc import META_MODEL
 from openerp.exceptions import Warning
 from openerp.tools.translate import _
+from openerp.addons.at_base import util
+
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 COLOR_NAMES = [("white", "White"),
                ("silver","Silver"),
@@ -85,7 +89,8 @@ class product_template(osv.Model):
         "pos_sec" : fields.selection([("1","Section 1"),
                                       ("2","Section 2"),
                                       ("g","Group"),
-                                      ("a","Addition")], string="Section", help="Section Flag")
+                                      ("a","Addition")], string="Section", help="Section Flag"),
+        "tmpl_pos_rate" : fields.float("POS Rate %", readonly=True)
     }
     _defaults = {
         "sequence" : 10
@@ -96,31 +101,70 @@ class product_template(osv.Model):
 class product_product(osv.Model):
     _inherit = "product.product"
     _columns = {
-        "pos_rate" : fields.float("POS Sale Rate %", select=True)
+        "pos_rate" : fields.float("POS Rate %", readonly=True)
     }
     
-    def _update_pos_rate(self, cr, uid, context=None):
-        cr.execute("SELECT pt.id, COUNT(l) FROM product_product p  "
+    def _update_pos_rate(self, cr, uid, start_date=None, history_months=1, nofilter=False, context=None):
+        
+        ranges = []
+        if not nofilter:
+            
+            if not start_date:
+                cr.execute("SELECT MAX(date_order) FROM pos_order")
+                res = cr.fetchone()
+                start_date = res and res[0] and util.strToDate(res[0]) or datetime.now()
+                start_date = start_date - relativedelta(months=history_months)
+                start_date = util.dateToStr(start_date)
+            
+            ranges.append("o.date_order >= '%s'" % start_date)
+            
+            if history_months:
+                history_start_dt = util.strToDate(start_date) - relativedelta(years=1)
+                history_delta = relativedelta(weeks=(history_months*2))
+                history_start = util.dateToStr(history_start_dt - history_delta)
+                history_end =  util.dateToStr(history_start_dt + history_delta)
+                ranges.append("(o.date_order >= '%s' AND o.date_order <= '%s')" % (history_start, history_end))
+            
+        rangeStr = ranges and "AND (%s)" % " OR ".join(ranges) or ""
+        query = ("SELECT p.id, COUNT(l) FROM product_product p  "
                    " INNER JOIN product_template pt ON pt.id = p.product_tmpl_id " 
                    " LEFT JOIN pos_order_line l ON l.product_id = p.id "  
-                   " WHERE pt.available_in_pos " 
-                   " GROUP BY 1 ")
+                   " LEFT JOIN pos_order o ON o.id = l.order_id "
+                   " WHERE pt.available_in_pos %s " 
+                   " GROUP BY 1 " % rangeStr)
+        cr.execute(query)
         
         res = cr.fetchall()
         total = 0.0        
         
-        for product_id, qty in res:
-            if qty:
-                total += qty
+        for product_id, usage in res:
+            if usage:
+                total += usage
                 
         if total:
-            for product_id, qty in res:
-                if qty:
-                    rate = qty / total
+            for product_id, usage in res:
+                if usage:
+                    rate = (usage / total)*100.0
                     self.write(cr, uid, [product_id], {"pos_rate" : rate}, context=context)
                 else:
                     self.write(cr, uid, [product_id], {"pos_rate" : 0.0}, context=context)
+
+        # reset non used
+        cr.execute("UPDATE product_product SET pos_rate = 0 WHERE product_tmpl_id IN "
+                   " (SELECT pt.id FROM product_template pt WHERE NOT pt.available_in_pos) ")
         
+        # update templates
+        cr.execute("UPDATE product_template SET tmpl_pos_rate = 0")
+        cr.execute("UPDATE product_template "
+                   " SET tmpl_pos_rate = t.pos_rate " 
+                   " FROM ( "                   
+                   "  SELECT product_tmpl_id, SUM(p.pos_rate) AS pos_rate "
+                   "  FROM product_product p " 
+                   "  GROUP BY 1 "
+                   " ) t "
+                   " WHERE t.product_tmpl_id = id AND t.pos_rate IS NOT NULL")
+         
+
     def _fpos_product_get(self, cr, uid, obj, *args, **kwarg):
         mapping_obj = self.pool["res.mapping"]
         

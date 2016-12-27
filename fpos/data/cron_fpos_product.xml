@@ -1,0 +1,17 @@
+<openerp>
+  <data noupdate="1">
+    
+    <record id="cron_fpos_product" model="ir.cron">
+        <field name="name">Fpos Product Optimization</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">product.product</field>
+        <field name="function">_update_pos_rate</field>
+        <field name="args">()</field>
+        <field name="active" eval="True"/>
+    </record>
+    
+  </data>
+</openerp>
