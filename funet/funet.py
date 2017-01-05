@@ -22,7 +22,6 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 import re
 
-
 class funet_node(models.Model):
     _name = "funet.node"
     _description = "Node"
@@ -33,6 +32,8 @@ class funet_node(models.Model):
     provider_id = fields.Many2one("funet.provider", "Provider", required=True)
     device_ids = fields.One2many("funet.dev","node_id", "Devices")
     device_info = fields.One2many("funet.dev","node_id", "Device Infos")
+    network_id = fields.Many2one("funet.network","Network")
+    tag_ids = fields.Many2many("funet.node.tag", "funet_node_tag_rel", "node_id", "tag_id", "Tags")
 
 
     @api.one
@@ -40,6 +41,13 @@ class funet_node(models.Model):
     def _check_name(self):
         if not re.match("^[a-z-_]*$", self.name):
             raise ValidationError(_("Field name must not contain special chars or whitespaces"))
+        
+class funet_node_tag(models.Model):
+    _name = "funet.node.tag"
+    _description = "Node Tag"
+    
+    name = fields.Char("Name")
+    sequence = fields.Integer("Sequence", default=10)
 
 
 class funet_dev(models.Model):
@@ -60,8 +68,10 @@ class funet_dev(models.Model):
     coord_horiz = fields.Float("Grade Horizontal", help= "0 is no fall", readonly=True, states={'draft': [('readonly', False)]})
     info = fields.Text("Info", compute="_build_info", readonly=True)
     last_config = fields.Datetime("Last Configuration", readonly=True)
-    network_ids = fields.One2many("funet.dev.network","device_id", "Networks")
+    network_ids = fields.One2many("funet.dev.network", "device_id", "Networks")
     password_id = fields.Many2one("password.entry","Password", readonly=True, states={"draft" : [("readonly",False)]}, required=True, ondelete="restrict")
+    port_ids = fields.One2many("funet.port", "device_id", "Port", readonly=True, states={"draft" : [("readonly",False)]}, required=True, ondelete="restrict")
+    
 
     state = fields.Selection([
         ('draft','Draft'),
@@ -160,6 +170,7 @@ class funet_network(models.Model):
     _description = "Network"
 
     name = fields.Char("Name",required=True)
+    parent_id = fields.Many2one("funet.network","Network")
 
     @api.one
     @api.constrains('name')
@@ -195,3 +206,27 @@ class funet_vpn(models.Model):
 
     name = fields.Char("Name")
     network_id = fields.Many2one("funet.network", "Network", required=True)
+    
+class funet_port(models.Model):
+    _name = "funet.port"
+    _description = "Port"
+    
+    name = fields.Char("Name")
+    type_id = fields.Many2one("funet.port.type", "Port Type", required=True)
+    device_id = fields.Many2one("funet.dev", "Device", required=True)
+    code = fields.Char("Code", required=True)
+    sequence = fields.Integer("Sequence", default=10)
+    port = fields.Integer("Port", default=10)
+
+    @api.one
+    @api.constrains('code')
+    def _check_code(self):
+        if not re.match("^[a-z-_]*$", self.code):
+            raise ValidationError(_("Field code must not contain special chars or whitespaces"))
+    
+class funet_port_type(models.Model):
+    _name = "funet.port.type"
+    _description = "Port Type"
+    
+    name = fields.Char("Name")
+    

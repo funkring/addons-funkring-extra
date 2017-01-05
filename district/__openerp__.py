@@ -19,33 +19,22 @@
 ##############################################################################
 
 {
-    "name" : "FUNET Network Management",
-    "summary" : "Framework for managing huge networks",
+    "name" : "District Management",
+    "summary" : "Add a district field",
     "description":"""
-FUNET Network Management
+District Management
 ========================
-* Database for network, nodes and devices
-* Device Konfiguration
-* Device/Node Monitoring
-
+* Database for districts
+* district Konfiguration
 """,
     "version" : "1.0",
     "author" :  "oerp.at",
     "website" : "http://oerp.at",
     "category" : "Network",
-    "depends" : ["at_base","mail","password_management"],
-    "data" : ["menu.xml",
-              "security.xml",
-              "view/node_view.xml",
-              "view/dev_view.xml",
-              "view/dev_type_view.xml",
-              "view/dev_fw_view.xml",
-              "view/dev_driver_view.xml",
-              "view/provider_view.xml",
-              "view/vpn_view.xml",
-              "view/network_view.xml",
-              "view/port_type_view.xml",
-              "wizard/connect_wizard.xml"],
+    "depends" : ["at_base"],
+    "data" : ["security.xml",
+              "view/district_view.xml",
+              "view/res_partner_view.xml"],
     "auto_install" : False,
     "installable": True
 }

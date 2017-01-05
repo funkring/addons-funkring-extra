@@ -1,11 +1,10 @@
 <openerp>
   <data>
 
-      <menuitem id="menu_network"
-            name="Network" sequence="49" groups="group_funet_user"/>
+      <menuitem id="menu_network" name="Network" sequence="60" groups="group_funet_user"/>
 
       <menuitem id="menu_management" parent="menu_network" name="Management" sequence="10"/>
-      <menuitem id="menu_config" parent="menu_network" name="Configuration" sequence="100"/>
+      <menuitem id="menu_config" parent="menu_network" name="Configuration" sequence="100" groups="base.group_no_one"/>
 
   </data>
 </openerp>

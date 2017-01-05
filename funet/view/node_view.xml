@@ -10,6 +10,8 @@
             <group>
                 <group>
                     <field name="name"/>
+                    <field name="network_id"/>
+                    <field name="tag_ids"/>
                 </group>
                 <group>
                     <field name="partner_id"/>

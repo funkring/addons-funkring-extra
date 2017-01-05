@@ -2,7 +2,7 @@
 <openerp>
   <data>
     <record id="form_funet_dev_type" model="ir.ui.view">
-      <field name="name">modul.form_funet_dev_type</field>
+      <field name="name">funet.form_funet_dev_type</field>
       <field name="model">funet.dev.type</field>
       <field name="arch" type="xml">
         <form string="Device Type">
@@ -23,7 +23,7 @@
     </record>
 
     <record id="tree_funet_dev_type" model="ir.ui.view">
-      <field name="name">modul.tree_funet_dev_type</field>
+      <field name="name">funet.tree_funet_dev_type</field>
       <field name="model">funet.dev.type</field>
       <field name="arch" type="xml">
         <tree string="more">
@@ -37,7 +37,7 @@
     </record>
 
     <record id="search_funet_dev_type" model="ir.ui.view">
-      <field name="name">modul.search_funet_dev_type</field>
+      <field name="name">funet.search_funet_dev_type</field>
       <field name="model">funet.dev.type</field>
       <field name="arch" type="xml">
         <search string="Device Type">
@@ -62,7 +62,7 @@
     </record>
 
     <menuitem id="menu_funet_dev_type" name="Device Type" parent="menu_config"
-      sequence="20"
+      sequence="10"
       action="action_funet_dev_type"/>
   </data>
 </openerp>

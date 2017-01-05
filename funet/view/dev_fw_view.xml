@@ -61,7 +61,7 @@
     </record>
 
     <menuitem id="menu_funet_dev_fw" name="Device Firmware" parent="menu_config"
-      sequence="20"
+      sequence="30"
       action="action_funet_dev_fw"/>
   </data>
 </openerp>

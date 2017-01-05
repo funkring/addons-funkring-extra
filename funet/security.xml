@@ -292,6 +292,96 @@
           <field name="perm_create" eval="True"/>
           <field name="perm_write" eval="True"/>
         </record>
+        
+        <record id="access_funet_port_funet_user" model="ir.model.access">
+          <field name="name">funet_port/funet_user</field>
+          <field name="model_id" ref="model_funet_port"/>
+          <field name="group_id" ref="group_funet_user"/>
+          <field name="perm_read" eval="True"/>
+          <field name="perm_unlink" eval="False"/>
+          <field name="perm_create" eval="False"/>
+          <field name="perm_write" eval="False"/>
+        </record>
+
+        <record id="access_funet_port_funet_provider" model="ir.model.access">
+          <field name="name">funet_port/funet_provider</field>
+          <field name="model_id" ref="model_funet_port"/>
+          <field name="group_id" ref="group_funet_provider"/>
+          <field name="perm_read" eval="True"/>
+          <field name="perm_unlink" eval="False"/>
+          <field name="perm_create" eval="False"/>
+          <field name="perm_write" eval="False"/>
+        </record>
+
+        <record id="access_funet_port_funet_manager" model="ir.model.access">
+          <field name="name">funet_port/funet_manager</field>
+          <field name="model_id" ref="model_funet_port"/>
+          <field name="group_id" ref="group_funet_manager"/>
+          <field name="perm_read" eval="True"/>
+          <field name="perm_unlink" eval="True"/>
+          <field name="perm_create" eval="True"/>
+          <field name="perm_write" eval="True"/>
+        </record>
+        
+        <record id="access_funet_port_type_funet_user" model="ir.model.access">
+          <field name="name">funet_port_type/funet_user</field>
+          <field name="model_id" ref="model_funet_port_type"/>
+          <field name="group_id" ref="group_funet_user"/>
+          <field name="perm_read" eval="True"/>
+          <field name="perm_unlink" eval="False"/>
+          <field name="perm_create" eval="False"/>
+          <field name="perm_write" eval="False"/>
+        </record>
+
+        <record id="access_funet_port_type_funet_provider" model="ir.model.access">
+          <field name="name">funet_port_type/funet_provider</field>
+          <field name="model_id" ref="model_funet_port_type"/>
+          <field name="group_id" ref="group_funet_provider"/>
+          <field name="perm_read" eval="True"/>
+          <field name="perm_unlink" eval="False"/>
+          <field name="perm_create" eval="False"/>
+          <field name="perm_write" eval="False"/>
+        </record>
+
+        <record id="access_funet_port_type_funet_manager" model="ir.model.access">
+          <field name="name">funet_port_type/funet_manager</field>
+          <field name="model_id" ref="model_funet_port_type"/>
+          <field name="group_id" ref="group_funet_manager"/>
+          <field name="perm_read" eval="True"/>
+          <field name="perm_unlink" eval="True"/>
+          <field name="perm_create" eval="True"/>
+          <field name="perm_write" eval="True"/>
+        </record>
+        
+        <record id="access_funet_node_tag_funet_user" model="ir.model.access">
+          <field name="name">funet_node_tag/funet_user</field>
+          <field name="model_id" ref="model_funet_node_tag"/>
+          <field name="group_id" ref="group_funet_user"/>
+          <field name="perm_read" eval="True"/>
+          <field name="perm_unlink" eval="False"/>
+          <field name="perm_create" eval="False"/>
+          <field name="perm_write" eval="False"/>
+        </record>
+
+        <record id="access_funet_node_tag_funet_provider" model="ir.model.access">
+          <field name="name">funet_node_tag/funet_provider</field>
+          <field name="model_id" ref="model_funet_node_tag"/>
+          <field name="group_id" ref="group_funet_provider"/>
+          <field name="perm_read" eval="True"/>
+          <field name="perm_unlink" eval="False"/>
+          <field name="perm_create" eval="False"/>
+          <field name="perm_write" eval="False"/>
+        </record>
+
+        <record id="access_funet_node_tag_funet_manager" model="ir.model.access">
+          <field name="name">funet_node_tag/funet_manager</field>
+          <field name="model_id" ref="model_funet_node_tag"/>
+          <field name="group_id" ref="group_funet_manager"/>
+          <field name="perm_read" eval="True"/>
+          <field name="perm_unlink" eval="True"/>
+          <field name="perm_create" eval="True"/>
+          <field name="perm_write" eval="True"/>
+        </record>
 
   </data>
 </openerp>

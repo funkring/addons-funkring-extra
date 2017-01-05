@@ -52,7 +52,7 @@
     </record>
 
     <menuitem id="menu_funet_vpn" name="VPN" parent="menu_config"
-      sequence="40"
+      sequence="50"
       action="action_funet_vpn"/>
   </data>
 </openerp>

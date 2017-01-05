@@ -21,15 +21,21 @@
                 <group>
                     <field name="code"/>
                     <field name="name"/>
-                    <field name="last_config"/>
                 </group>
             </group>
             <notebook>
-                <page name="password_entry" string="Password Entry">
+                <page name="general" string="General">
                     <group>
-                        <field name="login"/>
-                        <field name="password"/>
-                        <field name="group_id"/>
+                        <group string="Position">
+                            <field name="coord_lat"/>
+                            <field name="coord_long"/>
+                        </group>
+                        <group string="Direction">
+                            <field name="coord_dir"/>
+                            <field name="coord_vert"/>
+                            <field name="coord_horiz"/>
+                        </group>
+                        <field name="last_config"/>
                     </group>
                 </page>
                 <page name="network" string="Network">
@@ -43,17 +49,25 @@
                        </field>
                     </div>
                 </page>
-                <page name="coord" string="Coordinates">
+                <page name="port" string="Ports">
+                    <div>
+                       <field name="port_ids">
+                            <tree editable="buttom">
+                                <field name="name"/>
+                                <field name="type_id"/>
+                                <field name="device_id"/>
+                                <field name="code"/>
+                                <field name="sequence"/>
+                                <field name="port"/>
+                            </tree>
+                       </field>
+                    </div>
+                </page>
+                <page name="password_entry" string="Password Entry">
                     <group>
-                        <group string="Position">
-                            <field name="coord_lat"/>
-                            <field name="coord_long"/>
-                        </group>
-                        <group string="Direction">
-                            <field name="coord_dir"/>
-                            <field name="coord_vert"/>
-                            <field name="coord_horiz"/>
-                        </group>
+                        <field name="login"/>
+                        <field name="password"/>
+                        <field name="group_id"/>
                     </group>
                 </page>
             </notebook>
