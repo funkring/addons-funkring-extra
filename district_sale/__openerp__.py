@@ -19,22 +19,20 @@
 ##############################################################################
 
 {
-    "name" : "oerp.at District Management",
-    "summary" : "District Management",
+    "name" : "oerp.at District Management for Sale",
+    "summary" : "District Management for Sale",
     "description":"""
 District Management
 ===================
-* partner extension for assigning districts
-* district management
+* adds computed district field to account and sale
 """,
     "version" : "1.0",
     "author" :  "oerp.at",
     "website" : "http://oerp.at",
-    "category" : "Base",
-    "depends" : ["at_base"],
-    "data" : ["security.xml",
-              "view/district_view.xml",
-              "view/partner_view.xml"],
+    "category" : "Sales",
+    "depends" : ["district","at_account","at_sale","account","sale"],
+    "data" : ["view/invoice_view.xml",
+              "view/sale_view.xml"],
     "auto_install" : False,
     "installable": True
 }

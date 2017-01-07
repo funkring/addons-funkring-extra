@@ -20,28 +20,13 @@
 
 from openerp import models, fields, api, _
 
-class district_district(models.Model):
-    _name = "district.district"
-    _description = "District"
+class account_invoice(models.Model):
+    _inherit = "account.invoice"
     
-    name = fields.Char("Name")
-    state_id = fields.Many2one("res.country.state", "State", index=True)
-    country_id = fields.Many2one("res.country", "Country", index=True)
-
-    @api.multi
-    def name_get(self):
-        res = []
-        for district in self:
-            name = []
-            country = district.country_id
-            country_name = country and (country.code or country.name or "")
-            if country_name:
-                name.append(country_name)
-            state = district.state_id
-            state_name = state and (state.code or state.name or "")
-            if state_name:
-                name.append(state_name)
-            name.append(district.name)
-            res.append((district.id," / ".join(name)))
-                    
-        return res  
+    district_id = fields.Many2one("district.district","District",compute="_compute_district", store=True, index=True)
+    
+    @api.one
+    @api.depends("partner_id.district_id")
+    def _compute_district(self):
+        partner = self.partner_id        
+        self.district_id = partner and partner.district_id or None

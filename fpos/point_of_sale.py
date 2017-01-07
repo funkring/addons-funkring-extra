@@ -76,6 +76,8 @@ class pos_config(osv.Model):
     _inherit = "pos.config"
     _columns = {
         "fpos_prefix" : fields.char("Fpos Prefix"),
+        "fpos_sync_clean" : fields.integer("Clean Synchronization Count", help="Resync all Data after the specified count. if count is 0 auto full sync is disabled"),
+        "fpos_sync_count" : fields.integer("Synchronization Count", help="Synchronization count after full database sync", readonly=True),
         "iface_nogroup" : fields.boolean("No Grouping", help="If a product is selected twice a new pos line was created"),
         "iface_fold" : fields.boolean("Fold",help="Don't show foldable categories"),
         "iface_place" : fields.boolean("Place Management"),
@@ -134,7 +136,7 @@ class pos_config(osv.Model):
         config_ids = self.search(cr, uid, [("liveop","=",True),("user_id","!=",False)])
         return self.action_post(cr, uid, config_ids, context=context)
 
-    def get_profile(self, cr, uid, context=None):
+    def get_profile(self, cr, uid, action=None, context=None):
         """
         @return: Fpos Profile
         """
@@ -191,6 +193,13 @@ class pos_config(osv.Model):
             for bank in banks:
                 accounts.append(bank.acc_number)
             res["bank_accounts"] = accounts
+
+        # check sync action
+        if action:
+            if action == "inc":
+                cr.execute("UPDATE pos_config SET fpos_sync_count=sync_count+1 WHERE id=%s", (profile_id,))
+            elif action == "reset":
+                cr.execute("UPDATE pos_config SET fpos_sync_count=0 WHERE id=%s", (profile_id,))            
 
         # finished
         return res
