@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
  <data>
-    
     <record id="form_partner" model="ir.ui.view">
       <field name="name">district.form_partner</field>
       <field name="model">res.partner</field>
