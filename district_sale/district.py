@@ -20,20 +20,7 @@
 
 from openerp import models, fields, api, _
 
-class res_partner(models.Model):
-    _inherit = "res.partner"
+class district_district(models.Model):
+    _inherit = "district.district"
     
-    district_id = fields.Many2one("district.district", "District", index=True)
-    
-    @api.multi
-    def onchange_district(self, district_id):
-        if district_id:
-            district = self.env["district.district"].browse(district_id)
-            value =  {}
-            res = {"value" : value}
-            if district.country_id:
-                value["country_id"] = district.country_id
-            if district.state_id:
-                value["state_id"] = district.state_id
-            return res
-        return {}
+    section_id = fields.Many2one("crm.case.section","Sales Team")

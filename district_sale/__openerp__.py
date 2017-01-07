@@ -31,7 +31,8 @@ District Management
     "website" : "http://oerp.at",
     "category" : "Sales",
     "depends" : ["district","at_account","at_sale","account","sale"],
-    "data" : ["view/invoice_view.xml",
+    "data" : ["view/district_view.xml",
+              "view/invoice_view.xml",
               "view/sale_view.xml"],
     "auto_install" : False,
     "installable": True

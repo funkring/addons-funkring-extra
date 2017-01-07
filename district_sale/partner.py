@@ -27,13 +27,9 @@ class res_partner(models.Model):
     
     @api.multi
     def onchange_district(self, district_id):
+        res = super(res_partner, self).onchange_district(district_id)
         if district_id:
             district = self.env["district.district"].browse(district_id)
-            value =  {}
-            res = {"value" : value}
-            if district.country_id:
-                value["country_id"] = district.country_id
-            if district.state_id:
-                value["state_id"] = district.state_id
-            return res
-        return {}
+            if district.section_id:
+                res["value"]["section_id"] = district.section_id
+        return res
