@@ -44,6 +44,7 @@
                     <field name="fpos_dist_ids" widget="many2many_tags"/>
                     <field name="fpos_sync_clean"/>
                     <field name="fpos_sync_count"/>
+                    <field name="fpos_sync_version"/>
                 </group>
             </group>
             <field name="iface_cashdrawer" position="after">

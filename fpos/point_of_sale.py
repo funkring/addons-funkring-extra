@@ -76,8 +76,9 @@ class pos_config(osv.Model):
     _inherit = "pos.config"
     _columns = {
         "fpos_prefix" : fields.char("Fpos Prefix"),
-        "fpos_sync_clean" : fields.integer("Clean Synchronization Count", help="Resync all Data after the specified count. if count is 0 auto full sync is disabled"),
-        "fpos_sync_count" : fields.integer("Synchronization Count", help="Synchronization count after full database sync", readonly=True),
+        "fpos_sync_clean" : fields.integer("Clean Sync Count", help="Resync all Data after the specified count. if count is 0 auto full sync is disabled"),
+        "fpos_sync_count" : fields.integer("Sync Count", help="Synchronization count after full database sync", readonly=True),
+        "fpos_sync_version" : fields.integer("Sync Version", readonly=True),
         "iface_nogroup" : fields.boolean("No Grouping", help="If a product is selected twice a new pos line was created"),
         "iface_fold" : fields.boolean("Fold",help="Don't show foldable categories"),
         "iface_place" : fields.boolean("Place Management"),
@@ -96,19 +97,23 @@ class pos_config(osv.Model):
         "iface_test" : fields.boolean("Test"),
         "iface_waiterkey" : fields.boolean("Waiter Key"),
         "liveop" : fields.boolean("Live Operation", readonly=True, select=True, copy=False),
-        "fpos_dist" : fields.char("Distributor", copy=True),
+        "fpos_dist" : fields.char("Distributor", copy=True, index=True),
         "user_id" : fields.many2one("res.users","Sync User", select=True, copy=False),
         "user_ids" : fields.many2many("res.users",
                                       "pos_config_user_rel",
                                       "config_id", "user_id",
                                       "Users",
                                       help="Allowed users for the Point of Sale"),
-        "parent_user_id" : fields.many2one("res.users","Parent Sync User", help="Transfer all open orders to this user before pos is closing", copy=True),           
+        "parent_user_id" : fields.many2one("res.users","Parent Sync User", help="Transfer all open orders to this user before pos is closing", copy=True, index=True),           
         "payment_iface_ids" : fields.one2many("fpos.payment.iface","config_id","Payment Interfaces", copy=True, composition=True)
     }
     _sql_constraints = [
         ("user_uniq", "unique (user_id)","Fpos User could only assinged once")
     ]
+    _defaults = {
+        "fpos_sync_clean" : 15,
+        "fpos_sync_version" : 1
+    }
 
     def action_liveop(self, cr, uid, ids, context=None):
         user_obj = self.pool["res.users"]
@@ -140,9 +145,18 @@ class pos_config(osv.Model):
         """
         @return: Fpos Profile
         """
-        profile_id = self.search_id(cr, uid, [("user_id","=", uid)], context=context)
-        if not profile_id:
+        profile_data = self.search_read(cr, uid, [("user_id","=", uid)], ["parent_user_id"], context=context)
+        if not profile_data:
             return False
+        
+        profile_data = profile_data[0]
+        profile_id = profile_data["id"]
+        
+        # get parent profile id
+        parent_profile_id = profile_data["parent_user_id"]
+        if parent_profile_id:
+            parent_profile_id = self.search_id(cr, uid, [("user_id","=",parent_profile_id[0])], context=context)
+            
 
         jdoc_obj = self.pool["jdoc.jdoc"]
         jdoc_options = {
@@ -155,6 +169,21 @@ class pos_config(osv.Model):
                 }
             }
         }
+        
+        # check sync action
+        if action:
+            if action == "inc":
+                cr.execute("UPDATE pos_config SET fpos_sync_count=fpos_sync_count+1 WHERE id=%s", (profile_id,))
+            elif action == "reset":
+                cr.execute("UPDATE pos_config SET fpos_sync_count=0 WHERE id=%s", (profile_id,))
+                # update parents sync version
+                if not parent_profile_id:
+                    cr.execute("UPDATE pos_config SET fpos_sync_version=fpos_sync_version+1 WHERE id=%s", (profile_id,))
+        
+        # update childs sync version
+        if parent_profile_id:
+            cr.execute("UPDATE pos_config SET fpos_sync_version=(SELECT MIN(p.fpos_sync_version) FROM pos_config p WHERE p.id=%s) WHERE id=%s", (parent_profile_id,profile_id))
+                
 
         # query config
         res = jdoc_obj.jdoc_by_id(cr, uid, "pos.config", profile_id, options=jdoc_options, context=context)
@@ -165,6 +194,8 @@ class pos_config(osv.Model):
                                     [("fpos_user_id","=",uid),("state","!=","draft")],
                                     ["seq", "turnover", "cpos", "date"],
                                     order="seq desc", limit=1, context={"active_test" : False})
+        
+        # 
 
         if last_order_values:
             last_order_values = last_order_values[0]
@@ -193,13 +224,7 @@ class pos_config(osv.Model):
             for bank in banks:
                 accounts.append(bank.acc_number)
             res["bank_accounts"] = accounts
-
-        # check sync action
-        if action:
-            if action == "inc":
-                cr.execute("UPDATE pos_config SET fpos_sync_count=sync_count+1 WHERE id=%s", (profile_id,))
-            elif action == "reset":
-                cr.execute("UPDATE pos_config SET fpos_sync_count=0 WHERE id=%s", (profile_id,))            
+        
 
         # finished
         return res

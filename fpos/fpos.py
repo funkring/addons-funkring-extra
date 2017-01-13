@@ -34,6 +34,7 @@ class fpos_order(models.Model):
     _order = "date desc"
     
     name = fields.Char("Name")
+    sv = fields.Integer("Sync Version")
     tag = fields.Selection([("s","Status"),("t","Temp")], string="Tag", readonly=True, states={'draft': [('readonly', False)]}, index=True)    
     fpos_user_id = fields.Many2one("res.users", "Device", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
     user_id = fields.Many2one("res.users", "User", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
@@ -204,7 +205,7 @@ class fpos_order(models.Model):
             # get profile
             profile = profileDict.get(order.fpos_user_id.id)
             if profile is None:
-                profile = profile_obj.search( [("user_id","=", order.fpos_user_id.id)])
+                profile = profile_obj.search([("user_id","=", order.fpos_user_id.id)])
                 if not profile or not profile[0].liveop:
                     profile = False
                 else:
@@ -479,6 +480,9 @@ class fpos_order(models.Model):
                 start_at = helper.strToLocalDateStr(self._cr, self._uid, session.start_at, context=self._context)
                 self.env["fpos.report.email"]._send_report(start_at, session=session)
                 
+                # delete unused draft
+                draft_orders = self.search([("date","<",session.start_at),("state","=","draft"),("fpos_user_id","=",order.fpos_user_id.id)])
+                draft_orders.unlink()                
                  
         return True
     

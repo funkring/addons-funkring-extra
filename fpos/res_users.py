@@ -27,7 +27,8 @@ class res_users(osv.Model):
         "pos_role" : fields.selection([("user","User"),
                                        ("manager","Manager"),
                                        ("admin","Administrator")], "POS Role"),
-        "code" : fields.char("Code")
+        "code" : fields.char("Code"),
+        "child_config_ids" : fields.one2many("pos.config", "parent_user_id", "POS Childs")
     }
     _sql_constraints = [
         ("pin_uniq", "unique (pin)","PIN have to be unique for User")

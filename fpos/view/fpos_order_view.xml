@@ -16,10 +16,11 @@
                         <field name="name"/>
                         <field name="date"/>                        
                         <field name="seq"/>
-                        <field name="fpos_user_id"/>
+                        <field name="fpos_user_id"/>                        
                         <field name="user_id"/>
+                        <field name="sv"/>
                     </group>
-                    <group>
+                    <group>                        
                         <field name="company_id"/>
                         <field name="currency_id"/>
                         <field name="ref"/>
@@ -27,7 +28,7 @@
                         <field name="turnover"/>
                         <field name="cpos"/>
                         <field name="tag"/>
-                        <field name="cent_fix"/>
+                        <field name="cent_fix"/>                        
                     </group> 
                 </group>
                 <notebook>
