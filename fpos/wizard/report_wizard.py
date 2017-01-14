@@ -42,6 +42,7 @@ class report_wizard(models.TransientModel):
     summary = fields.Boolean("Summary", help="Summary")
     separate = fields.Boolean("Separate", help="Cashreport for every single day")
     product = fields.Boolean("Products", help="Print product overview")
+    irregular = fields.Boolean("Irregularities", help="Print irregularities")
        
     date_from = fields.Date("From")
     date_till = fields.Date("Till")

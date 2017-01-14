@@ -35,7 +35,8 @@ class pos_category(osv.osv):
         "pos_unavail" : fields.boolean("Unavailable"),
         "after_product" : fields.selection([("parent","to parent"),
                                             ("main","to main"),
-                                            ("root","to root")],
+                                            ("root","to root"),
+                                            ("back","to recent category")],
                                          string="After product",
                                          help="Action after product selection"),
         "foldable" : fields.boolean("Foldable"),
@@ -182,7 +183,7 @@ class pos_config(osv.Model):
         
         # update childs sync version
         if parent_profile_id:
-            cr.execute("UPDATE pos_config SET fpos_sync_version=(SELECT MIN(p.fpos_sync_version) FROM pos_config p WHERE p.id=%s) WHERE id=%s", (parent_profile_id,profile_id))
+            cr.execute("UPDATE pos_config SET fpos_sync_version=(SELECT MIN(p.fpos_sync_version) FROM pos_config p WHERE p.id=%s) WHERE id=%s", (parent_profile_id, profile_id))
                 
 
         # query config

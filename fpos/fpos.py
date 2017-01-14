@@ -583,8 +583,10 @@ class fpos_printer(models.Model):
     
     name = fields.Char("Name", required=True)    
     description = fields.Char("Description")
-    complete_name =fields.Char("Name", compute="_complete_name", store=True, index=True)
+    complete_name = fields.Char("Name", compute="_complete_name", store=True, index=True)
     local = fields.Boolean("Local", help="Print on local printer")
+    font_size = fields.Selection([("small","Small"),
+                                  ("standard","Standard")], "Font Size", default="standard")
     pos_category_ids = fields.Many2many("pos.category", "fpos_printer_pos_category_rel", "printer_id", "category_id", string="Categories", 
                                     help="If no category is given all products are printed, otherwise only the products in the categories")
     
@@ -645,6 +647,7 @@ class fpos_report_email(models.Model):
     detail = fields.Boolean("Detail")
     separate = fields.Boolean("Separate")
     product = fields.Boolean("Products", help="Print product overview")
+    irregular = fields.Boolean("Irregularities", help="Print irregularities")
     
     daily_overview = fields.Boolean("Daily Overview", help="Adds an daily overview")
     summary = fields.Boolean("Summary", help="Summary")
@@ -688,6 +691,8 @@ class fpos_report_email(models.Model):
             mail_context["summary"] = True
         if self.daily_overview:
             mail_context["daily_overview"] = True
+        if self.irregular:
+            mail_context["irregular"] = True
             
         # build config
         config_ids = []

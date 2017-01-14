@@ -14,6 +14,7 @@
                   <field name="detail"/>
                   <field name="separate"/>
                   <field name="product"/>
+                  <field name="irregular"/>
                   <field name="daily_overview"/>
                   <field name="summary"/>
                 </group>
