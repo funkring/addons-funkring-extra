@@ -328,21 +328,21 @@ class account_invoice(osv.osv):
                  "xmlns:cac" : "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
                  "xmlns:cbc" : "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" })
             
-    def action_date_assign(self, cr, uid, ids, context=None):
-        ubl_invoice_ids = []
-        for invoice in self.browse(cr, uid, ids, context=context):
-            ubl_profile = self._ubl_profile(cr, uid, invoice, context)
-            if ubl_profile and not invoice.ubl_status:
-                ubl_invoice_ids.append(invoice.id)
-        if ubl_invoice_ids:
-            self.write(cr, uid, ubl_invoice_ids, {"ubl_status": "prepare"}, context=context)
-        return super(account_invoice, self).action_date_assign(cr, uid, ids, context=context)
+#     def action_date_assign(self, cr, uid, ids, context=None):
+#         ubl_invoice_ids = []
+#         for invoice in self.browse(cr, uid, ids, context=context):
+#             ubl_profile = self._ubl_profile(cr, uid, invoice, context)
+#             if ubl_profile and not invoice.ubl_status:
+#                 ubl_invoice_ids.append(invoice.id)
+#         if ubl_invoice_ids:
+#             self.write(cr, uid, ubl_invoice_ids, {"ubl_status": "prepare"}, context=context)
+#         return super(account_invoice, self).action_date_assign(cr, uid, ids, context=context)
 
     _name = "account.invoice"
     _inherit = "account.invoice"
     _columns = {
-        "ubl_ref" : fields.char("UBL Reference", readonly=True, select=True),
+        "ubl_ref" : fields.char("UBL Reference", readonly=True, select=True, copy=False),
         "ubl_status" : fields.selection([("prepare","Preparation"),
                                          ("sent","Sent"),
-                                         ("except","Exception")], string="UBL Status", select=True)
+                                         ("except","Exception")], string="UBL Status", select=True, readonly=True, copy=False)
     }

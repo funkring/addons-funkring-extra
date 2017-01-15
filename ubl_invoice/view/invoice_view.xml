@@ -9,7 +9,7 @@
       <field name="arch" type="xml">
         <data>
             <field name="state" position="before">
-                <button name="%(action_ubl_transfer)d" type="action" string="UBL Transfer" attrs="{'invisible': ['|',('ubl_status','=',False),('state','=','draft')]}" groups="account.group_account_invoice"/>
+                <button name="%(action_ubl_transfer)d" type="action" string="UBL Transfer" states="open,paid" groups="account.group_account_invoice"/>
             </field>
             <field name="origin" position="before">
                 <field name="ubl_ref"/>
