@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-14 16:44+0000\n"
-"PO-Revision-Date: 2017-01-14 17:49+0100\n"
+"POT-Creation-Date: 2017-01-15 21:18+0000\n"
+"PO-Revision-Date: 2017-01-15 22:19+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,6 +16,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
 "X-Generator: Poedit 1.5.4\n"
+
+#. module: ubl_invoice
+#: field:ubl.transfer.wizard,ubl_action:0
+msgid "Action"
+msgstr "Aktion"
+
+#. module: ubl_invoice
+#: field:ubl.transfer.wizard,att_ids:0
+msgid "Attachments"
+msgstr "Anhänge"
 
 #. module: ubl_invoice
 #: view:ubl.transfer.wizard:ubl_invoice.wizard_ubl_transfer
@@ -44,12 +54,22 @@ msgstr ""
 
 #. module: ubl_invoice
 #: code:addons/ubl_invoice/invoice.py:78
-#: code:addons/ubl_invoice/invoice.py:125
-#: code:addons/ubl_invoice/invoice.py:200
-#: code:addons/ubl_invoice/wizard/ubl_transfer_wizard.py:98
+#: code:addons/ubl_invoice/invoice.py:122
+#: code:addons/ubl_invoice/invoice.py:188
+#: code:addons/ubl_invoice/wizard/ubl_transfer_wizard.py:106
 #, python-format
 msgid "Error"
 msgstr "Fehler"
+
+#. module: ubl_invoice
+#: selection:ubl.transfer.wizard,ubl_action:0
+msgid "Except"
+msgstr "Unterbrechen"
+
+#. module: ubl_invoice
+#: selection:account.invoice,ubl_status:0
+msgid "Exception"
+msgstr "Unterbrechnung"
 
 #. module: ubl_invoice
 #: field:ubl.transfer.wizard,id:0
@@ -89,13 +109,13 @@ msgid "No Order Reference!"
 msgstr "Keine Auftragsreferenz!"
 
 #. module: ubl_invoice
-#: code:addons/ubl_invoice/invoice.py:125
+#: code:addons/ubl_invoice/invoice.py:122
 #, python-format
 msgid "No UBL Profile defined!"
 msgstr "Kein UBL Profil definiert!"
 
 #. module: ubl_invoice
-#: code:addons/ubl_invoice/wizard/ubl_transfer_wizard.py:98
+#: code:addons/ubl_invoice/wizard/ubl_transfer_wizard.py:106
 #, python-format
 msgid "No webservice defined for sending the invoice"
 msgstr "Kein Webservice zum senden der Rechnung"
@@ -106,9 +126,30 @@ msgid "Partner"
 msgstr ""
 
 #. module: ubl_invoice
+#: selection:account.invoice,ubl_status:0
+msgid "Preparation"
+msgstr "Vorbereitung"
+
+#. module: ubl_invoice
+#: selection:ubl.transfer.wizard,ubl_action:0
+msgid "Prepare"
+msgstr "Vorbereiten"
+
+#. module: ubl_invoice
 #: view:ubl.transfer.wizard:ubl_invoice.wizard_ubl_transfer
+#: selection:ubl.transfer.wizard,ubl_action:0
 msgid "Send"
 msgstr "Übermitteln"
+
+#. module: ubl_invoice
+#: selection:account.invoice,ubl_status:0
+msgid "Sent"
+msgstr "Senden"
+
+#. module: ubl_invoice
+#: view:account.invoice:ubl_invoice.search_invoice
+msgid "Status"
+msgstr ""
 
 #. module: ubl_invoice
 #: field:ubl.transfer.wizard,test:0
@@ -116,7 +157,7 @@ msgid "Test"
 msgstr ""
 
 #. module: ubl_invoice
-#: code:addons/ubl_invoice/invoice.py:200
+#: code:addons/ubl_invoice/invoice.py:188
 #, python-format
 msgid "There is no bank account for the company partner defined"
 msgstr "Es wurde kein Bankkonto für die Firma defniert"
@@ -125,6 +166,16 @@ msgstr "Es wurde kein Bankkonto für die Firma defniert"
 #: model:ir.model,name:ubl_invoice.model_ubl_transfer_wizard
 msgid "Transfer Wizard"
 msgstr "E-Rechnung Übermittlung Assistent"
+
+#. module: ubl_invoice
+#: view:account.invoice:ubl_invoice.search_invoice
+msgid "UBL Excepted Invoices"
+msgstr "UBL Unterbrochen"
+
+#. module: ubl_invoice
+#: view:account.invoice:ubl_invoice.search_invoice
+msgid "UBL Invoices"
+msgstr "UBL Rechnungen"
 
 #. module: ubl_invoice
 #: field:ubl.transfer.wizard,profile_id:0
@@ -137,21 +188,28 @@ msgid "UBL Reference"
 msgstr "UBL Referenz"
 
 #. module: ubl_invoice
+#: field:account.invoice,ubl_status:0
+msgid "UBL Status"
+msgstr ""
+
+#. module: ubl_invoice
+#: view:account.invoice:ubl_invoice.form_invoice
 #: model:ir.actions.act_window,name:ubl_invoice.action_ubl_transfer
+#: view:ubl.transfer.wizard:ubl_invoice.wizard_ubl_transfer
 msgid "UBL Transfer"
 msgstr ""
 
 #. module: ubl_invoice
+#: view:account.invoice:ubl_invoice.search_invoice
+msgid "UBL Unsent Invoices"
+msgstr "UBL Nicht gesendet"
+
+#. module: ubl_invoice
 #: field:ubl.transfer.wizard,xml_data:0
 msgid "XML Data"
-msgstr ""
+msgstr "XML Daten"
 
 #. module: ubl_invoice
 #: view:ubl.transfer.wizard:ubl_invoice.wizard_ubl_transfer
 msgid "or"
 msgstr "oder"
-
-#. module: ubl_invoice
-#: view:ubl.transfer.wizard:ubl_invoice.wizard_ubl_transfer
-msgid "ubl_transfer"
-msgstr ""

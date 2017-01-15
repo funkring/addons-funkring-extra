@@ -36,17 +36,23 @@ class ubl_transfer_wizard(osv.osv_memory):
         res = super(ubl_transfer_wizard, self).default_get(cr, uid, fields_list, context)
         invoice_obj = self.pool.get("account.invoice")
         partner_rule_obj = self.pool.get("ubl.rule.partner")
-        
+                
         active_ids = util.active_ids(context, "account.invoice")        
         if active_ids:               
             invoice = invoice_obj.browse(cr, uid, active_ids[0], context)
-        if invoice:
+        if invoice:                 
             if "invoice_id" in fields_list:
                 res["invoice_id"]=invoice.id        
+                if "att_ids" in fields_list:
+                    attach_obj = self.pool.get("ir.attachment")
+                    attach_ids = attach_obj.search(cr, uid, [("res_model","=","account.invoice"),("res_id","=",invoice.id)])
+                    res["att_ids"] = attach_ids
+                
             if "profile_id" in fields_list:
                 ubl_profile = invoice_obj._ubl_profile(cr, uid, invoice, context)
                 if ubl_profile:
                     res["profile_id"] = ubl_profile.id
+                    res["ubl_action"] = "sent"
                     
                     no_delivery_address = False
                     partner = invoice.partner_id
@@ -65,10 +71,11 @@ class ubl_transfer_wizard(osv.osv_memory):
                         if invoice.ubl_ref:
                             res["ubl_ref"] = invoice.ubl_ref  
                         elif ubl_profile.ubl_ref:                            
-                            res["ubl_ref"] = safe_eval(ubl_profile.ubl_ref, locals_dict={ "partner" : partner, "invoice" : invoice, "profile" : ubl_profile } ) or None
+                            res["ubl_ref"] = safe_eval(ubl_profile.ubl_ref, locals_dict={ "partner" : partner, "invoice" : invoice, "profile" : ubl_profile } ) or invoice.number
             
                     if "xml_data" in fields_list:               
                         res["xml_data"] = self._get_xml_data(cr, uid, invoice, res.get("partner_id"), res.get("ubl_ref"), no_delivery_address, context)
+                 
                     
         return res
     
@@ -81,14 +88,15 @@ class ubl_transfer_wizard(osv.osv_memory):
         ubl = invoice_obj._ubl_invoice(cr, uid, invoice, inv_context)
         return base64.encodestring(tuple2xml.translate(StringIO(), ubl).getvalue())
     
-    def _send_invoice(self, cr, uid, wizard, context=None):            
+    def _send_invoice(self, cr, uid, wizard, context=None):
+        self.pool["account.invoice"].write(cr, uid, wizard.invoice_id.id, {"ubl_status" : "sent"}, context=context)            
         return True
         
     def action_ok(self, cr, uid, ids, context=None):
         invoice_obj = self.pool.get("account.invoice")
         for wizard in self.browse(cr, uid, ids, context):
             self.write(cr, uid, [wizard.id], {"xml_data" : self._get_xml_data(cr, uid, wizard.invoice_id, wizard.partner_id.id, wizard.ubl_ref, wizard.no_delivery_address, context)}, context)
-            invoice_obj.write(cr, uid, wizard.invoice_id.id, {"ubl_ref" : wizard.ubl_ref}, context=context)
+            invoice_obj.write(cr, uid, wizard.invoice_id.id, {"ubl_ref": wizard.ubl_ref, "ubl_status": wizard.ubl_action}, context=context)
         return { "type" : "ir.actions.act_window_close" }
         
     def action_transfer(self, cr, uid, ids, context=None):
@@ -102,12 +110,16 @@ class ubl_transfer_wizard(osv.osv_memory):
     _name = "ubl.transfer.wizard"
     _description = "Transfer Wizard"
     _columns = {
+        "ubl_action" : fields.selection([("prepare","Prepare"),
+                                         ("sent","Send"),
+                                         ("except","Except")], string="Action", required=True),
         "xml_data" : fields.binary("XML Data"),
         "invoice_id" : fields.many2one("account.invoice","Invoice",required=True),
         "profile_id" : fields.many2one("ubl.profile","UBL Profile",required=True),
         "partner_id" : fields.many2one("res.partner","Partner",required=True),
+        "att_ids" : fields.many2many("ir.attachment", "ubl_transfer_wizard_att_rel", "wizard_id", "att_id", string="Attachments"),
         "no_delivery_address" : fields.boolean("No Delivery Address"),
-        "ubl_ref" : fields.char("UBL Reference"),
+        "ubl_ref" : fields.char("UBL Reference", required=True),
         "email" : fields.char("E-Mail"),
         "test" : fields.boolean("Test")
     }    

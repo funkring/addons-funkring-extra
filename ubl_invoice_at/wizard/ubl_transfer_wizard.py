@@ -58,10 +58,9 @@ class ubl_transfer_wizard(osv.osv_memory):
             invoice = client.factory.create("DeliveryInvoiceType")
             invoice.value = wizard.xml_data
             
-            attach_obj = self.pool.get("ir.attachment")
-            attach_ids = attach_obj.search(cr, uid, [("res_model","=","account.invoice"),("res_id","=",wizard.invoice_id.id)])
+            # attachments
             embedded_attachments = []
-            for attach in attach_obj.browse(cr, uid, attach_ids, context):
+            for attach in wizard.att_ids:
                 embedded_attachment = client.factory.create("DeliveryEmbeddedAttachmentType")
                 embedded_attachment.value = attach.datas
                 embedded_attachment._name = attach.datas_fname or attach.name 
@@ -70,7 +69,7 @@ class ubl_transfer_wizard(osv.osv_memory):
             #deliver invoice
             res = None
             try:
-                res = client.service.deliverInvoice(invoice,embedded_attachments)                
+                res = client.service.deliverInvoice(invoice,embedded_attachments)
             except Exception,e:
                 if hasattr(e, "message"):
                     if e.message == "syntax error":
@@ -94,7 +93,8 @@ class ubl_transfer_wizard(osv.osv_memory):
             
             if error_messages:
                 raise osv.except_osv(_("Error"), "\n\n".join(error_messages))
-        return True
+                
+        return super(ubl_transfer_wizard, self)._send_invoice(cr, uid, wizard=wizard, context=context)
                         
     
     _inherit = "ubl.transfer.wizard"    

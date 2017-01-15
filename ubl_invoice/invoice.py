@@ -46,7 +46,7 @@ class account_invoice(osv.osv):
         for line in lines:
             if not res.get("currency"):
                 res["currency"]=line.invoice_id.currency_id.name
-            tax_calc = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line.quantity, line.invoice_id.address_invoice_id.id, line.product_id, line.partner_id)
+            tax_calc = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line.quantity, line.product_id, line.partner_id)
             res["total"]=res["total"]+tax_calc["total"]
             res["total_included"]=res["total_included"]+tax_calc["total_included"]
             for tax_line in tax_calc["taxes"]:
@@ -328,9 +328,21 @@ class account_invoice(osv.osv):
                  "xmlns:cac" : "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
                  "xmlns:cbc" : "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" })
             
-        
+    def action_date_assign(self, cr, uid, ids, context=None):
+        ubl_invoice_ids = []
+        for invoice in self.browse(cr, uid, ids, context=context):
+            ubl_profile = self._ubl_profile(cr, uid, invoice, context)
+            if ubl_profile and not invoice.ubl_status:
+                ubl_invoice_ids.append(invoice.id)
+        if ubl_invoice_ids:
+            self.write(cr, uid, ubl_invoice_ids, {"ubl_status": "prepare"}, context=context)
+        return super(account_invoice, self).action_date_assign(cr, uid, ids, context=context)
+
     _name = "account.invoice"
     _inherit = "account.invoice"
     _columns = {
-        "ubl_ref" : fields.char("UBL Reference", readonly=True)
+        "ubl_ref" : fields.char("UBL Reference", readonly=True, select=True),
+        "ubl_status" : fields.selection([("prepare","Preparation"),
+                                         ("sent","Sent"),
+                                         ("except","Exception")], string="UBL Status", select=True)
     }
