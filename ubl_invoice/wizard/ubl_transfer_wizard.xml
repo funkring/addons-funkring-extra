@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+
+  <data>
+    <record id="wizard_ubl_transfer" model="ir.ui.view">
+      <field name="name">ubl_invoice.wizard_ubl_transfer</field>
+      <field name="model">ubl.transfer.wizard</field>
+      <field name="arch" type="xml">
+        <form string="UBL Tansfer">
+          <group>
+            <group>     
+                <field name="xml_data"/>
+                <field name="ubl_ref"/> 
+                <field name="profile_id"/>                
+            </group>
+            <group>
+                <field name="partner_id"/>
+                <field name="email"/>
+                <field name="no_delivery_address"/>    
+            </group>
+          </group>
+          <footer>
+            <button name="action_ok" string="Ok"  type="object" class="oe_highlight" />
+            <button name="action_transfer" string="Send"  type="object" />
+            or
+            <button special="cancel" string="Close" class="oe_link" />
+          </footer>
+        </form>
+      </field>
+    </record>
+    
+    <record id="action_ubl_transfer" model="ir.actions.act_window">
+      <field name="name">UBL Transfer</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">ubl.transfer.wizard</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+    </record>
+
+    <record id="irconfig_ubl_transfer" model="ir.values">
+      <field name="model_id" ref="model_account_invoice" />      
+      <field name="name">UBL Transfer</field>
+      <field name="key2">client_action_multi</field>
+      <field name="value" eval="'ir.actions.act_window,' + str(ref('action_ubl_transfer'))" />
+      <field name="key">action</field>
+      <field name="model">account.invoice</field>
+    </record>
+  
+  </data>
+</openerp>
