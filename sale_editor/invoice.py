@@ -18,23 +18,8 @@
 #
 ##############################################################################
 
-{
-    "name" : "oerp.at Sale Editor",
-    "summary" : "Adds an editor field to sale order",
-    "description":"""
-Sale Editor
-===========
+from openerp import models, fields, api, _
 
-* Adds an editor field to sale order
-
-    """,
-    "version" : "1.0",
-    "author" :  "oerp.at",
-    "website" : "http://oerp.at",
-    "category" : "Sales/Invoice",
-    "depends" : ["sale","at_sale","account","at_account"],
-    "data" : ["view/sale_view.xml",
-              "view/invoice_view.xml"],
-    "auto_install" : False,
-    "installable": True
-}
+class account_invoice(models.Model):
+    _inherit = "account.invoice"
+    editor_id = fields.Many2one("res.users", "Editor", states={"draft": [("readonly", False)]}, index=True, default=lambda self: self._uid)
