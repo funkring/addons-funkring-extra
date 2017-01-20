@@ -26,7 +26,7 @@ import re
 
 class account_invoice(osv.osv):
     
-    def _ubl_compute_lines(self, cr, uid, lines, context=None):
+    def _ubl_compute_lines(self, cr, uid, lines, qty=None, context=None):
         """
         RETURN: {
                 'total': 0.0,                # Total without taxes
@@ -41,12 +41,16 @@ class account_invoice(osv.osv):
           "total_included" : 0.0,
           "taxes" : {}       
         }
+               
         tax_obj =  self.pool.get("account.tax")
         total_tax = 0.0
         for line in lines:
+            line_qty = line.quantity
+            if not qty is None:
+                line_qty = qty
             if not res.get("currency"):
                 res["currency"]=line.invoice_id.currency_id.name
-            tax_calc = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line.quantity, line.product_id, line.partner_id)
+            tax_calc = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line_qty, line.product_id, line.partner_id, force_excluded=True)
             res["total"]=res["total"]+tax_calc["total"]
             res["total_included"]=res["total_included"]+tax_calc["total_included"]
             for tax_line in tax_calc["taxes"]:
@@ -228,7 +232,7 @@ class account_invoice(osv.osv):
                 ])) 
         
     def _ubl_tax(self, cr, uid, ubl_list, lines, context):
-        tax_all = self._ubl_compute_lines(cr, uid, lines, context)
+        tax_all = self._ubl_compute_lines(cr, uid, lines, context=context)
         
         ubl_taxes = [("cbc:TaxAmount", tax_all["total_tax"], {"currencyID" : tax_all["currency"]})]        
         for tax_value in tax_all["taxes"].values():
@@ -291,8 +295,11 @@ class account_invoice(osv.osv):
         for line in inv.invoice_line:
             product = line.product_id
             uom = line.uos_id or (product and product.uos_id) or None
-            uom_code = self._ubl_unit(cr, uid, uom, context) 
-                            
+            uom_code = self._ubl_unit(cr, uid, uom, context)
+            
+            lineCompute = self._ubl_compute_lines(cr, uid, [line], context=context)
+            priceCompute = self._ubl_compute_lines(cr, uid, [line], qty=1, context=context)
+            
             order_ref = 1
             so_line = line.sale_order_line_ids
             if so_line:
@@ -304,7 +311,7 @@ class account_invoice(osv.osv):
               
             res_line = [("cbc:ID",line.id),
                         ("cbc:InvoicedQuantity",line.quantity,{"unitCode" : uom_code }),
-                        ("cbc:LineExtensionAmount",line.price_subtotal,{"currencyID" : inv.currency_id.name}),
+                        ("cbc:LineExtensionAmount",lineCompute["total"], {"currencyID" : inv.currency_id.name}),
                         ("cac:OrderLineReference",[
                             ("cbc:LineID",order_ref)
                         ])]
@@ -317,7 +324,7 @@ class account_invoice(osv.osv):
             ]))
                
             res_line.append(("cac:Price",[
-                ("cbc:PriceAmount",  line.price_unit_untaxed ,{"currencyID":inv.currency_id.name}),
+                ("cbc:PriceAmount",  priceCompute["total"] ,{"currencyID":inv.currency_id.name}),
                 ("cbc:BaseQuantity", 1, {"unitCode":inv.currency_id.name})
             ]))
             

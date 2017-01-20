@@ -40,7 +40,14 @@ class ubl_transfer_wizard(osv.osv_memory):
         active_ids = util.active_ids(context, "account.invoice")        
         if active_ids:               
             invoice = invoice_obj.browse(cr, uid, active_ids[0], context)
-        if invoice:                 
+        if invoice:
+            # create invoice report          
+            report = self.pool["ir.actions.report.xml"]._lookup_report(cr, "account.report_invoice")
+            if report:
+                report_context = context.copy()
+                report_context["report_title"]=invoice.number
+                report.create(cr, uid, [invoice.id], {"model": "account.invoice"}, report_context)
+                   
             if "invoice_id" in fields_list:
                 res["invoice_id"]=invoice.id        
                 if "att_ids" in fields_list:
