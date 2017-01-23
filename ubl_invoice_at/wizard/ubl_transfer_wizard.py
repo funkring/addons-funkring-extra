@@ -48,7 +48,7 @@ class ubl_transfer_wizard(osv.osv_memory):
             
             #settings
             settings =  client.factory.create("DeliverySettingsType")
-            settings._test = wizard.test
+            settings.test = wizard.test
             
             if wizard.email:
                 settings.EmailSettings.AlternateResponseEmail = [wizard.email]
