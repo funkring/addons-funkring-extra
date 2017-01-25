@@ -50,7 +50,7 @@ class account_invoice(osv.osv):
                 line_qty = qty
             if not res.get("currency"):
                 res["currency"]=line.invoice_id.currency_id.name
-            tax_calc = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line_qty, line.product_id, line.partner_id, force_excluded=True)
+            tax_calc = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line_qty, line.product_id, line.partner_id)
             res["total"]=res["total"]+tax_calc["total"]
             res["total_included"]=res["total_included"]+tax_calc["total_included"]
             for tax_line in tax_calc["taxes"]:

@@ -27,6 +27,7 @@ import os
 
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
+from openerp.exceptions import Warning
 
 #import logging
 #__logger__ = logging.getLogger(__name__)
@@ -36,7 +37,7 @@ class ubl_transfer_wizard(osv.osv_memory):
     def _send_invoice(self, cr, uid, wizard, context=None):
         if wizard.profile_id.ws_type_id.code == "usp.gv.at":
             if wizard.invoice_id.state in ("draft","cancel"):
-                raise osv.except_osv(_("Error"), _("Invoice is in draft or cancel state"))
+                raise Warning(_("Invoice is in draft or cancel state"))
             
             # prepare client
             wsdl_file = "file:%s/erb-invoicedelivery-200.wsdl" % os.path.dirname(__file__) 
@@ -73,9 +74,9 @@ class ubl_transfer_wizard(osv.osv_memory):
             except Exception,e:
                 if hasattr(e, "message"):
                     if e.message == "syntax error":
-                        raise osv.except_osv(_("Error"), _("Invalid Login"))
+                        raise Warning(_("Invalid Login"))
                     else:
-                        raise osv.except_osv(_("Error"), e.message)
+                        raise Warning(e.message)
                 else:
                     raise e
             
@@ -92,7 +93,7 @@ class ubl_transfer_wizard(osv.osv_memory):
                         error_messages.append(detail.Message)    
             
             if error_messages:
-                raise osv.except_osv(_("Error"), "\n\n".join(error_messages))
+                raise Warning("\n\n".join(error_messages))
                 
         return super(ubl_transfer_wizard, self)._send_invoice(cr, uid, wizard=wizard, context=context)
                         
