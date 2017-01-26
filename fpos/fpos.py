@@ -263,7 +263,7 @@ class fpos_order(models.Model):
                                "statements" : {}}
                 sessionDict[profile.id] = sessionCfg
                 
-            elif order.tag == "s":
+            if order.tag == "s":
                 # finish session
                 finish = True
                 
