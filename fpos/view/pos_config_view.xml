@@ -9,6 +9,10 @@
             <button name="set_deprecate" position="after">
                 <button name="action_liveop" string="Live Operation" type="object" groups="base.group_system"
                         attrs="{'invisible' : ['|',('user_id','=',False),('liveop','=',True)]}"/>
+                <button name="action_sign_config" string="Signature Config" type="object" groups="base.group_system"
+                        attrs="{'invisible' : ['|','|',('sign_method','=',False),('liveop','=',False),('sign_status','!=','draft')]}"/>
+                <button name="action_sign_reactivate" string="(Re)Activate Signature" type="object" groups="base.group_system"
+                        attrs="{'invisible' : ['|','|',('sign_method','=',False),('liveop','=',False),('sign_status','!=','active')]}"/>
                 <button name="action_post" string="Post Orders" type="object" groups="point_of_sale.group_pos_manager" 
                         attrs="{'invisible' : ['|',('user_id','=',False),('liveop','=',False)]}"/>
             </button>
@@ -47,9 +51,29 @@
                     <field name="fpos_sync_version"/>
                 </group>
             </group>
-            <field name="iface_cashdrawer" position="after">
-                <field name="iface_trigger"/>
-            </field> 
+            <group string="Hardware Proxy" position="replace">
+                <group>
+                    <group string="Hardware Proxy">
+                        <field name="fpos_hwproxy_id"/>
+                        <field name="proxy_ip" attrs="{'invisible':[('fpos_hwproxy_id','!=',False)]}"/>
+                        <field name="iface_print_via_proxy" />
+                        <field name="iface_scan_via_proxy" />
+                        <field name="iface_electronic_scale" />
+                        <field name="iface_cashdrawer" />
+                        <field name="iface_trigger"/>
+                    </group>
+                    <group string="Signature">
+                        <field name="sign_method" attrs="{'readonly': [('sign_status','!=','draft')]}" on_change="onchange_sign_method(sign_method, sign_status, sign_serial, sign_cid, sign_pid, sign_key, fpos_prefix, company_id)"/>
+                        <field name="sign_status" attrs="{'invisible': [('sign_method','=',False)]}"/>
+                        <field name="sign_serial" attrs="{'invisible': [('sign_method','=',False)], 'readonly':['!',('sign_status','in',['draft','react'])], 'required':[('sign_method','!=',False)]}"/>
+                        <field name="sign_cid" attrs="{'invisible':[('sign_method','=',False)], 'readonly':[('sign_status','!=','draft')], 'required':[('sign_method','!=',False)]}" />
+                        <field name="sign_pid" attrs="{'invisible':[('sign_method','=',False)], 'readonly':[('sign_status','!=','draft')], 'required':[('sign_method','!=',False)]}" />
+                        <field name="sign_key" attrs="{'invisible':[('sign_method','=',False)], 'readonly':[('sign_status','!=','draft')], 'required':[('sign_method','!=',False)]}" />
+                        <field name="sign_crc" attrs="{'invisible':['|',('sign_method','=',False),('sign_status','=','draft')]}"/>
+                        <field name="sign_certs" attrs="{'invisible':['|',('sign_method','=',False),('sign_status','!=','active')]}"/>
+                    </group>
+                </group>
+            </group>             
             <group string="Receipt" position="after">               
                 <group string="User" colspan="4">                  
                     <div>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="form_fpos_hwproxy" model="ir.ui.view">
+      <field name="name">fpos.form_fpos_hwproxy</field>
+      <field name="model">fpos.hwproxy</field>
+      <field name="arch" type="xml">
+        <form string="Hardware Proxy">
+            <group>
+                <group>            
+                    <field name="name"/>
+                </group>
+                <group>
+                    <field name="description"/>
+                    <field name="complete_name" invisible="1"/>
+                </group>
+            </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_fpos_hwproxy" model="ir.ui.view">
+      <field name="name">fpos.tree_fpos_hwproxy</field>
+      <field name="model">fpos.hwproxy</field>
+      <field name="arch" type="xml">
+        <tree string="Hardware Proxies" editable="buttom">
+            <field name="description"/>
+            <field name="name"/>            
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_fpos_hwproxy" model="ir.ui.view">
+      <field name="name">fpos.search_fpos_hwproxy</field>
+      <field name="model">fpos.hwproxy</field>
+      <field name="arch" type="xml">
+        <search string="Hardware Proxy">
+            <field name="complete_name"/>
+        </search>
+      </field>
+    </record>
+
+    <record id="action_fpos_hwproxy" model="ir.actions.act_window">
+      <field name="name">Hardware Proxy</field>
+      <field name="res_model">fpos.hwproxy</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_fpos_hwproxy" name="Hardware Proxy" parent="menu_fpos"
+      sequence="25"
+      action="action_fpos_hwproxy"/>
+  </data>
+</openerp>

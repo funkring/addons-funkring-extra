@@ -26,6 +26,15 @@ from openerp.addons.fpos.product import COLOR_NAMES
 from openerp.addons.at_base import util
 from openerp.addons.at_base import helper
 
+from Crypto import Random
+from Crypto.Hash import SHA256
+import OpenSSL.crypto
+
+import base64
+import re
+
+AES_BLOCK_SIZE = 32
+CRC_N = 3
 
 class pos_category(osv.osv):
     _inherit = "pos.category"
@@ -105,16 +114,101 @@ class pos_config(osv.Model):
                                       "config_id", "user_id",
                                       "Users",
                                       help="Allowed users for the Point of Sale"),
+        "fpos_hwproxy_id" : fields.many2one("fpos.hwproxy","Hardware Proxy", copy=True, index=True, composition=True),
         "parent_user_id" : fields.many2one("res.users","Parent Sync User", help="Transfer all open orders to this user before pos is closing", copy=True, index=True),           
-        "payment_iface_ids" : fields.one2many("fpos.payment.iface","config_id","Payment Interfaces", copy=True, composition=True)
+        "payment_iface_ids" : fields.one2many("fpos.payment.iface","config_id","Payment Interfaces", copy=True, composition=True),
+        
+        "sign_method" : fields.selection([("card","Card"),
+                                          ("online","Online")],
+                                         string="Signature Method"),
+                
+        "sign_status" : fields.selection([("draft", "Draft"),
+                                          ("config","Configuration"),
+                                          ("active","Active"),
+                                          ("react","(Re)Activation")], 
+                                          string="Signature Status", readonly=True),
+        
+        "sign_serial" : fields.char("Serial"),
+        "sign_cid" : fields.char("Company ID"),
+        "sign_pid" : fields.char("POS ID"),
+        "sign_key" : fields.char("Encryption Key", help="AES256 encryption key, Base64 coded"),
+        "sign_crc" : fields.char("Checksum", readonly=True),
+        "sign_certs" : fields.binary("Certificate", readonly=True)
     }
     _sql_constraints = [
-        ("user_uniq", "unique (user_id)","Fpos User could only assinged once")
+        ("user_uniq", "unique (user_id)", "Fpos User could only assinged once"),
+        ("sign_pid", "unique (sign_pid)", "Signature POS-ID could only used once")
     ]
     _defaults = {
         "fpos_sync_clean" : 15,
-        "fpos_sync_version" : 1
+        "fpos_sync_version" : 1,
+        "sign_status" : "draft"
     }
+    _order = "company_id, name"
+    
+    def action_sign_config(self, cr, uid, ids, context=None):
+        fpos_order_obj = self.pool["fpos.order"]
+        for config in self.browse(cr, uid, ids, context=context):
+            
+            if config.liveop and config.sign_status == "draft":
+                                
+                key = base64.decodestring(config.sign_key)
+                if not key or len(key) != AES_BLOCK_SIZE:
+                    raise Warning(_("Invalid AES Key"))
+                
+                checksum = SHA256.new(config.sign_key).digest()[:CRC_N]
+                checksum = base64.encodestring(checksum).replace("=", "")
+                
+                values = {
+                   "sign_crc": checksum, 
+                   "sign_status": "config"
+                }
+                
+                if config.sign_method == "online":
+                    values["sign_status"] = "active"
+                
+                self.write(cr, uid, config.id, values, context=context)
+                
+                # update turnover
+                lastOrderEntries = fpos_order_obj.search_read(cr, uid,
+                                    [("fpos_user_id","=",uid),("state","!=","draft")],
+                                    ["seq", "turnover", "cpos", "date"],
+                                    order="seq desc", limit=1, context={"active_test" : False})
+        
+
+                # reset turn over
+                for lastOrderEntry in lastOrderEntries:
+                    if lastOrderEntry["turnover"]:
+                        fpos_order_obj.write(cr, uid, lastOrderEntry["id"], {"turnover": 0.0}, context=context)
+                
+        return True
+    
+    def activate_card(self, cr, uid, oid, certs, context=None):
+        profile = self.browse(cr, uid, oid, context=context)
+        if not profile.sign_status in ("config","react"):
+            raise Warning(_("No activiation in this sign status possible"))
+        if profile.fpos_user_id.id != uid:
+            raise Warning(_("Card could only activated by Fpos"))
+        if not certs:
+            raise Warning(_("Card certifcate is empty"))
+        
+        certData = base64.b64decode(certs)
+        cert = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_ASN1, certData)
+        if cert.get_serial_number() != profile.sign_serial:
+            raise Warning(_("Invalid SerialNo: Expected is %s, but transmitted was %s") % (profile.sign_serial, cert.get_serial_number()))
+        
+        self.write(cr, uid, oid, {
+            "sign_certs": certs,
+            "sign_status" : "active"    
+        })
+        
+        return True
+    
+    def action_sign_reactivate(self, cr, uid, ids, context=None):
+        for config in self.browse(cr, uid, ids, context=context):
+            if config.liveop and config.sign_status == "active":
+                self.write(cr, uid, config.id, {"sign_status": "react"}, context=context)
+        return True
 
     def action_liveop(self, cr, uid, ids, context=None):
         user_obj = self.pool["res.users"]
@@ -193,10 +287,9 @@ class pos_config(osv.Model):
         fpos_order_obj = self.pool.get("fpos.order")
         last_order_values = fpos_order_obj.search_read(cr, uid,
                                     [("fpos_user_id","=",uid),("state","!=","draft")],
-                                    ["seq", "turnover", "cpos", "date"],
+                                    ["seq", "turnover", "cpos", "date", "dep"],
                                     order="seq desc", limit=1, context={"active_test" : False})
         
-        # 
 
         if last_order_values:
             last_order_values = last_order_values[0]
@@ -204,12 +297,14 @@ class pos_config(osv.Model):
             res["last_turnover"] = last_order_values["turnover"]
             res["last_cpos"] = last_order_values["cpos"]
             res["last_date"] = last_order_values["date"]
+            res["last_dep"] = last_order_values["dep"]
         else:
             profile = self.browse(cr, uid, profile_id, context=context)
             res["last_seq"] = -1.0 + profile.sequence_id.number_next
             res["last_turnover"] = 0.0
             res["last_cpos"] = 0.0
             res["last_date"] = util.currentDateTime()
+            res["last_dep"] = None
 
         # add company
         user_obj = self.pool["res.users"]
@@ -249,6 +344,66 @@ class pos_config(osv.Model):
             date_from = next_date
 
         return res
+    
+    def onchange_sign_method(self, cr, uid, ids, sign_method, sign_status, sign_serial, sign_cid, sign_pid, sign_key, fpos_prefix, company_id, context=None):
+        value =  {}
+        
+        if sign_method and sign_status == "draft":
+            if not sign_cid and company_id:
+                company = self.pool["res.company"].browse(cr, uid, company_id, context=context)
+                value["sign_cid"] = company.vat
+            if not sign_pid and fpos_prefix:
+                value["sign_pid"] = re.sub("[^0-9A-Za-z]", "", fpos_prefix)
+            if not sign_key:
+                value["sign_key"] = base64.b64encode(Random.new().read(AES_BLOCK_SIZE))
+        
+        res = {"value": value}
+        return res
+            
+    def copy(self, cr, uid, oid, default, context=None):
+                        
+        def incField(model_obj, field, default):
+            val = default.get(field)
+            if not val and model_obj:
+                val = model_obj.read(cr, uid, oid, [field], context=context)[field]
+            if val:
+                m = re.match("([^0-9]*)([0-9]+)(.*)", val)
+                if m:
+                    default[field]="%s%s%s" % (m.group(1), int(m.group(2))+1, m.group(3))
+
+        incField(self, "name", default)
+        incField(self, "fpos_prefix", default)
+        
+        fpos_prefix =  default.get("fpos_prefix")
+        if fpos_prefix:
+            user_ref = self.read(cr, uid, oid, ["user_id"], context=context)["user_id"]
+            if user_ref:
+                userObj = self.pool["res.users"]
+                userFields = ["name","email","login"]
+                userDefaults = {}                
+                for userField in userFields:
+                    incField(userObj, userField, userDefaults)
+                if userDefaults:
+                    default["user_id"] = userObj.copy(cr, uid, user_ref[0], userDefaults, context=context)
+                    
+        return super(pos_config, self).copy(cr, uid, oid, default, context=context)
+    
+    def create(self, cr, uid, values, context=None):
+        
+        fpos_prefix = values.get("fpos_prefix")
+        long_name = None
+        if fpos_prefix:
+            short_name = re.sub("[^0-9A-Za-z]", "", fpos_prefix)
+            if short_name:
+                long_name = values["name"]
+                values["name"] = short_name
+            
+        config_id = super(pos_config, self).create(cr, uid, values, context=context)
+        
+        if long_name:
+            self.write(cr, uid, config_id, {"name": long_name}, context=context)
+        
+        return config_id
 
 
 class pos_order(osv.Model):
@@ -296,6 +451,7 @@ class pos_order_line(osv.Model):
     _columns = {
         "fpos_line_id" : fields.many2one("fpos.order.line", "Fpos Line")
     }
+
 
 class pos_session(osv.Model):
 

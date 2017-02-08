@@ -6,17 +6,21 @@
       <field name="model">fpos.printer</field>
       <field name="arch" type="xml">
         <form string="Printer">
-          <group>
+          <group name="Printer">
             <group>            
                 <field name="name"/>
                 <field name="description"/>
-                <field name="complete_name" invisible="1"/>
-                <field name="pos_category_ids" widget="many2many_tags"/>            
+                <field name="complete_name" invisible="1"/>                            
             </group>
             <group>
                 <field name="local"/>
                 <field name="font_size"/>
-            </group>
+            </group>            
+          </group>
+          <group string="Categories">
+            <div>
+                <field name="pos_category_ids" />
+            </div>
           </group>
         </form>
       </field>
@@ -27,7 +31,8 @@
       <field name="model">fpos.printer</field>
       <field name="arch" type="xml">
         <tree string="Printer">
-            <field name="complete_name"/>
+            <field name="description"/>
+            <field name="name"/>
             <field name="local"/>
             <field name="font_size"/>
             <field name="pos_category_ids" widget="many2many_tags"/>

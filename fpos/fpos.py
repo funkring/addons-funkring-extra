@@ -35,6 +35,14 @@ class fpos_order(models.Model):
     
     name = fields.Char("Name")
     sv = fields.Integer("Sync Version")
+    
+    st = fields.Selection([("s","Start"),
+                           ("0","Null"),
+                           ("c","Cancel"),
+                           ("m","Mixed"),
+                           ("t","Training")],
+                          string="Special Type")
+    
     tag = fields.Selection([("s","Status"),("t","Temp")], string="Tag", readonly=True, states={'draft': [('readonly', False)]}, index=True)    
     fpos_user_id = fields.Many2one("res.users", "Device", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
     user_id = fields.Many2one("res.users", "User", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)
@@ -69,6 +77,10 @@ class fpos_order(models.Model):
     log_ids = fields.One2many("fpos.order.log", "order_id", "Order", readonly=True, states={'draft': [('readonly', False)]}, composition=True)
     
     cent_fix = fields.Float("Cent Correction", readonly=True)
+       
+    dep = fields.Char("Receipt Export Format", readonly=True)
+    
+    
     
     @api.multi
     def unlink(self):
@@ -560,6 +572,11 @@ class fpos_tax(models.Model):
     
     order_id = fields.Many2one("fpos.order", "Order", required=True, ondelete="cascade", index=True)
     name = fields.Char("Name")
+    st = fields.Selection([("1","Reduced 1"),
+                           ("2","Reduced 2"),
+                           ("s","Special"),
+                           ("0","Null")],
+                          string="Special Type")
     amount_tax = fields.Float("Tax")
     amount_netto = fields.Float("Netto")
     
@@ -580,8 +597,9 @@ class fpos_printer(models.Model):
     _name = "fpos.printer"
     _description = "Printer"
     _rec_name = "complete_name"
+    _order = "description, id"
     
-    name = fields.Char("Name", required=True)    
+    name = fields.Char("Url", required=True)    
     description = fields.Char("Description")
     complete_name = fields.Char("Name", compute="_complete_name", store=True, index=True)
     local = fields.Boolean("Local", help="Print on local printer")
@@ -598,13 +616,44 @@ class fpos_printer(models.Model):
         else:
             self.complete_name = self.name
 
-   
+        
+class fpos_hwproxy(models.Model):
+    _name = "fpos.hwproxy"
+    _description = "Hardware Proxy"
+    _rec_name = "complete_name"
+    _order = "description, id"
+    
+    name = fields.Char("Url", required=True)    
+    description = fields.Char("Description")
+    complete_name = fields.Char("Name", compute="_complete_name", store=True, index=True)
+    
+    @api.one
+    @api.depends("name","description")
+    def _complete_name(self):
+        if self.description:
+            self.complete_name = "%s [%s]" % (self.name, self.description)
+        else:
+            self.complete_name = self.name
+
+    
 class fpos_dist(models.Model):
     _name = "fpos.dist"
     _description =  "Distributor"
+    _rec_name = "complete_name"
+    _order = "description, id"
     
-    name = fields.Char("Name", required=True, index=True)
+    name = fields.Char("Url", required=True, index=True)
+    description = fields.Char("Description")
+    complete_name = fields.Char("Name", compute="_complete_name", store=True, index=True)
     
+    @api.one
+    @api.depends("name","description")
+    def _complete_name(self):
+        if self.description:
+            self.complete_name = "%s [%s]" % (self.name, self.description)
+        else:
+            self.complete_name = self.name
+
 
 class fpos_order_log(models.Model):
     _name = "fpos.order.log"

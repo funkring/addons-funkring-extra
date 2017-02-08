@@ -6,8 +6,14 @@
       <field name="model">fpos.dist</field>
       <field name="arch" type="xml">
         <form string="Distributor">
-          <group>
-              <field name="name"/>
+          <group>   
+              <group>
+                <field name="name"/>
+              </group>
+              <group>
+                <field name="description"/>
+                <field name="complete_name" invisible="1"/>
+              </group>
           </group>
         </form>
       </field>
@@ -18,6 +24,7 @@
       <field name="model">fpos.dist</field>
       <field name="arch" type="xml">
         <tree string="Distributor" editable="buttom">
+            <field name="description"/>
             <field name="name"/>
         </tree>
       </field>
@@ -28,7 +35,7 @@
       <field name="model">fpos.dist</field>
       <field name="arch" type="xml">
         <search string="Distributor">
-            <field name="name"/>
+            <field name="complete_name"/>
         </search>
       </field>
     </record>

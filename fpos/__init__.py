@@ -1,5 +1,6 @@
-import fpos_top
+import account
 import account_bank_statement
+import fpos_top
 import point_of_sale
 import res_users
 import product
