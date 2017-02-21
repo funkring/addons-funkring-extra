@@ -8,3 +8,4 @@ import fpos
 import wizard
 import report
 import res_partner
+import controller

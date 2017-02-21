@@ -78,8 +78,9 @@ class fpos_order(models.Model):
     
     cent_fix = fields.Float("Cent Correction", readonly=True)
        
-    dep = fields.Char("Receipt Export Format", readonly=True)
-    
+    dep = fields.Char("DEP", help="Data Export Protocol Data", readonly=True)
+    qr = fields.Char("QR Code", readonly=True)
+    sig = fields.Boolean("Signed", readonly=True)
     
     
     @api.multi

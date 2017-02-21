@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-08 10:54+0000\n"
-"PO-Revision-Date: 2017-02-08 11:54+0100\n"
+"POT-Creation-Date: 2017-02-21 19:50+0000\n"
+"PO-Revision-Date: 2017-02-21 20:50+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,29 +18,13 @@ msgstr ""
 "X-Generator: Poedit 1.5.4\n"
 
 #. module: fpos
-#: model:email.template,body_html:fpos.email_report
-msgid ""
-"\n"
-"            <div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, "
-"Verdana, sans-serif; font-size: 11pt;\">\n"
-"               <p>${object.partner_id.mail_salutation}, </p>\n"
-"               <p>as attachment the <strong>${ctx."
-"get('cashreport_name','Cashreport')}.</strong></p>\n"
-"               <p></p>                                               \n"
-"               <p>Best Regards</p>\n"
-"               <p>${object.company_id.name}</p>\n"
-"            </div>\n"
-"        "
-msgstr ""
-
-#. module: fpos
 #: model:email.template,report_name:fpos.email_report
 #: model:email.template,subject:fpos.email_report
 msgid "${ctx.get('cashreport_name','Cashreport')}"
 msgstr "${ctx.get('cashreport_name','Kassenbericht')}"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:861
+#: code:addons/fpos/fpos.py:862
 #, python-format
 msgid "%s - %s"
 msgstr ""
@@ -64,7 +48,7 @@ msgid "%s - %s / CW %s %s"
 msgstr "%s - %s / KW %s %s"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:851 code:addons/fpos/wizard/report_wizard.py:129
+#: code:addons/fpos/fpos.py:852 code:addons/fpos/wizard/report_wizard.py:129
 #, python-format
 msgid "%s - CW %s %s"
 msgstr "%s - KW %s %s"
@@ -80,7 +64,7 @@ msgid "(Re)Activation"
 msgstr "(Neu)Aktivierung"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:563
+#: code:addons/fpos/fpos.py:564
 #, python-format
 msgid "*-Format: %s,%s"
 msgstr ""
@@ -111,7 +95,7 @@ msgid "Active"
 msgstr "Aktiv"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:561 selection:product.template,pos_sec:0
+#: code:addons/fpos/fpos.py:562 selection:product.template,pos_sec:0
 #, python-format
 msgid "Addition"
 msgstr "Zusatz"
@@ -222,7 +206,7 @@ msgid "Blue"
 msgstr "Blau"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:549
+#: code:addons/fpos/fpos.py:550
 #, python-format
 msgid "Break"
 msgstr ""
@@ -264,13 +248,13 @@ msgid "Card"
 msgstr "Karte"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:193
+#: code:addons/fpos/point_of_sale.py:199
 #, python-format
 msgid "Card certifcate is empty"
 msgstr "Karten Zertifikat ist leer"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:191
+#: code:addons/fpos/point_of_sale.py:197
 #, python-format
 msgid "Card could only activated by Fpos"
 msgstr "Karte kann nur über eine Fpos aktiviert werden"
@@ -291,7 +275,7 @@ msgid "Cashbox Trigger"
 msgstr "Kassenladenöffner"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:823
+#: code:addons/fpos/fpos.py:824
 #: model:ir.actions.report.xml,name:fpos.report_session_email
 #, python-format
 msgid "Cashreport"
@@ -330,7 +314,7 @@ msgid "Category 2"
 msgstr "Kassen Kategorie 2"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:416 field:fpos.order,cent_fix:0
+#: code:addons/fpos/fpos.py:417 field:fpos.order,cent_fix:0
 #, python-format
 msgid "Cent Correction"
 msgstr "Cent Korrektur"
@@ -445,6 +429,22 @@ msgid "Currency"
 msgstr "Währung"
 
 #. module: fpos
+#: field:fpos.order,dep:0
+msgid "DEP"
+msgstr ""
+
+#. module: fpos
+#: view:pos.config:fpos.form_pos_config
+msgid "DEP Download"
+msgstr ""
+
+#. module: fpos
+#: code:addons/fpos/point_of_sale.py:449
+#, python-format
+msgid "DEP Export %s"
+msgstr ""
+
+#. module: fpos
 #: field:fpos.report.email,daily_overview:0
 #: field:fpos.report.wizard,daily_overview:0
 msgid "Daily Overview"
@@ -473,6 +473,11 @@ msgstr "dunkelstes Grau"
 #: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
 msgid "Darkest Red"
 msgstr "dunkelstes Rot"
+
+#. module: fpos
+#: help:fpos.order,dep:0
+msgid "Data Export Protocol Data"
+msgstr "Daten Export Protokoll (DEP)"
 
 #. module: fpos
 #: field:fpos.order,date:0 field:fpos.order.log,date:0
@@ -514,7 +519,7 @@ msgid "Description for Quotations"
 msgstr "Beschreibung für Angebote"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:551 field:fpos.report.email,detail:0
+#: code:addons/fpos/fpos.py:552 field:fpos.report.email,detail:0
 #: field:fpos.report.wizard,detail:0
 #, python-format
 msgid "Detail"
@@ -587,8 +592,8 @@ msgid "E-Mail Report"
 msgstr "E-Mail Bericht"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:330 code:addons/fpos/fpos.py:359
-#: code:addons/fpos/fpos.py:379
+#: code:addons/fpos/fpos.py:331 code:addons/fpos/fpos.py:360
+#: code:addons/fpos/fpos.py:380
 #, python-format
 msgid "Empty"
 msgstr "Leer"
@@ -599,7 +604,7 @@ msgid "Encryption Key"
 msgstr "Schlüssel"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:312
+#: code:addons/fpos/point_of_sale.py:321
 #, python-format
 msgid "Error!"
 msgstr "Fehler!"
@@ -725,7 +730,7 @@ msgid "Fpos User could only assinged once"
 msgstr "Fpos Benutzer kann nur einer Kasse zugewiesen werden"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:352
+#: code:addons/fpos/fpos.py:353
 #, python-format
 msgid "Fpos could only use price with tax included"
 msgstr "Fpos kann nur Preise inkl. Steuer verarbeiten"
@@ -759,7 +764,7 @@ msgid "Green"
 msgstr "Grün"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:559 field:fpos.order.line,group_id:0
+#: code:addons/fpos/fpos.py:560 field:fpos.order.line,group_id:0
 #: selection:product.template,pos_sec:0
 #, python-format
 msgid "Group"
@@ -863,13 +868,13 @@ msgid "Internal Sequence"
 msgstr "Interne Sequenz"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:157
+#: code:addons/fpos/point_of_sale.py:158
 #, python-format
 msgid "Invalid AES Key"
 msgstr "Ungültiger AES Schlüssel"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:198
+#: code:addons/fpos/point_of_sale.py:205
 #, python-format
 msgid "Invalid SerialNo: Expected is %s, but transmitted was %s"
 msgstr "Ungültige Seriennr.: Erwartet wird %s, ist übertragen wurde %s"
@@ -1041,7 +1046,7 @@ msgid "Lime"
 msgstr "Hellgrün"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:553
+#: code:addons/fpos/fpos.py:554
 #, python-format
 msgid "Line"
 msgstr "Position"
@@ -1104,7 +1109,7 @@ msgid "Messages and communication history"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:545 field:product.product,pos_minus:0
+#: code:addons/fpos/fpos.py:546 field:product.product,pos_minus:0
 #: field:product.template,pos_minus:0
 #, python-format
 msgid "Minus"
@@ -1165,7 +1170,7 @@ msgid "No Tax"
 msgstr "Keine Steuer"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:547
+#: code:addons/fpos/fpos.py:548
 #, python-format
 msgid "No Unit"
 msgstr "Keine Einheit"
@@ -1177,7 +1182,7 @@ msgid "No access for product with EAN %s"
 msgstr "Kein Zugriff auf Produkt mit EAN %s"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:189
+#: code:addons/fpos/point_of_sale.py:195
 #, python-format
 msgid "No activiation in this sign status possible"
 msgstr "Es ist keine Aktivierung in diesem Signaturstatus möglich"
@@ -1209,6 +1214,12 @@ msgstr ""
 #: field:account.journal,fpos_noreconcile:0
 msgid "No invoice reconciliation"
 msgstr "Kein Rechnungsausgleich"
+
+#. module: fpos
+#: code:addons/fpos/point_of_sale.py:445
+#, python-format
+msgid "No signation activated for %s"
+msgstr "Es wurde keine Signierung für %s aktiviert"
 
 #. module: fpos
 #: view:fpos.order:fpos.form_fpos_order field:fpos.order,note:0
@@ -1243,13 +1254,13 @@ msgid "Online User"
 msgstr "Online Benutzer"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:96
+#: code:addons/fpos/fpos.py:97
 #, python-format
 msgid "Only Administrator could correct Fpos orders"
 msgstr "Nur der Administrator darf Fpos Verkäufe korrigieren"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:216
+#: code:addons/fpos/point_of_sale.py:223
 #, python-format
 msgid "Only system admin could set pos system into live operation"
 msgstr "Nur der Systemadministrator kann eine Kasse in Echtbetrieb setzen"
@@ -1550,6 +1561,11 @@ msgid "Purple"
 msgstr "Violett"
 
 #. module: fpos
+#: field:fpos.order,qr:0
+msgid "QR Code"
+msgstr ""
+
+#. module: fpos
 #: field:fpos.order.line,qty:0 field:fpos.order.log.line,qty:0
 msgid "Quantity"
 msgstr "Menge"
@@ -1581,11 +1597,6 @@ msgstr "IST-Stand"
 #: view:pos.config:fpos.form_pos_config
 msgid "Receipt"
 msgstr "Quittung"
-
-#. module: fpos
-#: field:fpos.order,dep:0
-msgid "Receipt Export Format"
-msgstr "DEP Daten"
 
 #. module: fpos
 #: view:website:fpos.report_receipt
@@ -1686,7 +1697,7 @@ msgid "Search Partner Online"
 msgstr "Online Partnersuche"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:555 field:product.product,pos_sec:0
+#: code:addons/fpos/fpos.py:556 field:product.product,pos_sec:0
 #: field:product.template,pos_sec:0
 #, python-format
 msgid "Section"
@@ -1755,7 +1766,7 @@ msgid "Show the product also in this category"
 msgstr "Zeige das Produkt auch in dieser Kategorie"
 
 #. module: fpos
-#: view:pos.config:fpos.form_pos_config
+#: view:fpos.order:fpos.form_fpos_order view:pos.config:fpos.form_pos_config
 msgid "Signature"
 msgstr "Signatur"
 
@@ -1778,6 +1789,11 @@ msgstr "Die POS ID muss in der Firma eindeutig sein"
 #: field:pos.config,sign_status:0
 msgid "Signature Status"
 msgstr "Signatur Status"
+
+#. module: fpos
+#: field:fpos.order,sig:0
+msgid "Signed"
+msgstr "Signiert"
 
 #. module: fpos
 #: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
@@ -1823,7 +1839,7 @@ msgid "Status"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:557
+#: code:addons/fpos/fpos.py:558
 #, python-format
 msgid "Subsection"
 msgstr "Unterabschnitt"
@@ -1916,7 +1932,7 @@ msgid "Test"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:312
+#: code:addons/fpos/point_of_sale.py:321
 #, python-format
 msgid "There is no default company for the current user!"
 msgstr "Es existiert keine standard Firma für den aktuellen Benutzer!"
@@ -1958,7 +1974,7 @@ msgid "Turnover Count"
 msgstr "Umsatzzähler"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:468
+#: code:addons/fpos/fpos.py:469
 #, python-format
 msgid "Unable to book order %s/%s/%s"
 msgstr "Rechnung %s/%s/%s kann nicht gebucht werden"
@@ -2049,7 +2065,7 @@ msgid "Yellow"
 msgstr "Gelb"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:89
+#: code:addons/fpos/fpos.py:90
 #, python-format
 msgid "You cannot delete an order which are not in draft state"
 msgstr ""
@@ -2103,7 +2119,7 @@ msgid "to root"
 msgstr "zur Basis"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:565
+#: code:addons/fpos/fpos.py:566
 #, python-format
 msgid "€-Format: %s,%s"
 msgstr ""

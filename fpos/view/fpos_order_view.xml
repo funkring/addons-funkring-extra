@@ -19,8 +19,8 @@
                         <field name="fpos_user_id"/>                        
                         <field name="user_id"/>
                         <field name="sv"/>
-                        <field name="st"/>
-                        <field name="dep"/>                        
+                        <field name="sig"/> 
+                        <field name="st"/>                                             
                     </group>
                     <group>                        
                         <field name="company_id"/>
@@ -123,6 +123,16 @@
                                 </div>
                             </group>
                         </group>
+                    </page>
+                    <page string="Signature">
+                        <label for="dep"/>
+                        <div>                        
+                            <field name="dep"/>
+                        </div>
+                        <label for="qr"/>
+                        <div>
+                            <field name="qr"/>
+                        </div>
                     </page>
                 </notebook>
             </sheet>          

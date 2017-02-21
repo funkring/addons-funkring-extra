@@ -22,6 +22,7 @@ from openerp.osv import fields, osv
 from openerp.addons.jdoc.jdoc import META_MODEL
 from openerp.exceptions import Warning
 from openerp.addons.fpos.product import COLOR_NAMES
+from openerp.tools.translate import _
 
 from openerp.addons.at_base import util
 from openerp.addons.at_base import helper
@@ -33,7 +34,7 @@ import OpenSSL.crypto
 import base64
 import re
 
-AES_BLOCK_SIZE = 32
+AES_KEY_SIZE = 32
 CRC_N = 3
 
 class pos_category(osv.osv):
@@ -153,7 +154,7 @@ class pos_config(osv.Model):
             if config.liveop and config.sign_status == "draft":
                                 
                 key = base64.decodestring(config.sign_key)
-                if not key or len(key) != AES_BLOCK_SIZE:
+                if not key or len(key) != AES_KEY_SIZE:
                     raise Warning(_("Invalid AES Key"))
                 
                 checksum = SHA256.new(config.sign_key).digest()[:CRC_N]
@@ -184,18 +185,24 @@ class pos_config(osv.Model):
         return True
     
     def activate_card(self, cr, uid, oid, certs, context=None):
+        
+        # check if oid is uuid
+        if isinstance(oid, basestring):
+            oid = self.pool["res.mapping"].get_id(cr, uid, self._name, oid)
+            
         profile = self.browse(cr, uid, oid, context=context)
         if not profile.sign_status in ("config","react"):
             raise Warning(_("No activiation in this sign status possible"))
-        if profile.fpos_user_id.id != uid:
+        if profile.user_id.id != uid:
             raise Warning(_("Card could only activated by Fpos"))
         if not certs:
             raise Warning(_("Card certifcate is empty"))
         
         certData = base64.b64decode(certs)
         cert = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_ASN1, certData)
-        if cert.get_serial_number() != profile.sign_serial:
-            raise Warning(_("Invalid SerialNo: Expected is %s, but transmitted was %s") % (profile.sign_serial, cert.get_serial_number()))
+        cert_serial = cert.get_serial_number()        
+        if str(cert_serial) != profile.sign_serial:
+            raise Warning(_("Invalid SerialNo: Expected is %s, but transmitted was %s") % (profile.sign_serial, cert_serial))
         
         self.write(cr, uid, oid, {
             "sign_certs": certs,
@@ -282,7 +289,8 @@ class pos_config(osv.Model):
 
         # query config
         res = jdoc_obj.jdoc_by_id(cr, uid, "pos.config", profile_id, options=jdoc_options, context=context)
-
+        res["dbid"]  = profile_id
+        
         # get counting values
         fpos_order_obj = self.pool.get("fpos.order")
         last_order_values = fpos_order_obj.search_read(cr, uid,
@@ -292,7 +300,7 @@ class pos_config(osv.Model):
         
 
         if last_order_values:
-            last_order_values = last_order_values[0]
+            last_order_values = last_order_values[0]            
             res["last_seq"] = last_order_values["seq"]
             res["last_turnover"] = last_order_values["turnover"]
             res["last_cpos"] = last_order_values["cpos"]
@@ -355,7 +363,7 @@ class pos_config(osv.Model):
             if not sign_pid and fpos_prefix:
                 value["sign_pid"] = re.sub("[^0-9A-Za-z]", "", fpos_prefix)
             if not sign_key:
-                value["sign_key"] = base64.b64encode(Random.new().read(AES_BLOCK_SIZE))
+                value["sign_key"] = base64.b64encode(Random.new().read(AES_KEY_SIZE))
         
         res = {"value": value}
         return res
@@ -405,6 +413,46 @@ class pos_config(osv.Model):
         
         return config_id
 
+    def _dep_export(self, cr, uid, profile, context=None):
+        forder_obj = self.pool["fpos.order"]
+        
+        receipts = []
+        data = {            
+            "Signaturzertifikat" : "",
+            "Zertifizierungsstellen" : [],
+            "Belege-kompakt" : receipts
+        }
+                
+        fpos_user = profile.user_id
+        if fpos_user:
+            # search start seq
+            orderEntries = forder_obj.search_read(cr, uid, [("fpos_user_id","=", fpos_user.id),("st","=","s")], ["seq"], order="seq asc", limit=1, context=context)
+            if orderEntries:
+                # export other
+                startSeq = orderEntries[0]["seq"]
+                orderEntries = forder_obj.search_read(cr, uid, [("fpos_user_id", "=", fpos_user.id),("seq", ">=", startSeq)], ["dep"], order="seq asc", context=context)
+                for entry in orderEntries:
+                    receipts.append(entry["dep"])
+                    
+        return {
+             "Belege-Gruppe" : [data]
+        }
+        
+    def action_dep_export(self, cr, uid, ids, context=None):
+        for profile in self.browse(cr, uid, ids, context=context):
+            
+            if not profile.sign_status or profile.sign_status == "draft":
+                raise Warning(_("No signation activated for %s") % profile.name)
+            
+            url = "/fpos/dep/%s" % profile.id
+            return {
+               'name': _('DEP Export %s') % profile.sign_pid,
+               'type': 'ir.actions.act_url',
+               'url': url,
+               'target': 'self'
+            }
+        
+        
 
 class pos_order(osv.Model):
 
