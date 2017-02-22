@@ -33,15 +33,16 @@ class fpos_order(models.Model):
     _description = "Fpos Order"
     _order = "date desc"
     
-    name = fields.Char("Name")
-    sv = fields.Integer("Sync Version")
+    name = fields.Char("Name", readonly=True, states={'draft': [('readonly', False)]})
+    
+    sv = fields.Integer("Sync Version", readonly=True)
     
     st = fields.Selection([("s","Start"),
                            ("0","Null"),
                            ("c","Cancel"),
                            ("m","Mixed"),
                            ("t","Training")],
-                          string="Special Type")
+                          string="Special Type", readonly=True)
     
     tag = fields.Selection([("s","Status"),("t","Temp")], string="Tag", readonly=True, states={'draft': [('readonly', False)]}, index=True)    
     fpos_user_id = fields.Many2one("res.users", "Device", required=True, readonly=True, states={'draft': [('readonly', False)]}, index=True)

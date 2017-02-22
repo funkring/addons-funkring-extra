@@ -200,8 +200,8 @@ class pos_config(osv.Model):
         
         certData = base64.b64decode(certs)
         cert = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_ASN1, certData)
-        cert_serial = cert.get_serial_number()        
-        if str(cert_serial) != profile.sign_serial:
+        cert_serial = "%x" % cert.get_serial_number()        
+        if cert_serial != profile.sign_serial:
             raise Warning(_("Invalid SerialNo: Expected is %s, but transmitted was %s") % (profile.sign_serial, cert_serial))
         
         self.write(cr, uid, oid, {
@@ -416,6 +416,13 @@ class pos_config(osv.Model):
     def _dep_export(self, cr, uid, profile, context=None):
         forder_obj = self.pool["fpos.order"]
         
+        if context is None:
+            export_context = {}
+        else:
+            export_context = dict(context)
+        
+        export_context["active_test"] = False    
+        
         receipts = []
         data = {            
             "Signaturzertifikat" : "",
@@ -426,11 +433,11 @@ class pos_config(osv.Model):
         fpos_user = profile.user_id
         if fpos_user:
             # search start seq
-            orderEntries = forder_obj.search_read(cr, uid, [("fpos_user_id","=", fpos_user.id),("st","=","s")], ["seq"], order="seq asc", limit=1, context=context)
+            orderEntries = forder_obj.search_read(cr, uid, [("fpos_user_id","=", fpos_user.id),("st","=","s")], ["seq"], order="seq asc", limit=1, context=export_context)
             if orderEntries:
                 # export other
                 startSeq = orderEntries[0]["seq"]
-                orderEntries = forder_obj.search_read(cr, uid, [("fpos_user_id", "=", fpos_user.id),("seq", ">=", startSeq)], ["dep"], order="seq asc", context=context)
+                orderEntries = forder_obj.search_read(cr, uid, [("fpos_user_id", "=", fpos_user.id),("seq", ">=", startSeq)], ["dep"], order="seq asc", context=export_context)
                 for entry in orderEntries:
                     receipts.append(entry["dep"])
                     
