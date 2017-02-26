@@ -240,7 +240,7 @@ class Parser(extreport.basic_parser):
                     if fpos_line:
                         price = fpos_line.price
                     elif line.qty:
-                        price = product.amount / line.qty
+                        price = amount / line.qty
                     key = (line.name, line.product_id, line.discount, price)
                 # get detail
                 detail = detailDict.get(key)
