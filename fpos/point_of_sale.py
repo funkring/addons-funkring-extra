@@ -89,6 +89,7 @@ class pos_config(osv.Model):
         "fpos_prefix" : fields.char("Fpos Prefix"),
         "fpos_sync_clean" : fields.integer("Clean Sync Count", help="Resync all Data after the specified count. if count is 0 auto full sync is disabled"),
         "fpos_sync_count" : fields.integer("Sync Count", help="Synchronization count after full database sync", readonly=True),
+        "fpos_sync_reset" : fields.boolean("Sync Reset"),
         "fpos_sync_version" : fields.integer("Sync Version", readonly=True),
         "iface_nogroup" : fields.boolean("No Grouping", help="If a product is selected twice a new pos line was created"),
         "iface_fold" : fields.boolean("Fold",help="Don't show foldable categories"),
@@ -247,18 +248,46 @@ class pos_config(osv.Model):
         """
         @return: Fpos Profile
         """
-        profile_data = self.search_read(cr, uid, [("user_id","=", uid)], ["parent_user_id"], context=context)
+        profile_data = self.search_read(cr, uid, [("user_id","=", uid)], ["parent_user_id",
+                                                                          "fpos_sync_count",
+                                                                          "fpos_sync_clean",
+                                                                          "fpos_sync_version"], context=context)
         if not profile_data:
-            return False
+            raise Warning(_("No profile for user %s") % uid)
         
+        
+        # eval data
         profile_data = profile_data[0]
-        profile_id = profile_data["id"]
+        fpos_sync_count = profile_data["fpos_sync_count"] or 0
+        fpos_sync_clean = profile_data["fpos_sync_clean"] or 0
+        fpos_sync_version = profile_data["fpos_sync_version"] or 1
+        profile_id = profile_data["id"]        
         
-        # get parent profile id
-        parent_profile_id = profile_data["parent_user_id"]
-        if parent_profile_id:
-            parent_profile_id = self.search_id(cr, uid, [("user_id","=",parent_profile_id[0])], context=context)
+        # get parent or childs
+        parent_user_id = profile_data["parent_user_id"]
+        parent_profile_id = None
+        child_ids = None
+        if parent_user_id:
+            parent_user_id = parent_user_id[0]
+            child_ids = []  
+                      
+            parent_profile_data = self.search_read(cr, uid, [("user_id","=",parent_user_id)],["fpos_sync_version"], context=context)
+            if parent_profile_data:
+                parent_profile_data = parent_profile_data[0]
+                parent_profile_id = parent_profile_data["id"]
+                
+                # update child SYNC VERSION
+                parent_sync_version = parent_profile_data["fpos_sync_version"] or 1
+                if parent_sync_version != fpos_sync_version:
+                    self.write(cr, uid, profile_id, {
+                            "fpos_sync_version": parent_sync_version
+                        }, context=context)
+                    
+                    fpos_sync_version = parent_sync_version
             
+        else:
+            child_ids = self.search(cr, uid, [("parent_user_id","=",uid)], context=context)
+
 
         jdoc_obj = self.pool["jdoc.jdoc"]
         jdoc_options = {
@@ -273,20 +302,41 @@ class pos_config(osv.Model):
         }
         
         # check sync action
-        if action:
+        if action:            
             if action == "inc":
-                cr.execute("UPDATE pos_config SET fpos_sync_count=fpos_sync_count+1 WHERE id=%s", (profile_id,))
-            elif action == "reset":
-                cr.execute("UPDATE pos_config SET fpos_sync_count=0 WHERE id=%s", (profile_id,))
-                # update parents sync version
-                if not parent_profile_id:
-                    cr.execute("UPDATE pos_config SET fpos_sync_version=fpos_sync_version+1 WHERE id=%s", (profile_id,))
-        
-        # update childs sync version
-        if parent_profile_id:
-            cr.execute("UPDATE pos_config SET fpos_sync_version=(SELECT MIN(p.fpos_sync_version) FROM pos_config p WHERE p.id=%s) WHERE id=%s", (parent_profile_id, profile_id))
+                # ONLY increment if MAIN POS
+                fpos_sync_count += 1
+                sync_data = {
+                    "fpos_sync_count" : fpos_sync_count
+                }
                 
-
+                # RESET MARK for MAIN POS
+                if not parent_profile_id and fpos_sync_clean and fpos_sync_count >= fpos_sync_clean:
+                    sync_data["fpos_sync_reset"] = True
+                
+                self.write(cr, uid, profile_id, sync_data, context=context)
+                    
+            elif action == "reset":
+                sync_data = {
+                    "fpos_sync_count" : 0,
+                    "fpos_sync_reset" : False
+                }
+                
+                # if MAIN POS increment VERSION                
+                if not parent_profile_id:
+                    fpos_sync_version += 1
+                    sync_data["fpos_sync_version"] = fpos_sync_version
+                    
+                    # set RESET FLAG for all child POS
+                    self.write(cr, uid, child_ids, {
+                            "fpos_sync_version" : fpos_sync_version,
+                            "fpos_sync_reset" : True
+                    }, context=context)
+                
+                # write sync data
+                self.write(cr, uid, profile_id, sync_data, context=context)
+            
+     
         # query config
         res = jdoc_obj.jdoc_by_id(cr, uid, "pos.config", profile_id, options=jdoc_options, context=context)
         res["dbid"]  = profile_id
@@ -318,9 +368,9 @@ class pos_config(osv.Model):
         user_obj = self.pool["res.users"]
         company_id = user_obj._get_company(cr, uid, context=context)
         if not company_id:
-            raise osv.except_osv(_('Error!'), _('There is no default company for the current user!'))
+            raise Warning(_('There is no company for user %s') % uid)
 
-        # get company infos
+        # get company info
         company = self.pool["res.company"].browse(cr, uid, company_id, context=context)
         banks = company.bank_ids
         if banks:
@@ -329,7 +379,6 @@ class pos_config(osv.Model):
                 accounts.append(bank.acc_number)
             res["bank_accounts"] = accounts
         
-
         # finished
         return res
 
