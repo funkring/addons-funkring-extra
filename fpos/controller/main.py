@@ -22,6 +22,7 @@ from openerp.osv import osv
 from openerp.addons.web import http
 from openerp.addons.web.http import request
 from openerp.addons.web.controllers.main import content_disposition
+from openerp import SUPERUSER_ID
 import simplejson
 import logging
 
@@ -46,4 +47,20 @@ class fpos_export(http.Controller):
                 res,
                 [("Content-Type", "application/json"),
                  ("Content-Disposition", content_disposition("dep.json"))])
+        
+    @http.route(["/fpos/code/<int:seq>/<hs>"], type="http", auth="public", methods=["GET"])
+    def bon_get(self, seq, hs, **kwargs):
+        if isinstance(seq, basestring):
+            seq = int(seq)
+        
+        cr, context, pool = request.cr, request.context, request.registry
+        res = pool["fpos.order"].search_read(cr, SUPERUSER_ID, [("seq","=",seq), ("hs","=",hs), ("qr","!=",False)], ["qr"], limit=1, context=context)
+        qr = res and res[0]["qr"] or ""
+        res = simplejson.dumps({
+            "code" : qr
+        }, indent=2)
+        return request.make_response(
+                res,
+                [("Content-Type", "application/json")])
+        
         

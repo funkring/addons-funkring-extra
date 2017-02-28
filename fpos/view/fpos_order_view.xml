@@ -20,7 +20,7 @@
                         <field name="user_id"/>
                         <field name="sv"/>
                         <field name="sig"/> 
-                        <field name="st"/>                                             
+                        <field name="st"/>
                     </group>
                     <group>                        
                         <field name="company_id"/>
@@ -132,6 +132,10 @@
                         <label for="qr"/>
                         <div>
                             <field name="qr"/>
+                        </div>
+                        <label for="hs"/>
+                        <div>
+                            <field name="hs"/>
                         </div>
                     </page>
                 </notebook>

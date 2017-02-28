@@ -81,6 +81,7 @@ class fpos_order(models.Model):
        
     dep = fields.Char("DEP", help="Data Export Protocol Data", readonly=True)
     qr = fields.Char("QR Code", readonly=True)
+    hs = fields.Char("Hash", readonly=True, index=True)
     sig = fields.Boolean("Signed", readonly=True)
     
     
