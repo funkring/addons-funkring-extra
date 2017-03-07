@@ -54,7 +54,13 @@ class fpos_export(http.Controller):
             seq = int(seq)
         
         cr, context, pool = request.cr, request.context, request.registry
-        res = pool["fpos.order"].search_read(cr, SUPERUSER_ID, [("seq","=",seq), ("hs","=",hs), ("qr","!=",False)], ["qr"], limit=1, context=context)
+        if context is None:
+            queryContext = {}
+        else:
+            queryContext = dict(context)
+            
+        queryContext["active_test"] = False
+        res = pool["fpos.order"].search_read(cr, SUPERUSER_ID, [("seq","=",seq), ("hs","=",hs), ("qr","!=",False)], ["qr"], limit=1, context=queryContext)
         qr = res and res[0]["qr"] or ""
         res = simplejson.dumps({
             "code" : qr
