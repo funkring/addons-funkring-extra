@@ -30,7 +30,8 @@ class Parser(extreport.basic_parser):
             "formatDetailAmount" : self._formatDetailAmount,
             "dailyRange" : self._dailyRange,
             "dailyEnd" : self._dailyEnd,
-            "dailyStart" : self._dailyStart
+            "dailyStart" : self._dailyStart,
+            "groupDetail" : self._groupedDetail
         })
 
     def _groupByConfig(self, sessions):
@@ -173,7 +174,53 @@ class Parser(extreport.basic_parser):
             return "%s %s %s" % (qtyStr, uom.name, line.name)
 
     def _sortedDetail(self, details):
-        return sorted(details, key=lambda val: (val.get("amount",0.0), val.get("name")), reverse=True)
+        return sorted(details, key=lambda val: (val.get("qty",0.0), val.get("name")), reverse=True)
+    
+    def _groupedDetail(self, details):
+        groups = {}
+
+        def getCategory(product):
+            return product.pos_categ_id
+
+        for detail in details:
+            product = detail["product"]
+            categ = getCategory(product)
+            
+            groupEntry = groups.get(categ.id, None)
+            if groupEntry is None:
+                categoryIds = [categ.id]
+                names = [categ.name]
+
+                # search parent
+                parentCategory = categ.parent_id
+                while parentCategory:                    
+                    names.append(parentCategory.name)
+                    categoryIds.append(parentCategory.id)
+                    parentCategory = parentCategory.parent_id
+                    
+                names.reverse()
+                categoryIds.reverse()
+                
+                # add group entries
+                for i in range(0, len(categoryIds)):
+                    categoryId = categoryIds[i]                    
+                    groupEntry = groups.get(categoryId, None)
+                    if groupEntry is None:
+                        groupEntry = {
+                            "id" : categoryId,
+                            "name" : " / ".join(names[:i+1]),
+                            "amount" : 0.0,
+                            "details" : [],
+                            "ids" : categoryIds[:i+1]
+                        }
+                    groups[categoryId] = groupEntry
+                    
+            groupEntry["details"].append(detail)
+            for categId in groupEntry["ids"]:
+                curEntry = groups[categId] 
+                curEntry["amount"] = curEntry["amount"] + detail["amount"]
+                
+        return sorted(groups.values(), key=lambda val: val.get("name")) 
 
     def _buildStatistic(self, sessions):
         if not sessions:

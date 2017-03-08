@@ -135,7 +135,21 @@ class pos_config(osv.Model):
         "sign_pid" : fields.char("POS ID"),
         "sign_key" : fields.char("Encryption Key", help="AES256 encryption key, Base64 coded"),
         "sign_crc" : fields.char("Checksum", readonly=True),
-        "sign_certs" : fields.binary("Certificate", readonly=True)
+        "sign_certs" : fields.binary("Certificate", readonly=True),
+        
+        "dep_key" : fields.char("DEP Key"),
+        
+        "fpos_model" : fields.selection([
+                ("hand", "Touch&Cash Hand"),
+                ("flex", "Touch&Cash Flex"),
+                ("mpos", "Touch&Cash mPOS"),
+                ("npos", "Touch&Cash nPOS"),
+                ("pos", "Touch&Cash POS"),
+                ("online","Online POS"),
+                ("tablet","Tablet POS"),
+                ("pc","PC POS"),
+                ("jim","Order JIM")
+            ], "Fpos Model")
     }
     _sql_constraints = [
         ("user_uniq", "unique (user_id)", "Fpos User could only assinged once"),
@@ -144,7 +158,8 @@ class pos_config(osv.Model):
     _defaults = {
         "fpos_sync_clean" : 15,
         "fpos_sync_version" : 1,
-        "sign_status" : "draft"
+        "sign_status" : "draft",
+        "dep_key" : lambda self, cr, uid, context: util.password() 
     }
     _order = "company_id, name"
     

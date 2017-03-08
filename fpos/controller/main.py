@@ -23,6 +23,7 @@ from openerp.addons.web import http
 from openerp.addons.web.http import request
 from openerp.addons.web.controllers.main import content_disposition
 from openerp import SUPERUSER_ID
+from openerp.http import AuthenticationError
 import simplejson
 import logging
 
@@ -48,6 +49,27 @@ class fpos_export(http.Controller):
                 [("Content-Type", "application/json"),
                  ("Content-Disposition", content_disposition("dep.json"))])
         
+        
+    @http.route(["/fpos/dep/<int:profile_id>/<dep_key>"], type="http", auth="public", methods=["GET"])
+    def dep_download_bmf(self, profile_id, dep_key, **kwargs):
+        cr, context, pool = request.cr, request.context, request.registry
+        
+        if isinstance(profile_id, basestring):
+            profile_id = int(profile_id)
+            
+        profile_obj = pool["pos.config"]
+        profile = profile_obj.browse(cr, SUPERUSER_ID, profile_id, context=context)
+        if profile.dep_key and profile.dep_key == dep_key:
+            res = profile_obj._dep_export(cr, SUPERUSER_ID, profile, context=context)
+            res = simplejson.dumps(res, indent=2)
+            return request.make_response(
+                    res,
+                    [("Content-Type", "application/json"),
+                     ("Content-Disposition", content_disposition("dep.json"))])
+        else:
+            raise AuthenticationError()
+     
+        
     @http.route(["/fpos/code/<int:seq>/<hs>"], type="http", auth="public", methods=["GET"])
     def bon_get(self, seq, hs, **kwargs):
         if isinstance(seq, basestring):
@@ -67,6 +89,5 @@ class fpos_export(http.Controller):
         }, indent=2)
         return request.make_response(
                 res,
-                [("Content-Type", "application/json")])
-        
-        
+                [("Content-Type", "application/json")])        
+    

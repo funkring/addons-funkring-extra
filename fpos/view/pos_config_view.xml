@@ -38,7 +38,8 @@
             <field name="picking_type_id" position="before">
                 <field name="user_id" string="Fpos User"/>
                 <field name="parent_user_id" string="Fpos Parent User"/>
-                <field name="fpos_prefix"/>
+                <field name="fpos_model"/>
+                <field name="fpos_prefix"/>                
             </field>
             <group string="Features" position="inside">
                 <group string="Auto Income/Expense">
@@ -65,7 +66,7 @@
                         <field name="iface_cashdrawer" />
                         <field name="iface_trigger"/>
                     </group>
-                    <group string="Signature">
+                    <group string="Signature">                                                
                         <field name="sign_method" attrs="{'readonly': [('sign_status','!=','draft')]}" on_change="onchange_sign_method(sign_method, sign_status, sign_serial, sign_cid, sign_pid, sign_key, fpos_prefix, company_id)"/>
                         <field name="sign_status" attrs="{'invisible': [('sign_method','=',False)]}"/>
                         <field name="sign_serial" attrs="{'invisible': [('sign_method','=',False)], 'readonly':['!',('sign_status','in',['draft','react'])], 'required':[('sign_method','!=',False)]}"/>
@@ -74,6 +75,7 @@
                         <field name="sign_key" attrs="{'invisible':[('sign_method','=',False)], 'readonly':[('sign_status','!=','draft')], 'required':[('sign_method','!=',False)]}" />
                         <field name="sign_crc" attrs="{'invisible':['|',('sign_method','=',False),('sign_status','=','draft')]}"/>
                         <field name="sign_certs" attrs="{'invisible':['|',('sign_method','=',False),('sign_status','!=','active')]}"/>
+                        <field name="dep_key" attrs="{'invisible' : ['|','|',('sign_method','=',False),('liveop','=',False),('sign_status','=','draft')]}"/>
                     </group>
                 </group>
             </group>             

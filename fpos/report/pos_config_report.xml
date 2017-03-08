@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  
+  <data>
+    <report id="report_pos_config_pdf"
+      string="BMF Kasseninfo"
+      name="pos_config"
+      auto="False"
+      process_sep="True" 
+      report_type="aeroo"
+      model="pos.config"
+      in_format="oo-odt"
+      out_format="oo-pdf"
+      parser="fpos/report/pos_config_report.py"
+      rml="fpos/report/pos_config_report.odt"/>
+  </data>
+  
+</openerp>
