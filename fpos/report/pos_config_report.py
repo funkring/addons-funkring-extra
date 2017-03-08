@@ -82,7 +82,7 @@ class Parser(extreport.basic_parser):
                 start_order = fpos_order_obj.browse(self.cr, self.uid, start_order_id, context=self.localcontext)
                 info["dep_start_image"] = getImage(start_order.qr)
                 if start_order.hs:                    
-                    info["dep_start"] = urlparse.urljoin(url, "fpos/code/%s/%s" % config.id, start_order.hs) 
+                    info["dep_start"] = urlparse.urljoin(url, "fpos/code/%s/%s" % (config.id, start_order.hs)) 
                 else:
                     info["dep_start"] = start_order.qr
         
