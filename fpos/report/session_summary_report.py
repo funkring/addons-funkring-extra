@@ -186,34 +186,46 @@ class Parser(extreport.basic_parser):
             product = detail["product"]
             categ = getCategory(product)
             
-            groupEntry = groups.get(categ.id, None)
-            if groupEntry is None:
-                categoryIds = [categ.id]
-                names = [categ.name]
-
-                # search parent
-                parentCategory = categ.parent_id
-                while parentCategory:                    
-                    names.append(parentCategory.name)
-                    categoryIds.append(parentCategory.id)
-                    parentCategory = parentCategory.parent_id
+            if not categ:
+                groupEntry = groups.get(0, None)
+                if groupEntry is None:
+                    groupEntry = {
+                        "id" : 0,
+                        "name" : "Produkte",
+                        "amount" : 0.0,
+                        "details" : [],
+                        "ids" : [0]
+                    }
+                    groups[0] = groupEntry
+            else:
+                groupEntry = groups.get(categ.id, None)
+                if groupEntry is None:
+                    categoryIds = [categ.id]
+                    names = [categ.name]
+    
+                    # search parent
+                    parentCategory = categ.parent_id
+                    while parentCategory:                    
+                        names.append(parentCategory.name)
+                        categoryIds.append(parentCategory.id)
+                        parentCategory = parentCategory.parent_id
+                        
+                    names.reverse()
+                    categoryIds.reverse()
                     
-                names.reverse()
-                categoryIds.reverse()
-                
-                # add group entries
-                for i in range(0, len(categoryIds)):
-                    categoryId = categoryIds[i]                    
-                    groupEntry = groups.get(categoryId, None)
-                    if groupEntry is None:
-                        groupEntry = {
-                            "id" : categoryId,
-                            "name" : " / ".join(names[:i+1]),
-                            "amount" : 0.0,
-                            "details" : [],
-                            "ids" : categoryIds[:i+1]
-                        }
-                    groups[categoryId] = groupEntry
+                    # add group entries
+                    for i in range(0, len(categoryIds)):
+                        categoryId = categoryIds[i]                    
+                        groupEntry = groups.get(categoryId, None)
+                        if groupEntry is None:
+                            groupEntry = {
+                                "id" : categoryId,
+                                "name" : " / ".join(names[:i+1]),
+                                "amount" : 0.0,
+                                "details" : [],
+                                "ids" : categoryIds[:i+1]
+                            }
+                        groups[categoryId] = groupEntry
                     
             groupEntry["details"].append(detail)
             for categId in groupEntry["ids"]:
