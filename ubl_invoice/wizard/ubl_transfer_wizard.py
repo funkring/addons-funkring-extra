@@ -32,6 +32,9 @@ from openerp.tools.safe_eval import safe_eval
 
 class ubl_transfer_wizard(osv.osv_memory):
     
+    def _get_partner(self, cr, uid, invoice, context=None):
+        return invoice.partner_id
+    
     def default_get(self, cr, uid, fields_list, context=None):
         res = super(ubl_transfer_wizard, self).default_get(cr, uid, fields_list, context)
         invoice_obj = self.pool.get("account.invoice")
@@ -62,7 +65,7 @@ class ubl_transfer_wizard(osv.osv_memory):
                     res["ubl_action"] = "sent"
                     
                     no_delivery_address = False
-                    partner = invoice.partner_id
+                    partner = self._get_partner(cr, uid, invoice, context=context)
                     rule = partner_rule_obj._get_rule(cr, uid, ubl_profile.id, partner.id)
                           
                     if partner:      
@@ -126,7 +129,7 @@ class ubl_transfer_wizard(osv.osv_memory):
         "partner_id" : fields.many2one("res.partner","Partner",required=True),
         "att_ids" : fields.many2many("ir.attachment", "ubl_transfer_wizard_att_rel", "wizard_id", "att_id", string="Attachments"),
         "no_delivery_address" : fields.boolean("No Delivery Address"),
-        "ubl_ref" : fields.char("UBL Reference", required=True),
+        "ubl_ref" : fields.char("UBL Reference"),
         "email" : fields.char("E-Mail"),
         "test" : fields.boolean("Test")
     }    

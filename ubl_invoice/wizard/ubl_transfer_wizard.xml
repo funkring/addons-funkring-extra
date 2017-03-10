@@ -25,7 +25,7 @@
           </group>
           <footer>
             <button name="action_ok" string="Ok"  type="object" class="oe_highlight" />
-            <button name="action_transfer" string="Send"  type="object" />
+            <button name="action_transfer" string="Send" type="object" attrs="{'invisible': [('ubl_action','!=','sent')]}"/>
             or
             <button special="cancel" string="Close" class="oe_link" />
           </footer>
