@@ -158,8 +158,7 @@ class pos_config(osv.Model):
     _defaults = {
         "fpos_sync_clean" : 15,
         "fpos_sync_version" : 1,
-        "sign_status" : "draft",
-        "dep_key" : lambda self, cr, uid, context: util.password() 
+        "sign_status" : "draft" 
     }
     _order = "company_id, name"
     
@@ -168,7 +167,7 @@ class pos_config(osv.Model):
         for config in self.browse(cr, uid, ids, context=context):
             
             if config.liveop and config.sign_status == "draft":
-                                
+
                 key = base64.decodestring(config.sign_key)
                 if not key or len(key) != AES_KEY_SIZE:
                     raise Warning(_("Invalid AES Key"))
@@ -178,7 +177,8 @@ class pos_config(osv.Model):
                 
                 values = {
                    "sign_crc": checksum, 
-                   "sign_status": "config"
+                   "sign_status": "config",
+                   "dep_key":  util.password() 
                 }
                 
                 if config.sign_method == "online":
@@ -434,7 +434,7 @@ class pos_config(osv.Model):
             
     def copy(self, cr, uid, oid, default, context=None):
                         
-        def incField(model_obj, field, default):
+        def incField(model_obj, oid, field, default):
             val = default.get(field)
             if not val and model_obj:
                 val = model_obj.read(cr, uid, oid, [field], context=context)[field]
@@ -443,8 +443,8 @@ class pos_config(osv.Model):
                 if m:
                     default[field]="%s%s%s" % (m.group(1), int(m.group(2))+1, m.group(3))
 
-        incField(self, "name", default)
-        incField(self, "fpos_prefix", default)
+        incField(self, oid, "name", default)
+        incField(self, oid, "fpos_prefix", default)
         
         fpos_prefix =  default.get("fpos_prefix")
         if fpos_prefix:
@@ -454,7 +454,7 @@ class pos_config(osv.Model):
                 userFields = ["name","email","login"]
                 userDefaults = {}                
                 for userField in userFields:
-                    incField(userObj, userField, userDefaults)
+                    incField(userObj, user_ref[0], userField, userDefaults)
                 if userDefaults:
                     default["user_id"] = userObj.copy(cr, uid, user_ref[0], userDefaults, context=context)
                     
