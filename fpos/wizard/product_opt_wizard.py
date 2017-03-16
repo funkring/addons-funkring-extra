@@ -42,7 +42,7 @@ class product_opt_wizard(models.TransientModel):
             products = product_obj.search([("available_in_pos","=",True),("pos_categ_id","=",category.id),("pos_sec","=",False)], order=order)
             for product in products:
                 sequence+=1
-                product.sequence =  sequence         
+                product.sequence = sequence         
                 
             products = product_obj.search([("available_in_pos","=",True),("pos_categ_id","=",category.id),("pos_sec","!=",False),'!',("pos_sec","in",["1","g"])], order="sequence asc")
             for product in products:

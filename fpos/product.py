@@ -167,21 +167,16 @@ class product_product(osv.Model):
 
     def _fpos_product_get(self, cr, uid, obj, *args, **kwarg):
         mapping_obj = self.pool["res.mapping"]
-        company_id = self.pool.get('res.users')._get_company(cr, uid, context=kwarg.get("context"))
         
         # read tax        
-        taxes_uuids = []
+        taxes_id = []
         price_include = 0
         for tax in obj.taxes_id:
-            # only use tax if it
-            # use the same company
-            if company_id and tax.company_id.id != company_id:
-                continue
             if tax.price_include:
                 price_include += 1
-            taxes_uuids.append(mapping_obj._get_uuid(cr, uid, tax));
+            taxes_id.append(mapping_obj._get_uuid(cr, uid, tax));
             
-        netto = price_include == 0 and len(taxes_uuids) > 0
+        netto = price_include == 0 and len(taxes_id) > 0
             
         # build product
         values =  {
@@ -203,7 +198,7 @@ class product_product(osv.Model):
             "income_pdt" : obj.income_pdt,
             "expense_pdt" : obj.expense_pdt,
             "to_weight" : obj.to_weight,
-            "taxes_id" : taxes_uuids,
+            "taxes_id" : taxes_id,
             "sequence" : obj.sequence,
             "active": obj.active,
             "available_in_pos" : obj.available_in_pos,

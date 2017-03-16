@@ -29,10 +29,15 @@ from openerp.addons.at_base import helper
 
 from Crypto import Random
 from Crypto.Hash import SHA256
+from Crypto.Cipher import AES
 import OpenSSL.crypto
 
 import base64
 import re
+import struct
+
+import requests
+import simplejson
 
 AES_KEY_SIZE = 32
 CRC_N = 3
@@ -137,6 +142,9 @@ class pos_config(osv.Model):
         "sign_crc" : fields.char("Checksum", readonly=True),
         "sign_certs" : fields.binary("Certificate", readonly=True),
         
+        "sign_user" : fields.char("Online Sign User"),
+        "sign_password" : fields.char("Online Sign Password"), 
+        
         "dep_key" : fields.char("DEP Key"),
         
         "fpos_model" : fields.selection([
@@ -148,7 +156,7 @@ class pos_config(osv.Model):
                 ("online","Online POS"),
                 ("tablet","Tablet POS"),
                 ("pc","PC POS"),
-                ("jim","Order JIM")
+                ("jim","OrderJIM")
             ], "Fpos Model")
     }
     _sql_constraints = [
@@ -230,7 +238,10 @@ class pos_config(osv.Model):
     def action_sign_reactivate(self, cr, uid, ids, context=None):
         for config in self.browse(cr, uid, ids, context=context):
             if config.liveop and config.sign_status == "active":
-                self.write(cr, uid, config.id, {"sign_status": "react"}, context=context)
+                if config.sign_method == "online":
+                    self.write(cr, uid, config.id, {"sign_status": "draft"}, context=context)
+                else:
+                    self.write(cr, uid, config.id, {"sign_status": "react"}, context=context)
         return True
 
     def action_liveop(self, cr, uid, ids, context=None):
@@ -258,6 +269,97 @@ class pos_config(osv.Model):
     def action_post_all(self, cr, uid, context=None):
         config_ids = self.search(cr, uid, [("liveop","=",True),("user_id","!=",False)])
         return self.action_post(cr, uid, config_ids, context=context)
+    
+    def sign_data(self, cr, uid, data, build_hash=False, context=None):
+        profile_data = self.search_read(cr, uid, [("user_id","=", uid)], ["sign_status",
+                                                                          "sign_user",
+                                                                          "sign_password",
+                                                                          "sign_key"], context=context)
+        if not profile_data:
+            raise Warning(_("No profile for user %s") % uid)
+        
+        profile = profile_data[0]
+        if profile["sign_status"] != "active":
+            raise Warning(_("Signation is not configured for user %s") % uid)
+                
+        sign_user = profile["sign_user"]
+        sign_password = profile["sign_password"]
+        sign_key = profile["sign_key"]
+        
+        def floatToStr(val):
+            return ("%0.2f" % val).replace(".",",")
+        
+        def dateToStr(val):
+            return util.strToTime(val).strftime("%Y-%m-%dT%H:%M:%S")
+        
+        def encryptTurnover():
+            st = data["st"]
+            specialType = None
+            if st == "c":
+                specialType = "STO"
+            elif st == "t":
+                specialType = "TRA"
+                
+            if specialType:                
+                return base64.encodestring(specialType)
+            else:
+                receiptId = "%s%s" % (data["sign_pid"],data["seq"])
+                turnoverHash = SHA256.new(receiptId).digest()[:16]
+                cipher = AES.new(base64.b64decode(sign_key), counter=lambda: turnoverHash, mode=AES.MODE_CTR)
+                turnover = struct.pack(">QQ", long(data["turnover"] * 100.0), 0)          
+                return base64.b64encode(cipher.encrypt(turnover)[:8])
+            
+        def b64urldecode_nopadding(val):
+            missing_padding = len(val) % 4
+            if missing_padding != 0:
+                val += b'='* (4 - missing_padding)
+            return base64.urlsafe_b64decode(val)
+        
+        data["turnover_enc"] = encryptTurnover()
+        prevHash = base64.b64encode(SHA256.new(data["last_dep"]).digest()[:8])
+        payload = [
+            "R1-AT1",                       # 0
+            data["sign_pid"],               # 1
+            "%s" % data["seq"],             # 2
+            dateToStr(data["date"]),        # 3
+            floatToStr(data["amount"]),     # 4
+            floatToStr(data["amount_1"]),   # 5
+            floatToStr(data["amount_2"]),   # 6
+            floatToStr(data["amount_0"]),   # 7
+            floatToStr(data["amount_s"]),   # 8
+            data["turnover_enc"],           # 9
+            data["sign_serial"],            # 10
+            prevHash                        # 11
+        ]
+                
+        payload = "_%s" % "_".join(payload)
+        url = "https://www.a-trust.at/asignrkonline/v2/%s/Sign/JWS" % sign_user
+        json = {
+           "password": sign_password,
+           "jws_payload" : payload
+        }
+        
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        resp = requests.post(url, data=simplejson.dumps(json), headers=headers, timeout=10)
+        resp.raise_for_status()        
+        res = simplejson.loads(resp.text)
+        res = res.get("result")
+        
+        if not res:
+            raise Warning(_("Signation failed for user %s") % uid)
+        
+        signation = str(res.split(".")[-1])
+        signation = b64urldecode_nopadding(signation)
+        plaindata = "%s_%s" % (payload, base64.b64encode(signation))
+        data["qr"] = plaindata
+        data["dep"] = res
+        data["sig"] = True
+        data["hs"] = None
+        
+        if build_hash:
+            data["hs"] = base64.urlsafe_b64encode(SHA256.new(plaindata).digest()[:8]) 
+
+        return data
 
     def get_profile(self, cr, uid, action=None, context=None):
         """

@@ -10,9 +10,9 @@
                 <button name="action_liveop" string="Live Operation" type="object" groups="base.group_system"
                         attrs="{'invisible' : ['|',('user_id','=',False),('liveop','=',True)]}"/>
                 <button name="action_sign_config" string="Signature Config" type="object" groups="base.group_system"
-                        attrs="{'invisible' : ['|','|',('sign_method','=',False),('liveop','=',False),('sign_status','!=','draft')]}"/>
+                        attrs="{'invisible' : ['|','|',('sign_method','=',False),('liveop','=',False),('sign_status','!=','draft')]}"/>                
                 <button name="action_sign_reactivate" string="(Re)Activate Signature" type="object" groups="base.group_system"
-                        attrs="{'invisible' : ['|','|',('sign_method','=',False),('liveop','=',False),('sign_status','=','draft')]}"/>
+                        attrs="{'invisible' : ['|','|',('sign_method','=',False),('liveop','=',False),('sign_status','in',['draft','react'])]}"/>
                 <button name="action_post" string="Post Orders" type="object" groups="point_of_sale.group_pos_manager" 
                         attrs="{'invisible' : ['|',('user_id','=',False),('liveop','=',False)]}"/>
                 <button name="action_dep_export" string="DEP Download" type="object" groups="point_of_sale.group_pos_user" 
@@ -75,6 +75,8 @@
                         <field name="sign_key" attrs="{'invisible':[('sign_method','=',False)], 'readonly':[('sign_status','!=','draft')], 'required':[('sign_method','!=',False)]}" />
                         <field name="sign_crc" attrs="{'invisible':['|',('sign_method','=',False),('sign_status','=','draft')]}"/>
                         <field name="sign_certs" attrs="{'invisible':['|',('sign_method','=',False),('sign_status','!=','active')]}"/>
+                        <field name="sign_user" attrs="{'invisible':[('sign_method','!=','online')], 'readonly':['!',('sign_status','in',['draft','react'])], 'required':[('sign_method','=','online')] }"/>                        
+                        <field name="sign_password" attrs="{'invisible':[('sign_method','!=','online')], 'readonly':['!',('sign_status','in',['draft','react'])], 'required':[('sign_method','=','online')] }"/>
                         <field name="dep_key" attrs="{'invisible' : ['|','|',('sign_method','=',False),('liveop','=',False),('sign_status','=','draft')]}"/>
                     </group>
                 </group>
