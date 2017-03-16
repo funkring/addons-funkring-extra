@@ -306,7 +306,7 @@ class pos_config(osv.Model):
                 receiptId = "%s%s" % (data["sign_pid"],data["seq"])
                 turnoverHash = SHA256.new(receiptId).digest()[:16]
                 cipher = AES.new(base64.b64decode(sign_key), counter=lambda: turnoverHash, mode=AES.MODE_CTR)
-                turnover = struct.pack(">QQ", long(data["turnover"] * 100.0), 0)          
+                turnover = struct.pack(">qq", long(data["turnover"] * 100.0), 0)          
                 return base64.b64encode(cipher.encrypt(turnover)[:8])
             
         def b64urldecode_nopadding(val):
