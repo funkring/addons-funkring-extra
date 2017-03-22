@@ -23,5 +23,7 @@ from openerp.osv import fields, osv
 class account_journal(osv.Model):
     _inherit = "account.journal"
     _columns = {
-        "fpos_noreconcile" : fields.boolean("No invoice reconciliation")
+        "fpos_noreconcile" : fields.boolean("No invoice reconciliation"),
+        "fpos_noturnover" : fields.boolean("No Turnover"),
+        "fpos_atomic": fields.boolean("Atomic Payment")
     }

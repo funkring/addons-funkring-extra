@@ -176,6 +176,9 @@ class Parser(extreport.basic_parser):
     def _sortedDetail(self, details):
         return sorted(details, key=lambda val: (val.get("qty",0.0), val.get("name")), reverse=True)
     
+    def _sortedTurnover(self, values):
+        return sorted(values, key=lambda val: (val.get("is_taxed") and 1 or 0, val.get("name")), reverse=True)
+    
     def _groupedDetail(self, details):
         groups = {}
 
@@ -250,6 +253,7 @@ class Parser(extreport.basic_parser):
         details = []
 
         sum_turnover = 0.0
+        sum_turnover_all = 0.0
         sum_in = 0.0
         sum_out = 0.0
         sum_all = 0.0
@@ -272,10 +276,10 @@ class Parser(extreport.basic_parser):
 
         currency = first_session.currency_id.symbol
         status_id = self.pool["ir.model.data"].xmlid_to_res_id(self.cr, self.uid, "fpos.product_fpos_status", raise_if_not_found=True)
-
+        
         # add turnover
-        def addTurnover(name, amount, line, tax_amount, is_taxed):
-            entry = turnover_dict.get(name, None)
+        def addTurnover(data, name, amount, line, tax_amount, is_taxed):
+            entry = data.get(name, None)
             if entry is None:
                 entry = {
                     "name" : name,
@@ -284,7 +288,7 @@ class Parser(extreport.basic_parser):
                     "is_taxed" :  is_taxed,
                     "detail" : OrderedDict()
                 }
-                turnover_dict[name] = entry
+                data[name] = entry
 
             product = line.product_id
             if product.pos_report or print_product:
@@ -323,14 +327,14 @@ class Parser(extreport.basic_parser):
 
         # cash entry
         cashEntry = {
-            "name" :  first_session == last_session and cash_statement.name or "",
-            "journal" : cash_statement.journal_id.name,
-            "turnover" : 0.0,
-            "sum" : 0.0,
-            "income" : 0.0,
-            "expense" : 0.0,
-            "users" : {}
-
+            "name":  first_session == last_session and cash_statement.name or "",
+            "journal": cash_statement.journal_id.name,
+            "turnover": 0.0,
+            "sum": 0.0,
+            "income": 0.0,
+            "expense": 0.0,
+            "users": {},
+            "turnover_detail": {}
         }
 
         cashJournalId = cash_statement.journal_id.id
@@ -396,6 +400,32 @@ class Parser(extreport.basic_parser):
                     "lines" : detail_lines
                 }
                 details.append(detail)
+                
+            # create statements
+            atomic_entry = None
+            noturnover = False                        
+            for st_line in order.statement_ids:
+                st = st_line.statement_id
+                st_journal = st.journal_id
+                     
+                entry = st_dict.get(st_journal.id, None)                
+                if entry is None:
+                    entry = {
+                        "journal" : st.journal_id.name,
+                        "name" : first_session == last_session and st.name or "",
+                        "sum" : 0.0,
+                        "income" : 0.0,
+                        "expense" : 0.0,
+                        "users" : {},
+                        "turnover_detail" : {}
+                    }
+                    statements.append(entry)
+                    st_dict[st.journal_id.id] = entry
+                    
+                if not atomic_entry and st_journal.fpos_atomic and st_line.amount:
+                    atomic_entry = entry
+                    noturnover = st_journal.fpos_noturnover
+             
 
             # iterate line
             for line in order.lines:
@@ -470,31 +500,35 @@ class Parser(extreport.basic_parser):
 
                 # add turnover
                 if not product.income_pdt and not product.expense_pdt:
-                    sum_turnover += total_inc
-                    if tax_details:
-                        for tax in tax_details:
-                            addTurnover(tax["name"], total_inc, line, tax["amount"], True)
-                    else:
-                        addTurnover(_("No Tax"), total_inc, line, 0, False)
-
+                    
+                    # turnover add function
+                    def addTurnoverForData(data):
+                        if tax_details:
+                            for tax in tax_details:
+                                addTurnover(data, tax["name"], total_inc, line, tax["amount"], True)
+                        else:
+                            addTurnover(data, _("No Tax"), total_inc, line, 0, False)
+                    
+                    # all turnover
+                    sum_turnover_all += total_inc
+                    
+                    # add if it is turnover
+                    if not noturnover:
+                        sum_turnover += total_inc
+                        addTurnoverForData(turnover_dict)
+                    
+                    # add turnover for journal
+                    if atomic_entry:
+                        addTurnoverForData(atomic_entry["turnover_detail"])
+                        
                 # sum all
                 sum_all += total_inc
 
             # sumup statements
             for st_line in order.statement_ids:
                 st = st_line.statement_id
-                entry = st_dict.get(st.journal_id.id, None)
-                if entry is None:
-                    entry = {
-                        "journal" : st.journal_id.name,
-                        "name" : first_session == last_session and st.name or "",
-                        "sum" : 0.0,
-                        "income" : 0.0,
-                        "expense" : 0.0,
-                        "users" : {}
-                    }
-                    statements.append(entry)
-                    st_dict[st.journal_id.id] = entry
+                entry = st_dict[st.journal_id.id]
+              
                 # add line
                 entry["sum"] = entry["sum"] + st_line.amount
 
@@ -595,7 +629,8 @@ class Parser(extreport.basic_parser):
 
         # sort details
         turnoverDetails = []
-        for to in turnover_dict.values():
+        turnoverList = self._sortedTurnover(turnover_dict.values())
+        for to in turnoverList:
             detailList = self._sortedDetail(to["detail"].values())
             for d in detailList:
                 d["description"] = self._getDetailName(d, currency)
@@ -604,6 +639,9 @@ class Parser(extreport.basic_parser):
         # overall detail
         turnoverDetails = self._sortedDetail(turnoverDetails)
 
+        # convert statement turnovers to list
+        for st in statements:
+            st["turnover_detail"] = self._sortedTurnover(st["turnover_detail"].values())
 
         # stat
         stat = {
@@ -623,6 +661,7 @@ class Parser(extreport.basic_parser):
             "period" :  period,
             "description" : description,
             "turnover" : sum_turnover,
+            "turnover_all" : sum_turnover_all,
             "statements" : statements,
             "statement_sum" : st_sum,
             "cash_income" : cashEntry["income"],
@@ -635,7 +674,7 @@ class Parser(extreport.basic_parser):
             "balance_end" : cash_statement.balance_end_real,
             "expenseList" : expense_dict.values(),
             "incomeList" : income_dict.values(),
-            "turnoverList" : turnover_dict.values(),
+            "turnoverList" : turnoverList,
             "turnoverDetails" : turnoverDetails,
             "details_start" : first_session.details_ids,
             "details_end" : last_session.details_ids,

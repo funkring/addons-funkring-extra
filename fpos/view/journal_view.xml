@@ -6,9 +6,13 @@
       <field name="model">account.journal</field>
       <field name="inherit_id" ref="point_of_sale.view_account_journal_pos_user_form"/>
       <field name="arch" type="xml">
-        <field name="amount_authorized_diff" position="after">
-            <field name="fpos_noreconcile"/>
-        </field>
+        <page string="Point of Sale" position="inside">
+            <group string="Processing">
+                <field name="fpos_noreconcile"/>            
+                <field name="fpos_atomic"/>
+                <field name="fpos_noturnover" attrs="{'invisible': [('fpos_atomic','!=',True)]}"/>
+            </group>    
+        </page>
       </field>
     </record>
   </data>
