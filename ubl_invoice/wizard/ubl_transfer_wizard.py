@@ -120,6 +120,8 @@ class ubl_transfer_wizard(osv.osv_memory):
             if not wizard.profile_id.ws_type_id:
                 raise osv.except_osv(_("Error"), _("No webservice defined for sending the invoice"))
             self._send_invoice(cr, uid, wizard, context)
+            self.pool["account.invoice"].message_post(cr, uid, wizard.invoice_id.id, context=context, 
+                                                      body=_("UBL Invoice %s with reference %s transfered") % (wizard.invoice_id.number or "", wizard.ubl_ref))
         return { "type" : "ir.actions.act_window_close" }
     
     _name = "ubl.transfer.wizard"

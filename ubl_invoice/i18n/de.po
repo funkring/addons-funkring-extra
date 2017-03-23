@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-19 01:03+0000\n"
-"PO-Revision-Date: 2017-01-19 02:05+0100\n"
+"POT-Creation-Date: 2017-03-23 08:18+0000\n"
+"PO-Revision-Date: 2017-03-23 09:19+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -53,10 +53,10 @@ msgid "E-Mail"
 msgstr ""
 
 #. module: ubl_invoice
-#: code:addons/ubl_invoice/invoice.py:78
-#: code:addons/ubl_invoice/invoice.py:122
-#: code:addons/ubl_invoice/invoice.py:188
-#: code:addons/ubl_invoice/wizard/ubl_transfer_wizard.py:106
+#: code:addons/ubl_invoice/invoice.py:82
+#: code:addons/ubl_invoice/invoice.py:126
+#: code:addons/ubl_invoice/invoice.py:192
+#: code:addons/ubl_invoice/wizard/ubl_transfer_wizard.py:121
 #, python-format
 msgid "Error"
 msgstr "Fehler"
@@ -103,19 +103,19 @@ msgid "No Delivery Address"
 msgstr "Keine Lieferadresse"
 
 #. module: ubl_invoice
-#: code:addons/ubl_invoice/invoice.py:78
+#: code:addons/ubl_invoice/invoice.py:82
 #, python-format
 msgid "No Order Reference!"
 msgstr "Keine Auftragsreferenz!"
 
 #. module: ubl_invoice
-#: code:addons/ubl_invoice/invoice.py:122
+#: code:addons/ubl_invoice/invoice.py:126
 #, python-format
 msgid "No UBL Profile defined!"
 msgstr "Kein UBL Profil definiert!"
 
 #. module: ubl_invoice
-#: code:addons/ubl_invoice/wizard/ubl_transfer_wizard.py:106
+#: code:addons/ubl_invoice/wizard/ubl_transfer_wizard.py:121
 #, python-format
 msgid "No webservice defined for sending the invoice"
 msgstr "Kein Webservice zum senden der Rechnung"
@@ -144,7 +144,7 @@ msgstr "Übermitteln"
 #. module: ubl_invoice
 #: selection:account.invoice,ubl_status:0
 msgid "Sent"
-msgstr "Gesendet"
+msgstr "Senden"
 
 #. module: ubl_invoice
 #: view:account.invoice:ubl_invoice.search_invoice
@@ -157,7 +157,7 @@ msgid "Test"
 msgstr ""
 
 #. module: ubl_invoice
-#: code:addons/ubl_invoice/invoice.py:188
+#: code:addons/ubl_invoice/invoice.py:192
 #, python-format
 msgid "There is no bank account for the company partner defined"
 msgstr "Es wurde kein Bankkonto für die Firma defniert"
@@ -171,6 +171,12 @@ msgstr "E-Rechnung Übermittlung Assistent"
 #: view:account.invoice:ubl_invoice.search_invoice
 msgid "UBL Excepted"
 msgstr "UBL Unterbrechnung"
+
+#. module: ubl_invoice
+#: code:addons/ubl_invoice/wizard/ubl_transfer_wizard.py:124
+#, python-format
+msgid "UBL Invoice %s with reference %s transfered"
+msgstr "UBL/eRechnung %s mit der Referenz %s wurde gesendet"
 
 #. module: ubl_invoice
 #: view:account.invoice:ubl_invoice.search_invoice
