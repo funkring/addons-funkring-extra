@@ -35,6 +35,9 @@ class ubl_transfer_wizard(osv.osv_memory):
     def _get_partner(self, cr, uid, invoice, context=None):
         return invoice.partner_id
     
+    def _get_invoice_partner(self, cr, uid, invoice, context=None):
+        return invoice.partner_id
+    
     def default_get(self, cr, uid, fields_list, context=None):
         res = super(ubl_transfer_wizard, self).default_get(cr, uid, fields_list, context)
         invoice_obj = self.pool.get("account.invoice")
@@ -67,12 +70,14 @@ class ubl_transfer_wizard(osv.osv_memory):
                     no_delivery_address = False
                     partner = self._get_partner(cr, uid, invoice, context=context)
                     rule = partner_rule_obj._get_rule(cr, uid, ubl_profile.id, partner.id)
-                          
-                    if partner:      
-                        if "partner_id" in fields_list:
-                            if rule and rule.name:
-                                partner = rule.name
-                            res["partner_id"] = partner.id
+
+                    invoice_partner = self._get_invoice_partner(cr, uid, invoice, context=context)
+                    if rule and rule.name:
+                        invoice_partner = rule.name
+                        
+                    if "partner_id" in fields_list:
+                        if invoice_partner:
+                            res["partner_id"] = invoice_partner.id
                     if "no_delivery_address" in fields_list:
                         if rule:                            
                             no_delivery_address = rule.no_delivery_address         
