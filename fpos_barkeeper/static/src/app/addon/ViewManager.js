@@ -1,4 +1,4 @@
-/*global Ext:false, futil:false, DBUtil:false*/
+/*global Ext:false, futil:false, DBUtil:false, console:false*/
 
 
 /**
@@ -331,6 +331,7 @@ Ext.define('Ext.form.ViewManager', {
      */
     handleError: function(err, alternativeError, callback) {
         this.stopLoading();
+        if ( err ) console.error(err);
         if ( !err || !err.name || !err.message) {
             if ( err && err.data && err.data.name && err.data.message ) {
                 err = err.data;

@@ -34,9 +34,9 @@ Ext.define('BarKeeper.core.Core', {
             // query user
             user_obj.call('whoami',[],{context:context}).then(function(status) {
                 // query company
-                user_obj.call("read", [status.uid, ["company_id"]], {context:context} ).then(function(company) {
-                   status.company_id = company[0];
-                   status.company = company[1];
+                user_obj.call("read", [status.uid, ["company_id"]], {context:context} ).then(function(res) {
+                   status.company_id = res.company_id[0];
+                   status.company = res.company_id[1];
                    self.setStatus(status);
                    deferred.resolve(status);
                 }, function(err) {

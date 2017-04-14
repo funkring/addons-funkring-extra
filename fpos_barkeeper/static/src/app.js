@@ -22,8 +22,17 @@ Ext.application({
         'Main'
     ],
 
+    models: [
+        'BarKeeper.model.Turnover'
+    ],
+    
+    stores: [
+        'BarKeeper.store.TurnoverStore'
+    ],
+    
     controllers: [
-        'MainCtrl'
+        'MainCtrl',
+        'TurnoverCtrl'
     ],
 
     icon: {

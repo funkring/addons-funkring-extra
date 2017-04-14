@@ -1904,11 +1904,24 @@ Ext.Loader.addClassPathMappings({
   "Ext.device.sqlite.SQLResultSet": "../../touch/src/device/sqlite/Sencha.js",
   "Ext.device.sqlite.SQLResultSetRowList": "../../touch/src/device/sqlite/Sencha.js",
   "Ext.device.sqlite.SQLTransaction": "../../touch/src/device/sqlite/Sencha.js",
-  "Ext.draw.engine.SvgContext.Gradient": "../../touch/src/draw/engine/SvgContext.js"
+  "Ext.draw.engine.SvgContext.Gradient": "../../touch/src/draw/engine/SvgContext.js",
+  "Ext.form": "../../app/addon",
+  "Ext.form.FieldSet": "../../touch/src/form/FieldSet.js",
+  "Ext.form.Panel": "../../touch/src/form/Panel.js",
+  "Ext.ux.Deferred": "../../app/addon/Deferred.js",
+  "Ext.ux.Promise": "../../app/addon/Promise.js"
 });
 
 Ext.ClassManager.addNameAlternateMappings({
+  "BarKeeper.controller.MainCtrl": [],
+  "BarKeeper.controller.TurnoverCtrl": [],
+  "BarKeeper.core.Core": [
+    "Core"
+  ],
+  "BarKeeper.model.Turnover": [],
+  "BarKeeper.store.TurnoverStore": [],
   "BarKeeper.view.Main": [],
+  "BarKeeper.view.TurnoverView": [],
   "Ext.AbstractComponent": [],
   "Ext.AbstractManager": [],
   "Ext.AbstractPlugin": [],
@@ -2450,6 +2463,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.form.Panel": [
     "Ext.form.FormPanel"
   ],
+  "Ext.form.ViewManager": [
+    "ViewManager"
+  ],
   "Ext.fx.Animation": [],
   "Ext.fx.Easing": [],
   "Ext.fx.Runner": [],
@@ -2607,7 +2623,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.ux.ActionOverFlowMenuButton": [],
   "Ext.ux.ApplicationMenu": [],
   "Ext.ux.ContextMenu": [],
+  "Ext.ux.Deferred": [],
   "Ext.ux.MenuButton": [],
+  "Ext.ux.Promise": [],
   "Ext.ux.TabMenuButton": [],
   "Ext.ux.device.Analytics": [],
   "Ext.ux.device.Twitter": [],
@@ -2636,8 +2654,16 @@ Ext.ClassManager.addNameAlternateMappings({
 });
 
 Ext.ClassManager.addNameAliasMappings({
+  "BarKeeper.controller.MainCtrl": [],
+  "BarKeeper.controller.TurnoverCtrl": [],
+  "BarKeeper.core.Core": [],
+  "BarKeeper.model.Turnover": [],
+  "BarKeeper.store.TurnoverStore": [],
   "BarKeeper.view.Main": [
     "widget.main"
+  ],
+  "BarKeeper.view.TurnoverView": [
+    "widget.barkeeper_turnover"
   ],
   "Ext.AbstractComponent": [],
   "Ext.AbstractManager": [],
@@ -3328,6 +3354,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.form.Panel": [
     "widget.formpanel"
   ],
+  "Ext.form.ViewManager": [],
   "Ext.fx.Animation": [],
   "Ext.fx.Easing": [],
   "Ext.fx.Runner": [],
@@ -3547,7 +3574,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.ux.ActionOverFlowMenuButton": [],
   "Ext.ux.ApplicationMenu": [],
   "Ext.ux.ContextMenu": [],
+  "Ext.ux.Deferred": [],
   "Ext.ux.MenuButton": [],
+  "Ext.ux.Promise": [],
   "Ext.ux.TabMenuButton": [],
   "Ext.ux.device.Analytics": [],
   "Ext.ux.device.Twitter": [],
