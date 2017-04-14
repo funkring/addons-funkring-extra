@@ -38,4 +38,4 @@ class fpos_barkeeper(http.Controller):
         if debug:
             return werkzeug.utils.redirect("/fpos_barkeeper/static/src/index.html?debug")
         else:
-            return werkzeug.utils.redirect("/fpos_barkeeper/app/index.html")
+            return werkzeug.utils.redirect("/fpos_barkeeper/static/src/index.html")
