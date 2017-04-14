@@ -156,5 +156,14 @@
      * Uniquely generated id for this application, used as prefix for localStorage keys.
      * Normally you should never change this value.
      */
-    "id": "51d75cd8-d27d-4f52-b094-b4be779cacf0"
+    "id": "51d75cd8-d27d-4f52-b094-b4be779cacf0",
+    
+    /**
+     * output for build
+     */
+     "production": {
+        "output": {
+            "base" : "${workspace.build.dir}/../../app"
+        }   
+     }
 }

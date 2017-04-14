@@ -27,10 +27,16 @@ _logger = logging.getLogger(__name__)
 
 class fpos_barkeeper(http.Controller):
         
-    @http.route(["/fpos_barkeeper/static/src/index.html", "/fpos_barkeeper/static/app/index.html"], type="http", auth="user")
+    @http.route(["/fpos_barkeeper/static/src/index.html"], type="http", auth="user")
     def app_index(self, debug=False, **kwargs):
         cr, session = request.cr, request.session
         html = request.registry["ir.ui.view"].render(cr, session.uid, "fpos_barkeeper.app_index", {})
+        return html
+    
+    @http.route(["/fpos_barkeeper/static/app/index.html"], type="http", auth="user")
+    def app_release_index(self, debug=False, **kwargs):
+        cr, session = request.cr, request.session
+        html = request.registry["ir.ui.view"].render(cr, session.uid, "fpos_barkeeper.app_release_index", {})
         return html
     
     @http.route(["/barkeeper"], type="http", auth="user")
@@ -38,4 +44,4 @@ class fpos_barkeeper(http.Controller):
         if debug:
             return werkzeug.utils.redirect("/fpos_barkeeper/static/src/index.html?debug")
         else:
-            return werkzeug.utils.redirect("/fpos_barkeeper/static/src/index.html")
+            return werkzeug.utils.redirect("/fpos_barkeeper/static/app/index.html")
