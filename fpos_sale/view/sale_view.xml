@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+ <data>
+    
+    <record id="form_sale_order" model="ir.ui.view">
+      <field name="name">fpos_sale.form_sale_order</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="fast_sale.form_sale_order"/>
+      <field name="arch" type="xml">
+        <button name="action_deliver_invoice" position="replace">
+            
+            <button name="action_print_delivery" string="Delivery Note"
+                    groups="base.group_user"
+                    class="oe_highlight"  
+                    type="object"/>
+            
+            <button name="action_deliver_invoice" string="Delivery and Invoice" 
+                    groups="base.group_user" 
+                    class="oe_highlight" 
+                    type="object" attrs="{'invisible': [('invoice_exists','=',True)]}"/>
+                    
+        
+            <button name="action_group" string="Group"
+                    groups="base.group_user"
+                    type="object" states="draft,sent"/>
+                    
+        </button>        
+      </field>
+    </record>
+    
+    
+    <record id="form_sale_order2" model="ir.ui.view">
+      <field name="name">fpos_sale.form_sale_order2</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form"/>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+            <button name="action_button_confirm" states="sent" position="replace">
+                <button name="action_button_confirm" states="sent" string="Confirm Sale" class="oe_highlight" type="object" groups="fpos_sale.group_sale_extended"/>
+            </button>     
+            <button name="action_button_confirm" states="draft" position="replace">
+                <button name="action_button_confirm" states="draft" string="Confirm Sale" type="object" groups="fpos_sale.group_sale_extended"/>
+            </button>
+            <button name="cancel" states="draft,sent" position="replace">
+                 <button name="cancel" states="draft,sent" string="Cancel" groups="fpos_sale.group_sale_extended"/>
+            </button>
+      </field>
+    </record>
+    
+  </data>
+</openerp>

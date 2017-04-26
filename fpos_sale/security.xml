@@ -1,0 +1,10 @@
+<openerp>
+  <data>
+    
+    <record id="group_sale_extended" model="res.groups">
+      <field name="name">Extended Sale</field>
+      <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+    
+  </data>
+</openerp>
