@@ -8,6 +8,7 @@ Ext.define('BarKeeper.view.StatusView', {
     ],
     config: {
         reloadable: true,
+        layout: 'vbox',
         items: [
             {
                 xtype: 'dataview',
@@ -15,18 +16,18 @@ Ext.define('BarKeeper.view.StatusView', {
                 store: 'StatusStore',
                 scrollable: null,
                 cls: 'StatusFilter',
-                itemCls: 'StatusItem',
+                itemCls: 'StatusItem',                
                 itemTpl: ''
             },
             {
                 xtype: 'dataview',
                 id: 'statusDataView',
-                scrollable: 'vertical', 
-                height: '100%',               
+                scrollable: 'vertical',
                 cls: 'StatusData',
                 itemCls: 'StatusDataItem',
                 store: 'StatusStore',
-                itemTpl: ''
+                itemTpl: '',
+                flex: 1
             }
             
         ]

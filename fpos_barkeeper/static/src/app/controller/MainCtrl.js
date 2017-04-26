@@ -55,7 +55,7 @@ Ext.define('BarKeeper.controller.MainCtrl', {
                 layout: 'card',
                 items: [
                     {
-                        xtype: 'barkeeper_status'                        
+                        xtype: 'barkeeper_status'
                     }
                 ]
             });                        
