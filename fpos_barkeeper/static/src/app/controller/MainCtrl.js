@@ -6,15 +6,20 @@ Ext.define('BarKeeper.controller.MainCtrl', {
          'Ext.form.ViewManager',
          'Ext.ux.Deferred',
          'BarKeeper.core.Core',
-         'BarKeeper.view.TurnoverView'
+         'BarKeeper.view.StatusView'
     ],
     config: {
          refs: {
-             mainView: '#mainView'
+             mainView: '#mainView',
+             refreshButton: '#refreshButton'
          },
          control: {
              mainView: {
-                 initialize: 'prepare'
+                 initialize: 'prepare',
+                 activeitemchange : 'onActiveItemChange'
+             },
+             'button[action=reloadData]': {
+                release: 'onReloadData'
              }
          }
     },
@@ -50,12 +55,26 @@ Ext.define('BarKeeper.controller.MainCtrl', {
                 layout: 'card',
                 items: [
                     {
-                        xtype: 'barkeeper_turnover'                        
+                        xtype: 'barkeeper_status'                        
                     }
                 ]
             });                        
             self.getMainView().push(self.basePanel);
         }
+    },
+    
+    getActiveItem: function() {
+        var activeItem = this.getMainView().getActiveItem(); 
+        if ( activeItem == this.basePanel ) activeItem = this.basePanel.getActiveItem();
+        return activeItem;  
+    },
+    
+    onActiveItemChange: function() {       
+        var reloadable = ViewManager.hasViewOption(this.getActiveItem(), 'reloadable');
+        this.getRefreshButton().setHidden(!reloadable);
+    },
+    
+    onReloadData: function() {
+        this.getActiveItem().fireEvent('reloadData');
     }   
-   
 });

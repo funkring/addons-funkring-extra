@@ -11,6 +11,17 @@ Ext.define('BarKeeper.view.Main', {
         layout: {
             type: 'card',
             animation: false            
+        },
+        navigationBar: {            
+            items: [
+                {
+                    xtype: 'button',
+                    id: 'refreshButton',
+                    iconCls: 'refresh',                                  
+                    align: 'right',
+                    action: 'reloadData'
+                }
+            ]
         }
     }
 });

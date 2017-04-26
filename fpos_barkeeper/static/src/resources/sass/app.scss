@@ -57,6 +57,12 @@ $fpos-lightestgold: #fff09e; // 255,240,158
 
 $form-field-label-bg-color : #dcdce6;
 
+$filter-background: #146aa6;
+$filter-forground: #ffffff;
+
+$data-background: #f9f9f9;
+$data-forground: #666666;
+$time-background: #ffffff;
 
 // ******************************************************************
 // BUTTONS
@@ -75,4 +81,115 @@ $form-field-label-bg-color : #dcdce6;
     margin: 1px;
     color: $fpos-white !important; 
     font-size: 1.4em;    
+}
+
+
+// ******************************************************************
+// STATUS FILTER
+// ******************************************************************
+
+.StatusFilter {
+    background: $filter-background;
+    color: $filter-forground;    
+}
+
+.StatusItem {
+    font-size: 1.4em;       
+}
+
+.StatusItemTable {
+    padding: 16px;
+    display: table;
+    width: 100%; 
+}
+.StatusItemTitle {
+    font-weight: bold;
+    text-align: left;
+    display: table-cell; 
+}
+
+.StatusItemRange {
+    text-align: right;
+    display: table-cell; 
+}
+
+.StatusItemName {
+    align: right;
+    font-weight: bold;
+    padding: 16px;
+    border-top: 2px solid $filter-forground;
+}
+
+.StatusItemGroup {
+    align: right;
+    font-weight: normal;
+    padding-top : 8px;
+    padding-left: 24px;
+}
+
+// ******************************************************************
+// STATUS DATA
+// ******************************************************************
+
+.StatusData {
+    background: $data-background;
+    color: $data-forground;    
+}
+
+.StatusDataItem {
+    font-size: 1.6em;
+    font-weight: bold;
+}
+
+.StatusDataTotal {
+    
+}
+
+.StatusDataTotalTable {
+    padding: 16px;
+    display: table;
+    width: 100%; 
+}
+
+.StatusDataTotalTitle {
+    text-align: left;
+    display: table-cell;
+}
+
+.StatusDataTotalAmount {
+    text-align: right;
+    display: table-cell;
+}
+
+.StatusDataSaleBy {
+    border-top: 2px dashed $data-forground;
+    padding: 16px;
+}
+
+.StatusDataTable {
+    font-size: 1.0em;
+    display: table;
+    width: 100%;
+}
+
+.StatusDataSaleByInner {
+    font-weight: normal;
+    padding-left: 24px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.StatusByTime {    
+    background: $time-background; 
+}
+
+.StatusTimeTable {
+    border-top: 2px solid $data-forground;
+    padding: 16px;  
+    font-size: 1.0em;
+}
+
+.StatusTimeTableRow {
+    display: table;
+    width: 100%;
 }

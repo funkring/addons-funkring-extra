@@ -1914,14 +1914,16 @@ Ext.Loader.addClassPathMappings({
 
 Ext.ClassManager.addNameAlternateMappings({
   "BarKeeper.controller.MainCtrl": [],
-  "BarKeeper.controller.TurnoverCtrl": [],
+  "BarKeeper.controller.StatusCtrl": [],
   "BarKeeper.core.Core": [
     "Core"
   ],
-  "BarKeeper.model.Turnover": [],
-  "BarKeeper.store.TurnoverStore": [],
+  "BarKeeper.model.PosConfig": [],
+  "BarKeeper.model.Status": [],
+  "BarKeeper.store.PosConfigStore": [],
+  "BarKeeper.store.StatusStore": [],
   "BarKeeper.view.Main": [],
-  "BarKeeper.view.TurnoverView": [],
+  "BarKeeper.view.StatusView": [],
   "Ext.AbstractComponent": [],
   "Ext.AbstractManager": [],
   "Ext.AbstractPlugin": [],
@@ -2655,15 +2657,17 @@ Ext.ClassManager.addNameAlternateMappings({
 
 Ext.ClassManager.addNameAliasMappings({
   "BarKeeper.controller.MainCtrl": [],
-  "BarKeeper.controller.TurnoverCtrl": [],
+  "BarKeeper.controller.StatusCtrl": [],
   "BarKeeper.core.Core": [],
-  "BarKeeper.model.Turnover": [],
-  "BarKeeper.store.TurnoverStore": [],
+  "BarKeeper.model.PosConfig": [],
+  "BarKeeper.model.Status": [],
+  "BarKeeper.store.PosConfigStore": [],
+  "BarKeeper.store.StatusStore": [],
   "BarKeeper.view.Main": [
     "widget.main"
   ],
-  "BarKeeper.view.TurnoverView": [
-    "widget.barkeeper_turnover"
+  "BarKeeper.view.StatusView": [
+    "widget.barkeeper_status"
   ],
   "Ext.AbstractComponent": [],
   "Ext.AbstractManager": [],
