@@ -62,7 +62,7 @@ class pos_config(osv.Model):
             # get latest order
             order_id = None
             if config_id:
-                order_id = order_obj.search_id(cr, uid, [("session_id.config_id","!=",config_id)], order="date_order desc", context=None)
+                order_id = order_obj.search_id(cr, uid, [("session_id.config_id","=",config_id)], order="date_order desc", context=None)
             else:
                 order_id = order_obj.search_id(cr, uid, [("session_id","!=",False)], order="date_order desc", context=None)
             
@@ -200,7 +200,7 @@ class pos_config(osv.Model):
             dt_delta = relativedelta(hours=1)
         
         # query session build range
-        session_ids = session_obj.search(cr, uid, [("start_at",">=",startDate),("start_at","<",endDate)], order="start_at asc", context=context)
+        session_ids = session_obj.search(cr, uid, [("start_at",">=",startDate),("start_at","<",endDate),("config_id","=",config_id)], order="start_at asc", context=context)
         stat["range"] = helper.getRangeName(cr, uid, startDate, util.getPrevDayDate(endDate), context=context) 
 
         # query orders

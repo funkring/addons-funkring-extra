@@ -159,7 +159,7 @@ Ext.define('BarKeeper.controller.StatusCtrl', {
             ViewManager.stopLoading();
             self.data.set('status', data);  
         }, function(err) {            
-            ViewManager.handleError(err);
+            ViewManager.handleError(err, {name: 'Server Offline', message: 'Daten konnten nicht geladen werden'});
         });        
     },
     
@@ -200,7 +200,7 @@ Ext.define('BarKeeper.controller.StatusCtrl', {
                 }
             });
         }, function(err) {
-           ViewManager.handleError(err);
+           ViewManager.handleError(err, {name: 'Server Offline', message: 'Daten konnten nicht geladen werden'});
         });
        
     }
