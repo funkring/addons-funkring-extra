@@ -591,9 +591,20 @@ class fpos_payment(models.Model):
     
     order_id = fields.Many2one("fpos.order", "Order", required=True, ondelete="cascade", index=True)
     journal_id = fields.Many2one("account.journal", "Journal", required=True, index=True)
+    receipt_ids = fields.One2many("fpos.order.payment.receipt", "payment_id", "Receipts", composition=True)
     amount = fields.Float("Amount")
     payment = fields.Float("Payment")
     code = fields.Char("Code")
+
+    
+class fpos_payment_receipt(models.Model):
+    _name = "fpos.order.payment.receipt"
+    _description = "Payment Receipt"
+    _rec_name = "payment_id"
+    
+    payment_id =  fields.Many2one("fpos.order.payment","Payment", required=True, ondelete="cascade", index=True)
+    receipt = fields.Text("Receipt")
+    rprint = fields.Boolean("Print")
     
     
 class fpos_printer(models.Model):

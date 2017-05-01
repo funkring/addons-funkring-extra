@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-22 20:06+0000\n"
-"PO-Revision-Date: 2017-03-22 21:06+0100\n"
+"POT-Creation-Date: 2017-05-01 15:48+0000\n"
+"PO-Revision-Date: 2017-05-01 17:49+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -51,7 +51,7 @@ msgid "${ctx.get('cashreport_name','Cashreport')}"
 msgstr "${ctx.get('cashreport_name','Kassenbericht')}"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:864
+#: code:addons/fpos/fpos.py:875
 #, python-format
 msgid "%s - %s"
 msgstr ""
@@ -75,7 +75,7 @@ msgid "%s - %s / CW %s %s"
 msgstr "%s - %s / KW %s %s"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:854 code:addons/fpos/wizard/report_wizard.py:129
+#: code:addons/fpos/fpos.py:865 code:addons/fpos/wizard/report_wizard.py:129
 #, python-format
 msgid "%s - CW %s %s"
 msgstr "%s - KW %s %s"
@@ -277,7 +277,7 @@ msgstr "Nach Verkäufer"
 #. module: fpos
 #: selection:fpos.order,st:0
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen"
 
 #. module: fpos
 #: selection:pos.config,sign_method:0
@@ -285,13 +285,13 @@ msgid "Card"
 msgstr "Karte"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:223
+#: code:addons/fpos/point_of_sale.py:224
 #, python-format
 msgid "Card certifcate is empty"
 msgstr "Karten Zertifikat ist leer"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:221
+#: code:addons/fpos/point_of_sale.py:222
 #, python-format
 msgid "Card could only activated by Fpos"
 msgstr "Karte kann nur über eine Fpos aktiviert werden"
@@ -312,7 +312,7 @@ msgid "Cashbox Trigger"
 msgstr "Kassenladenöffner"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:826
+#: code:addons/fpos/fpos.py:837
 #: model:ir.actions.report.xml,name:fpos.report_session_email
 #, python-format
 msgid "Cashreport"
@@ -436,11 +436,12 @@ msgstr "Erstellen"
 #: field:fpos.dist,create_uid:0 field:fpos.hwproxy,create_uid:0
 #: field:fpos.order,create_uid:0 field:fpos.order.line,create_uid:0
 #: field:fpos.order.log,create_uid:0 field:fpos.order.log.line,create_uid:0
-#: field:fpos.order.payment,create_uid:0 field:fpos.order.tax,create_uid:0
-#: field:fpos.payment.iface,create_uid:0 field:fpos.place,create_uid:0
-#: field:fpos.printer,create_uid:0 field:fpos.report.email,create_uid:0
-#: field:fpos.report.wizard,create_uid:0 field:fpos.top,create_uid:0
-#: field:fpos.wizard.export.bmd,create_uid:0
+#: field:fpos.order.payment,create_uid:0
+#: field:fpos.order.payment.receipt,create_uid:0
+#: field:fpos.order.tax,create_uid:0 field:fpos.payment.iface,create_uid:0
+#: field:fpos.place,create_uid:0 field:fpos.printer,create_uid:0
+#: field:fpos.report.email,create_uid:0 field:fpos.report.wizard,create_uid:0
+#: field:fpos.top,create_uid:0 field:fpos.wizard.export.bmd,create_uid:0
 #: field:fpos.wizard.export.rzl,create_uid:0
 #: field:product.opt.wizard,create_uid:0
 msgid "Created by"
@@ -450,9 +451,11 @@ msgstr "Erstellt von"
 #: field:fpos.dist,create_date:0 field:fpos.hwproxy,create_date:0
 #: field:fpos.order,create_date:0 field:fpos.order.line,create_date:0
 #: field:fpos.order.log,create_date:0 field:fpos.order.log.line,create_date:0
-#: field:fpos.order.payment,create_date:0 field:fpos.order.tax,create_date:0
-#: field:fpos.payment.iface,create_date:0 field:fpos.place,create_date:0
-#: field:fpos.printer,create_date:0 field:fpos.report.email,create_date:0
+#: field:fpos.order.payment,create_date:0
+#: field:fpos.order.payment.receipt,create_date:0
+#: field:fpos.order.tax,create_date:0 field:fpos.payment.iface,create_date:0
+#: field:fpos.place,create_date:0 field:fpos.printer,create_date:0
+#: field:fpos.report.email,create_date:0
 #: field:fpos.report.wizard,create_date:0 field:fpos.top,create_date:0
 #: field:fpos.wizard.export.bmd,create_date:0
 #: field:fpos.wizard.export.rzl,create_date:0
@@ -476,7 +479,7 @@ msgid "DEP Download"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:622
+#: code:addons/fpos/point_of_sale.py:623
 #, python-format
 msgid "DEP Export %s"
 msgstr ""
@@ -587,9 +590,11 @@ msgstr "Rabatt %"
 #: field:fpos.order,display_name:0 field:fpos.order.line,display_name:0
 #: field:fpos.order.log,display_name:0
 #: field:fpos.order.log.line,display_name:0
-#: field:fpos.order.payment,display_name:0 field:fpos.order.tax,display_name:0
-#: field:fpos.payment.iface,display_name:0 field:fpos.place,display_name:0
-#: field:fpos.printer,display_name:0 field:fpos.report.email,display_name:0
+#: field:fpos.order.payment,display_name:0
+#: field:fpos.order.payment.receipt,display_name:0
+#: field:fpos.order.tax,display_name:0 field:fpos.payment.iface,display_name:0
+#: field:fpos.place,display_name:0 field:fpos.printer,display_name:0
+#: field:fpos.report.email,display_name:0
 #: field:fpos.report.wizard,display_name:0 field:fpos.top,display_name:0
 #: field:fpos.wizard.export.bmd,display_name:0
 #: field:fpos.wizard.export.rzl,display_name:0
@@ -847,11 +852,12 @@ msgstr ""
 #: field:fpos.dist,id:0 field:fpos.hwproxy,id:0 field:fpos.order,id:0
 #: field:fpos.order.line,id:0 field:fpos.order.log,id:0
 #: field:fpos.order.log.line,id:0 field:fpos.order.payment,id:0
-#: field:fpos.order.tax,id:0 field:fpos.payment.iface,id:0
-#: field:fpos.place,id:0 field:fpos.printer,id:0 field:fpos.report.email,id:0
-#: field:fpos.report.wizard,id:0 field:fpos.top,id:0
-#: field:fpos.wizard.export.bmd,id:0 field:fpos.wizard.export.rzl,id:0
-#: field:product.opt.wizard,id:0 field:report.fpos.report_receipt,id:0
+#: field:fpos.order.payment.receipt,id:0 field:fpos.order.tax,id:0
+#: field:fpos.payment.iface,id:0 field:fpos.place,id:0 field:fpos.printer,id:0
+#: field:fpos.report.email,id:0 field:fpos.report.wizard,id:0
+#: field:fpos.top,id:0 field:fpos.wizard.export.bmd,id:0
+#: field:fpos.wizard.export.rzl,id:0 field:product.opt.wizard,id:0
+#: field:report.fpos.report_receipt,id:0
 msgid "ID"
 msgstr ""
 
@@ -914,13 +920,13 @@ msgid "Internal Sequence"
 msgstr "Interne Sequenz"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:181
+#: code:addons/fpos/point_of_sale.py:182
 #, python-format
 msgid "Invalid AES Key"
 msgstr "Ungültiger AES Schlüssel"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:229
+#: code:addons/fpos/point_of_sale.py:230
 #, python-format
 msgid "Invalid SerialNo: Expected is %s, but transmitted was %s"
 msgstr "Ungültige Seriennr.: Erwartet wird %s, ist übertragen wurde %s"
@@ -957,6 +963,7 @@ msgstr ""
 #: field:fpos.order.log,__last_update:0
 #: field:fpos.order.log.line,__last_update:0
 #: field:fpos.order.payment,__last_update:0
+#: field:fpos.order.payment.receipt,__last_update:0
 #: field:fpos.order.tax,__last_update:0
 #: field:fpos.payment.iface,__last_update:0 field:fpos.place,__last_update:0
 #: field:fpos.printer,__last_update:0 field:fpos.report.email,__last_update:0
@@ -977,11 +984,12 @@ msgstr "Letzter Abgleich"
 #: field:fpos.dist,write_uid:0 field:fpos.hwproxy,write_uid:0
 #: field:fpos.order,write_uid:0 field:fpos.order.line,write_uid:0
 #: field:fpos.order.log,write_uid:0 field:fpos.order.log.line,write_uid:0
-#: field:fpos.order.payment,write_uid:0 field:fpos.order.tax,write_uid:0
-#: field:fpos.payment.iface,write_uid:0 field:fpos.place,write_uid:0
-#: field:fpos.printer,write_uid:0 field:fpos.report.email,write_uid:0
-#: field:fpos.report.wizard,write_uid:0 field:fpos.top,write_uid:0
-#: field:fpos.wizard.export.bmd,write_uid:0
+#: field:fpos.order.payment,write_uid:0
+#: field:fpos.order.payment.receipt,write_uid:0
+#: field:fpos.order.tax,write_uid:0 field:fpos.payment.iface,write_uid:0
+#: field:fpos.place,write_uid:0 field:fpos.printer,write_uid:0
+#: field:fpos.report.email,write_uid:0 field:fpos.report.wizard,write_uid:0
+#: field:fpos.top,write_uid:0 field:fpos.wizard.export.bmd,write_uid:0
 #: field:fpos.wizard.export.rzl,write_uid:0
 #: field:product.opt.wizard,write_uid:0
 msgid "Last Updated by"
@@ -991,11 +999,12 @@ msgstr "Zuletzt aktualisiert von"
 #: field:fpos.dist,write_date:0 field:fpos.hwproxy,write_date:0
 #: field:fpos.order,write_date:0 field:fpos.order.line,write_date:0
 #: field:fpos.order.log,write_date:0 field:fpos.order.log.line,write_date:0
-#: field:fpos.order.payment,write_date:0 field:fpos.order.tax,write_date:0
-#: field:fpos.payment.iface,write_date:0 field:fpos.place,write_date:0
-#: field:fpos.printer,write_date:0 field:fpos.report.email,write_date:0
-#: field:fpos.report.wizard,write_date:0 field:fpos.top,write_date:0
-#: field:fpos.wizard.export.bmd,write_date:0
+#: field:fpos.order.payment,write_date:0
+#: field:fpos.order.payment.receipt,write_date:0
+#: field:fpos.order.tax,write_date:0 field:fpos.payment.iface,write_date:0
+#: field:fpos.place,write_date:0 field:fpos.printer,write_date:0
+#: field:fpos.report.email,write_date:0 field:fpos.report.wizard,write_date:0
+#: field:fpos.top,write_date:0 field:fpos.wizard.export.bmd,write_date:0
 #: field:fpos.wizard.export.rzl,write_date:0
 #: field:product.opt.wizard,write_date:0
 msgid "Last Updated on"
@@ -1233,7 +1242,7 @@ msgid "No access for product with EAN %s"
 msgstr "Kein Zugriff auf Produkt mit EAN %s"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:219
+#: code:addons/fpos/point_of_sale.py:220
 #, python-format
 msgid "No activiation in this sign status possible"
 msgstr "Es ist keine Aktivierung in diesem Signaturstatus möglich"
@@ -1267,13 +1276,13 @@ msgid "No invoice reconciliation"
 msgstr "Kein Rechnungsausgleich"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:279 code:addons/fpos/point_of_sale.py:373
+#: code:addons/fpos/point_of_sale.py:280 code:addons/fpos/point_of_sale.py:374
 #, python-format
 msgid "No profile for user %s"
 msgstr "Kein Profil für Benutzer %s"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:618
+#: code:addons/fpos/point_of_sale.py:619
 #, python-format
 msgid "No signation activated for %s"
 msgstr "Es wurde keine Signierung für %s aktiviert"
@@ -1332,7 +1341,7 @@ msgid "Only Administrator could correct Fpos orders"
 msgstr "Nur der Administrator darf Fpos Verkäufe korrigieren"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:250
+#: code:addons/fpos/point_of_sale.py:251
 #, python-format
 msgid "Only system admin could set pos system into live operation"
 msgstr "Nur der Systemadministrator kann eine Kasse in Echtbetrieb setzen"
@@ -1470,6 +1479,7 @@ msgstr "Kunde"
 
 #. module: fpos
 #: view:fpos.order:fpos.form_fpos_order field:fpos.order.payment,payment:0
+#: field:fpos.order.payment.receipt,payment_id:0
 msgid "Payment"
 msgstr "Zahlung"
 
@@ -1477,6 +1487,11 @@ msgstr "Zahlung"
 #: view:pos.config:fpos.form_pos_config field:pos.config,payment_iface_ids:0
 msgid "Payment Interfaces"
 msgstr "Bezahlschnittstelle"
+
+#. module: fpos
+#: model:ir.model,name:fpos.model_fpos_order_payment_receipt
+msgid "Payment Receipt"
+msgstr ""
 
 #. module: fpos
 #: view:fpos.order:fpos.form_fpos_order field:fpos.order,payment_ids:0
@@ -1546,6 +1561,11 @@ msgstr "Preiseingabe"
 #: field:product.template,pos_price_pre:0
 msgid "Price Predecimal"
 msgstr "Preis Vorkommastellen"
+
+#. module: fpos
+#: field:fpos.order.payment.receipt,rprint:0
+msgid "Print"
+msgstr "Drucken"
 
 #. module: fpos
 #: field:pos.config,iface_printleft:0
@@ -1677,6 +1697,17 @@ msgid "Real"
 msgstr "IST-Stand"
 
 #. module: fpos
+#: field:pos.config,fpos_sync_realtime:0
+msgid "Realtime Online Sync"
+msgstr "Echzeit Online Sync"
+
+#. module: fpos
+#: help:pos.config,fpos_sync_realtime:0
+msgid "Realtime online order synchronisation"
+msgstr "Verkäufe werden in Echtzeit übertragen"
+
+#. module: fpos
+#: field:fpos.order.payment.receipt,receipt:0
 #: view:pos.config:fpos.form_pos_config
 msgid "Receipt"
 msgstr "Quittung"
@@ -1685,6 +1716,11 @@ msgstr "Quittung"
 #: view:website:fpos.report_receipt
 msgid "Receipt:"
 msgstr "Beleg:"
+
+#. module: fpos
+#: view:fpos.order:fpos.form_fpos_order field:fpos.order.payment,receipt_ids:0
+msgid "Receipts"
+msgstr "Belege"
 
 #. module: fpos
 #: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
@@ -1849,13 +1885,13 @@ msgid "Show the product also in this category"
 msgstr "Zeige das Produkt auch in dieser Kategorie"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:349
+#: code:addons/fpos/point_of_sale.py:350
 #, python-format
 msgid "Signation failed for user %s"
 msgstr "Signierung für Benutzer %s fehlgeschlagen"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:283
+#: code:addons/fpos/point_of_sale.py:284
 #, python-format
 msgid "Signation is not configured for user %s"
 msgstr "Signierung für Benutzer %s nicht konfiguriert"
@@ -2037,7 +2073,7 @@ msgid "Test"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:488
+#: code:addons/fpos/point_of_sale.py:489
 #, python-format
 msgid "There is no company for user %s"
 msgstr "Es existiert keine Firma für Benutzer %s"

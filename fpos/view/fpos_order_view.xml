@@ -72,12 +72,32 @@
                             <group string="Payment">
                                 <div>
                                     <field name="payment_ids">
-                                        <tree string="Payments" editable="buttom"> 
+                                        <tree string="Payments"> 
                                             <field name="journal_id"/>
                                             <field name="code"/>
                                             <field name="amount" sum="Amount"/>
                                             <field name="payment" sum="Payment"/>                                            
                                         </tree>
+                                        <form string="Payment">
+                                            <group>
+                                                <group>
+                                                    <field name="journal_id"/>
+                                                    <field name="code"/>
+                                                </group>
+                                                <group>
+                                                    <field name="amount"/>
+                                                    <field name="payment"/>
+                                                </group>
+                                            </group>
+                                            <div>
+                                                <field name="receipt_ids">
+                                                    <tree string="Receipts">   
+                                                        <field name="rprint"/>                                                 
+                                                        <field name="receipt"/>                                                        
+                                                    </tree>
+                                                </field>
+                                            </div>
+                                        </form>
                                     </field>      
                                 </div>
                             </group>

@@ -46,13 +46,14 @@
                     <field name="fpos_income_id"/>
                     <field name="fpos_expense_id"/>
                 </group>
-                <group string="Distribution">
+                <group string="Distribution">                    
                     <field name="fpos_printer_ids" widget="many2many_tags"/>
                     <field name="fpos_dist_ids" widget="many2many_tags"/>
                     <field name="fpos_sync_clean"/>
                     <field name="fpos_sync_count"/>
                     <field name="fpos_sync_version"/>
                     <field name="fpos_sync_reset"/>
+                    <field name="fpos_sync_realtime"/>
                 </group>
             </group>
             <group string="Hardware Proxy" position="replace">
