@@ -55,7 +55,6 @@ class res_partner(osv.Model):
     
     _inherit = "res.partner"
     _columns = {
-        "tmpl_order_id" : fields.many2one("sale.order", "Order Template", help="Template for new orders"),        
         "pending_order_count" : fields.function(_pending_order_count, string="Orders", type="integer", store=False)
     }
     

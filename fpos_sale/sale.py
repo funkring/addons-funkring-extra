@@ -19,6 +19,7 @@
 ##############################################################################
 
 from openerp.osv import osv
+from collections import OrderedDict
 
 class sale_order(osv.Model):
     
@@ -31,17 +32,23 @@ class sale_order(osv.Model):
             if default_partner_id:
                 partner = partner_obj.browse(cr, uid, default_partner_id, context=context)
                 if partner:
-                    order_tmpl = partner.tmpl_order_id
-                    if order_tmpl:
-                        vals = []
-                        for line in order_tmpl.order_line:
-                            copy_vals = line_obj.copy_data(cr, uid, line.id, context=context)
-                            del copy_vals["order_id"]
-                            vals.append((0,0,copy_vals))
-                        if vals:
-                            if not "value" in res:
-                                res["value"] = {}
-                            res["value"]["order_line"] = vals
+                    products = set()
+                    vals = []
+                    order_ids = self.search(cr, uid, [("partner_id","=",partner.id),("state","!=","cancel")], limit=10, order="date_order desc", context=context)
+                    for order in self.browse(cr, uid, order_ids, context=context):
+                        for line in order.order_line:
+                            if line.product_id and not line.product_id.id in products:
+                                products.add(line.product_id.id)
+                                # add copy data
+                                copy_vals = line_obj.copy_data(cr, uid, line.id, context=context)
+                                copy_vals["product_uom_qty"] = 0.0
+                                copy_vals["product_uos_qty"] = 0.0
+                                del copy_vals["order_id"]
+                                vals.append((0,0,copy_vals))                                
+                    if vals:
+                        if not "value" in res:
+                            res["value"] = {}
+                        res["value"]["order_line"] = vals
         return res
 
     def action_print_delivery(self, cr, uid, ids, context=None):
