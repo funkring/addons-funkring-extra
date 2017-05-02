@@ -46,7 +46,7 @@ class res_partner(osv.Model):
                 "view_mode": view_mode,
                 "res_model": "sale.order",
                 "type": "ir.actions.act_window",
-                "domain" : [("partner_id","=",partner.id)],
+                "domain" : [("partner_id","=",partner.id),("state","in",["draft","sent","waiting_date"])],
                 "context": {
                     "default_partner_id" : partner.id
                  }

@@ -58,6 +58,8 @@ class sale_order(osv.Model):
     def action_group(self, cr, uid, ids, context=None):
         line_ids = []
         for order in self.browse(cr, uid, ids, context=context):
+            if not order.state in ("draft","sent"):
+                continue
             for line in order.order_line:
                 if not line.product_uom_qty:
                     line_ids.append(line.id) 
