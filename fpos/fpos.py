@@ -193,7 +193,47 @@ class fpos_order(models.Model):
                 order.amount_tax = order_tax
 
         return True
+    
+    @api.model
+    def post_order(self, docs):
+        if isinstance(docs, dict):
+            docs = [docs]
+        
+        lastOrderEntry = self.with_context({"active_test" : False}).search_read([("fpos_user_id","=",self._uid),("state","!=","draft")],
+                                                  ["seq"],
+                                                  order="seq desc", limit=1, context={"active_test" : False})
+        uuid = None
+            
+        nextSeq = 0
+        if lastOrderEntry:
+            nextSeq = lastOrderEntry[0]["seq"] or 0
+        
+        if docs:
+            jdoc_obj = self.env["jdoc.jdoc"]
+            mapping_obj = self.env["res.mapping"]
+            for doc in docs: 
+                # check user
+                fpos_user_id = mapping_obj.get_id("res.users", doc.get("fpos_user_id"))
+                if fpos_user_id != self._uid:
+                    raise Warning(_("User %s cannot post order as user %s") % (self._uid, fpos_user_id))
+
+                # check sequence            
+                nextSeq += 1       
+                if nextSeq != doc["seq"]:
+                    break
                 
+                uuid = jdoc_obj.jdoc_put(doc)
+       
+        # build res     
+        res =  {
+            "seq" : nextSeq,
+        }
+        
+        if uuid:
+            res["_id"] = uuid
+            
+        return res
+        
     
     @api.model
     def create(self, vals):

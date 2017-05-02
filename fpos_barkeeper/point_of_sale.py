@@ -22,7 +22,6 @@ from openerp.osv import osv
 from openerp.tools.translate import _
 from openerp.addons.at_base import util
 from openerp.addons.at_base import helper
-from openerp import tools
 
 from dateutil.relativedelta import relativedelta
 
@@ -52,17 +51,27 @@ class pos_config(osv.Model):
         # and build default options 
         # if no options are passed
         config_id = None
+        config = None
         date = None
+        mode = "today"
         if options:
             config_id = options.get("config_id")
-            date = options.get("date")
+            # if mode is today
+            # date is none            
+            mode = options.get("mode")
+            if not mode or mode == "today":
+                date = None
+                options["mode"] = "today"             
+            else:
+                date = options.get("date")
         
         nodata = False
         if not config_id or not date:
             # get latest order
             order_id = None
             if config_id:
-                order_id = order_obj.search_id(cr, uid, [("session_id.config_id","=",config_id)], order="date_order desc", context=None)
+                config = config_obj.browse(cr, uid, config_id, context=context)
+                order_id = order_obj.search_id(cr, uid, ['|',("session_id.config_id","=",config_id),('session_id.config_id.parent_user_id','=',config.user_id.id)], order="date_order desc", context=None)
             else:
                 order_id = order_obj.search_id(cr, uid, [("session_id","!=",False)], order="date_order desc", context=None)
             
@@ -95,7 +104,8 @@ class pos_config(osv.Model):
             return stat
         
         # get current mode
-        config = config_obj.browse(cr, uid, config_id, context=context)
+        if not config or config.id != config_id:
+            config = config_obj.browse(cr, uid, config_id, context=context)
         config_ids = [config_id]
 
         # build title and group description
@@ -119,12 +129,6 @@ class pos_config(osv.Model):
         if not statDate:
             options["date"] = statDate = util.currentDate()
             
-        # get mode
-        mode = options.get("mode")
-        if not mode:
-            options["mode"] = mode = "today"
-        
-        
         # add amount
         orderDicts = []
         def addAmount(amount, amountStat, sections, count=False):
@@ -190,7 +194,7 @@ class pos_config(osv.Model):
         elif mode == "week":
             stat["title"] = _("Week")
             startDate = util.getFirstOfWeek(statDate)
-            endDate = util.getFirstOfWeek(statDate)
+            endDate = util.getFirstOfNextWeek(statDate)
             dt_delta = relativedelta(weeks=1)        
         else:
             time_keyfunc = lambda date_order: "%s:00" % helper.strToLocalTimeStr(cr, uid, date_order, context=context).split(" ")[1][:2]
@@ -200,7 +204,7 @@ class pos_config(osv.Model):
             dt_delta = relativedelta(hours=1)
         
         # query session build range
-        session_ids = session_obj.search(cr, uid, [("start_at",">=",startDate),("start_at","<",endDate),("config_id","=",config_id)], order="start_at asc", context=context)
+        session_ids = session_obj.search(cr, uid, [("start_at",">=",startDate),("start_at","<",endDate),("config_id","in",config_ids)], order="start_at asc", context=context)
         stat["range"] = helper.getRangeName(cr, uid, startDate, util.getPrevDayDate(endDate), context=context) 
 
         # query orders

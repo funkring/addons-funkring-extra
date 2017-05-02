@@ -11,7 +11,8 @@ Ext.define('BarKeeper.controller.MainCtrl', {
     config: {
          refs: {
              mainView: '#mainView',
-             refreshButton: '#refreshButton'
+             refreshButton: '#refreshButton',
+             saveButton: '#saveButton'
          },
          control: {
              mainView: {
@@ -20,6 +21,9 @@ Ext.define('BarKeeper.controller.MainCtrl', {
              },
              'button[action=reloadData]': {
                 release: 'onReloadData'
+             },
+             'button[action=saveRecord]': {
+                release: 'onSaveRecord'
              }
          }
     },
@@ -63,18 +67,34 @@ Ext.define('BarKeeper.controller.MainCtrl', {
         }
     },
     
+    getActiveMainView: function() {            
+        var activeItem = this.getMainView().getActiveItem(); 
+        if ( activeItem == this.basePanel ) return this.basePanel;
+        return this.getMainView();
+    },
+    
     getActiveItem: function() {
         var activeItem = this.getMainView().getActiveItem(); 
         if ( activeItem == this.basePanel ) activeItem = this.basePanel.getActiveItem();
         return activeItem;  
     },
     
-    onActiveItemChange: function() {       
-        var reloadable = ViewManager.hasViewOption(this.getActiveItem(), 'reloadable');
+    onActiveItemChange: function() {
+        var self = this;
+        var view = self.getActiveItem();
+        var reloadable = ViewManager.hasViewOption(view, 'reloadable');
         this.getRefreshButton().setHidden(!reloadable);
+        
+        ViewManager.updateButtonState(view, {
+            saveButton: self.getSaveButton()            
+        });
     },
     
     onReloadData: function() {
         this.getActiveItem().fireEvent('reloadData');
-    }   
+    },
+    
+    onSaveRecord: function() {
+        ViewManager.saveRecord(this.getActiveMainView());
+    } 
 });

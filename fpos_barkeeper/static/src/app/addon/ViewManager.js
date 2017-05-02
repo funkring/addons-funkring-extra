@@ -51,7 +51,8 @@ Ext.define('Ext.form.ViewManager', {
     requires: [
       'Ext.ux.Deferred',
       'Ext.Panel',
-      'Ext.MessageBox'
+      'Ext.MessageBox',
+      'Ext.picker.Picker'
     ],
     config : {
     },
@@ -59,6 +60,24 @@ Ext.define('Ext.form.ViewManager', {
     constructor: function(config) {
         this.initConfig(config);
         this.keyboardListenerStack=[];
+        
+        // override translation for picker
+        Ext.define('Override.Ext.picker.Picker', {
+            override: 'Ext.picker.Picker',
+            config: {
+                doneButton: 'OK',
+                cancelButton: 'Abbrechen'
+            }
+        });
+        
+         // override translation for date picker
+        Ext.define('Override.Ext.picker.Date', {
+            override: 'Ext.picker.Date',
+            config: {
+                doneButton: 'OK',
+                cancelButton: 'Abbrechen'
+            }
+        });
     },
     
     updateButtonState: function(view, items) {

@@ -21,7 +21,10 @@ futil.keys = function(obj) {
 
 futil.dateToStr = function(date) {
     //2016-02-03T22:46:46.011Z
-    return date.toISOString().substring(0, 10);
+    var d = new Date(date);
+    //correct time zone
+    d.setTime( d.getTime() - (d.getTimezoneOffset()*60*1000) );
+    return d.toISOString().substring(0, 10);
 };
 
 futil.datetimeToStr = function(date) {
@@ -42,9 +45,10 @@ futil.strToIsoDate = function(str) {
     return date.toISOString();
 };
 
-futil.strToLocalDateTime = function(str) {
-    var date = futil.strToDate(str);
-      
+futil.padLeft = function(val, count, pad) {
+    if ( !pad ) pad = ' ';
+    while ( val.length < count ) val=pad+val;
+    return val; 
 };
 
 futil.isDoubleTap = function() {

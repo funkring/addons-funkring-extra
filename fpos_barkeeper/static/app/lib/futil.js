@@ -1,1 +1,103 @@
-function _f1d9fa5fa83b015edc128f6d0243ef82afe5a689(){};function _eeda578b0e042826b4d6cdaa0fee2d522f02f532(){}function _2088a048b2415a353bfdb45510c23c2472e66d13(){}var futil={comma:",",activetap:false};futil.keys=function(a){if(typeof a!="object"&&typeof a!="function"||a===null){throw TypeError("Object.keys called on non-object")}var b=[];for(var c in a){if(a.hasOwnProperty(c)){b.push(c)}}return b};futil.dateToStr=function(a){return a.toISOString().substring(0,10)};futil.datetimeToStr=function(a){var b=a.toISOString();return b.substring(0,10)+" "+b.substring(11,19)};futil.strToDate=function(b){if(b.length==19){b=b.substring(0,10)+"T"+b.substring(11,19)+"Z"}var a=new Date(b);return a};futil.strToIsoDate=function(b){var a=futil.strToDate(b);return a.toISOString()};futil.strToLocalDateTime=function(b){var a=futil.strToDate(b)};futil.isDoubleTap=function(){if(!futil.activetap){futil.activetap=true;setTimeout(function(){futil.activetap=false},500);return false}return true};futil.screenWidth=function(){var a=(window.innerWidth>0)?window.innerWidth:screen.width;return a};futil.screenHeight=function(){var a=(window.innerHeight>0)?window.innerHeight:screen.height;return a};futil.physicalScreenWidth=function(){return window.screen.width*window.devicePixelRatio};futil.physicalScreenHeight=function(){return window.screen.height*window.devicePixelRatio};futil.hasSmallRes=function(){return Math.max(futil.screenWidth(),futil.screenHeight())<1024};futil.formatFloat=function(a,b){if(!a){a=0}if(b===0){return a.toString().replace(".",futil.comma)}else{if(!b){b=2}}return a.toFixed(b).replace(".",futil.comma)};futil.parseFloat=function(a){if(!a){return 0}return parseFloat(a.replace(futil.comma,"."))};
+/*global Ext:false*/
+
+/**
+ * funkring util lib
+ */
+var futil = {
+    comma: ",",
+    activetap: false
+};
+
+futil.keys = function(obj) {
+    if (typeof obj != "object" && typeof obj != "function" || obj === null) {
+        throw TypeError("Object.keys called on non-object");
+    }
+    var keys = [];
+    for (var p in obj) 
+        if ( obj.hasOwnProperty(p) )
+            keys.push(p);
+    return keys;
+};
+
+futil.dateToStr = function(date) {
+    //2016-02-03T22:46:46.011Z
+    return date.toISOString().substring(0, 10);
+};
+
+futil.datetimeToStr = function(date) {
+    //2016-02-03T22:46:46.011Z
+    var isoStr = date.toISOString();
+    return isoStr.substring(0, 10) + " " + isoStr.substring(11,19);
+};
+
+futil.strToDate = function(str) {
+    if ( str.length == 19) 
+        str = str.substring(0, 10) + "T" + str.substring(11,19) + "Z";
+    var date = new Date(str);
+    return date;
+};
+
+futil.strToIsoDate = function(str) {
+    var date = futil.strToDate(str);
+    return date.toISOString();
+};
+
+futil.dateToLocalDateStr = function(date) {
+    debugger;
+    var res = String.format("%4d-%2d-%2d", date.getYear(), date.getMonth(), date.getDay());
+    return res;
+};
+
+futil.isDoubleTap = function() {
+    if ( !futil.activetap ) {
+        futil.activetap = true;
+        setTimeout(function() {
+            futil.activetap = false;
+        },500);
+        return false;
+    }        
+    return true;
+};
+
+futil.screenWidth = function() {
+    var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    return width;
+};
+
+futil.screenHeight = function() {
+    var height = (window.innerHeight > 0) ? window.innerHeight : screen.height;
+    return height;
+};
+
+futil.physicalScreenWidth = function() {
+    return window.screen.width * window.devicePixelRatio;
+};
+
+futil.physicalScreenHeight = function() {
+    return window.screen.height * window.devicePixelRatio;
+};
+
+futil.hasSmallRes = function() {
+    return Math.max(futil.screenWidth(), futil.screenHeight()) < 1024;
+};
+
+futil.formatFloat = function(num, digits) {    
+    if ( !num) {
+        num = 0.0;
+    }
+    
+    if (digits === 0) {
+        return num.toString().replace(".",futil.comma);    
+    } else if (!digits) {
+        digits=2;
+    }
+    
+    return num.toFixed(digits).replace(".",futil.comma);  
+};
+
+futil.parseFloat = function(num) {
+    if (!num) {
+        return 0.0;
+    }
+    return parseFloat(num.replace(futil.comma,"."));
+};

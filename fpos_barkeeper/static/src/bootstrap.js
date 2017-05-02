@@ -22,7 +22,6 @@ Ext.Loader.addClassPathMappings({
   "Ext.Element-static": "touch/src/dom/Element.static.js",
   "Ext.Element-style": "touch/src/dom/Element.style.js",
   "Ext.Element-traversal": "touch/src/dom/Element.traversal.js",
-  "Ext.cmd": "../../../../../../.local/opt/Sencha/Cmd/6.2.2.36/plugins/src",
   "Ext.core.DomQuery": "touch/src/dom/Query.js",
   "Ext.device.Purchases.Product": "touch/src/device/purchases/Sencha.js",
   "Ext.device.filesystem.DirectoryEntry": "touch/src/device/filesystem/Sencha.js",
@@ -39,7 +38,9 @@ Ext.Loader.addClassPathMappings({
   "Ext.form.FieldSet": "touch/src/form/FieldSet.js",
   "Ext.form.Panel": "touch/src/form/Panel.js",
   "Ext.ux.Deferred": "app/addon/Deferred.js",
-  "Ext.ux.Promise": "app/addon/Promise.js"
+  "Ext.ux.Promise": "app/addon/Promise.js",
+  "Override.Ext.picker.Date": "app/addon/ViewManager.js",
+  "Override.Ext.picker.Picker": "app/addon/ViewManager.js"
 });
 
 Ext.ClassManager.addNameAlternateMappings({
@@ -656,6 +657,17 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.layout.wrapper.BoxDock": [],
   "Ext.layout.wrapper.Dock": [],
   "Ext.layout.wrapper.Inner": [],
+  "Ext.log.Base": [],
+  "Ext.log.Logger": [],
+  "Ext.log.filter.Filter": [],
+  "Ext.log.filter.Priority": [],
+  "Ext.log.formatter.Default": [],
+  "Ext.log.formatter.Formatter": [],
+  "Ext.log.formatter.Identity": [],
+  "Ext.log.writer.Console": [],
+  "Ext.log.writer.DocumentTitle": [],
+  "Ext.log.writer.Remote": [],
+  "Ext.log.writer.Writer": [],
   "Ext.mixin.Bindable": [],
   "Ext.mixin.Filterable": [],
   "Ext.mixin.Mixin": [],
@@ -782,7 +794,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.viewport.Viewport": [],
   "Ext.viewport.WindowsPhone": [
     "Ext.viewport.WP"
-  ]
+  ],
+  "Override.Ext.picker.Date": [],
+  "Override.Ext.picker.Picker": []
 });
 
 Ext.ClassManager.addNameAliasMappings({
@@ -1601,6 +1615,17 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.layout.wrapper.BoxDock": [],
   "Ext.layout.wrapper.Dock": [],
   "Ext.layout.wrapper.Inner": [],
+  "Ext.log.Base": [],
+  "Ext.log.Logger": [],
+  "Ext.log.filter.Filter": [],
+  "Ext.log.filter.Priority": [],
+  "Ext.log.formatter.Default": [],
+  "Ext.log.formatter.Formatter": [],
+  "Ext.log.formatter.Identity": [],
+  "Ext.log.writer.Console": [],
+  "Ext.log.writer.DocumentTitle": [],
+  "Ext.log.writer.Remote": [],
+  "Ext.log.writer.Writer": [],
   "Ext.mixin.Bindable": [],
   "Ext.mixin.Filterable": [],
   "Ext.mixin.Mixin": [],
@@ -1739,7 +1764,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.viewport.Ios": [],
   "Ext.viewport.Viewport": [],
-  "Ext.viewport.WindowsPhone": []
+  "Ext.viewport.WindowsPhone": [],
+  "Override.Ext.picker.Date": [],
+  "Override.Ext.picker.Picker": []
 });
 
 

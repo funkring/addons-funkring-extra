@@ -19,7 +19,15 @@ Ext.define('BarKeeper.view.Main', {
                     id: 'refreshButton',
                     iconCls: 'refresh',                                  
                     align: 'right',
-                    action: 'reloadData'
+                    action: 'reloadData',
+                    hidden: true
+                },
+                {
+                    xtype: 'button',
+                    id: 'saveButton',
+                    text: 'Speichern',                                  
+                    align: 'right',
+                    action: 'saveRecord'
                 }
             ]
         }

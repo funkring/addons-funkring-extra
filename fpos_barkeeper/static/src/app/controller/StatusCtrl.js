@@ -6,6 +6,9 @@ Ext.define('BarKeeper.controller.StatusCtrl', {
          'Ext.form.ViewManager',
          'Ext.ux.Deferred',
          'Ext.dataview.List',
+         'Ext.form.Panel',
+         'Ext.field.DatePicker',
+         'Ext.field.Select',
          'BarKeeper.core.Core',
          'BarKeeper.view.StatusView',
          'BarKeeper.model.Status'
@@ -174,6 +177,8 @@ Ext.define('BarKeeper.controller.StatusCtrl', {
         var element = Ext.get(e.target);
         if ( element.hasCls('StatusItemName') || element.up('div.StatusItemName') ) {
             this.selectPosConfig();
+        } else if ( element.hasCls('StatusItemTable') || element.up('div.StatusItemTable') ) {
+            this.selectRangeConfig();
         }
     },
     
@@ -202,7 +207,69 @@ Ext.define('BarKeeper.controller.StatusCtrl', {
         }, function(err) {
            ViewManager.handleError(err, {name: 'Server Offline', message: 'Daten konnten nicht geladen werden'});
         });
-       
+    },
+    
+    
+    selectRangeConfig: function() {
+        var self = this;
+        
+        var status = this.data.get('status');
+        var options = status.options || {};
+        
+        // mode
+        var mode = options.mode || 'today';
+        
+        // date
+        var date = new Date();
+        if ( options.date ) {
+            date = futil.strToDate(options.date);
+        }
+        
+        var configForm = Ext.create('Ext.form.Panel',{
+           title: 'Bereich',
+           fullscreen: true,
+           saveable: true,
+           saveHandler: function(view) {            
+               var values = view.getValues();               
+               options.date = futil.dateToStr(values.date);
+               options.mode = values.mode;
+               setTimeout(function() {
+                    self.loadData(options);    
+               }, 0);
+           },
+           items: [{
+                xtype: 'fieldset',
+                items: [                   
+                    {
+                        xtype: 'selectfield',
+                        label: 'Ansicht',
+                        name: 'mode',
+                        doneButton: 'Auswählen',
+                        cancelButton: 'Abbrechen',
+                        options: [
+                             { text: 'Heute', value: 'today' },
+                             { text: 'Tag', value: 'day' },
+                             { text: 'Woche', value: 'week' },
+                             { text: 'Monat', value: 'month' }
+                        ]
+                    },
+                    {
+                        xtype: 'datepickerfield',
+                        label: 'Datum',
+                        name: 'date',
+                        dateFormat: 'd.m.Y',
+                        doneButton: 'Auswählen',
+                        cancelButton: 'Abbrechen'
+                    }                    
+                ]  
+           }]
+        });
+        
+        configForm.setValues({
+            mode: mode,
+            date: date
+        });
+        self.getMainView().push(configForm);
     }
     
 });

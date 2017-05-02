@@ -151,8 +151,8 @@ class pos_config(osv.Model):
         "fpos_model" : fields.selection([
                 ("hand", "Touch&Cash Hand"),
                 ("flex", "Touch&Cash Flex"),
-                ("mpos", "Touch&Cash mPOS"),
-                ("npos", "Touch&Cash nPOS"),
+                ("mpos", "Touch&Cash Fine"),
+                ("npos", "Touch&Cash Raw"),
                 ("pos", "Touch&Cash POS"),
                 ("online","Online POS"),
                 ("tablet","Tablet POS"),
