@@ -216,13 +216,19 @@ class fpos_order(models.Model):
                 fpos_user_id = mapping_obj.get_id("res.users", doc.get("fpos_user_id"))
                 if fpos_user_id != self._uid:
                     raise Warning(_("User %s cannot post order as user %s") % (self._uid, fpos_user_id))
-
+                
                 # check sequence            
                 nextSeq += 1       
                 if nextSeq != doc["seq"]:
                     break
-                
-                uuid = jdoc_obj.jdoc_put(doc)
+
+                # check if order already exist
+                order = mapping_obj._browse_mapped(doc["_id"], "fpos.order")
+                if order and order.state != "draft":
+                    # don't override order if it is not in draft state
+                    uuid = doc["_id"]
+                else:
+                    uuid = jdoc_obj.jdoc_put(doc)
        
         # build res     
         res =  {
