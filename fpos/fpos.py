@@ -261,7 +261,23 @@ class fpos_order(models.Model):
         precision = self.pool.get('decimal.precision').precision_get(self._cr, self._uid, 'Account')       
         status_id = data_obj.xmlid_to_res_id("fpos.product_fpos_status",raise_if_not_found=True)
         
+        # build fpos order to pos order map
+        fpos_order_ids = [o.id for o in self]
+        if not fpos_order_ids:
+            return True
+        
+        self._cr.execute("SELECT fo.id, o.id FROM fpos_order fo "
+                         " INNER JOIN pos_order o ON o.fpos_order_id = fo.id WHERE fo.id IN %s ", (tuple(fpos_order_ids),))
+        
+        fpos2posOrderMap = dict([(r[0],r[1]) for r in self._cr.fetchall()])
+        
+        # post orders
         for order in self:
+            # check if order was already done
+            # (prevent double creation)
+            if fpos2posOrderMap.get(order.id):
+                order.state = "done"
+                continue
             
             # get profile
             profile = profileDict.get(order.fpos_user_id.id)
@@ -277,7 +293,7 @@ class fpos_order(models.Model):
             # and order is in paid state
             if not profile or order.state != "paid":
                 continue
-            
+                    
             # init finish flag
             finish = False
             
