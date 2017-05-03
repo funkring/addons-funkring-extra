@@ -6,7 +6,6 @@ Ext.define('BarKeeper.view.Main', {
     requires: [
     ],
     config: {
-        tabBarPosition: 'bottom',
         defaultBackButtonText: 'Zurück',        
         layout: {
             type: 'card',
@@ -27,7 +26,8 @@ Ext.define('BarKeeper.view.Main', {
                     id: 'saveButton',
                     text: 'Speichern',                                  
                     align: 'right',
-                    action: 'saveRecord'
+                    action: 'saveRecord',
+                    hidden: true
                 }
             ]
         }

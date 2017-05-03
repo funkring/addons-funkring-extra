@@ -21,10 +21,7 @@ futil.keys = function(obj) {
 
 futil.dateToStr = function(date) {
     //2016-02-03T22:46:46.011Z
-    var d = new Date(date);
-    //correct time zone
-    d.setTime( d.getTime() - (d.getTimezoneOffset()*60*1000) );
-    return d.toISOString().substring(0, 10);
+    return date.toISOString().substring(0, 10);
 };
 
 futil.datetimeToStr = function(date) {
