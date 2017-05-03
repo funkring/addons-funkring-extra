@@ -1909,7 +1909,9 @@ Ext.Loader.addClassPathMappings({
   "Ext.form.FieldSet": "../../touch/src/form/FieldSet.js",
   "Ext.form.Panel": "../../touch/src/form/Panel.js",
   "Ext.ux.Deferred": "../../app/addon/Deferred.js",
-  "Ext.ux.Promise": "../../app/addon/Promise.js"
+  "Ext.ux.Promise": "../../app/addon/Promise.js",
+  "Override.Ext.picker.Date": "../../app/addon/ViewManager.js",
+  "Override.Ext.picker.Picker": "../../app/addon/ViewManager.js"
 });
 
 Ext.ClassManager.addNameAlternateMappings({
@@ -2652,7 +2654,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.viewport.Viewport": [],
   "Ext.viewport.WindowsPhone": [
     "Ext.viewport.WP"
-  ]
+  ],
+  "Override.Ext.picker.Date": [],
+  "Override.Ext.picker.Picker": []
 });
 
 Ext.ClassManager.addNameAliasMappings({
@@ -3609,7 +3613,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.viewport.Ios": [],
   "Ext.viewport.Viewport": [],
-  "Ext.viewport.WindowsPhone": []
+  "Ext.viewport.WindowsPhone": [],
+  "Override.Ext.picker.Date": [],
+  "Override.Ext.picker.Picker": []
 });
 
 
