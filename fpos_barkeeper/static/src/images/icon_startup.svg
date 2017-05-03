@@ -712,8 +712,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="68.58962"
-     inkscape:cy="548.21546"
+     inkscape:cx="-103.55324"
+     inkscape:cy="542.50117"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -741,7 +741,7 @@
      transform="translate(0,-576.38633)">
     <g
        id="g4633"
-       transform="translate(268.78097,408.36188)">
+       transform="matrix(0.96631115,0,0,0.96631115,268.92535,423.22173)">
       <text
          id="text4650-3"
          y="634.25702"
