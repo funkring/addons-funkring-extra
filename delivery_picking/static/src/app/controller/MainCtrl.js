@@ -253,7 +253,7 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
                     '<tpl if="package_count &gt; 0">',                   
                         '<div class="OpItemAmountCell">',
                             '<div class="OpItemLabel">Pakete</div>',
-                            '<div class="OpItemAmount">{package_count}</div>',                        
+                            '<div class="OpItemAmount">+{package_count}</div>',                        
                         '</div>',
                     '<tpl else>',
                         '<div class="OpItemAmountCell">',
