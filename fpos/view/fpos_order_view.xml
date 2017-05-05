@@ -92,9 +92,22 @@
                                             <div>
                                                 <field name="receipt_ids">
                                                     <tree string="Receipts">   
-                                                        <field name="rprint"/>                                                 
-                                                        <field name="receipt"/>                                                        
+                                                        <field name="name"/>                                                 
+                                                        <field name="tag"/>                                                        
                                                     </tree>
+                                                    <form>
+                                                        <group>
+                                                            <group>
+                                                                <field name="name"/>
+                                                            </group>
+                                                            <group>
+                                                                <field name="tag"/>
+                                                            </group>                                                            
+                                                        </group>
+                                                        <div>
+                                                            <field name="receipt"/>
+                                                        </div>                                                    
+                                                    </form>
                                                 </field>
                                             </div>
                                         </form>

@@ -664,9 +664,10 @@ class fpos_payment_receipt(models.Model):
     _description = "Payment Receipt"
     _rec_name = "payment_id"
     
-    payment_id =  fields.Many2one("fpos.order.payment","Payment", required=True, ondelete="cascade", index=True)
+    payment_id = fields.Many2one("fpos.order.payment","Payment", required=True, ondelete="cascade", index=True)
+    name = fields.Char("Name")
     receipt = fields.Text("Receipt")
-    rprint = fields.Boolean("Print")
+    tag = fields.Char("Tag")
     
     
 class fpos_printer(models.Model):
