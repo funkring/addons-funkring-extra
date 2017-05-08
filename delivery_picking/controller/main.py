@@ -44,4 +44,4 @@ class delivery_picking(http.Controller):
         if debug:
             return werkzeug.utils.redirect("/delivery_picking/static/src/index.html?debug")
         else:
-            return werkzeug.utils.redirect("/delivery_picking/static/app/index.html")
+            return werkzeug.utils.redirect("/delivery_picking/static/src/index.html")

@@ -5,8 +5,7 @@ Ext.define('DeliveryPicking.core.Core', {
     alternateClassName: 'Core',
     
     requires: [
-        'Ext.ux.Deferred',
-        'Ext.form.ViewManager'
+        'Ext.ux.Deferred'
     ],
     
     config : {       

@@ -1906,15 +1906,10 @@ Ext.Loader.addClassPathMappings({
   "Ext.device.sqlite.SQLTransaction": "../../touch/src/device/sqlite/Sencha.js",
   "Ext.draw.engine.SvgContext.Gradient": "../../touch/src/draw/engine/SvgContext.js",
   "Ext.field.PatternText": "../../app/addon/PatternText.js",
-  "Ext.form": "../../app/addon",
-  "Ext.form.FieldSet": "../../touch/src/form/FieldSet.js",
-  "Ext.form.Panel": "../../touch/src/form/Panel.js",
   "Ext.util.BarcodeScanner": "../../app/addon/BarcodeScanner.js",
   "Ext.ux.Deferred": "../../app/addon/Deferred.js",
   "Ext.ux.Promise": "../../app/addon/Promise.js",
-  "Ext.view": "../../app/addon",
-  "Override.Ext.picker.Date": "../../app/addon/ViewManager.js",
-  "Override.Ext.picker.Picker": "../../app/addon/ViewManager.js"
+  "Ext.view": "../../app/addon"
 });
 
 Ext.ClassManager.addNameAlternateMappings({
@@ -2467,9 +2462,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.form.Panel": [
     "Ext.form.FormPanel"
   ],
-  "Ext.form.ViewManager": [
-    "ViewManager"
-  ],
   "Ext.fx.Animation": [],
   "Ext.fx.Easing": [],
   "Ext.fx.Runner": [],
@@ -2649,6 +2641,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.ux.parse.association.Relation": [],
   "Ext.view.NumDisplay": [],
   "Ext.view.NumberInputView": [],
+  "Ext.view.ViewManager": [
+    "ViewManager"
+  ],
   "Ext.viewport.AndroidStock": [
     "Ext.viewport.Android"
   ],
@@ -2657,9 +2652,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.viewport.Viewport": [],
   "Ext.viewport.WindowsPhone": [
     "Ext.viewport.WP"
-  ],
-  "Override.Ext.picker.Date": [],
-  "Override.Ext.picker.Picker": []
+  ]
 });
 
 Ext.ClassManager.addNameAliasMappings({
@@ -3362,7 +3355,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.form.Panel": [
     "widget.formpanel"
   ],
-  "Ext.form.ViewManager": [],
   "Ext.fx.Animation": [],
   "Ext.fx.Easing": [],
   "Ext.fx.Runner": [],
@@ -3614,15 +3606,14 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.view.NumberInputView": [
     "widget.numberinput"
   ],
+  "Ext.view.ViewManager": [],
   "Ext.viewport.AndroidStock": [],
   "Ext.viewport.Default": [
     "widget.viewport"
   ],
   "Ext.viewport.Ios": [],
   "Ext.viewport.Viewport": [],
-  "Ext.viewport.WindowsPhone": [],
-  "Override.Ext.picker.Date": [],
-  "Override.Ext.picker.Picker": []
+  "Ext.viewport.WindowsPhone": []
 });
 
 

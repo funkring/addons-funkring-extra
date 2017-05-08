@@ -1,4 +1,4 @@
-/*global Ext:false, futil:false, console:false*/
+/*global Ext:false, futil:false, DBUtil:false, console:false*/
 
 
 /**
@@ -44,7 +44,7 @@ Ext.override(Ext.MessageBox, {
 /**
  * View manager
  */
-Ext.define('Ext.form.ViewManager', {
+Ext.define('Ext.view.ViewManager', {
     alternateClassName: 'ViewManager',
     singleton: true,
     requires: [

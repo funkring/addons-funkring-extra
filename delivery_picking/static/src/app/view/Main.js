@@ -5,7 +5,6 @@ Ext.define('DeliveryPicking.view.Main', {
     xtype: 'main',
     id: 'mainView',
     requires: [
-        'Ext.form.ViewManager'
     ],    
     config: {
         defaultBackButtonText: 'Zurück',

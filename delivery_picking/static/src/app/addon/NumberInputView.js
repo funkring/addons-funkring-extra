@@ -7,7 +7,7 @@ Ext.define('Ext.view.NumberInputView', {
         'Ext.Container',
         'Ext.view.NumDisplay',
         'Ext.field.PatternText',
-        'Ext.form.ViewManager'
+        'Ext.view.ViewManager'
     ],
     config: {    
         layout: 'vbox', 

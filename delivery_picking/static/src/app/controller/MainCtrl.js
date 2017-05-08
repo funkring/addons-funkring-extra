@@ -3,17 +3,17 @@
 Ext.define('DeliveryPicking.controller.MainCtrl', {
     extend: 'Ext.app.Controller',
     requires:[
-         'Ext.ux.Deferred',
-         'DeliveryPicking.core.Core',
-         'Ext.form.ViewManager',
+         'Ext.ux.Deferred',         
          'Ext.util.BarcodeScanner',
          'Ext.dataview.List',
          'Ext.form.Panel',
          'Ext.form.FieldSet',
          'Ext.field.Number',
          'Ext.field.Spinner',
+         'Ext.view.ViewManager',         
+         'Ext.view.NumberInputView',
          'DeliveryPicking.store.OpStore',
-         'Ext.view.NumberInputView'
+         'DeliveryPicking.core.Core'
     ],
     config: {
          refs: {
