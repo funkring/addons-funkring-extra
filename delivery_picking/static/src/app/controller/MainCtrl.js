@@ -294,7 +294,7 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
                 title: picking.name,
                 packable: true,
                 listeners: {
-                    itemsingletap: function(view, index, target, data, e, opts) {
+                    itemtap: function(view, index, target, data, e, opts) {
                         var element = Ext.get(e.target);
                         var record = opStore.getAt(index);
                         if ( element.hasCls("OpItemActionAll") ) {
