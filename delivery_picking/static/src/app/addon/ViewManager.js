@@ -41,6 +41,24 @@ Ext.override(Ext.MessageBox, {
     }
 });
 
+// override translation for picker
+Ext.define('Override.Ext.picker.Picker', {
+    override: 'Ext.picker.Picker',
+    config: {
+        doneButton: 'OK',
+        cancelButton: 'Abbrechen'
+    }
+});
+
+ // override translation for date picker
+Ext.define('Override.Ext.picker.Date', {
+    override: 'Ext.picker.Date',
+    config: {
+        doneButton: 'OK',
+        cancelButton: 'Abbrechen'
+    }
+});
+
 /**
  * View manager
  */
@@ -50,8 +68,7 @@ Ext.define('Ext.view.ViewManager', {
     requires: [
       'Ext.ux.Deferred',
       'Ext.Panel',
-      'Ext.MessageBox',
-      'Ext.picker.Picker'
+      'Ext.MessageBox'
     ],
     config : {
     },
@@ -59,24 +76,6 @@ Ext.define('Ext.view.ViewManager', {
     constructor: function(config) {
         this.initConfig(config);
         this.keyboardListenerStack=[];
-        
-        // override translation for picker
-        Ext.define('Override.Ext.picker.Picker', {
-            override: 'Ext.picker.Picker',
-            config: {
-                doneButton: 'OK',
-                cancelButton: 'Abbrechen'
-            }
-        });
-        
-         // override translation for date picker
-        Ext.define('Override.Ext.picker.Date', {
-            override: 'Ext.picker.Date',
-            config: {
-                doneButton: 'OK',
-                cancelButton: 'Abbrechen'
-            }
-        });
     },
     
     updateButtonState: function(view, items) {

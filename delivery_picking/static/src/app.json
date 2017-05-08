@@ -83,7 +83,7 @@
     "css": [
         {
             "path": "resources/css/app.css",
-            "update": "delta"
+            "update": "full"
         }
     ],
 
@@ -153,7 +153,7 @@
      *   }
      */
     "cache": {
-        "enable": false,
+        "enable": true,
         "deltas": "deltas"
     },
 

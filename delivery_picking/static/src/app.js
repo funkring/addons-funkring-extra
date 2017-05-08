@@ -15,7 +15,9 @@ Ext.application({
     name: 'DeliveryPicking',
 
     requires: [
-        'Ext.MessageBox'
+        'Ext.MessageBox',
+        'Ext.picker.Picker',
+        'Ext.picker.Date'
     ],
 
     views: [

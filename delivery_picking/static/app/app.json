@@ -1,1 +1,1 @@
-{"id":"3a5c2c58-a70e-4c29-a85c-51b535905e3d","js":[{"update":"full","path":"app.js"},{"update":"full","path":"lib/futil.js"}],"css":[{"update":"delta","path":"resources/css/app.css"}]}
+{"id":"3a5c2c58-a70e-4c29-a85c-51b535905e3d","hash":"5501fd44a00356200927501be9304a31f87cffc9","js":[{"update":"full","hash":"7e3d2a387ba99c5e36b718fe11164e4c9b442e9a","path":"app.js"},{"update":"full","hash":"ef1c1babb140235af450e06940ebda81223579c7","path":"lib/futil.js"}],"css":[{"update":"full","hash":"8f65abff1ca6fa3f8e2ef8e9c2f474d92defe612","path":"resources/css/app.css"}]}
