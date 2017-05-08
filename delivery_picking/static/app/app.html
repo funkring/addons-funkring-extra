@@ -1,19 +1,8 @@
-<openerp>
-<data>
-    
-<!-- ###################################################################### -->
-<!-- Picking Index -->
-<!-- ###################################################################### -->
-<template id="app_release_index" name="Picking Index">&lt;!DOCTYPE html&gt;
-
-<html manifest="cache.appcache" lang="de-DE">
+<!DOCTYPE HTML>
+<html manifest="cache.appcache" lang="en-US">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Picking</title>
-    
-    <t t-call-assets="web.assets_common" t-css="false" />
-    <t t-call-assets="web.assets_backend" t-css="false" />
-    
+    <meta charset="UTF-8">
+    <title>DeliveryPicking</title>
     <style type="text/css">
          /**
          * Example of an initial loading indicator.
@@ -61,9 +50,7 @@
         }
     </style>
     <!-- The line below must be kept intact for Sencha Command to build your application -->
-    <script id="microloader" data-app="3a5c2c58-a70e-4c29-a85c-51b535905e3d" type="text/javascript">
-<![CDATA[
-/**
+    <script id="microloader" data-app="3a5c2c58-a70e-4c29-a85c-51b535905e3d" type="text/javascript">/**
  * Sencha Blink
  * @author Jacky Nguyen <jacky@sencha.com>
  */
@@ -854,9 +841,7 @@
         }
     };
 })(this);
-Ext.blink({id:'3a5c2c58-a70e-4c29-a85c-51b535905e3d'});
-]]>
-</script>
+Ext.blink({id:'3a5c2c58-a70e-4c29-a85c-51b535905e3d'});</script>
 </head>
 <body>
     <div id="appLoadingIndicator">
@@ -866,8 +851,3 @@ Ext.blink({id:'3a5c2c58-a70e-4c29-a85c-51b535905e3d'});
     </div>
 </body>
 </html>
-
-</template>
-    
-</data>
-</openerp>

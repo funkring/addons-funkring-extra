@@ -1,4 +1,4 @@
-/*global Ext:false, openerp:false, ViewManger:false */
+/*global Ext:false, openerp:false*/
 
 Ext.define('DeliveryPicking.core.Core', {
     singleton : true,
@@ -6,7 +6,7 @@ Ext.define('DeliveryPicking.core.Core', {
     
     requires: [
         'Ext.ux.Deferred',
-        'Ext.data.proxy.Odoo'
+        'Ext.form.ViewManager'
     ],
     
     config : {       
@@ -23,14 +23,6 @@ Ext.define('DeliveryPicking.core.Core', {
         self.service = new openerp.init();
         self.client = new this.service.web.WebClient();
         self.models = {};
-         
-        // override core function
-        Ext.define('Override.data.proxy.Odoo', {
-            override: 'Ext.data.proxy.Odoo',
-            getCore: function() {
-                return self;
-            }
-        });
     },
     
     /** Setup Barkeeper Core **/

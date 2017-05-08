@@ -2,10 +2,10 @@
 
 Ext.define('DeliveryPicking.controller.MainCtrl', {
     extend: 'Ext.app.Controller',
-    requires:[         
-         'Ext.form.ViewManager',
+    requires:[
          'Ext.ux.Deferred',
          'DeliveryPicking.core.Core',
+         'Ext.form.ViewManager',
          'Ext.util.BarcodeScanner',
          'Ext.dataview.List',
          'Ext.form.Panel',
@@ -178,7 +178,14 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
                 Core.call('stock.picking','picking_app_pack',[picking_id, weight]).then(function(next_picking) {            
                     ViewManager.stopLoading();
                     self.getMainView().pop();
-                    self.showPicking(next_picking);
+                    
+                    // notify
+                    Core.call('stock.picking','picking_app_pack_notify', [picking_id]).then(function() {
+                        self.showPicking(next_picking);
+                    }, function(err) {
+                        ViewManager.handleError(err, {name:'Packen', message: 'Benachrichtigung fehlgeschlagen'});
+                    });
+                    
                 }, function(err) {            
                     ViewManager.handleError(err, {name:'Packen', message: 'Packvorgang konnte nicht abgeschlossen werden'});
                 });
@@ -218,7 +225,7 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
             self.weightInput = Ext.create('Ext.view.NumberInputView', {
                 centered : true,
                 autoRemoveHandler: true,
-                title: 'Gewicht'           
+                title: 'Gewicht in Kg'           
             });
             self.getMainView().add(self.weightInput);           
         }

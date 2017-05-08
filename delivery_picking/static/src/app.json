@@ -7,7 +7,7 @@
     /**
      * The file path to this application's front HTML document, relative to this app.json file
      */
-    "indexHtmlPath": "index.html",
+    "indexHtmlPath": "app.html",
 
     /**
      * The Sencha Framework for this application: "ext" or "touch".
@@ -83,7 +83,7 @@
     "css": [
         {
             "path": "resources/css/app.css",
-            "update": "full"
+            "update": "delta"
         }
     ],
 
@@ -161,5 +161,14 @@
      * Uniquely generated id for this application, used as prefix for localStorage keys.
      * Normally you should never change this value.
      */
-    "id": "3a5c2c58-a70e-4c29-a85c-51b535905e3d"
+    "id": "3a5c2c58-a70e-4c29-a85c-51b535905e3d",
+    
+    /**
+     * output for build
+     */
+     "production": {
+        "output": {
+            "base" : "${workspace.build.dir}/../../app"
+        }   
+     }
 }

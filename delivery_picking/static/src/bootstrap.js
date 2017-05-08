@@ -22,9 +22,8 @@ Ext.Loader.addClassPathMappings({
   "Ext.Element-static": "touch/src/dom/Element.static.js",
   "Ext.Element-style": "touch/src/dom/Element.style.js",
   "Ext.Element-traversal": "touch/src/dom/Element.traversal.js",
+  "Ext.cmd": "../../../../../../.local/opt/Sencha/Cmd/6.2.2.36/plugins/src",
   "Ext.core.DomQuery": "touch/src/dom/Query.js",
-  "Ext.data.proxy.Odoo": "app/addon/OdooProxy.js",
-  "Ext.data.reader.JsonOdoo": "app/addon/OdooProxy.js",
   "Ext.device.Purchases.Product": "touch/src/device/purchases/Sencha.js",
   "Ext.device.filesystem.DirectoryEntry": "touch/src/device/filesystem/Sencha.js",
   "Ext.device.filesystem.Entry": "touch/src/device/filesystem/Sencha.js",
@@ -45,8 +44,7 @@ Ext.Loader.addClassPathMappings({
   "Ext.ux.Promise": "app/addon/Promise.js",
   "Ext.view": "app/addon",
   "Override.Ext.picker.Date": "app/addon/ViewManager.js",
-  "Override.Ext.picker.Picker": "app/addon/ViewManager.js",
-  "Override.data.proxy.Odoo": "app/core/Core.js"
+  "Override.Ext.picker.Picker": "app/addon/ViewManager.js"
 });
 
 Ext.ClassManager.addNameAlternateMappings({
@@ -262,7 +260,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.data.proxy.Memory": [
     "Ext.data.MemoryProxy"
   ],
-  "Ext.data.proxy.Odoo": [],
   "Ext.data.proxy.Proxy": [
     "Ext.data.DataProxy",
     "Ext.data.Proxy"
@@ -288,7 +285,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.data.reader.Json": [
     "Ext.data.JsonReader"
   ],
-  "Ext.data.reader.JsonOdoo": [],
   "Ext.data.reader.Reader": [
     "Ext.data.Reader",
     "Ext.data.DataReader"
@@ -662,17 +658,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.layout.wrapper.BoxDock": [],
   "Ext.layout.wrapper.Dock": [],
   "Ext.layout.wrapper.Inner": [],
-  "Ext.log.Base": [],
-  "Ext.log.Logger": [],
-  "Ext.log.filter.Filter": [],
-  "Ext.log.filter.Priority": [],
-  "Ext.log.formatter.Default": [],
-  "Ext.log.formatter.Formatter": [],
-  "Ext.log.formatter.Identity": [],
-  "Ext.log.writer.Console": [],
-  "Ext.log.writer.DocumentTitle": [],
-  "Ext.log.writer.Remote": [],
-  "Ext.log.writer.Writer": [],
   "Ext.mixin.Bindable": [],
   "Ext.mixin.Filterable": [],
   "Ext.mixin.Mixin": [],
@@ -804,8 +789,7 @@ Ext.ClassManager.addNameAlternateMappings({
     "Ext.viewport.WP"
   ],
   "Override.Ext.picker.Date": [],
-  "Override.Ext.picker.Picker": [],
-  "Override.data.proxy.Odoo": []
+  "Override.Ext.picker.Picker": []
 });
 
 Ext.ClassManager.addNameAliasMappings({
@@ -1144,9 +1128,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.data.proxy.Memory": [
     "proxy.memory"
   ],
-  "Ext.data.proxy.Odoo": [
-    "proxy.odoo"
-  ],
   "Ext.data.proxy.Proxy": [
     "proxy.proxy"
   ],
@@ -1168,9 +1149,6 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.data.reader.Json": [
     "reader.json"
-  ],
-  "Ext.data.reader.JsonOdoo": [
-    "reader.odoo"
   ],
   "Ext.data.reader.Reader": [],
   "Ext.data.reader.Xml": [
@@ -1627,17 +1605,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.layout.wrapper.BoxDock": [],
   "Ext.layout.wrapper.Dock": [],
   "Ext.layout.wrapper.Inner": [],
-  "Ext.log.Base": [],
-  "Ext.log.Logger": [],
-  "Ext.log.filter.Filter": [],
-  "Ext.log.filter.Priority": [],
-  "Ext.log.formatter.Default": [],
-  "Ext.log.formatter.Formatter": [],
-  "Ext.log.formatter.Identity": [],
-  "Ext.log.writer.Console": [],
-  "Ext.log.writer.DocumentTitle": [],
-  "Ext.log.writer.Remote": [],
-  "Ext.log.writer.Writer": [],
   "Ext.mixin.Bindable": [],
   "Ext.mixin.Filterable": [],
   "Ext.mixin.Mixin": [],
@@ -1785,8 +1752,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.viewport.Viewport": [],
   "Ext.viewport.WindowsPhone": [],
   "Override.Ext.picker.Date": [],
-  "Override.Ext.picker.Picker": [],
-  "Override.data.proxy.Odoo": []
+  "Override.Ext.picker.Picker": []
 });
 
 

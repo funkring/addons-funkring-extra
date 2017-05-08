@@ -25,12 +25,15 @@ class stock_picking(osv.Model):
     _inherit = "stock.picking"
     
     def picking_app_pack(self, cr, uid, picking_id, weight=0.0, context=None):
-        self.action_done_from_ui(cr, uid, picking_id, context=context)
-        
         if weight:
             self.write(cr, uid, picking_id, {"carrier_weight":weight}, context=context)
         
+        self.action_done_from_ui(cr, uid, picking_id, context=context)
         return self.picking_app_get(cr, uid, picking_id, context=context)
+    
+    def picking_app_pack_notify(self, cr, uid, picking_id, context=None):
+        self.pool["bus.bus"].sendone(cr, uid, "%s,%s" % (cr.dbname,'delivery_picking'), {"picking_id":picking_id, "action":"packed"})
+        return True
     
     def picking_app_update(self, cr, uid, values, context=None):
         op_obj = self.pool["stock.pack.operation"]
@@ -80,7 +83,7 @@ class stock_picking(osv.Model):
         picking = self.browse(cr, uid, picking_id, context=context)
         if not picking.state in ("partially_available","assigned"):
             if picking.group_id:
-                picking_id = self.search_id(cr, uid, [("group_id","=",picking.group_id.id),("state","in",["partially_available","assigned"])])
+                picking_id = self.search_id(cr, uid, [("group_id","=",picking.group_id.id),("state","in",["partially_available","assigned"]),("picking_type_id.code","=",picking.picking_type_id.code)])
                 if picking_id:
                     picking = self.browse(cr, uid, picking_id, context=context)
                 else:

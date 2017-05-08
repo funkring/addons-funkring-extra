@@ -1,4 +1,4 @@
-/*global Ext:false, futil:false, DBUtil:false, console:false*/
+/*global Ext:false, futil:false, console:false*/
 
 
 /**
@@ -40,7 +40,6 @@ Ext.override(Ext.MessageBox, {
         return this.callParent(arguments);
     }
 });
-
 
 /**
  * View manager
