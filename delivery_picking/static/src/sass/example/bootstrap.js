@@ -1909,9 +1909,7 @@ Ext.Loader.addClassPathMappings({
   "Ext.util.BarcodeScanner": "../../app/addon/BarcodeScanner.js",
   "Ext.ux.Deferred": "../../app/addon/Deferred.js",
   "Ext.ux.Promise": "../../app/addon/Promise.js",
-  "Ext.view": "../../app/addon",
-  "Override.Ext.picker.Date": "../../app/addon/ViewManager.js",
-  "Override.Ext.picker.Picker": "../../app/addon/ViewManager.js"
+  "Ext.view": "../../app/addon"
 });
 
 Ext.ClassManager.addNameAlternateMappings({
@@ -2654,9 +2652,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.viewport.Viewport": [],
   "Ext.viewport.WindowsPhone": [
     "Ext.viewport.WP"
-  ],
-  "Override.Ext.picker.Date": [],
-  "Override.Ext.picker.Picker": []
+  ]
 });
 
 Ext.ClassManager.addNameAliasMappings({
@@ -3617,9 +3613,7 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.viewport.Ios": [],
   "Ext.viewport.Viewport": [],
-  "Ext.viewport.WindowsPhone": [],
-  "Override.Ext.picker.Date": [],
-  "Override.Ext.picker.Picker": []
+  "Ext.viewport.WindowsPhone": []
 });
 
 

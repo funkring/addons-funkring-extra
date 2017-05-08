@@ -15,9 +15,7 @@ Ext.application({
     name: 'DeliveryPicking',
 
     requires: [
-        'Ext.MessageBox',
-        'Ext.picker.Picker',
-        'Ext.picker.Date'
+        'Ext.MessageBox'
     ],
 
     views: [
@@ -51,6 +49,7 @@ Ext.application({
         Ext.fly('appLoadingIndicator').destroy();
 
         // Initialize the main view
+        Ext.Msg.defaultAllowedConfig.showAnimation = false;
         Ext.Viewport.add(Ext.create('DeliveryPicking.view.Main'));
     },
 

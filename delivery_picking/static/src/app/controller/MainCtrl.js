@@ -140,17 +140,45 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
     
     onBarcode: function(code) {
         var self = this;
-        ViewManager.startLoading('Suche Lieferschein');
-        Core.call('stock.picking','picking_app_scan', [code]).then(function(picking) {
-            ViewManager.stopLoading();
-            try {
-                self.showPicking(picking);
-            } catch (err) {
-                ViewManager.handleError(err, {name:'Unerwarteter Fehler', message: 'Scan fehlgeschlagen'});
-            }
-        }, function(err) {
-            ViewManager.handleError(err, {name:'Scan', message: 'Scan fehlgeschlagen'});
-        });
+        if ( !self.barcodeActive ) {   
+            self.barcodeActive = true;       
+            ViewManager.startLoading('Suche Lieferschein');
+            Core.call('stock.picking','picking_app_scan', [code]).then(function(picking) {
+                ViewManager.stopLoading();
+                try {
+                    // check picking
+                    if ( picking.found_picking_id && picking.found_picking_id != picking.id ) {
+                        var msgView = Ext.Msg.confirm(picking.found_picking_name,'Sollen die Lieferdokumente nochmal gedruckt werden?', function(buttonId) {
+                            msgView.hide();
+                            setTimeout(function() {                     
+                                if ( buttonId == 'yes' ) {
+                                    // notify
+                                    Core.call('stock.picking','picking_app_pack_notify', [picking.found_picking_id]).then(function() {
+                                        self.showPicking(picking); 
+                                        self.barcodeActive = false;              
+                                    }, function(err) {
+                                        self.barcodeActive = false;
+                                        ViewManager.handleError(err, {name:'Packen', message: 'Benachrichtigung fehlgeschlagen'});
+                                    });
+                                } else {
+                                    self.barcodeActive = false;
+                                    self.showPicking(picking); 
+                                }
+                            }, 0);
+                        });                    
+                    } else {
+                        self.barcodeActive = false;
+                        self.showPicking(picking);
+                    }
+                } catch (err) {
+                    self.barcodeActive = false;
+                    ViewManager.handleError(err, {name:'Unerwarteter Fehler', message: 'Scan fehlgeschlagen'});
+                }
+            }, function(err) {
+                self.barcodeActive = false;
+                ViewManager.handleError(err, {name:'Scan', message: 'Scan fehlgeschlagen'});
+            });
+        }
     },
     
     onPack: function() {

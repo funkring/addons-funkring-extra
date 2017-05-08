@@ -1,67 +1,5 @@
 /*global Ext:false, futil:false, DBUtil:false, console:false*/
 
-
-/**
- * Workarounds 
- */
- 
-// Fix Freeze after double OK Button Click (https://www.sencha.com/forum/showthread.php?284450)
-// Fix Translations
-Ext.override(Ext.MessageBox, {    
-    statics: {
-        OK    : {text: 'OK',    itemId: 'ok',  ui: 'action'},
-        YES   : {text: 'Ja',    itemId: 'yes', ui: 'action'},
-        NO    : {text: 'Nein',     itemId: 'no'},
-        CANCEL: {text: 'Abbrechen', itemId: 'cancel'},
-
-        INFO    : Ext.baseCSSPrefix + 'msgbox-info',
-        WARNING : Ext.baseCSSPrefix + 'msgbox-warning',
-        QUESTION: Ext.baseCSSPrefix + 'msgbox-question',
-        ERROR   : Ext.baseCSSPrefix + 'msgbox-error',
-
-        OKCANCEL: [
-            {text: 'Abbrechen', itemId: 'cancel'},
-            {text: 'OK',     itemId: 'ok',  ui : 'action'}
-        ],
-        YESNOCANCEL: [
-            {text: 'Abbrechen', itemId: 'cancel'},
-            {text: 'Nein',     itemId: 'no'},
-            {text: 'Ja',    itemId: 'yes', ui: 'action'}
-        ],
-        YESNO: [
-            {text: 'Nein',  itemId: 'no'},
-            {text: 'Ja', itemId: 'yes', ui: 'action'}
-        ]
-    },
-    hide:  function() {
-        if (this.activeAnimation && this.activeAnimation._onEnd) {
-            this.activeAnimation._onEnd();
-        }
-        return this.callParent(arguments);
-    }
-});
-
-// override translation for picker
-Ext.define('Override.Ext.picker.Picker', {
-    override: 'Ext.picker.Picker',
-    config: {
-        doneButton: 'OK',
-        cancelButton: 'Abbrechen'
-    }
-});
-
- // override translation for date picker
-Ext.define('Override.Ext.picker.Date', {
-    override: 'Ext.picker.Date',
-    config: {
-        doneButton: 'OK',
-        cancelButton: 'Abbrechen'
-    }
-});
-
-/**
- * View manager
- */
 Ext.define('Ext.view.ViewManager', {
     alternateClassName: 'ViewManager',
     singleton: true,
@@ -75,7 +13,7 @@ Ext.define('Ext.view.ViewManager', {
     
     constructor: function(config) {
         this.initConfig(config);
-        this.keyboardListenerStack=[];
+        this.keyboardListenerStack=[];       
     },
     
     updateButtonState: function(view, items) {

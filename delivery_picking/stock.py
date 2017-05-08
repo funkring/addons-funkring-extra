@@ -80,38 +80,49 @@ class stock_picking(osv.Model):
         if not picking_id:
             return {}
         
-        picking = self.browse(cr, uid, picking_id, context=context)
-        if not picking.state in ("partially_available","assigned"):
-            if picking.group_id:
-                picking_id = self.search_id(cr, uid, [("group_id","=",picking.group_id.id),("state","in",["partially_available","assigned"]),("picking_type_id.code","=",picking.picking_type_id.code)])
+        picking = None
+
+        # prepare result        
+        found_picking = self.browse(cr, uid, picking_id, context=context)
+        res = {
+            "found_picking_id" : found_picking.id,
+            "found_picking_name" : found_picking.name
+        }
+        
+        # check picking
+        if not found_picking.state in ("partially_available","assigned"):
+            if found_picking.group_id:
+                picking_id = self.search_id(cr, uid, [("group_id","=",found_picking.group_id.id),("state","in",["partially_available","assigned"]),("picking_type_id.code","=",found_picking.picking_type_id.code)])
                 if picking_id:
                     picking = self.browse(cr, uid, picking_id, context=context)
-                else:
-                    return {}
-            else:
-                return {}
+        else:
+            picking = found_picking
         
-        if not picking.pack_operation_ids:
-            self.do_prepare_partial(cr, uid, [picking_id], context=context)
-            picking = self.browse(cr, uid, picking_id, context=context)
-        
-        ops = []
-        
-        for op in picking.pack_operation_ids:
-            ops.append({
-                "id" : op.id,
-                "name" : op.product_id.name,
-                "uom" : op.product_uom_id.name,
-                "qty" : op.product_qty,
-                "qty_done" : op.qty_done or 0,
-                "package_count" : op.package_count or 0
+        # check if picking was found
+        if picking:
+            if not picking.pack_operation_ids:
+                self.do_prepare_partial(cr, uid, [picking_id], context=context)
+                picking = self.browse(cr, uid, picking_id, context=context)
+            
+            ops = []
+            
+            for op in picking.pack_operation_ids:
+                ops.append({
+                    "id" : op.id,
+                    "name" : op.product_id.name,
+                    "uom" : op.product_uom_id.name,
+                    "qty" : op.product_qty,
+                    "qty_done" : op.qty_done or 0,
+                    "package_count" : op.package_count or 0
+                })
+            
+            res.update({
+                "id" : picking_id,
+                "name" : picking.name,
+                "ops" : ops
             })
         
-        return {
-            "id" : picking.id,
-            "name" : picking.name,
-            "ops" : ops
-        }
+        return res
     
     def picking_app_scan(self, cr, uid, code, context=None):
         if not code:
