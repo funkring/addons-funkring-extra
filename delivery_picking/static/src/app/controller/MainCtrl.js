@@ -352,9 +352,11 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
                     xtype: 'fieldset',
                     items: [                   
                         {
-                            xtype: 'numberfield',
+                            xtype: 'spinnerfield',
                             label: record.get('uom'),
-                            name: 'qty_done'                            
+                            name: 'qty_done',
+                            stepValue: 1,
+                            minValue: 0                            
                         },
                         {
                             xtype: 'spinnerfield',
