@@ -21,7 +21,7 @@ class Parser(extreport.basic_parser):
             "getSessionGroups" : self._getSessionGroups,
             "getSessions" : self._getSessions,
             "print_detail" : context.get("print_detail",name == "fpos.report_session_detail"),
-            "print_product" : context.get("print_product", False),
+            "print_product" : context.get("print_product", True),
             "no_group" : context.get("no_group", False),
             "summary" : context.get("summary", False),
             "cashreport_name" : context.get("cashreport_name",""),
@@ -187,6 +187,7 @@ class Parser(extreport.basic_parser):
 
         for detail in details:
             product = detail["product"]
+            tax_name = detail["tax_name"]
             categ = getCategory(product)
             
             if not categ:
@@ -197,7 +198,9 @@ class Parser(extreport.basic_parser):
                         "name" : "Produkte",
                         "amount" : 0.0,
                         "details" : [],
-                        "ids" : [0]
+                        "ids" : [0],
+                        "level" : 0,
+                        "amount_tax" : {}
                     }
                     groups[0] = groupEntry
             else:
@@ -226,15 +229,28 @@ class Parser(extreport.basic_parser):
                                 "name" : " / ".join(names[:i+1]),
                                 "amount" : 0.0,
                                 "details" : [],
-                                "ids" : categoryIds[:i+1]
+                                "level" : i+1,
+                                "ids" : categoryIds[:i+1],
+                                "amount_tax" : {}
                             }
                         groups[categoryId] = groupEntry
                     
             groupEntry["details"].append(detail)
             for categId in groupEntry["ids"]:
                 curEntry = groups[categId] 
-                curEntry["amount"] = curEntry["amount"] + detail["amount"]
+                detail_amount = detail["amount"]
+                curEntry["amount"] = curEntry["amount"] + detail_amount
+                curEntry["amount_tax"][tax_name] = curEntry["amount_tax"].get(tax_name, 0.0) + detail_amount
+        
+        for group in groups.values():
+            amount_tax = group["amount_tax"]
+            amount_tax_list = []
+            for key in sorted(amount_tax.keys()):        
+                amount_tax_list.append({ "name": key, 
+                                         "amount": amount_tax.get(key,0.0)})
                 
+            group["amount_tax"] = amount_tax_list
+        
         return sorted(groups.values(), key=lambda val: val.get("name")) 
 
     def _buildStatistic(self, sessions):
@@ -285,7 +301,7 @@ class Parser(extreport.basic_parser):
                     "name" : name,
                     "sum" : 0.0,
                     "tax_sum" : 0.0,
-                    "is_taxed" :  is_taxed,
+                    "is_taxed" : is_taxed,
                     "detail" : OrderedDict()
                 }
                 data[name] = entry
@@ -314,7 +330,8 @@ class Parser(extreport.basic_parser):
                         "amount" : amount,
                         "discount" : line.discount,
                         "price" : price,
-                        "name" : line.name
+                        "name" : line.name,
+                        "tax_name" : is_taxed and name or ""
                     }
                     detailDict[key] = detail
                 else:
