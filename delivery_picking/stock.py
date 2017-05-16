@@ -23,7 +23,7 @@ from openerp.exceptions import Warning
 
 class stock_picking(osv.Model):
     _inherit = "stock.picking"
-    
+            
     def picking_app_pack(self, cr, uid, picking_id, weight=0.0, context=None):
         if weight:
             self.write(cr, uid, picking_id, {"carrier_weight":weight}, context=context)
@@ -130,3 +130,9 @@ class stock_picking(osv.Model):
         
         picking_id = self.pool["stock.picking"].search_id(cr, uid, [("name","ilike","%%%s" % code)], context=context)
         return self.picking_app_get(cr, uid, picking_id, context=context)
+    
+    def action_print_label(self, cr, uid, ids, context=None):
+        res = super(stock_picking, self).action_print_label(cr, uid, ids, context=context)
+        for picking_id in ids:
+            self.picking_app_pack_notify(cr, uid, picking_id, context)        
+        return res
