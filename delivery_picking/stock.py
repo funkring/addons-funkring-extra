@@ -136,3 +136,17 @@ class stock_picking(osv.Model):
         for picking_id in ids:
             self.picking_app_pack_notify(cr, uid, picking_id, context)        
         return res
+    
+    def picking_app_create_delivery(self, cr, uid, context=None):
+        delivery_obj = self.pool["delivery.order"]
+        delivery_id = delivery_obj.create(cr, uid, {"user_id": uid}, context=context)
+        delivery_obj.action_collect_picking(cr, uid, [delivery_id], context=context)
+        self.pool["bus.bus"].sendone(cr, uid, "%s,%s" % (cr.dbname,'delivery_picking'), {"delivery_order_id":delivery_id, "action":"collected"})
+        return True
+    
+    def picking_app_reprint_delivery(self, cr, uid, context=None):
+        delivery_obj = self.pool["delivery.order"]
+        delivery_ids = delivery_obj.search(cr, uid, [], limit=1)
+        if delivery_ids:
+            self.pool["bus.bus"].sendone(cr, uid, "%s,%s" % (cr.dbname,'delivery_picking'), {"delivery_order_id":delivery_ids[0], "action":"collected"})
+        return True

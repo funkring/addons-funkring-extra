@@ -12,27 +12,38 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
          'Ext.field.Spinner',
          'Ext.view.ViewManager',         
          'Ext.view.NumberInputView',
+         'Ext.Menu',
          'DeliveryPicking.store.OpStore',
          'DeliveryPicking.core.Core'
     ],
     config: {
          refs: {
-             mainView: '#mainView',
-             refreshButton: '#refreshButton',
-             saveButton: '#saveButton',
-             packButton: '#packButton'
+            mainView: '#mainView',
+            refreshButton: '#refreshButton',
+            saveButton: '#saveButton',
+            packButton: '#packButton',
+            mainMenuButton: '#mainMenuButton'
          },
          control: {
-             mainView: {
-                 initialize: 'prepare',
-                 activeitemchange : 'onActiveItemChange'
-             },             
-             'button[action=saveRecord]': {
+            mainView: {
+                initialize: 'prepare',
+                activeitemchange : 'onActiveItemChange'
+            },             
+            'button[action=saveRecord]': {
                 tap: 'onSaveRecord'
-             },
-             'button[action=pack]' : {
-                tap: 'onPack' 
-             }
+            },
+            'button[action=pack]' : {
+               tap: 'onPack' 
+            },
+            'button[action=createDelivery]' : {
+               tap: 'onCreateDelivery' 
+            },
+            'button[action=reprintDelivery]' : {
+               tap: 'onReprintDelivery' 
+            },
+            mainMenuButton: {
+                tap: 'onShowMainMenu'                
+            }
          }
     },
 
@@ -73,13 +84,38 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
     loadMainView: function() {
         var self = this;
         if ( !self.basePanel ) {
-            // load main view        
+        
+            // setup menu
+            var menu = Ext.create('Ext.Menu', {
+                    cls: 'MainMenu',
+                    xtype: 'menu',
+                    defaults: {
+                        xtype: 'button',
+                        flex: 1,
+                        cls: 'MenuButton',
+                        ui: 'posInputButtonBlack'
+                    },
+                    items: [
+                        {
+                            text: 'Paketliste erstellen',
+                            action: 'createDelivery',
+                            ui: 'posInputButtonOrange'
+                        },
+                        {
+                            text: 'Paketliste erneut drucken',
+                            action: 'reprintDelivery'
+                        }
+                    ]
+            });
+            
+            // load main view
             self.basePanel = Ext.create('Ext.Panel', {
                 barcodeEnabled: true,
                 layout: 'vbox',
+                menu: menu,
                 items: [
                     {
-                        flex: 1                    
+                        flex: 1                         
                     },
                     {
                         flex: 1,  
@@ -90,7 +126,8 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
                     }
                 ],
                 title: Core.getStatus().company
-            });                        
+            });               
+                     
             self.getMainView().push(self.basePanel);
         }
     },
@@ -118,7 +155,8 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
         
         // update button        
         ViewManager.updateButtonState(view, {
-            saveButton: self.getSaveButton()            
+            saveButton: self.getSaveButton(),
+            menuButton: self.getMainMenuButton()     
         });
     },
     
@@ -401,6 +439,34 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
                 
         formPanel.setRecord(record);
         mainView.push(formPanel);
-    }
-   
+    },
+    
+    onShowMainMenu: function() {
+       var menu = Ext.Viewport.getMenus().right;
+       if ( menu ) {
+           if ( menu.isHidden() ) {
+                Ext.Viewport.showMenu("right");
+           } else {
+                Ext.Viewport.hideMenu("right");
+           }
+       }
+    },
+    
+    onCreateDelivery: function() {
+        ViewManager.startLoading('Erstelle Paketliste');
+        Core.call('stock.picking','picking_app_create_delivery',[]).then(function(result) {
+            ViewManager.stopLoading();
+        }, function(err) {            
+            ViewManager.handleError(err, {name:'Paketliste', message: 'Paketliste konnte nicht erstellt werden'});
+        });        
+    },
+    
+    onReprintDelivery: function() {
+        ViewManager.startLoading('Drucke Paketliste erneut');
+        Core.call('stock.picking','picking_app_reprint_delivery',[]).then(function(result) {
+            ViewManager.stopLoading();
+        }, function(err) {            
+            ViewManager.handleError(err, {name:'Paketliste', message: 'Wiederholter Druck der Paketliste fehlgeschlagen'});
+        });        
+    }   
 });

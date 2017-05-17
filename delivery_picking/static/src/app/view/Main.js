@@ -29,6 +29,14 @@ Ext.define('DeliveryPicking.view.Main', {
                     align: 'right',
                     action: 'pack',
                     hidden: true
+                },
+                {
+                    xtype: 'button',
+                    iconCls: 'list',
+                    id: 'mainMenuButton',
+                    ui: 'plain',
+                    align: 'right',
+                    hidden: true
                 }
             ]
         }    

@@ -80,6 +80,7 @@ Ext.define('Ext.view.ViewManager', {
      * start loading
      */
     startLoading : function(msg) {
+        this.hideMenus();
         Ext.Viewport.setMasked({xtype: 'loadmask', message: msg});    
     },
     
