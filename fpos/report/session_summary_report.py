@@ -21,7 +21,7 @@ class Parser(extreport.basic_parser):
             "getSessionGroups" : self._getSessionGroups,
             "getSessions" : self._getSessions,
             "print_detail" : context.get("print_detail",name == "fpos.report_session_detail"),
-            "print_product" : context.get("print_product", True),
+            "print_product" : context.get("print_product", False),
             "no_group" : context.get("no_group", False),
             "summary" : context.get("summary", False),
             "cashreport_name" : context.get("cashreport_name",""),
