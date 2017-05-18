@@ -15,5 +15,44 @@
       parser="fpos/report/session_summary_report.py"
       rml="fpos/report/session_summary_report.odt"/>
       
+    <report id="report_session_email"
+      string="Cashreport"
+      name="fpos.report_session_email"
+      auto="False"
+      report_type="aeroo"
+      process_sep="False"
+      model="fpos.report.email"
+      in_format="oo-odt"
+      out_format="oo-pdf" 
+      stylesheet="none"
+      parser="fpos/report/session_summary_report.py"
+      rml="fpos/report/session_summary_report.odt"/>
+      
+    <report id="report_session_detail"
+      string="Session Detail"
+      name="fpos.report_session_detail"
+      auto="False"
+      report_type="aeroo"
+      process_sep="False"
+      model="pos.session"
+      in_format="oo-odt"
+      out_format="oo-pdf" 
+      stylesheet="none"
+      parser="fpos/report/session_summary_report.py"
+      rml="fpos/report/session_summary_report.odt"/>
+      
+    <report id="report_session_product"
+      string="Session Product"
+      name="fpos.report_session_product"
+      auto="False"
+      report_type="aeroo"
+      process_sep="False"
+      model="pos.session"
+      in_format="oo-odt"
+      out_format="oo-pdf" 
+      stylesheet="none"
+      parser="fpos/report/session_summary_report.py"
+      rml="fpos/report/session_summary_report.odt"/>
+      
   </data>
 </openerp>
