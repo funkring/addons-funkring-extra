@@ -99,6 +99,8 @@ class fpos_order(models.Model):
             raise Warning(_("Only Administrator could correct Fpos orders"))
         
         tax_obj = self.pool["account.tax"]
+        line_obj = self.env["pos.order.line"]
+        
         for order in self:
             cash_payment = None
             payment_total = 0
@@ -134,10 +136,6 @@ class fpos_order(models.Model):
                 else:
                     order_total += line.subtotal_incl
                 
-                # FIX PRICE
-                if not line.price and line.brutto_price:
-                    line.price = line.brutto_price
-                
             if not has_status:
                 order.tag = ""    
             
@@ -150,8 +148,8 @@ class fpos_order(models.Model):
                 taxes = {}
                 fpos_taxes = []
                 order_tax = 0
-                for line in order.line_ids:                    
-                    taxes_ids = [tax for tax in line.product_id.taxes_id if tax.company_id.id == line.order_id.company_id.id]
+                for line in order.line_ids:      
+                    taxes_ids = line_obj._get_taxes(line)              
                     price = line.price
                     calc = tax_obj.compute_all(self._cr, self._uid, taxes_ids, price, line.qty, product=line.product_id, partner=line.order_id.partner_id or False)
                     if taxes_ids:
@@ -404,17 +402,17 @@ class fpos_order(models.Model):
                 for line in order.line_ids:
     
                     # calc back price per unit
-                    price_unit = line.price or line.brutto_price or 0.0
+                    price_unit = line.price or 0.0
                     if line.tax_ids:
                         # check if price conversion is needed
-                        convert=False
+                        invalidTax=False
                         for tax in line.tax_ids:
                             if not tax.price_include and not line.netto:
-                                convert=True
+                                invalidTax=True
                                 break
                             
-                        if convert:
-                            raise Warning(_("Fpos could only use price with tax included"))
+                        if invalidTax:
+                            raise Warning(_("Unable to post order %s: tax 'price include/exclude' was changed or tax mixed") % order.name)
                             
                     if line.product_id:
                         # add line with product
@@ -574,7 +572,6 @@ class fpos_order_line(models.Model):
     group_id = fields.Many2one("product.product", "Group", index=True)
     uom_id = fields.Many2one("product.uom", "Unit")
     tax_ids = fields.Many2many("account.tax", "fpos_line_tax_rel", "line_id", "tax_id", "Taxes")
-    brutto_price = fields.Float("Brutto Price", deprecated=True)
     price = fields.Float("Price")
     netto = fields.Boolean("Netto")
     qty = fields.Float("Quantity", digits=dp.get_precision('Product UoS'))

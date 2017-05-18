@@ -286,6 +286,7 @@ class Parser(extreport.basic_parser):
         account_tax_obj = self.pool.get("account.tax")
         currency_obj = self.pool.get('res.currency')
         order_obj = self.pool.get("pos.order")
+        order_line_obj = self.pool.get("pos.order.line")
 
         print_detail = self.localcontext["print_detail"]
         print_product = self.localcontext["print_product"]
@@ -455,7 +456,7 @@ class Parser(extreport.basic_parser):
                 # get taxes
                 taxes = tax_dict.get(product.id,None)
                 if taxes is None:
-                    taxes = [x for x in line.product_id.taxes_id if x.company_id.id == line.company_id.id]
+                    taxes = order_line_obj._get_taxes(self.cr, self.uid, line, context=self.localcontext)
                     tax_dict[product.id] = taxes
 
                 # compute taxes

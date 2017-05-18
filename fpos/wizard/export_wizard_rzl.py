@@ -42,6 +42,7 @@ class wizard_export_bmd(models.TransientModel):
     def default_get(self, fields_list):
         res = super(wizard_export_bmd, self).default_get(fields_list)
         order_obj = self.env["pos.order"]
+        line_obj = self.env["pos.order.line"]
         orders = []
         
         session_ids = util.active_ids(self._context, "pos.session")
@@ -108,7 +109,7 @@ class wizard_export_bmd(models.TransientModel):
                 
                 # get tax
                 tax = 0
-                taxes = [t for t in product.taxes_id if not t.company_id or t.company_id == order.company_id]
+                taxes = line_obj._get_taxes(line) 
                 if taxes:
                     tax = int(taxes[0].amount * 100)
                 

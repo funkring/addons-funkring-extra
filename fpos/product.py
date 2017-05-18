@@ -165,73 +165,134 @@ class product_product(osv.Model):
                    " WHERE t.product_tmpl_id = id AND t.pos_rate IS NOT NULL")
          
 
-    def _fpos_product_get(self, cr, uid, obj, *args, **kwarg):
+    def _fpos_product_bulk_get(self, cr, uid, objs, *args, **kwarg):
         mapping_obj = self.pool["res.mapping"]
+        context = kwarg.get("context")
         
-        # read tax        
-        taxes_id = []
-        price_include = 0
-        for tax in obj.taxes_id:
-            if tax.price_include:
-                price_include += 1
-            taxes_id.append(mapping_obj._get_uuid(cr, uid, tax));
+        # uuid cache
+        uuids = {}
+        def get_uuid(obj):
+            if not obj:
+                return None
+            key = (obj._name, obj.id)
+            uuid = uuids.get(key, False)
+            if uuid is False:
+                uuid = mapping_obj._get_uuid(cr, uid, obj) or None
+                uuids[key] = uuid
+            return uuid
+        
+        # tax mapping
+        taxMap = {}
+        prices = {}
+        
+        # build mappings from profile
+        profile_obj = self.pool["pos.config"]
+        profile_id = profile_obj.search_id(cr, uid, [("user_id","=", uid)], context=context)
+        if profile_id:
+            profile = profile_obj.browse(cr, uid, profile_id, context=context)
+            partner = profile.company_id.partner_id
+
+            # get fiscal position
+            fiscal_obj = self.pool['account.fiscal.position']
+              
+            # find fiscal position
+            fiscalpos_id = None
+            fiscalpos = partner.property_account_position          
+            if not fiscalpos:
+                fiscalpos_id = fiscal_obj.get_fiscal_position(self._cr, self._uid, profile.company_id.id, partner.id, context=context)
+                fiscalpos = fiscal_obj.browse(cr, uid, fiscalpos_id, context=context)
             
-        netto = price_include == 0 and len(taxes_id) > 0
             
-        # build product
-        values =  {
-            "_id" : mapping_obj._get_uuid(cr, uid, obj),
-            META_MODEL : obj._model._name,
-            "name" : obj.name,
-            "pos_name" : obj.pos_name or obj.name,
-            "description" : obj.description,
-            "description_sale" : obj.description_sale,
-            "price" : obj.lst_price or 0.0,
-            "netto" : netto, 
-            "brutto_price" : obj.brutto_price,
-            "uom_id" : mapping_obj._get_uuid(cr, uid, obj.uom_id), 
-            "nounit" : obj.uom_id.nounit,
-            "code" : obj.code,
-            "ean13" : obj.ean13,
-            "image_small" : obj.image_small,
-            "pos_categ_id" : mapping_obj._get_uuid(cr, uid, obj.pos_categ_id),
-            "income_pdt" : obj.income_pdt,
-            "expense_pdt" : obj.expense_pdt,
-            "to_weight" : obj.to_weight,
-            "taxes_id" : taxes_id,
-            "sequence" : obj.sequence,
-            "active": obj.active,
-            "available_in_pos" : obj.available_in_pos,
-            "sale_ok" : obj.sale_ok,
-            "pos_color" : obj.pos_color,
-            "pos_report" : obj.pos_report,
-            "pos_fav" : obj.pos_fav,
-            "pos_categ2_id" : mapping_obj._get_uuid(cr, uid, obj.pos_categ2_id),
-            "pos_rate" : obj.pos_rate
-        }
+            # create tax map
+            if fiscalpos:
+                tax_obj = self.pool["account.tax"]                
+                taxes = tax_obj.browse(cr, uid, tax_obj.search(cr, uid, [], context=context), context=context)
+                for tax in taxes:
+                    mapped_taxes_ids = fiscal_obj.map_tax(cr, uid, fiscalpos, [tax], context=context)
+                    if mapped_taxes_ids:
+                        taxMap[tax.id] = tax_obj.browse(cr, uid, mapped_taxes_ids[0], context=context)
+                    else:
+                        taxMap[tax.id] = None
+                        
+            # create price list
+            if profile.pricelist_id:
+                prices = self.pool['product.pricelist']._price_get_multi(cr, uid, profile.pricelist_id, [(o, 1, None) for o in objs], context=context)
+                        
         
-        if obj.pos_nogroup:
-            values["pos_nogroup"] = True
-        if obj.pos_minus:
-            values["pos_minus"] = True
-        if type(obj.pos_price_pre) in (int,long):
-            values["pos_price_pre"] = obj.pos_price_pre
-        if type(obj.pos_price_dec) in (int,long):
-            values["pos_price_dec"] = obj.pos_price_dec
-        if type(obj.pos_amount_pre) in (int,long):
-            values["pos_amount_pre"] = obj.pos_amount_pre
-        if type(obj.pos_amount_dec) in (int,long):
-            values["pos_amount_dec"] = obj.pos_amount_dec            
-        if obj.pos_price:
-            values["pos_price"] = obj.pos_price
-        if obj.pos_sec:
-            values["pos_sec"] = obj.pos_sec
-        if obj.pos_cm:
-            values["pos_cm"] = obj.pos_cm
-        if obj.pos_action:
-            values["pos_action"] = obj.pos_action
+        # build docs
+        docs = []
+        for obj in objs:
+            
+            # read tax        
+            taxes_id = []
+            price_include = 0
+            for tax in obj.taxes_id:
+                tax = taxMap.get(tax.id, tax)
+                if tax:
+                    if tax.price_include:
+                        price_include += 1
+                    taxes_id.append(get_uuid(tax));
+                
+            netto = price_include == 0 and len(taxes_id) > 0
+                
+            # get price
+            price = prices.get(obj.id, obj.lst_price)            
+                
+            # build product
+            values =  {
+                "_id" : get_uuid(obj),
+                META_MODEL : obj._model._name,
+                "name" : obj.name,
+                "pos_name" : obj.pos_name or obj.name,
+                "description" : obj.description,
+                "description_sale" : obj.description_sale,
+                "price" : price,
+                "netto" : netto, 
+                "uom_id" : get_uuid(obj.uom_id), 
+                "nounit" : obj.uom_id.nounit,
+                "code" : obj.code,
+                "ean13" : obj.ean13,
+                "image_small" : obj.image_small,
+                "pos_categ_id" : get_uuid(obj.pos_categ_id),
+                "income_pdt" : obj.income_pdt,
+                "expense_pdt" : obj.expense_pdt,
+                "to_weight" : obj.to_weight,
+                "taxes_id" : taxes_id,
+                "sequence" : obj.sequence,
+                "active": obj.active,
+                "available_in_pos" : obj.available_in_pos,
+                "sale_ok" : obj.sale_ok,
+                "pos_color" : obj.pos_color,
+                "pos_report" : obj.pos_report,
+                "pos_fav" : obj.pos_fav,
+                "pos_categ2_id" : get_uuid(obj.pos_categ2_id),
+                "pos_rate" : obj.pos_rate
+            }
+            
+            if obj.pos_nogroup:
+                values["pos_nogroup"] = True
+            if obj.pos_minus:
+                values["pos_minus"] = True
+            if type(obj.pos_price_pre) in (int,long):
+                values["pos_price_pre"] = obj.pos_price_pre
+            if type(obj.pos_price_dec) in (int,long):
+                values["pos_price_dec"] = obj.pos_price_dec
+            if type(obj.pos_amount_pre) in (int,long):
+                values["pos_amount_pre"] = obj.pos_amount_pre
+            if type(obj.pos_amount_dec) in (int,long):
+                values["pos_amount_dec"] = obj.pos_amount_dec            
+            if obj.pos_price:
+                values["pos_price"] = obj.pos_price
+            if obj.pos_sec:
+                values["pos_sec"] = obj.pos_sec
+            if obj.pos_cm:
+                values["pos_cm"] = obj.pos_cm
+            if obj.pos_action:
+                values["pos_action"] = obj.pos_action
         
-        return values  
+            docs.append(values)
+            
+        return docs  
     
     def _fpos_product_put(self, cr, uid, obj, *args, **kwarg):
         return None
@@ -253,7 +314,7 @@ class product_product(osv.Model):
     
     def _fpos_product(self, cr, uid, *args, **kwargs):
         return {
-            "get" : self._fpos_product_get,
+            "bulk_get" : self._fpos_product_bulk_get,
             "put" : self._fpos_product_put,
             "lastchange" : self._jdoc_product_lastchange
         }
@@ -262,7 +323,9 @@ class product_product(osv.Model):
         # check for product
         product_id = self.search_id(cr, uid, [("ean13","=",code)], context=context)
         if not product_id:
-            raise Warning(_('Product with EAN %s not found') % code)    
+            product_id = self.search_id(cr, uid, [("default_code","=",code)], context=context)
+            if not product_id:
+                raise Warning(_('Product with EAN %s not found') % code)    
         
         product = self.browse(cr, uid, product_id, context=context)
         if not product:
@@ -270,4 +333,9 @@ class product_product(osv.Model):
         
         jdoc_obj = self.pool["jdoc.jdoc"]
         jdoc_obj._jdoc_access(cr, uid, "product.product", product_id, auto=True, context=context)
-        return self._fpos_product_get(cr, uid, product, context=context)
+        
+        docs = self._fpos_product_bulk_get(cr, uid, [product], context=context)
+        if not docs:
+            raise Warning(_('No access for product with EAN %s') % code)
+
+        return docs[0]

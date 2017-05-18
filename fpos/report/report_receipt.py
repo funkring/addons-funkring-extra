@@ -48,9 +48,11 @@ class order(report_sxw.rml_parse):
         account_tax_obj = self.pool.get('account.tax')
         taxes_dict = {}
         
+        line_obj = self.pool.get("pos.order.line")
+        
         # lines
         for line in o.lines:             
-            taxes = [tax for tax in line.product_id.taxes_id if tax.company_id.id == line.order_id.company_id.id]
+            taxes =  line_obj._get_taxes(self.cr, self.uid, line, context=self.localcontext)
 
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0) 
             taxes_calc = account_tax_obj.compute_all(self.cr, self.uid, taxes, price, line.qty, product=line.product_id, partner=line.order_id.partner_id or False)

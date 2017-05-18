@@ -26,6 +26,7 @@ from openerp.tools.translate import _
 
 from openerp.addons.at_base import util
 from openerp.addons.at_base import helper
+from openerp import api
 
 from Crypto import Random
 from Crypto.Hash import SHA256
@@ -415,6 +416,8 @@ class pos_config(osv.Model):
                     "compositions" : ["journal_ids","user_ids","company_id","sequence_id"]
                 },
                 "res.company" : {
+                    "fields" : ["name", 
+                                "currency_id"],
                     "compositions" : ["currency_id"]
                 }
             }
@@ -669,6 +672,13 @@ class pos_order(osv.Model):
 
 
 class pos_order_line(osv.Model):
+
+    @api.cr_uid_context
+    def _get_taxes(self, cr, uid, line, context=None):
+        fpos_line = line.fpos_line_id
+        if fpos_line:
+            return fpos_line.tax_ids
+        return super(pos_order_line, self)._get_taxes(cr, uid, line, context=context)
 
     _inherit = "pos.order.line"
     _columns = {
