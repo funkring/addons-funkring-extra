@@ -199,8 +199,9 @@ class product_product(osv.Model):
             fiscalpos_id = None
             fiscalpos = partner.property_account_position          
             if not fiscalpos:
-                fiscalpos_id = fiscal_obj.get_fiscal_position(self._cr, self._uid, profile.company_id.id, partner.id, context=context)
-                fiscalpos = fiscal_obj.browse(cr, uid, fiscalpos_id, context=context)
+                fiscalpos_id = fiscal_obj.get_fiscal_position(cr, uid, profile.company_id.id, partner.id, context=context)
+                if fiscalpos_id:
+                    fiscalpos = fiscal_obj.browse(cr, uid, fiscalpos_id, context=context)
             
             
             # create tax map
