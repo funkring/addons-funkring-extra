@@ -214,7 +214,7 @@ class pos_config(osv.Model):
         # build base
         addAmount(0, stat, [("total",)]) 
         if orders:
-            firstOrder = orders[1]
+            firstOrder = orders[0]
             lastOrder = orders[-1]
             
             curTime = util.strToTime(firstOrder.date_order)
