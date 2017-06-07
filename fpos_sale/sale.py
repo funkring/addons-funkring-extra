@@ -19,7 +19,7 @@
 ##############################################################################
 
 from openerp.osv import osv
-from collections import OrderedDict
+
 
 class sale_order(osv.Model):
     
@@ -54,7 +54,7 @@ class sale_order(osv.Model):
     def action_print_delivery(self, cr, uid, ids, context=None):
         res = self.pool["report"].get_action(cr, uid, ids, "fast_sale.report_sale_delivery", context=context)
         return res
-
+   
     def action_group(self, cr, uid, ids, context=None):
         line_ids = []
         for order in self.browse(cr, uid, ids, context=context):
@@ -68,5 +68,18 @@ class sale_order(osv.Model):
             self.pool["sale.order.line"].unlink(cr, uid, line_ids, context=context)
             
         return True
+    
+    def confirm_force_all(self, cr, uid, ids, context=None):
+        self.action_group(cr, uid, ids, context=context)
+        return super(sale_order, self).confirm_force_all(cr, uid, ids, context=context)
+    
+    def action_group_invoice(self, cr, uid, ids, context=None):
+        if ids:
+            order = self.browse(cr, uid, ids[0], context=context)
+            order_ids = self.search(cr, uid, [("partner_id","=",order.partner_id.id),("state","in",["draft","sent"])], context=context)
+            if order_ids:
+                self.confirm_force_all(cr, uid, order_ids, context=context)            
+        return True
+        
 
     _inherit = "sale.order"

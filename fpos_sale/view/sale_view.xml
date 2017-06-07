@@ -24,10 +24,12 @@
                     groups="base.group_user"
                     type="object" states="draft,sent"/>
                     
+            <button name="action_group_invoice" states="draft,sent" string="Group Invoice" roups="base.group_user" 
+                    type="object"/>             
+                    
         </button>        
       </field>
     </record>
-    
     
     <record id="form_sale_order2" model="ir.ui.view">
       <field name="name">fpos_sale.form_sale_order2</field>
@@ -40,10 +42,10 @@
             </button>     
             <button name="action_button_confirm" states="draft" position="replace">
                 <button name="action_button_confirm" states="draft" string="Confirm Sale" type="object" groups="fpos_sale.group_sale_extended"/>
-            </button>
+            </button>           
             <button name="cancel" states="draft,sent" position="replace">
                  <button name="cancel" states="draft,sent" string="Cancel" groups="fpos_sale.group_sale_extended"/>
-            </button>
+            </button>            
       </field>
     </record>
     
