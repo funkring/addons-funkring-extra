@@ -36,7 +36,7 @@
                 <field name="iface_test"/>                
             </field>            
             <field name="picking_type_id" position="before">
-                <field name="user_id" string="Fpos User"/>
+                <field name="user_id" string="Fpos User" attrs="{'readonly': [('liveop','=',True)]}"/>
                 <field name="parent_user_id" string="Fpos Parent User"/>
                 <field name="fpos_model"/>
                 <field name="fpos_prefix"/>                
