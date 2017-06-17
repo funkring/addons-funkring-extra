@@ -56,7 +56,7 @@ class pos_category(osv.osv):
                                          string="After product",
                                          help="Action after product selection"),
         "foldable" : fields.boolean("Foldable"),
-        "link_id" : fields.many2one("pos.category", "Link", ondelete="set null", index=True)
+        "link_id" : fields.many2one("pos.category", "Link", ondelete="set null", select=True)
     }
 
     def _fpos_category_get(self, cr, uid, obj, *args, **kwarg):
@@ -116,15 +116,15 @@ class pos_config(osv.Model):
         "iface_test" : fields.boolean("Test"),
         "iface_waiterkey" : fields.boolean("Waiter Key"),
         "liveop" : fields.boolean("Live Operation", readonly=True, select=True, copy=False),
-        "fpos_dist" : fields.char("Distributor", copy=True, index=True),
+        "fpos_dist" : fields.char("Distributor", copy=True, select=True),
         "user_id" : fields.many2one("res.users","Sync User", select=True, copy=False),
         "user_ids" : fields.many2many("res.users",
                                       "pos_config_user_rel",
                                       "config_id", "user_id",
                                       "Users",
                                       help="Allowed users for the Point of Sale"),
-        "fpos_hwproxy_id" : fields.many2one("fpos.hwproxy","Hardware Proxy", copy=True, index=True, composition=True),
-        "parent_user_id" : fields.many2one("res.users","Parent Sync User", help="Transfer all open orders to this user before pos is closing", copy=True, index=True),           
+        "fpos_hwproxy_id" : fields.many2one("fpos.hwproxy","Hardware Proxy", copy=True, select=True, composition=True),
+        "parent_user_id" : fields.many2one("res.users","Parent Sync User", help="Transfer all open orders to this user before pos is closing", copy=True, select=True),           
         "payment_iface_ids" : fields.one2many("fpos.payment.iface","config_id","Payment Interfaces", copy=True, composition=True),
         
         "sign_method" : fields.selection([("card","Card"),
@@ -636,8 +636,9 @@ class pos_order(osv.Model):
 
     _inherit = "pos.order"
     _columns = {
-        "fpos_order_id" : fields.many2one("fpos.order", "Fpos Order"),
-        "fpos_place_id" : fields.many2one("fpos.place", "Place")
+        "fpos_order_id": fields.many2one("fpos.order", "Fpos Order", select=True),
+        "fpos_place_id": fields.many2one("fpos.place", "Place", select=True),
+        "fpos_group_id": fields.many2one("fpos.order", "Fpos Group Order", select=True, ondelete="set null")
     }
 
     def reconcile_invoice(self, cr, uid, ids, context=None):

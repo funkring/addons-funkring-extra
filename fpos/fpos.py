@@ -27,6 +27,7 @@ from openerp import SUPERUSER_ID
 import openerp.addons.decimal_precision as dp
 
 from dateutil.relativedelta import relativedelta
+from openerp.osv.fields import datetime
 
 class fpos_order(models.Model):
     _name = "fpos.order"
@@ -83,6 +84,8 @@ class fpos_order(models.Model):
     qr = fields.Char("QR Code", readonly=True)
     hs = fields.Char("Hash", readonly=True, index=True)
     sig = fields.Boolean("Signed", readonly=True)
+    
+    ga = fields.Boolean("Groupable", readonly=True)
     
     
     @api.multi
@@ -191,7 +194,7 @@ class fpos_order(models.Model):
                 order.amount_tax = order_tax
 
         return True
-    
+          
     @api.model
     def post_order(self, docs):
         if isinstance(docs, dict):

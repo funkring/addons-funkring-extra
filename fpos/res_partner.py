@@ -19,9 +19,146 @@
 ##############################################################################
 
 from openerp.osv import fields, osv
+from openerp.addons.at_base import util
+from openerp.addons.at_base import format
+
+from openerp.tools.translate import _
 
 class res_partner(osv.Model):
+    
+    def _groupable_amount(self, cr, uid, ids, field_names, arg, context=None):
+        res = dict.fromkeys(ids)
+        if ids:            
+            for oid in ids:
+                res[oid] = {
+                    "ga_amount": 0.0,
+                    "ga_count": 0
+                } 
+                
+                
+            cr.execute("SELECT f.partner_id, SUM(f.amount_total), COUNT(f.id) FROM pos_order o "
+                       "INNER JOIN fpos_order f ON f.id = o.fpos_order_id "
+                       "WHERE f.partner_id IN %s AND f.ga AND o.fpos_group_id IS NULL "
+                       "GROUP BY 1 ", (tuple(ids),))
+            
+            for partner_id, amount, count in cr.fetchall():
+                values = res[partner_id]
+                values["ga_amount"] = amount
+                values["ga_count"] = count
+                
+        return res
+    
+    def fpos_ga_order(self,cr, uid, partner_id, context=None):
+        order_obj = self.pool["pos.order"]
+        order_ids = order_obj.search(cr, uid, [("partner_id","=",partner_id),("fpos_order_id.ga","=",True),("fpos_group_id","=",False)], context=context)
+        
+        res = []
+        
+        for order in order_obj.browse(cr, uid, order_ids, context=context):
+            journals = []
+            
+            for st in order.statement_ids:
+                journal = st.statement_id.journal_id
+                if journal.type != "cash":
+                    journals.append(journal.name)
+            
+            journals.sort()
+            
+            res.append({
+                "id": order.id,
+                "date_order": order.date_order,
+                "name": order.name,
+                "pos_reference" : order.pos_reference,
+                "amount_total": order.amount_total,
+                "journal": ", ".join(journals) 
+            })
+                        
+            
+        return res
+        return order_obj.search_read(cr, uid, [("fpos_order_id.ga","=",True),("fpos_group_id","=",False)], ["date_order","name","amount_total"], context=context)
+    
+    def fpos_ga_order_create(self, cr, uid, partner_id, order_ids, defaults=None, context=None):
+        data_obj = self.pool["ir.model.data"]
+        jdoc_obj = self.pool["jdoc.jdoc"]
+        order_obj = self.pool["pos.order"]
+        fpos_line_obj = self.pool["fpos.order.line"]
+        fpos_order_obj = self.pool["fpos.order"]
+        
+        f = format.LangFormat(cr, uid, context=context)
+        status_id = data_obj.xmlid_to_res_id(cr, uid, "fpos.product_fpos_status", raise_if_not_found=True)
+        
+        lines = []
+        filtered_order_ids = []
+        partner_id = None
+        first = True
+        
+        for order in order_obj.browse(cr, uid, order_ids, context=None):            
+            fpos_order = order.fpos_order_id
+            if not fpos_order:
+                continue
+
+            if fpos_order.partner_id:
+                partner_id = fpos_order.partner_id.id
+                
+            if partner_id != partner_id:
+                continue
+                                
+            filtered_order_ids.append(order.id)  
+            lines.append({
+                "name": " ".join([f.formatLang(fpos_order.date, date_time=True), order.name]),
+                "note": order.pos_reference,
+                "qty": 1,
+                "price": fpos_order.amount_total,
+                "subtotal_incl": fpos_order.amount_total,
+                "subtotal": fpos_order.amount_total,                
+                "tag": "s",
+                "flags" : first and "1b" or "1bl" # main section
+            })
+            
+            first = False
+            
+            line_values = None
+            for fpos_line in fpos_order.line_ids:
+                if fpos_line.tag and not fpos_line.tag in ("i","o"):
+                    continue
+                line_values = fpos_line_obj.copy_data(cr, uid, fpos_line.id, context=context)
+                
+                # replace with status
+                # to handle right stock
+                line_values["product_id"] = status_id
+                
+                # sub section
+                flags = line_values.get("flags") or ""
+                if flags.find("2") < 0:
+                    flags += "2"
+                    line_values["flags"] = flags
+                                     
+                lines.append(line_values)
+                
+        # set values for order
+        order_values = defaults and dict(defaults) or {}
+        order_values["line_ids"] = [(0,0,l) for l in lines]
+        order_values["fpos_user_id"] = uid
+        if not "user_id" in order_values:
+            order_values["user_id"] = uid
+        if not "date" in order_values:
+            order_values["date"] = util.currentDateTime()
+        if not "ref" in order_values:
+            order_values["ref"] = _("Group Invoice")
+        if partner_id and not "partner_id" in order_values:
+            order_values["partner_id"] = partner_id
+            
+        # create order
+        fpos_ga_order_id = fpos_order_obj.create(cr, uid, order_values, context=context)
+        # update order group
+        order_obj.write(cr, uid, filtered_order_ids, {"fpos_group_id": fpos_ga_order_id}, context=context)
+
+        res = jdoc_obj.jdoc_by_id(cr, uid, "fpos.order", fpos_ga_order_id, options={"empty_values":False}, context=context)
+        return res
+    
     _inherit = "res.partner"
     _columns = {
-        "available_in_pos" : fields.boolean("Available in POS")
+        "available_in_pos" : fields.boolean("Available in POS"),
+        "ga_amount" : fields.function(_groupable_amount, type="float", store=False, string="Groupable POS Amount", multi="ga"),
+        "ga_count" : fields.function(_groupable_amount, type="integer", store=False, string="Groupable Order Count", multi="ga")
     }

@@ -27,6 +27,7 @@
                         <field name="currency_id"/>
                         <field name="ref"/>
                         <field name="partner_id"/>     
+                        <field name="ga"/>
                         <field name="turnover"/>
                         <field name="cpos"/>
                         <field name="tag"/>                        
