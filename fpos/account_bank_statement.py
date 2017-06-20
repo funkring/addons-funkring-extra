@@ -25,6 +25,7 @@ class account_journal(osv.Model):
     _columns = {
         "fpos_noreconcile": fields.boolean("No invoice reconciliation"),
         "fpos_noturnover": fields.boolean("No Turnover"),
+        "fpos_invoice" : fields.boolean("Create Invoice"),
         "fpos_atomic": fields.boolean("Atomic Payment"),
         "fpos_group": fields.boolean("Group Order"),
         "fpos_partner_id": fields.many2one("res.partner", "Default Partner", domain=[("available_in_pos","=",True)]) 

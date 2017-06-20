@@ -21,7 +21,7 @@
 from openerp.osv import fields, osv
 from openerp.addons.at_base import util
 from openerp.addons.at_base import format
-
+from openerp import SUPERUSER_ID
 from openerp.tools.translate import _
 
 class res_partner(osv.Model):
@@ -50,13 +50,20 @@ class res_partner(osv.Model):
     
     def fpos_ga_order(self,cr, uid, partner_id, context=None):
         order_obj = self.pool["pos.order"]
-        order_ids = order_obj.search(cr, uid, [("partner_id","=",partner_id),("fpos_order_id.ga","=",True),("fpos_group_id","=",False)], context=context)
         
+        cr.execute("SELECT o.id FROM pos_order o "
+                   "INNER JOIN fpos_order f ON f.id = o.fpos_order_id "
+                   "WHERE f.partner_id = %s AND f.ga AND o.fpos_group_id IS NULL "
+                   "ORDER BY o.date_order DESC ", (partner_id, ))
+        
+        order_ids = [r[0] for r in cr.fetchall()]
         res = []
         
         for order in order_obj.browse(cr, uid, order_ids, context=context):
-            journals = []
+            if not order:
+                continue
             
+            journals = []            
             for st in order.statement_ids:
                 journal = st.statement_id.journal_id
                 if journal.type != "cash":
@@ -72,27 +79,27 @@ class res_partner(osv.Model):
                 "amount_total": order.amount_total,
                 "journal": ", ".join(journals) 
             })
-                        
             
         return res
-        return order_obj.search_read(cr, uid, [("fpos_order_id.ga","=",True),("fpos_group_id","=",False)], ["date_order","name","amount_total"], context=context)
     
     def fpos_ga_order_create(self, cr, uid, partner_id, order_ids, defaults=None, context=None):
-        data_obj = self.pool["ir.model.data"]
         jdoc_obj = self.pool["jdoc.jdoc"]
         order_obj = self.pool["pos.order"]
         fpos_line_obj = self.pool["fpos.order.line"]
         fpos_order_obj = self.pool["fpos.order"]
         
+        data_obj = self.pool["ir.model.data"]
+        product_balance_id = data_obj.xmlid_to_res_id(cr, uid, "fpos.product_fpos_balance", raise_if_not_found=True)
+        
         f = format.LangFormat(cr, uid, context=context)
-        status_id = data_obj.xmlid_to_res_id(cr, uid, "fpos.product_fpos_status", raise_if_not_found=True)
         
         lines = []
         filtered_order_ids = []
         partner_id = None
         first = True
         
-        for order in order_obj.browse(cr, uid, order_ids, context=None):            
+        order_ids = order_obj.search(cr, uid, [("id","in",order_ids)], context=context)
+        for order in order_obj.browse(cr, SUPERUSER_ID, order_ids, context=context):            
             fpos_order = order.fpos_order_id
             if not fpos_order:
                 continue
@@ -123,16 +130,18 @@ class res_partner(osv.Model):
                     continue
                 line_values = fpos_line_obj.copy_data(cr, uid, fpos_line.id, context=context)
                 
-                # replace with status
-                # to handle right stock
-                line_values["product_id"] = status_id
+                # replace product with none
+                line_values["product_id"] = product_balance_id
                 
-                # sub section
+                # sub section and payment
                 flags = line_values.get("flags") or ""
                 if flags.find("2") < 0:
                     flags += "2"
-                    line_values["flags"] = flags
-                                     
+                if flags.find("x") < 0:
+                    flags += "x"
+                line_values["flags"] = flags
+                                         
+                # add            
                 lines.append(line_values)
                 
         # set values for order

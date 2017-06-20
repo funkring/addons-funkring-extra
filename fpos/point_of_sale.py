@@ -552,6 +552,7 @@ class pos_config(osv.Model):
 
         incField(self, oid, "name", default)
         incField(self, oid, "fpos_prefix", default)
+        incField(self, oid, "sign_pid", default)
         
         fpos_prefix =  default.get("fpos_prefix")
         if fpos_prefix:

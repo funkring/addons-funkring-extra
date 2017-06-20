@@ -340,3 +340,32 @@ class product_product(osv.Model):
             raise Warning(_('No access for product with EAN %s') % code)
 
         return docs[0]
+    
+    def fpos_product_info(self, cr, uid, product_id, pricelist_id=None, partner_id=None, amount=1.0, context=None):
+        mapping_obj = self.pool["res.mapping"]
+        pricelist_obj = self.pool["product.pricelist"]
+        
+        # product
+        if product_id and isinstance(product_id, basestring):
+            product = mapping_obj._browse_mapped(cr, uid, product_id, "product.product", context=context)
+            product_id = product.id
+        else:
+            product = self.browse(cr, uid, product_id, context=context)
+            
+        # pricelist
+        if pricelist_id and isinstance(pricelist_id, basestring):
+            pricelist = mapping_obj._browse_mapped(cr, uid, pricelist_id, "product.pricelist", context=context)
+            pricelist_id = pricelist.id
+        else:
+            pricelist = pricelist_obj.browse(cr, uid, pricelist_id, context=context)
+            
+        # partner
+        if partner_id and isinstance(partner_id, basestring):
+            partner_id = mapping_obj.get_id(cr, uid, "res.partner", partner_id)
+            
+        prices = pricelist_obj._price_get_multi(cr, uid, pricelist, [(product, amount, partner_id)], context=context)
+        return {
+            "id": product_id, 
+            "price": prices[product_id],
+            "amount": amount
+        }

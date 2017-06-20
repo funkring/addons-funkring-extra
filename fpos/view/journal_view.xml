@@ -8,10 +8,11 @@
       <field name="arch" type="xml">
         <page string="Point of Sale" position="inside">
             <group string="Processing">
+                <field name="fpos_invoice"/>
                 <field name="fpos_noreconcile"/>            
                 <field name="fpos_atomic"/>
-                <field name="fpos_noturnover" attrs="{'invisible': [('fpos_atomic','!=',True)]}"/>
-                <field name="fpos_group" attrs="{'invisible': [('fpos_noturnover','!=',True)]}"/>
+                <field name="fpos_noturnover" attrs="{'invisible': ['|',('fpos_atomic','!=',True),('type','=','cash')]}"/>
+                <field name="fpos_group" attrs="{'invisible': ['|',('fpos_noturnover','!=',True),('type','=','cash')]}"/>
                 <field name="fpos_partner_id" attrs="{'invisible':[('fpos_group','!=',True)], 'required':[('fpos_group','=',True)]}"/>
             </group>    
         </page>

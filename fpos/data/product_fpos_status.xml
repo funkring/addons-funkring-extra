@@ -12,5 +12,16 @@
       <field name="type">service</field>
     </record>
     
+    <record id="product_fpos_balance" model="product.product">
+      <field name="name">Ausgleich</field>
+      <field name="available_in_pos" eval="True"/>
+      <field name="standard_price">0.0</field>
+      <field name="categ_id" ref="product.product_category_all"/>
+      <field name="taxes_id" eval="[(6,0,[])]"/>
+      <field name="supplier_taxes_id" eval="[(6,0,[])]"/>
+      <field name="list_price">0.0</field>
+      <field name="type">service</field>
+    </record>
+    
   </data>
 </openerp>

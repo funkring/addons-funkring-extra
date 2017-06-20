@@ -9,6 +9,9 @@
       <field name="arch" type="xml">
             
             <data>
+                <button name="action_invoice" position="replace">
+                    <button name="action_invoice" string="Invoice" type="object" states="paid,done,invoiced" attrs="{'readonly': [('partner_id','=',False)]}"/>
+                </button>
                 <field name="company_id" position="after">
                     <field name="fpos_place_id"/>
                     <field name="fpos_order_id" readonly="1"/>

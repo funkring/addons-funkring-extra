@@ -624,6 +624,8 @@ class fpos_order_line(models.Model):
                 config.append(_("Group"))
             if "a" in self.flags:
                 config.append(_("Addition"))
+            if "x" in self.flags:
+                config.append(_("Balance"))
         if self.p_pre or self.p_dec:
             config.append(_("*-Format: %s,%s") % (self.p_pre or 0, self.p_dec or 0))
         if self.a_pre or self.a_dec:
