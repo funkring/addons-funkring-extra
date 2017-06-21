@@ -214,7 +214,7 @@ class chicken_log(models.Model):
     def _compute_loss_total(self):
         # add loss without fix
         self._cr.execute("SELECT SUM(COALESCE(loss,0)) FROM farm_chicken_log l "
-                         " WHERE l.logbook_id = %s AND l.day <= %s AND NOT l.loss_fix ", (self.logbook_id.id, self.day) )
+                         " WHERE l.logbook_id = %s AND l.day <= %s AND NOT COALESCE(l.loss_fix,False) ", (self.logbook_id.id, self.day) )
         res = self._cr.fetchone()
         loss_total = res and res[0] or 0
         

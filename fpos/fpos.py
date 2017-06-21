@@ -194,7 +194,11 @@ class fpos_order(models.Model):
                 order.amount_tax = order_tax
 
         return True
-          
+    
+    @api.model
+    def post_order_notify(self, uuid):
+        return True
+         
     @api.model
     def post_order(self, docs):
         if isinstance(docs, dict):
@@ -230,6 +234,9 @@ class fpos_order(models.Model):
                     uuid = doc["_id"]
                 else:
                     uuid = jdoc_obj.jdoc_put(doc)
+                    
+                # notify post
+                self.post_order_notify(uuid)
        
         # build res     
         res =  {

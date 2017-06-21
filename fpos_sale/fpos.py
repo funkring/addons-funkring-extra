@@ -18,26 +18,17 @@
 #
 ##############################################################################
 
-{
-    "name" : "oerp.at Simple Sale",
-    "summary" : "Simple sale module with template for customer",
-    "description":"""
-Fpos Sale
-=========
-* adds simple template based sale within point of sale
-""",
-    "version" : "1.0",
-    "author" :  "oerp.at",
-    "website" : "http://oerp.at",
-    "depends" : ["point_of_sale",
-                 "sale",
-                 "at_sale",
-                 "fpos",
-                 "fast_sale",
-                 "bus"],
-    "data" : ["security.xml",
-              "view/partner_view.xml",
-              "view/sale_view.xml"],
-    "auto_install" : False,
-    "installable": True
-}
+from openerp import models, api
+
+class fpos_order(models.Model):
+    _inherit = "fpos.order"
+    
+    @api.model
+    def post_order_notify(self, uuid):
+        mapping_obj = self.env["res.mapping"]
+        order_id = mapping_obj.get_id("fpos.order", uuid)
+        if order_id:
+            self.env["bus.bus"].sendone("%s,%s" % (self._cr.dbname,'post_order'), 
+                                        {"forder_id": order_id,
+                                         "uid" : self._uid } )
+        return super(fpos_order, self).post_order_notify(uuid)

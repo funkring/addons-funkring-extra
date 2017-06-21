@@ -1,0 +1,30 @@
+<openerp>
+  <data>
+    
+    <report id="report_pos_order_delivery_pdf" 
+            string="Delivery Note" 
+            name="pos.order.delivery.pdf" 
+            auto="False" 
+            report_type="aeroo" 
+            model="pos.order"
+            process_sep="True" 
+            in_format="oo-odt" 
+            out_format="oo-pdf" 
+            parser="fpos/report/pos_order_report.py" 
+            rml="fpos/report/pos_order_delivery.odt" />
+            
+     <report id="report_fpos_order_delivery_pdf" 
+            string="Delivery Note" 
+            name="fpos.order.delivery.pdf" 
+            auto="False" 
+            report_type="aeroo" 
+            model="fpos.order"
+            process_sep="True" 
+            in_format="oo-odt" 
+            out_format="oo-pdf" 
+            parser="fpos/report/pos_order_report.py" 
+            rml="fpos/report/pos_order_delivery.odt" />
+
+    
+  </data>
+</openerp>
