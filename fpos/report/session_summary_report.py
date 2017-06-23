@@ -182,27 +182,25 @@ class Parser(extreport.basic_parser):
     def _groupedDetail(self, details):
         groups = {}
 
-        def getCategory(product):
-            return product.pos_categ_id
-
         for detail in details:
             product = detail["product"]
             tax_name = detail["tax_name"]
-            categ = getCategory(product)
+            categ = product.pos_categ_id
             
             if not categ:
-                groupEntry = groups.get(0, None)
+                internCategId = product.categ_id.id*-1
+                groupEntry = groups.get(internCategId, None)
                 if groupEntry is None:
                     groupEntry = {
-                        "id" : 0,
-                        "name" : "Produkte",
+                        "id" : internCategId,
+                        "name" : product.categ_id.name_get()[0][1],
                         "amount" : 0.0,
                         "details" : [],
-                        "ids" : [0],
-                        "level" : 0,
+                        "ids" : [internCategId],
+                        "level" : 1,
                         "amount_tax" : {}
                     }
-                    groups[0] = groupEntry
+                    groups[internCategId] = groupEntry
             else:
                 groupEntry = groups.get(categ.id, None)
                 if groupEntry is None:
