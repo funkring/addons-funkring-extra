@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+  
+    <record id="wizard_product_ean" model="ir.ui.view">
+      <field name="name">fpos.wizard_product_ean</field>
+      <field name="model">fpos.product.ean.wizard</field>
+      <field name="arch" type="xml">
+        <form string="Product EAN Creator">
+          <group>
+            <p>Create Intern EAN Codes for active products. EAN Code is only created if the current code is empty</p>
+          </group>
+          <footer>
+            <button name="action_product_ean" string="Create"  type="object" class="oe_highlight" />
+            or
+            <button special="cancel" string="Close" class="oe_link" />
+          </footer>
+        </form>
+      </field>
+    </record>
+    
+    <record id="action_wizard_product_ean" model="ir.actions.act_window">
+      <field name="name">EAN Creator</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">fpos.product.ean.wizard</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+    </record>
+
+    <record id="irconfig_wizard_product_ean" model="ir.values">
+     <field name="model_id" ref="model_product_product" />      
+     <field name="name">EAN Creator</field>
+     <field name="key2">client_action_multi</field>
+     <field name="value" eval="'ir.actions.act_window,' + str(ref('action_wizard_product_ean'))" />
+     <field name="key">action</field>
+     <field name="model">product.product</field>
+   </record>
+   
+   <record id="irconfig_wizard_product_ean2" model="ir.values">
+     <field name="model_id" ref="model_product_template" />      
+     <field name="name">EAN Creator</field>
+     <field name="key2">client_action_multi</field>
+     <field name="value" eval="'ir.actions.act_window,' + str(ref('action_wizard_product_ean'))" />
+     <field name="key">action</field>
+     <field name="model">product.template</field>
+   </record>
+    
+  </data>
+</openerp>

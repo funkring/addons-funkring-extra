@@ -113,6 +113,7 @@ class pos_config(osv.Model):
         "iface_trigger" : fields.boolean("Cashbox Trigger", help="External cashbox trigger"),
         "iface_user_nobalance" : fields.boolean("User: no Balancing",  help="Balancing deactivated for User"),
         "iface_user_printsales" : fields.boolean("User: print sales", help="User allowed to print own sales"),
+        "iface_desktop" : fields.boolean("Desktop"),
         "iface_test" : fields.boolean("Test"),
         "iface_waiterkey" : fields.boolean("Waiter Key"),
         "liveop" : fields.boolean("Live Operation", readonly=True, select=True, copy=False),
@@ -671,6 +672,83 @@ class pos_order(osv.Model):
 
     def _after_invoice(self, cr, uid, order, context=None):
         self.reconcile_invoice(cr, uid, [order.id], context=context)
+        
+    def action_invoice(self, cr, uid, ids, context=None):
+        inv_ref = self.pool.get('account.invoice')
+        inv_line_ref = self.pool.get('account.invoice.line')
+        product_obj = self.pool.get('product.product')
+        inv_ids = []
+
+        for order in self.pool.get('pos.order').browse(cr, uid, ids, context=context):
+            if order.invoice_id:
+                inv_ids.append(order.invoice_id.id)
+                continue
+
+            if not order.partner_id:
+                raise osv.except_osv(_('Error!'), _('Please provide a partner for the sale.'))
+
+            acc = order.partner_id.property_account_receivable.id
+            inv = {
+                'name': order.name,
+                'origin': order.name,
+                'account_id': acc,
+                'journal_id': order.sale_journal.id or None,
+                'type': 'out_invoice',
+                'reference': order.name,
+                'partner_id': order.partner_id.id,
+                'comment': order.note or '',
+                'currency_id': order.pricelist_id.currency_id.id, # considering partner's sale pricelist's currency
+            }
+            inv.update(inv_ref.onchange_partner_id(cr, uid, [], 'out_invoice', order.partner_id.id)['value'])
+            # FORWARDPORT TO SAAS-6 ONLY!
+            inv.update({'fiscal_position': False})
+            if not inv.get('account_id', None):
+                inv['account_id'] = acc
+            inv_id = inv_ref.create(cr, uid, inv, context=context)
+
+            self.write(cr, uid, [order.id], {'invoice_id': inv_id, 'state': 'invoiced'}, context=context)
+            inv_ids.append(inv_id)
+            for line in order.lines:
+                inv_line = {
+                    'invoice_id': inv_id,
+                    'product_id': line.product_id.id,
+                    'quantity': line.qty,
+                }
+                inv_name = line.name
+                inv_line.update(inv_line_ref.product_id_change(cr, uid, [],
+                                                               line.product_id.id,
+                                                               line.product_id.uom_id.id,
+                                                               line.qty, partner_id = order.partner_id.id)['value'])
+                if not inv_line.get('account_analytic_id', False):
+                    inv_line['account_analytic_id'] = \
+                        self._prepare_analytic_account(cr, uid, line,
+                                                       context=context)
+                inv_line['price_unit'] = line.price_unit
+                inv_line['discount'] = line.discount
+                inv_line['name'] = inv_name
+                inv_line['invoice_line_tax_id'] = [(6, 0, inv_line['invoice_line_tax_id'])]
+                inv_line_ref.create(cr, uid, inv_line, context=context)
+            inv_ref.button_reset_taxes(cr, uid, [inv_id], context=context)
+            self.signal_workflow(cr, uid, [order.id], 'invoice')
+            inv_ref.signal_workflow(cr, uid, [inv_id], 'validate')
+
+        if not inv_ids: return {}
+
+        mod_obj = self.pool.get('ir.model.data')
+        res = mod_obj.get_object_reference(cr, uid, 'account', 'invoice_form')
+        res_id = res and res[1] or False
+        return {
+            'name': _('Customer Invoice'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'view_id': [res_id],
+            'res_model': 'account.invoice',
+            'context': "{'type':'out_invoice'}",
+            'type': 'ir.actions.act_window',
+            'nodestroy': True,
+            'target': 'current',
+            'res_id': inv_ids and inv_ids[0] or False,
+        }
 
 
 class pos_order_line(osv.Model):

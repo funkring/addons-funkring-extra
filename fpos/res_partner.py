@@ -169,5 +169,6 @@ class res_partner(osv.Model):
     _columns = {
         "available_in_pos" : fields.boolean("Available in POS"),
         "ga_amount" : fields.function(_groupable_amount, type="float", store=False, string="Groupable POS Amount", multi="ga"),
-        "ga_count" : fields.function(_groupable_amount, type="integer", store=False, string="Groupable Order Count", multi="ga")
+        "ga_count" : fields.function(_groupable_amount, type="integer", store=False, string="Groupable Order Count", multi="ga"),
+        "sale_discount": fields.float("Sale Discount %")
     }

@@ -61,7 +61,8 @@ oerp.at Fpos
               "wizard/export_wizard.xml",
               "wizard/export_wizard_rzl.xml",
               "wizard/report_wizard.xml",
-              "wizard/product_opt_wizard.xml",             
+              "wizard/product_opt_wizard.xml",
+              "wizard/product_ean_wizard.xml",
               "report/session_summary_report.xml",              
               "report/report_receipt.xml",
               "report/pos_config_report.xml",
@@ -69,7 +70,8 @@ oerp.at Fpos
               "data/cron_fpos_post.xml",
               "data/cron_fpos_product.xml",
               "data/product_fpos_status.xml",
-              "data/report_email_template.xml"
+              "data/report_email_template.xml",
+              "data/internal_product_seq.xml"
              ],
     "auto_install" : False,
     "installable": True

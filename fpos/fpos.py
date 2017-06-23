@@ -468,7 +468,7 @@ class fpos_order(models.Model):
                                     "name" : order.name          
                                   }, context)
             
-            # check cent correction
+            # check cent correction          
             payment_total = 0.0
             payments = []
             for payment in order.payment_ids:
@@ -484,7 +484,6 @@ class fpos_order(models.Model):
                     order.cent_fix = diff
                     order_obj.write(self._cr, session_uid, pos_order_ids, {
                                         "lines" : [(0,0,{
-                                                    "fpos_line_id" : line.id,
                                                     "company_id" : order.company_id.id,
                                                     "name" : _("Cent Correction"),
                                                     "product_id" : status_id,                    
@@ -497,7 +496,12 @@ class fpos_order(models.Model):
                 
             
             # add payment
+            create_invoice = order.send_invoice
             for st, journal, amount in payments:
+                
+                if journal.fpos_invoice and amount:
+                    create_invoice = True
+                    
                 order_obj.add_payment(self._cr, session_uid, pos_order_id, { 
                                     "payment_date" : order.date,
                                     "amount" : amount,
@@ -510,7 +514,7 @@ class fpos_order(models.Model):
             # post order
             order_obj.signal_workflow(self._cr, session_uid, pos_order_ids, "paid")
             # check if invoice should be created
-            if order.send_invoice:
+            if create_invoice:
                 if order.partner_id:
                     # created invoice
                     order_obj.action_invoice(self._cr, session_uid, pos_order_ids, context)

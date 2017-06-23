@@ -222,6 +222,7 @@ class product_product(osv.Model):
         
         # build docs
         docs = []
+        names = dict(self.name_get(cr, uid, [o.id for o in objs], context=context))
         for obj in objs:
             
             # read tax        
@@ -239,11 +240,12 @@ class product_product(osv.Model):
             # get price
             price = prices.get(obj.id, obj.lst_price)            
                 
+                
             # build product
             values =  {
                 "_id" : get_uuid(obj),
                 META_MODEL : obj._model._name,
-                "name" : obj.name,
+                "name" : names.get(obj.id,obj.name),
                 "pos_name" : obj.pos_name or obj.name,
                 "description" : obj.description,
                 "description_sale" : obj.description_sale,
@@ -345,27 +347,34 @@ class product_product(osv.Model):
         mapping_obj = self.pool["res.mapping"]
         pricelist_obj = self.pool["product.pricelist"]
         
+        pricelist = None
+        product = None
+        
         # product
-        if product_id and isinstance(product_id, basestring):
-            product = mapping_obj._browse_mapped(cr, uid, product_id, "product.product", context=context)
-            product_id = product.id
-        else:
-            product = self.browse(cr, uid, product_id, context=context)
+        if product_id:
+            if isinstance(product_id, basestring):
+                product = mapping_obj._browse_mapped(cr, uid, product_id, "product.product", context=context)
+                product_id = product.id
+            else:
+                product = self.browse(cr, uid, product_id, context=context)
             
         # pricelist
-        if pricelist_id and isinstance(pricelist_id, basestring):
-            pricelist = mapping_obj._browse_mapped(cr, uid, pricelist_id, "product.pricelist", context=context)
-            pricelist_id = pricelist.id
-        else:
-            pricelist = pricelist_obj.browse(cr, uid, pricelist_id, context=context)
+        if pricelist_id:
+            if isinstance(pricelist_id, basestring):
+                pricelist = mapping_obj._browse_mapped(cr, uid, pricelist_id, "product.pricelist", context=context)
+                pricelist_id = pricelist.id
+            else:
+                pricelist = pricelist_obj.browse(cr, uid, pricelist_id, context=context)
             
         # partner
-        if partner_id and isinstance(partner_id, basestring):
-            partner_id = mapping_obj.get_id(cr, uid, "res.partner", partner_id)
+        if partner_id:
+            if isinstance(partner_id, basestring):
+                partner_id = mapping_obj.get_id(cr, uid, "res.partner", partner_id)
+                
             
         prices = pricelist_obj._price_get_multi(cr, uid, pricelist, [(product, amount, partner_id)], context=context)
-        return {
-            "id": product_id, 
+        return {            
+            "product_id": product_id,
             "price": prices[product_id],
-            "amount": amount
+            "amount": amount        
         }

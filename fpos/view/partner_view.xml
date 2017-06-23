@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
  <data>
+    
     <record id="form_partner" model="ir.ui.view">
       <field name="name">fpos.form_partner</field>
       <field name="model">res.partner</field>
@@ -8,8 +9,21 @@
       <field name="arch" type="xml">
         <xpath expr="//page[@name='sales_purchases']/group/group/field[@name='supplier']" position="after">
             <field name="available_in_pos"/>
-        </xpath>
+        </xpath>        
       </field>
     </record>
+    
+    <record id="form_partner_sale" model="ir.ui.view">
+          <field name="name">fpos_sale.form_partner</field>
+          <field name="model">res.partner</field>
+          <field name="inherit_id" ref="at_sale.form_partner_view"/>
+          <field name="type">form</field>
+          <field name="arch" type="xml">
+             <field name="detailed_invoice" position="after">
+                <field name="sale_discount"/>
+             </field>
+          </field>
+    </record>
+    
   </data>
 </openerp>

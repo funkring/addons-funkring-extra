@@ -1,0 +1,18 @@
+<openerp>
+  <data noupdate="1">
+    
+    <record id="seq_type_internal_product_ean" model="ir.sequence.type">
+        <field name="name">Internal Product EAN</field>
+        <field name="code">internal.product.ean</field>
+    </record>
+    
+    <record id="seq_internal_product_ean" model="ir.sequence">
+        <field name="name">Internal Product EAN</field>
+        <field name="code">internal.product.ean</field>
+        <field name="prefix">2966</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    
+  </data>
+</openerp>

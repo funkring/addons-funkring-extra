@@ -18,17 +18,17 @@
 #
 ##############################################################################
 
-from openerp import models, api
+from openerp import models, fields, api, _
 
-class fpos_order(models.Model):
-    _inherit = "fpos.order"
-    
-    @api.model
-    def post_order_notify(self, uuid):
-        mapping_obj = self.env["res.mapping"]
-        order_id = mapping_obj.get_id("fpos.order", uuid)
-        if order_id:
-            self.env["bus.bus"].sendone("%s,%s" % (self._cr.dbname,'post_order'), 
-                                        {"fpos_order_id": order_id,
+class account_invoice(models.Model):
+    _inherit = "account.invoice"
+
+    @api.multi
+    def invoice_validate(self):
+        res = super(account_invoice, self).invoice_validate()
+        
+        self.env["bus.bus"].sendone("%s,%s" % (self._cr.dbname,'post_order'), 
+                                        {"invoice_ids": self.ids,
                                          "uid" : self._uid } )
-        return super(fpos_order, self).post_order_notify(uuid)
+        
+        return res

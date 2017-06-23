@@ -26,10 +26,11 @@
                 <field name="liveop" invisible="1"/>        
             </field>
             <field name="iface_big_scrollbars" position="after">
+                <field name="iface_desktop"/>
                 <field name="iface_nogroup"/>
                 <field name="iface_autofav"/>
                 <field name="iface_fold"/>                
-                <field name="iface_fastuswitch"/>
+                <field name="iface_fastuswitch"/>                
                 <field name="iface_nosearch"/>
                 <field name="iface_printleft"/>
                 <field name="iface_ponline"/>        
