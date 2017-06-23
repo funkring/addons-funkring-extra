@@ -57,6 +57,9 @@
                         <field name="eggs_color_dote"/>
                         <field name="eggs_thickness"/>
                     </group>
+                    <group string="Note">
+                        <div><field name="note"></field></div>
+                    </group>
                     <group colspan="4" string="Delivery">
                         <group>
                             <field name="delivered"/>

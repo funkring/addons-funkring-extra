@@ -7,11 +7,23 @@
             auto="False" 
             report_type="aeroo" 
             model="farm.chicken.log"
+            process_sep="False" 
+            in_format="oo-odt" 
+            out_format="oo-pdf" 
+            parser="farm_chicken/report/chicken_log_report_pdf.py" 
+            rml="farm_chicken/report/chicken_log_report_pdf.odt" />
+            
+    <report id="report_chicken_logbook" 
+            string="Logbook" 
+            name="farm.chicken.logbook.pdf" 
+            auto="False" 
+            report_type="aeroo" 
+            model="farm.chicken.logbook"
             process_sep="True" 
             in_format="oo-odt" 
             out_format="oo-pdf" 
-            parser="farm_chicken/report/parser.py" 
-            rml="farm_chicken/report/parser.odt" />
+            parser="farm_chicken/report/chicken_log_report_pdf.py" 
+            rml="farm_chicken/report/chicken_log_report_pdf.odt" />
     
   </data>
 </openerp>

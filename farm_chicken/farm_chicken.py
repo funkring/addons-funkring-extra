@@ -225,6 +225,10 @@ class chicken_log(models.Model):
         loss_total += res and res[0] or 0
         
         self.loss_total = loss_total
+                
+        self.loss_amount = self.loss
+        if self.loss_fix:
+            self.loss_amount = self.loss_fix_amount
         
     @api.one
     @api.depends("loss")
@@ -404,6 +408,7 @@ class chicken_log(models.Model):
     loss_fix_amount = fields.Integer("Loss Fix Amount", readonly=True, states={'draft': [('readonly', False)]})
     loss_total = fields.Integer("Loss Total", readonly=True, compute="_compute_loss_total")
     loss_total_real = fields.Integer("Real Loss", readonly=True, compute="_compute_loss_total_real")
+    loss_amount = fields.Integer("Loss Amount", readonly=True, compute="_compute_loss_total_real")
     
     weight = fields.Float("Weight [kg]", readonly=True, states={'draft': [('readonly', False)]})
     feed_manual = fields.Boolean("Manual Feed Input", readonly=True, states={'draft': [('readonly', False)]})
@@ -487,3 +492,5 @@ class chicken_log(models.Model):
     
     child_ids = fields.One2many("farm.chicken.log", "parent_id", string="Child Logs", readonly=True)
     parent_id = fields.Many2one("farm.chicken.log", string="Parent Log", compute="_compute_parent_id", readonly=True, store=True)
+    
+    note = fields.Text("Note")

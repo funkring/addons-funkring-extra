@@ -24,4 +24,38 @@ from openerp.addons.at_base import extreport
 class Parser(extreport.basic_parser):
     def __init__(self, cr, uid, name, context=None):
         super(Parser, self).__init__(cr, uid, name, context=context)
+        self.localcontext.update({
+            "prepare": self._prepare
+        })
         
+    def _prepare(self, objects):
+        if not objects:
+            return []
+
+        log_ids = []        
+        if objects[0]._model._name == "farm.chicken.logbook":
+            for logbook in objects:
+                for log in logbook.log_ids:
+                    log_ids.append(log.id)
+        else:
+            log_ids = [o.id for o in objects]
+            
+        log_obj = self.pool["farm.chicken.log"]
+        log_ids = log_obj.search(self.cr, self.uid, [("id","in",log_ids)], order="day asc", context=self.localcontext)
+        logs = log_obj.browse(self.cr, self.uid, log_ids, context=self.localcontext)
+        
+        logbooks = {}
+        for log in logs:
+            logbook = logbooks.get(log.logbook_id.id)
+            if logbook is None:
+                logbook = {
+                    "name": log.logbook_id.name,
+                    "logs": [] 
+                }
+                logbooks[log.logbook_id.id] = logbook
+                
+            logbook_logs = logbook["logs"]
+            logbook_logs.append(log)
+        
+        logbooks = sorted(logbooks.values(), key=lambda p: p["name"])
+        return logbooks
