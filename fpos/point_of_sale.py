@@ -676,7 +676,6 @@ class pos_order(osv.Model):
     def action_invoice(self, cr, uid, ids, context=None):
         inv_ref = self.pool.get('account.invoice')
         inv_line_ref = self.pool.get('account.invoice.line')
-        product_obj = self.pool.get('product.product')
         inv_ids = []
 
         for order in self.pool.get('pos.order').browse(cr, uid, ids, context=context):
