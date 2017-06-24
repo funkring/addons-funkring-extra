@@ -3,7 +3,7 @@
 Ext.define('ChickenFarm.controller.MainCtrl', {
     extend: 'Ext.app.Controller',
     requires:[         
-        'Ext.form.ViewManager',
+        'Ext.view.ViewManager',
         'Ext.ux.Deferred',
         'ChickenFarm.core.Core',
         'ChickenFarm.view.ProductionView',

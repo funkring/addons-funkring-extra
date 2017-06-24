@@ -1,83 +1,19 @@
 /*global Ext:false, futil:false, DBUtil:false, console:false*/
 
-
-/**
- * Workarounds 
- */
- 
-// Fix Freeze after double OK Button Click (https://www.sencha.com/forum/showthread.php?284450)
-// Fix Translations
-Ext.override(Ext.MessageBox, {    
-    statics: {
-        OK    : {text: 'OK',    itemId: 'ok',  ui: 'action'},
-        YES   : {text: 'Ja',    itemId: 'yes', ui: 'action'},
-        NO    : {text: 'Nein',     itemId: 'no'},
-        CANCEL: {text: 'Abbrechen', itemId: 'cancel'},
-
-        INFO    : Ext.baseCSSPrefix + 'msgbox-info',
-        WARNING : Ext.baseCSSPrefix + 'msgbox-warning',
-        QUESTION: Ext.baseCSSPrefix + 'msgbox-question',
-        ERROR   : Ext.baseCSSPrefix + 'msgbox-error',
-
-        OKCANCEL: [
-            {text: 'Abbrechen', itemId: 'cancel'},
-            {text: 'OK',     itemId: 'ok',  ui : 'action'}
-        ],
-        YESNOCANCEL: [
-            {text: 'Abbrechen', itemId: 'cancel'},
-            {text: 'Nein',     itemId: 'no'},
-            {text: 'Ja',    itemId: 'yes', ui: 'action'}
-        ],
-        YESNO: [
-            {text: 'Nein',  itemId: 'no'},
-            {text: 'Ja', itemId: 'yes', ui: 'action'}
-        ]
-    },
-    hide:  function() {
-        if (this.activeAnimation && this.activeAnimation._onEnd) {
-            this.activeAnimation._onEnd();
-        }
-        return this.callParent(arguments);
-    }
-});
-
-
-/**
- * View manager
- */
-Ext.define('Ext.form.ViewManager', {
+Ext.define('Ext.view.ViewManager', {
     alternateClassName: 'ViewManager',
     singleton: true,
     requires: [
       'Ext.ux.Deferred',
       'Ext.Panel',
-      'Ext.MessageBox',
-      'Ext.picker.Picker'
+      'Ext.MessageBox'
     ],
     config : {
     },
     
     constructor: function(config) {
         this.initConfig(config);
-        this.keyboardListenerStack=[];
-        
-        // override translation for picker
-        Ext.define('Override.Ext.picker.Picker', {
-            override: 'Ext.picker.Picker',
-            config: {
-                doneButton: 'OK',
-                cancelButton: 'Abbrechen'
-            }
-        });
-        
-         // override translation for date picker
-        Ext.define('Override.Ext.picker.Date', {
-            override: 'Ext.picker.Date',
-            config: {
-                doneButton: 'OK',
-                cancelButton: 'Abbrechen'
-            }
-        });
+        this.keyboardListenerStack=[];       
     },
     
     updateButtonState: function(view, items) {
@@ -144,6 +80,7 @@ Ext.define('Ext.form.ViewManager', {
      * start loading
      */
     startLoading : function(msg) {
+        this.hideMenus();
         Ext.Viewport.setMasked({xtype: 'loadmask', message: msg});    
     },
     
@@ -286,7 +223,7 @@ Ext.define('Ext.form.ViewManager', {
                                         deferred.resolve();
                                     }, function(err) {
                                         deferred.reject(err);
-                                    });                                                                    
+                                    });
                             } else {
                                 deferred.resolve();
                             }                         
@@ -361,7 +298,7 @@ Ext.define('Ext.form.ViewManager', {
         }
         Ext.Msg.alert(err.name, err.message, callback);       
     },
-   
+
     handleLoadError: function(err) { 
         this.handleError(err, {name: 'Server Offline', message: 'Daten konnten nicht geladen werden'});
     },

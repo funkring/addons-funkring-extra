@@ -153,9 +153,9 @@ Ext.define('Ext.MessageBox', {
 
     statics: {
         OK    : {text: 'OK',     itemId: 'ok',  ui: 'action'},
-        YES   : {text: 'Yes',    itemId: 'yes', ui: 'action'},
-        NO    : {text: 'No',     itemId: 'no'},
-        CANCEL: {text: 'Cancel', itemId: 'cancel'},
+        YES   : {text: 'Ja',    itemId: 'yes', ui: 'action'},
+        NO    : {text: 'Nein',     itemId: 'no'},
+        CANCEL: {text: 'Abbrechen', itemId: 'cancel'},
 
         INFO    : Ext.baseCSSPrefix + 'msgbox-info',
         WARNING : Ext.baseCSSPrefix + 'msgbox-warning',
@@ -163,17 +163,17 @@ Ext.define('Ext.MessageBox', {
         ERROR   : Ext.baseCSSPrefix + 'msgbox-error',
 
         OKCANCEL: [
-            {text: 'Cancel', itemId: 'cancel'},
-            {text: 'OK',     itemId: 'ok',  ui : 'action'}
+            {text: 'Abbrechen', itemId: 'cancel'},
+            {text: 'Ja',     itemId: 'ok',  ui : 'action'}
         ],
         YESNOCANCEL: [
-            {text: 'Cancel', itemId: 'cancel'},
-            {text: 'No',     itemId: 'no'},
-            {text: 'Yes',    itemId: 'yes', ui: 'action'}
+            {text: 'Abbrechen', itemId: 'cancel'},
+            {text: 'Nein',     itemId: 'no'},
+            {text: 'Ja',       itemId: 'yes', ui: 'action'}
         ],
         YESNO: [
-            {text: 'No',  itemId: 'no'},
-            {text: 'Yes', itemId: 'yes', ui: 'action'}
+            {text: 'Nein',  itemId: 'no'},
+            {text: 'Ja', itemId: 'yes', ui: 'action'}
         ]
     },
 
