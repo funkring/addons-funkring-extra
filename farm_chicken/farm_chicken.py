@@ -21,7 +21,11 @@
 from openerp import models, fields, api, _
 from openerp.exceptions import Warning
 from openerp.addons.at_base import util
+from openerp.addons.at_base import format
 from datetime import datetime
+from babel.dates import format_date
+from openerp import tools
+
 
 class chicken_logbook(models.Model):
     
@@ -95,6 +99,105 @@ class chicken_logbook(models.Model):
                     values.pop("feed")
                 log.write(values)
         return True
+     
+    @api.one
+    def logbook_week_info(self):
+        weeks = []
+        
+        f = format.LangFormat(self._cr, self._uid, self._context)
+        week_start = util.getFirstOfWeek(self.date_start)
+        date_end = self.date_end
+        
+        while week_start <= date_end:
+            week_str = datetime.strftime(util.strToDate(week_start), _("CW %W"))
+            week_first = week_start
+            week_start = util.getFirstOfNextWeek(week_start)
+            week_end = util.getPrevDayDate(week_start)
+            
+            weeks.append({
+                "name": week_str,
+                "start": f.formatLang(week_first, date=True),
+                "end": f.formatLang(week_end,  date=True)
+            })                          
+            
+        return weeks
+        
+     
+    @api.one
+    def update_day(self, values):
+        log_obj = self.env["farm.chicken.log"]
+        logs = log_obj.search([("logbook_id","=",self.id),("day","=",values["day"])])
+        values["logbook_id"] = self.id
+        if not logs:            
+            log = log_obj.create(values)
+        else:
+            log = logs[0]
+            if log.state != "draft":
+                raise Warning(_("Unable to change logentry which is already validated"))
+            log.write(values)
+        return log.id
+    
+    @api.one
+    def logbook_week(self, date_start=None):
+        if not date_start:
+            date_start = util.currentDate()
+        
+        f = format.LangFormat(self._cr, self._uid, self._context)
+        
+        week_start = util.getFirstOfWeek(date_start)
+        week_next = util.getFirstOfNextWeek(date_start)
+        week_str = datetime.strftime(util.strToDate(week_start), _("CW %W"))
+        
+        week_day = week_start
+        days = []
+        log_obj = self.env["farm.chicken.log"]
+        
+        while week_day < week_next:
+            
+            loss = 0
+            eggs_total = 0
+            eggs_broken = 0
+            eggs_dirty = 0
+            eggs_weight = 0.0
+            weight = 0.0
+            note = ""
+            chicken_age_weeks = 0
+            
+            for log in log_obj.search([("logbook_id","=",self.id),("day","=",week_day)]):
+                loss = log.loss
+                eggs_total = log.eggs_total
+                eggs_broken = log.eggs_broken
+                eggs_dirty = log.eggs_dirty
+                eggs_weight = log.eggs_weight
+                weight = log.weight
+                note = log.note
+                chicken_age_weeks = log.chicken_age_weeks
+                break
+            
+            days.append({
+                "name" : format_date(util.strToDate(week_day), "E d.M.y", locale=self._context.get("lang") or tools.config.defaultLang),
+                "day": week_day,
+                "loss": loss,
+                "eggs_total": eggs_total,
+                "eggs_broken": eggs_broken,
+                "eggs_dirty": eggs_dirty,
+                "eggs_weight": eggs_weight,
+                "weight": weight,
+                "note": note,
+                "chicken_age_weeks": chicken_age_weeks
+            })
+            
+            week_day = util.getNextDayDate(week_day)
+            
+        return {
+            "name": "%s %s" % (self.name, week_str),
+            "week" : week_str,
+            "date" : week_start,
+            "start" : f.formatLang(week_start, date=True),
+            "end" : f.formatLang(week_day, date=True),
+            "days": days            
+        }
+        
     
     @api.one
     @api.depends("chicken_age")

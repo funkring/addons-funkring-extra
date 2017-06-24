@@ -1,3 +1,4 @@
+/*global Ext:false */
 /*
     This file is generated and updated by Sencha Cmd. You can edit this file as
     needed for your application, but these edits will have to be merged by
@@ -19,6 +20,21 @@ Ext.application({
 
     views: [
         'Main'
+    ],
+
+    models: [
+        'ChickenFarm.model.Production',
+        'ChickenFarm.model.ProductionDay'
+    ],
+
+    stores: [
+        'ChickenFarm.store.ProductionStore',
+        'ChickenFarm.store.ProductionDayStore'
+    ],
+    
+    controllers: [
+        'MainCtrl',
+        'ProductionCtrl'    
     ],
 
     icon: {

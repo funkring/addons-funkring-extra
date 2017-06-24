@@ -7,7 +7,7 @@
     /**
      * The file path to this application's front HTML document, relative to this app.json file
      */
-    "indexHtmlPath": "index.html",
+    "indexHtmlPath": "app.html",
 
     /**
      * The Sencha Framework for this application: "ext" or "touch".
@@ -55,7 +55,12 @@
         {
             "path": "app.js",
             "bundle": true,  /* Indicates that all class dependencies are concatenated into this file when build */
-            "update": "delta"
+            "update": "full"
+        },
+        {
+            "path": "lib/futil.js",
+            "bundle" : true,
+            "update" : "full"
         }
     ],
 
@@ -78,7 +83,7 @@
     "css": [
         {
             "path": "resources/css/app.css",
-            "update": "delta"
+            "update": "full"
         }
     ],
 
@@ -90,7 +95,7 @@
          * List of items in the CACHE MANIFEST section
          */
         "cache": [
-            "index.html"
+            "app.html"
         ],
         /**
          * List of items in the NETWORK section
@@ -156,5 +161,14 @@
      * Uniquely generated id for this application, used as prefix for localStorage keys.
      * Normally you should never change this value.
      */
-    "id": "95921627-4897-4f11-9855-d1ec1e3f7b3b"
+    "id": "95921627-4897-4f11-9855-d1ec1e3f7b3b",
+    
+    /**
+     * output for build
+     */
+     "production": {
+        "output": {
+            "base" : "${workspace.build.dir}/../../app"
+        }   
+     }
 }

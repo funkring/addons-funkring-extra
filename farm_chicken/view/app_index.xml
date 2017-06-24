@@ -1,12 +1,25 @@
 <openerp>
 <data>
     
-<template id="analyzer_index" name="Chicken Farm Analyzer">&lt;!DOCTYPE html&gt;
-<html>
+    
+<!-- ###################################################################### -->
+<!-- BarKeeper Index -->
+<!-- ###################################################################### -->
+<template id="app_index" name="ChickenFarm Index">&lt;!DOCTYPE html&gt;
+<html manifest="" lang="de-DE">
 <head>
     <meta charset="UTF-8"/>
-    <title>ChickenFarmAnalyzer</title>
+    <title>ChickenFarm</title>
+    
+    <t t-call-assets="web.assets_common" t-css="false" />
+    <t t-call-assets="web.assets_backend" t-css="false" />
+    
     <style type="text/css">
+         /**
+         * Example of an initial loading indicator.
+         * It is recommended to keep this as minimal as possible to provide instant feedback
+         * while other resources are still being loaded for the first time
+         */
         html, body {
             height: 100%;
             background-color: #1985D0
@@ -47,10 +60,6 @@
             }
         }
     </style>
-    
-    <t t-call-assets="web.assets_common" t-css="false" />
-    <t t-call-assets="web.assets_backend" t-css="false" />
-    
     <!-- The line below must be kept intact for Sencha Command to build your application -->    
     <script id="microloader" type="text/javascript" src=".sencha/app/microloader/development.js"></script>
 </head>
@@ -63,6 +72,7 @@
 </body>
 </html>
 </template>
-
+    
+    
 </data>
 </openerp>

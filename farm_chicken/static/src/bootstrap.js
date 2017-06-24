@@ -22,6 +22,7 @@ Ext.Loader.addClassPathMappings({
   "Ext.Element-static": "touch/src/dom/Element.static.js",
   "Ext.Element-style": "touch/src/dom/Element.style.js",
   "Ext.Element-traversal": "touch/src/dom/Element.traversal.js",
+  "Ext.cmd": "../../../../../../.local/opt/Sencha/Cmd/6.2.2.36/plugins/src",
   "Ext.core.DomQuery": "touch/src/dom/Query.js",
   "Ext.device.Purchases.Product": "touch/src/device/purchases/Sencha.js",
   "Ext.device.filesystem.DirectoryEntry": "touch/src/device/filesystem/Sencha.js",
@@ -33,11 +34,30 @@ Ext.Loader.addClassPathMappings({
   "Ext.device.sqlite.SQLResultSet": "touch/src/device/sqlite/Sencha.js",
   "Ext.device.sqlite.SQLResultSetRowList": "touch/src/device/sqlite/Sencha.js",
   "Ext.device.sqlite.SQLTransaction": "touch/src/device/sqlite/Sencha.js",
-  "Ext.draw.engine.SvgContext.Gradient": "touch/src/draw/engine/SvgContext.js"
+  "Ext.draw.engine.SvgContext.Gradient": "touch/src/draw/engine/SvgContext.js",
+  "Ext.form": "app/addon",
+  "Ext.form.FieldSet": "touch/src/form/FieldSet.js",
+  "Ext.form.Panel": "touch/src/form/Panel.js",
+  "Ext.ux.Deferred": "app/addon/Deferred.js",
+  "Ext.ux.Promise": "app/addon/Promise.js",
+  "Override.Ext.picker.Date": "app/addon/ViewManager.js",
+  "Override.Ext.picker.Picker": "app/addon/ViewManager.js"
 });
 
 Ext.ClassManager.addNameAlternateMappings({
+  "ChickenFarm.controller.MainCtrl": [],
+  "ChickenFarm.controller.ProductionCtrl": [],
+  "ChickenFarm.core.Core": [
+    "Core"
+  ],
+  "ChickenFarm.model.Production": [],
+  "ChickenFarm.model.ProductionDay": [],
+  "ChickenFarm.store.ProductionDayStore": [],
+  "ChickenFarm.store.ProductionStore": [],
   "ChickenFarm.view.Main": [],
+  "ChickenFarm.view.ProductionDayForm": [],
+  "ChickenFarm.view.ProductionDayView": [],
+  "ChickenFarm.view.ProductionView": [],
   "Ext.AbstractComponent": [],
   "Ext.AbstractManager": [],
   "Ext.AbstractPlugin": [],
@@ -579,6 +599,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.form.Panel": [
     "Ext.form.FormPanel"
   ],
+  "Ext.form.ViewManager": [
+    "ViewManager"
+  ],
   "Ext.fx.Animation": [],
   "Ext.fx.Easing": [],
   "Ext.fx.Runner": [],
@@ -637,17 +660,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.layout.wrapper.BoxDock": [],
   "Ext.layout.wrapper.Dock": [],
   "Ext.layout.wrapper.Inner": [],
-  "Ext.log.Base": [],
-  "Ext.log.Logger": [],
-  "Ext.log.filter.Filter": [],
-  "Ext.log.filter.Priority": [],
-  "Ext.log.formatter.Default": [],
-  "Ext.log.formatter.Formatter": [],
-  "Ext.log.formatter.Identity": [],
-  "Ext.log.writer.Console": [],
-  "Ext.log.writer.DocumentTitle": [],
-  "Ext.log.writer.Remote": [],
-  "Ext.log.writer.Writer": [],
   "Ext.mixin.Bindable": [],
   "Ext.mixin.Filterable": [],
   "Ext.mixin.Mixin": [],
@@ -747,7 +759,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.ux.ActionOverFlowMenuButton": [],
   "Ext.ux.ApplicationMenu": [],
   "Ext.ux.ContextMenu": [],
+  "Ext.ux.Deferred": [],
   "Ext.ux.MenuButton": [],
+  "Ext.ux.Promise": [],
   "Ext.ux.TabMenuButton": [],
   "Ext.ux.device.Analytics": [],
   "Ext.ux.device.Twitter": [],
@@ -772,12 +786,30 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.viewport.Viewport": [],
   "Ext.viewport.WindowsPhone": [
     "Ext.viewport.WP"
-  ]
+  ],
+  "Override.Ext.picker.Date": [],
+  "Override.Ext.picker.Picker": []
 });
 
 Ext.ClassManager.addNameAliasMappings({
+  "ChickenFarm.controller.MainCtrl": [],
+  "ChickenFarm.controller.ProductionCtrl": [],
+  "ChickenFarm.core.Core": [],
+  "ChickenFarm.model.Production": [],
+  "ChickenFarm.model.ProductionDay": [],
+  "ChickenFarm.store.ProductionDayStore": [],
+  "ChickenFarm.store.ProductionStore": [],
   "ChickenFarm.view.Main": [
     "widget.main"
+  ],
+  "ChickenFarm.view.ProductionDayForm": [
+    "widget.chf_production_day_form"
+  ],
+  "ChickenFarm.view.ProductionDayView": [
+    "widget.chf_production_week"
+  ],
+  "ChickenFarm.view.ProductionView": [
+    "widget.chf_production"
   ],
   "Ext.AbstractComponent": [],
   "Ext.AbstractManager": [],
@@ -1468,6 +1500,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.form.Panel": [
     "widget.formpanel"
   ],
+  "Ext.form.ViewManager": [],
   "Ext.fx.Animation": [],
   "Ext.fx.Easing": [],
   "Ext.fx.Runner": [],
@@ -1580,17 +1613,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.layout.wrapper.BoxDock": [],
   "Ext.layout.wrapper.Dock": [],
   "Ext.layout.wrapper.Inner": [],
-  "Ext.log.Base": [],
-  "Ext.log.Logger": [],
-  "Ext.log.filter.Filter": [],
-  "Ext.log.filter.Priority": [],
-  "Ext.log.formatter.Default": [],
-  "Ext.log.formatter.Formatter": [],
-  "Ext.log.formatter.Identity": [],
-  "Ext.log.writer.Console": [],
-  "Ext.log.writer.DocumentTitle": [],
-  "Ext.log.writer.Remote": [],
-  "Ext.log.writer.Writer": [],
   "Ext.mixin.Bindable": [],
   "Ext.mixin.Filterable": [],
   "Ext.mixin.Mixin": [],
@@ -1698,7 +1720,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.ux.ActionOverFlowMenuButton": [],
   "Ext.ux.ApplicationMenu": [],
   "Ext.ux.ContextMenu": [],
+  "Ext.ux.Deferred": [],
   "Ext.ux.MenuButton": [],
+  "Ext.ux.Promise": [],
   "Ext.ux.TabMenuButton": [],
   "Ext.ux.device.Analytics": [],
   "Ext.ux.device.Twitter": [],
@@ -1727,7 +1751,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.viewport.Ios": [],
   "Ext.viewport.Viewport": [],
-  "Ext.viewport.WindowsPhone": []
+  "Ext.viewport.WindowsPhone": [],
+  "Override.Ext.picker.Date": [],
+  "Override.Ext.picker.Picker": []
 });
 
 
