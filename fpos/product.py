@@ -104,6 +104,45 @@ class product_product(osv.Model):
         "pos_rate" : fields.float("POS Rate %", readonly=True)
     }
     
+    def _pos_product_overview(self, cr, uid, ids, context=None):
+        categories = {}
+        
+        products = self.browse(cr, uid, ids, context=context)
+        category_ids = list(set([p.pos_categ_id.id for p in products]))
+        category_names = dict(self.pool["pos.category"].name_get(cr, uid, category_ids, context=context))
+        product_names = dict(self.name_get(cr, uid, ids, context=context))
+        
+        for product in products:
+            category = product.pos_categ_id
+            category_name = ""
+            if category:
+                category_name = category_names.get(category.id, category.name),
+            
+            ncategory = categories.get(category_name)
+            if ncategory is None:
+                ncategory = {
+                    "name" : category_name,
+                    "category" : category,
+                    "products" : []     
+                }
+                categories[category_name] = ncategory
+            
+            # add for template
+            nprod = {
+                "product" : product,
+                "name" : product_names.get(product.id, product.name)
+            }   
+            ncategory["products"].append(nprod)
+
+        def getName(v):
+            return v["name"]
+        
+        categories = sorted(categories.values(), key=getName)
+        for category in categories:
+            category["products"] = sorted(category["products"], key=getName)
+                
+        return categories
+    
     def _update_pos_rate(self, cr, uid, start_date=None, history_months=1, nofilter=False, context=None):
         
         ranges = []
@@ -167,7 +206,14 @@ class product_product(osv.Model):
 
     def _fpos_product_bulk_get(self, cr, uid, objs, *args, **kwarg):
         mapping_obj = self.pool["res.mapping"]
+        
+        # prepare context
         context = kwarg.get("context")
+        if not isinstance(context, dict):
+            context = {}
+        else:
+            context = dict(context)            
+        context["display_default_code"] = False
         
         # uuid cache
         uuids = {}

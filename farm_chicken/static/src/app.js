@@ -24,12 +24,14 @@ Ext.application({
 
     models: [
         'ChickenFarm.model.Production',
-        'ChickenFarm.model.ProductionDay'
+        'ChickenFarm.model.ProductionDay',
+        'ChickenFarm.model.ProductionWeek'
     ],
 
     stores: [
         'ChickenFarm.store.ProductionStore',
-        'ChickenFarm.store.ProductionDayStore'
+        'ChickenFarm.store.ProductionDayStore',
+        'ChickenFarm.store.ProductionWeekStore',
     ],
     
     controllers: [

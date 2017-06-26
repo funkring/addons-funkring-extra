@@ -1,5 +1,5 @@
 /* global Ext:false */
-Ext.define('ChickenFarm.view.ProductionDayView', {
+Ext.define('ChickenFarm.view.ProductionWeekView', {
     extend: 'Ext.Panel',
     xtype: 'chf_production_week',
     requires: [
@@ -9,10 +9,13 @@ Ext.define('ChickenFarm.view.ProductionDayView', {
     config: {
         reloadable: true,       
         layout: 'vbox',
-        action: 'productionDayView',
         items: [
             {
-                xtype: 'dataview'
+                xtype: 'dataview',
+                itemTpl: '<div>{name}</div>',
+                itemCls: 'WeekItem',                
+                store: 'ProductionWeekStore',
+                scrollable: null
             },
             {
                 xtype: 'list',

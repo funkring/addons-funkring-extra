@@ -7,7 +7,7 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
          'Ext.ux.Deferred',
          'ChickenFarm.core.Core',
          'ChickenFarm.view.ProductionView',
-         'ChickenFarm.view.ProductionDayView',
+         'ChickenFarm.view.ProductionWeekView',
          'ChickenFarm.view.ProductionDayForm'
     ],
     config: {
@@ -28,8 +28,7 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
                 itemsingletap: 'onDayTab'
              },
              'chf_production_week[action=productionDayView]': {
-                reloadData: 'onReloadDayList',
-                painted: 'onReloadDayList'
+                reloadData: 'onReloadDayList'
              }             
          }
     },
@@ -46,6 +45,7 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
         var self = this;
         self.logbookStore = Ext.StoreMgr.lookup("ProductionStore");
         self.dayStore = Ext.StoreMgr.lookup("ProductionDayStore");
+        self.weekStore = Ext.StoreMgr.lookup("ProductionWeekStore");
         self.reloadData();
         
     },
@@ -70,9 +70,12 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
         ViewManager.startLoading('Lade Woche...');
         Core.getModel("farm.chicken.logbook")
             .call('logbook_week', [self.logbook.getId()], {context: Core.getContext()}).then(function(res) {
-            ViewManager.stopLoading();
-            var dayList = res[0];
-            self.dayStore.setData(dayList.days);
+            ViewManager.stopLoading();            
+            // set header
+            self.weekStore.setData(res);        
+			// set days
+            var week = res[0];
+            self.dayStore.setData(week.days);
         }, function(err) {
             ViewManager.handleLoadError(err);
         });
@@ -123,6 +126,7 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
                 }], {context: Core.getContext()}).then(function(res) {
                     record.commit();                    
                     deferred.resolve();
+                    self.reloadDayList();
                 }, function(err) {
                     record.reject();
                     deferred.reject(err);

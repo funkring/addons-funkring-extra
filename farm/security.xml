@@ -13,6 +13,12 @@
       <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
     </record>
     
+    <record id="group_administrator" model="res.groups">
+      <field name="name">Farm Administrator</field>
+      <field name="category_id" ref="module_category_farm"/>
+      <field name="implied_ids" eval="[(4, ref('farm.group_manager'))]"/>
+    </record>
+    
     <!-- farm.manager -->
 
     <record id="access_farm_house_manager" model="ir.model.access">

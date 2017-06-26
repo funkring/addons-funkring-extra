@@ -1,0 +1,44 @@
+<openerp>
+  <data>
+    
+    <report id="report_pos_product_list" 
+            string="Products by POS-Category" 
+            name="pos.product.list" 
+            auto="False" 
+            report_type="aeroo" 
+            model="product.product"
+            process_sep="False" 
+            in_format="oo-odt" 
+            out_format="oo-pdf" 
+            stylesheet="none" 
+            parser="fpos/report/product_list.py" 
+            rml="fpos/report/product_list.odt" />
+            
+    <report id="report_pos_product_tmpl_list" 
+            string="Products by POS-Category" 
+            name="pos.product.tmpl.list" 
+            auto="False" 
+            report_type="aeroo" 
+            model="product.template"
+            process_sep="False" 
+            in_format="oo-odt" 
+            out_format="oo-pdf" 
+            stylesheet="none" 
+            parser="fpos/report/product_list.py" 
+            rml="fpos/report/product_list.odt" />
+            
+     <report id="report_pos_product_tmpl_list_editable" 
+            string="Products by POS-Category (editable)" 
+            name="pos.product.tmpl.list.editable" 
+            auto="False" 
+            report_type="aeroo" 
+            model="product.template"
+            process_sep="False" 
+            in_format="oo-odt" 
+            out_format="oo-odt" 
+            stylesheet="none" 
+            parser="fpos/report/product_list.py" 
+            rml="fpos/report/product_list.odt" />
+    
+  </data>
+</openerp>
