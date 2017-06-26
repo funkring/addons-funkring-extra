@@ -37,7 +37,7 @@ class sale_order(osv.Model):
                     order_ids = self.search(cr, uid, [("partner_id","=",partner.id),("state","!=","cancel")], limit=10, order="date_order desc", context=context)
                     for order in self.browse(cr, uid, order_ids, context=context):
                         for line in order.order_line:
-                            if line.product_id and not line.product_id.id in products:
+                            if line.product_id and line.product_id.active and not line.product_id.id in products:
                                 products.add(line.product_id.id)
                                 # add copy data
                                 copy_vals = line_obj.copy_data(cr, uid, line.id, context=context)
