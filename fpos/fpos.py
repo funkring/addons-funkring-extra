@@ -255,6 +255,8 @@ class fpos_order(models.Model):
     
     @api.multi
     def _post(self):
+        # the right order for booking is expected !!!
+        
         profileDict = {}
         sessionDict = {}      
         profile_obj = self.env["pos.config"]
@@ -553,17 +555,18 @@ class fpos_order(models.Model):
                 session_obj.write(self._cr, session_uid, [session.id], {"stop_at" : order.date})
                 sessionDict[profile.id] = False
                 
-                # search finished orders
+                # search finished orders, but leave last order active
                 self._cr.execute("SELECT fo.id FROM pos_order o "
                                  " INNER JOIN pos_session s ON s.id = o.session_id AND s.state = 'closed' "
                                  " INNER JOIN fpos_order fo ON fo.id = o.fpos_order_id "
-                                 " WHERE fo.active AND fo.fpos_user_id = %s ", (order.fpos_user_id.id,))
+                                 " WHERE fo.active AND fo.fpos_user_id = %s "
+                                 " ORDER BY fo.seq DESC ", (order.fpos_user_id.id,))
                 
-                # set finished orders inactive
-                finish_orders_ids = [r[0] for r in self._cr.fetchall()]
+                # set finished orders inactive, but leave last order active
+                finish_orders_ids = [r[0] for r in self._cr.fetchall()][1:]
                 if finish_orders_ids:
                     finish_orders = self.browse(finish_orders_ids)
-                    finish_orders.write({'active' : False})
+                    finish_orders.write({'active': False})
                     
                 # send report
                 start_at = helper.strToLocalDateStr(self._cr, self._uid, session.start_at, context=self._context)
