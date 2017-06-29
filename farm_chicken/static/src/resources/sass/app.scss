@@ -50,20 +50,21 @@ $custom-lightestyellow: #fdf7e0;
 }
 
 
-.DayItem {     
+.DayItem {    
 }
 div.DayItem > div.x-innerhtml {
     padding: 0px !important;
 }
 
 
-.DayItemNormal {
-    @extend .ListItem;
-    display: table;
+.DayItemNormal {    
+    @extend .ListItem;    
     padding-left: 12px;
     padding-right: 12px;
     padding-top: 5px;
     padding-bottom: 5px;
+    width: 100%;
+    display: table;
 }
 
 .DayItemFilled {

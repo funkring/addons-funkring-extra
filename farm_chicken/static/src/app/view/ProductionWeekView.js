@@ -35,7 +35,8 @@ Ext.define('ChickenFarm.view.ProductionWeekView', {
                 itemCls: 'DayItem',         
                 scrollable: null,
                 disableSelection: true,
-                itemTpl: [  '<div class="{dayClass}">',
+                flex: 1,
+                itemTpl: [  '<div class="{[this.getCls(values)]}">',
                                 '<div class="DayName">{name}</div>',
                                 '<tpl for="overview">',
                                     '<div class="DayInfo">',
@@ -43,19 +44,18 @@ Ext.define('ChickenFarm.view.ProductionWeekView', {
                                         '<div class="DayInfoLabel">{name}</div>',
                                     '</div>',
                                 '</tpl>',
-                            '<div>'                                
-                        ],
-                prepareData: function(data, recordIndex, record){
-                    if(record.get('valid')){
-                        data.dayClass = 'DayItemValid';
-                    } else if (record.get('filled')) {
-                        data.dayClass = 'DayItemFilled';
-                    } else {
-                        data.dayClass = 'DayItemNormal';
-                    }
-                    return data;
-                },
-                flex: 1
+                            '<div>', {
+                                getCls: function(values) {
+                                    if ( values.valid ){
+                                        return 'DayItemValid';
+                                    } else if ( values.filled ) {
+                                        return 'DayItemFilled';
+                                    }
+                                    return 'DayItemNormal';
+                                }
+                            }                            
+                        ]
+                
             }            
         ]
     }
