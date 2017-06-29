@@ -43,6 +43,7 @@
                     </group>
                     <group string="Eggs">                    
                         <field name="eggs_total"/>
+                        <field name="eggs_machine"/>
                         <field name="eggs_nest"/>
                         <field name="eggs_top"/>
                         <field name="eggs_buttom"/>

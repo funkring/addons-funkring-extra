@@ -1,17 +1,15 @@
 /*global Ext:false */
-Ext.define('ChickenFarm.model.ProductionWeek', {
+Ext.define('ChickenFarm.model.ProductionWeekSel', {
    extend: 'Ext.data.Model',
    requires: [
    ],
    config: {
        fields: [
             'name',
-            'week',
-            'date',
+            'date_start',
             'start',
             'end',
-            'days',
-            'overview'
+            'group'
        ]
    } 
 });

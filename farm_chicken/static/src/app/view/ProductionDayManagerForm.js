@@ -1,13 +1,14 @@
 /*global Ext:false*/
 
-Ext.define('ChickenFarm.view.ProductionDayForm', {
+Ext.define('ChickenFarm.view.ProductionDayManagerForm', {
     extend: 'Ext.form.FormPanel',    
     requires: [
         'Ext.form.FieldSet', 
         'Ext.field.Text',
-        'Ext.field.Number'
+        'Ext.field.Number',
+        'Ext.field.Toggle'
     ],
-    xtype: 'chf_production_day_form',    
+    xtype: 'chf_production_day_manager_form',    
     config: {
         scrollable: true,
         saveable: true,
@@ -16,9 +17,24 @@ Ext.define('ChickenFarm.view.ProductionDayForm', {
                 xtype: 'fieldset',
                 items: [
                     {
+                        xtype: 'togglefield',
+                        name: 'valid',
+                        label: 'Validiert'
+                    },
+                    {
                         xtype: 'numberfield',
                         name: 'loss',
                         label: 'Ausfall'
+                    },
+                    {
+                        xtype: 'togglefield',
+                        name: 'loss_fix',
+                        label: 'Ausfallanpassung'
+                    },
+                    {
+                        xtype: 'numberfield',
+                        name: 'loss_fix_amount',
+                        label: 'Ausfall korrigiert'
                     },
                     {
                         xtype: 'numberfield',

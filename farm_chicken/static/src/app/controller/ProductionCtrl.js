@@ -8,7 +8,9 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
          'ChickenFarm.core.Core',
          'ChickenFarm.view.ProductionView',
          'ChickenFarm.view.ProductionWeekView',
-         'ChickenFarm.view.ProductionDayForm'
+         'ChickenFarm.view.ProductionDayForm',
+         'ChickenFarm.view.ProductionWeekSelView',
+         'ChickenFarm.view.ProductionDayManagerForm'
     ],
     config: {
          refs: {
@@ -26,6 +28,12 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
              },
              'list[action=productionDayList]': {               
                 itemsingletap: 'onDayTab'
+             },
+             'list[action=weekSelection]': {
+                itemsingletap: 'onWeekSelTab'
+             },
+             'dataview[action=productionWeekDataView]': {
+                itemsingletap: 'onWeekTab'
              },
              'chf_production_week[action=productionDayView]': {
                 reloadData: 'onReloadDayList'
@@ -46,6 +54,7 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
         self.logbookStore = Ext.StoreMgr.lookup("ProductionStore");
         self.dayStore = Ext.StoreMgr.lookup("ProductionDayStore");
         self.weekStore = Ext.StoreMgr.lookup("ProductionWeekStore");
+        self.weekSelStore = Ext.StoreMgr.lookup("ProductionWeekSelStore");
         self.reloadData();
         
     },
@@ -66,10 +75,10 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
     reloadDayList: function() {
         var self = this;
         if ( !self.logbook ) return;
-        
+
         ViewManager.startLoading('Lade Woche...');
         Core.getModel("farm.chicken.logbook")
-            .call('logbook_week', [self.logbook.getId()], {context: Core.getContext()}).then(function(res) {
+            .call('logbook_week', [self.logbook.getId()], {date_start: self.date_start, context: Core.getContext()}).then(function(res) {
             ViewManager.stopLoading();            
             // set header
             self.weekStore.setData(res);        
@@ -95,12 +104,19 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
         var mainView = self.getMainView();
         
         self.logbook = record;
-        self.reloadDayList();
+        self.manager = false;
         
-        mainView.push({
-            title: record.get('name'),
-            xtype: 'chf_production_week'
-        });
+        Core.getModel("res.users").call('has_group',['farm.group_manager']).then(function(res) {
+            self.manager = res;
+            self.reloadDayList();
+        
+            mainView.push({
+                title: record.get('name'),
+                xtype: 'chf_production_week'
+            });              
+        }, function(err) {
+            ViewManager.handleLoadError(err);
+        });        
     },
     
     onDayTab: function(list, index, target, record, e, eOpts) {
@@ -108,13 +124,12 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
         var mainView = self.getMainView();
         
         mainView.push({
-            'title' : record.get('name'),
-            'xtype': 'chf_production_day_form' ,
-            'record': record,
-            'savedHandler': function() {
+            title : record.get('name'),
+            xtype: self.manager ? 'chf_production_day_manager_form' : 'chf_production_day_form',
+            record: record,
+            savedHandler: function() {
                 var deferred = Ext.create('Ext.ux.Deferred');
-                Core.getModel("farm.chicken.logbook")
-                    .call('update_day', [self.logbook.getId(), {
+                var values = {
                     day: record.get('day'),
                     loss: record.get('loss'),
                     eggs_total: record.get('eggs_total'),
@@ -123,7 +138,23 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
                     eggs_weight: record.get('eggs_weight'),
                     weight: record.get('weight'),
                     note: record.get('note')
-                }], {context: Core.getContext()}).then(function(res) {
+                };
+                
+                var next_state="";
+                if ( self.manager ) {
+                    values.loss_fix = record.get('loss_fix');
+                    values.loss_fix_amount = record.get('loss_fix_amount');
+                    
+                    // check valid flag
+                    if (record.get('valid')) {
+                        next_state = 'valid';
+                    } else {
+                        next_state = 'draft';
+                    }
+                }
+                
+                Core.getModel("farm.chicken.logbook")
+                    .call('update_day', [self.logbook.getId(), values], {next_state: next_state, context: Core.getContext()}).then(function(res) {
                     record.commit();                    
                     deferred.resolve();
                     self.reloadDayList();
@@ -139,6 +170,38 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
     
     onReloadDayList: function() {
         this.reloadDayList();
+    },
+    
+    onWeekTab: function(list, index, target, record, e, eOpts) {
+        var self = this;
+        if ( !self.logbook ) return;
+        if ( !self.manager ) return;
+        
+        Core.getModel("farm.chicken.logbook")
+            .call('logbook_weeks', [self.logbook.getId()], {context: Core.getContext()}).then(function(res) {
+            ViewManager.stopLoading();
+            
+            var weeks = res[0];
+            if ( weeks.length > 0 ) {
+                self.weekSelStore.setData(weeks);
+                var mainView = self.getMainView();
+                mainView.push({
+                    title: self.logbook.get('name'),
+                    xtype: 'chf_production_week_list'                            
+                });
+            }
+            
+        }, function(err) {
+            ViewManager.handleLoadError(err);
+        });
+    },
+    
+    onWeekSelTab: function(list, index, target, record, e, eOpts) {    
+        var self = this;
+        self.date_start = record.get('date_start');
+                
+        self.reloadDayList();
+        self.getMainView().pop();        
     }
     
 });

@@ -22,6 +22,7 @@ Ext.Loader.addClassPathMappings({
   "Ext.Element-static": "touch/src/dom/Element.static.js",
   "Ext.Element-style": "touch/src/dom/Element.style.js",
   "Ext.Element-traversal": "touch/src/dom/Element.traversal.js",
+  "Ext.cmd": "../../../../../../.local/opt/Sencha/Cmd/6.2.2.36/plugins/src",
   "Ext.core.DomQuery": "touch/src/dom/Query.js",
   "Ext.device.Purchases.Product": "touch/src/device/purchases/Sencha.js",
   "Ext.device.filesystem.DirectoryEntry": "touch/src/device/filesystem/Sencha.js",
@@ -48,12 +49,16 @@ Ext.ClassManager.addNameAlternateMappings({
   "ChickenFarm.model.Production": [],
   "ChickenFarm.model.ProductionDay": [],
   "ChickenFarm.model.ProductionWeek": [],
+  "ChickenFarm.model.ProductionWeekSel": [],
   "ChickenFarm.store.ProductionDayStore": [],
   "ChickenFarm.store.ProductionStore": [],
+  "ChickenFarm.store.ProductionWeekSelStore": [],
   "ChickenFarm.store.ProductionWeekStore": [],
   "ChickenFarm.view.Main": [],
   "ChickenFarm.view.ProductionDayForm": [],
+  "ChickenFarm.view.ProductionDayManagerForm": [],
   "ChickenFarm.view.ProductionView": [],
+  "ChickenFarm.view.ProductionWeekSelView": [],
   "ChickenFarm.view.ProductionWeekView": [],
   "Ext.AbstractComponent": [],
   "Ext.AbstractManager": [],
@@ -654,17 +659,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.layout.wrapper.BoxDock": [],
   "Ext.layout.wrapper.Dock": [],
   "Ext.layout.wrapper.Inner": [],
-  "Ext.log.Base": [],
-  "Ext.log.Logger": [],
-  "Ext.log.filter.Filter": [],
-  "Ext.log.filter.Priority": [],
-  "Ext.log.formatter.Default": [],
-  "Ext.log.formatter.Formatter": [],
-  "Ext.log.formatter.Identity": [],
-  "Ext.log.writer.Console": [],
-  "Ext.log.writer.DocumentTitle": [],
-  "Ext.log.writer.Remote": [],
-  "Ext.log.writer.Writer": [],
   "Ext.mixin.Bindable": [],
   "Ext.mixin.Filterable": [],
   "Ext.mixin.Mixin": [],
@@ -804,8 +798,10 @@ Ext.ClassManager.addNameAliasMappings({
   "ChickenFarm.model.Production": [],
   "ChickenFarm.model.ProductionDay": [],
   "ChickenFarm.model.ProductionWeek": [],
+  "ChickenFarm.model.ProductionWeekSel": [],
   "ChickenFarm.store.ProductionDayStore": [],
   "ChickenFarm.store.ProductionStore": [],
+  "ChickenFarm.store.ProductionWeekSelStore": [],
   "ChickenFarm.store.ProductionWeekStore": [],
   "ChickenFarm.view.Main": [
     "widget.main"
@@ -813,8 +809,14 @@ Ext.ClassManager.addNameAliasMappings({
   "ChickenFarm.view.ProductionDayForm": [
     "widget.chf_production_day_form"
   ],
+  "ChickenFarm.view.ProductionDayManagerForm": [
+    "widget.chf_production_day_manager_form"
+  ],
   "ChickenFarm.view.ProductionView": [
     "widget.chf_production"
+  ],
+  "ChickenFarm.view.ProductionWeekSelView": [
+    "widget.chf_production_week_list"
   ],
   "ChickenFarm.view.ProductionWeekView": [
     "widget.chf_production_week"
@@ -1620,17 +1622,6 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.layout.wrapper.BoxDock": [],
   "Ext.layout.wrapper.Dock": [],
   "Ext.layout.wrapper.Inner": [],
-  "Ext.log.Base": [],
-  "Ext.log.Logger": [],
-  "Ext.log.filter.Filter": [],
-  "Ext.log.filter.Priority": [],
-  "Ext.log.formatter.Default": [],
-  "Ext.log.formatter.Formatter": [],
-  "Ext.log.formatter.Identity": [],
-  "Ext.log.writer.Console": [],
-  "Ext.log.writer.DocumentTitle": [],
-  "Ext.log.writer.Remote": [],
-  "Ext.log.writer.Writer": [],
   "Ext.mixin.Bindable": [],
   "Ext.mixin.Filterable": [],
   "Ext.mixin.Mixin": [],

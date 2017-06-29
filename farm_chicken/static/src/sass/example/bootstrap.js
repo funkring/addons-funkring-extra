@@ -1918,12 +1918,18 @@ Ext.ClassManager.addNameAlternateMappings({
   ],
   "ChickenFarm.model.Production": [],
   "ChickenFarm.model.ProductionDay": [],
+  "ChickenFarm.model.ProductionWeek": [],
+  "ChickenFarm.model.ProductionWeekSel": [],
   "ChickenFarm.store.ProductionDayStore": [],
   "ChickenFarm.store.ProductionStore": [],
+  "ChickenFarm.store.ProductionWeekSelStore": [],
+  "ChickenFarm.store.ProductionWeekStore": [],
   "ChickenFarm.view.Main": [],
   "ChickenFarm.view.ProductionDayForm": [],
-  "ChickenFarm.view.ProductionDayView": [],
+  "ChickenFarm.view.ProductionDayManagerForm": [],
   "ChickenFarm.view.ProductionView": [],
+  "ChickenFarm.view.ProductionWeekSelView": [],
+  "ChickenFarm.view.ProductionWeekView": [],
   "Ext.AbstractComponent": [],
   "Ext.AbstractManager": [],
   "Ext.AbstractPlugin": [],
@@ -2661,19 +2667,29 @@ Ext.ClassManager.addNameAliasMappings({
   "ChickenFarm.core.Core": [],
   "ChickenFarm.model.Production": [],
   "ChickenFarm.model.ProductionDay": [],
+  "ChickenFarm.model.ProductionWeek": [],
+  "ChickenFarm.model.ProductionWeekSel": [],
   "ChickenFarm.store.ProductionDayStore": [],
   "ChickenFarm.store.ProductionStore": [],
+  "ChickenFarm.store.ProductionWeekSelStore": [],
+  "ChickenFarm.store.ProductionWeekStore": [],
   "ChickenFarm.view.Main": [
     "widget.main"
   ],
   "ChickenFarm.view.ProductionDayForm": [
     "widget.chf_production_day_form"
   ],
-  "ChickenFarm.view.ProductionDayView": [
-    "widget.chf_production_week"
+  "ChickenFarm.view.ProductionDayManagerForm": [
+    "widget.chf_production_day_manager_form"
   ],
   "ChickenFarm.view.ProductionView": [
     "widget.chf_production"
+  ],
+  "ChickenFarm.view.ProductionWeekSelView": [
+    "widget.chf_production_week_list"
+  ],
+  "ChickenFarm.view.ProductionWeekView": [
+    "widget.chf_production_week"
   ],
   "Ext.AbstractComponent": [],
   "Ext.AbstractManager": [],

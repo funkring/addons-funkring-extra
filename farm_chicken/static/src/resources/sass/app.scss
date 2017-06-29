@@ -9,6 +9,129 @@
 // Examples of using the icon mixin:
 // @include icon('user');
 
-.WeekItem {
-    padding: 12px;
+$custom-grey: #4d4d4d;
+$custom-lightgreen: #eeffaa;   // 238,255,170
+$custom-lightestgreen: #f6ffd5;  // 246,255,213
+$custom-green: #256235;
+$custom-lightestyellow: #fdf7e0; 
+
+// Overrides
+
+.x-form-label {
+    font-size: 1.2em;
+    min-width: 160px;
 }
+
+.x-form-field {
+    font-size: 1.2em;
+}
+
+
+
+// Items
+
+.ListItem {
+    font-size: 1.2em;   
+}
+
+.WeekItem {
+    @extend .ListItem;
+    padding: 12px;
+    display: table; 
+}
+
+.WeekItemValid {
+    @extend .WeekItem;
+    background-color: $custom-lightgreen;
+}
+
+.ProductionItem {
+    @extend .ListItem;
+}
+
+
+.DayItem {     
+}
+div.DayItem > div.x-innerhtml {
+    padding: 0px !important;
+}
+
+
+.DayItemNormal {
+    @extend .ListItem;
+    display: table;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.DayItemFilled {
+    @extend .DayItemNormal;
+    background-color: $custom-lightestyellow;
+};
+
+.DayItemValid {
+    @extend .DayItemNormal;
+    background-color: $custom-lightestgreen;
+};
+
+
+// Week
+
+.WeekNameHeader {
+    font-weight: bold;   
+}
+
+.WeekNameLabel {
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 0.8em;   
+}
+
+.WeekInfo {
+    float: left;
+    min-width: 120px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 0.9em; 
+}
+
+.WeekInfoValue {
+}
+
+.WeekInfoLabel {
+    font-size: 0.7em;
+    color: $custom-grey;    
+}
+
+.DayInfo {
+    float: left;
+    min-width: 80px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 2px;
+    padding-bottom: 6px;
+    font-size: 0.7em;
+}
+
+.DayInfoValue {
+}
+
+.DayInfoLabel {
+    font-size: 0.6em;
+    color: $custom-grey;    
+}
+
+.WeekSelHeader {
+}
+
+.WeekSelLabel {
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 0.8em;   
+}
+
+

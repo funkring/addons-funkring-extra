@@ -13,7 +13,12 @@ Ext.define('ChickenFarm.model.ProductionDay', {
             {name:'eggs_weight', type:'float'},
             {name:'weight', type:'float'},
             {name:'note', type:'string'},
-            {name:'day', type:'string'}
+            {name:'day', type:'string'},
+            {name:'loss_fix', type:'boolean'},
+            {name:'loss_fix_amount', type:'int'},
+            {name:'valid', type:'boolean'},
+            {name:'filled', type:'boolean'},
+            {name:'overview'}
        ]
    } 
 });

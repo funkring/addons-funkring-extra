@@ -25,13 +25,15 @@ Ext.application({
     models: [
         'ChickenFarm.model.Production',
         'ChickenFarm.model.ProductionDay',
-        'ChickenFarm.model.ProductionWeek'
+        'ChickenFarm.model.ProductionWeek',
+        'ChickenFarm.model.ProductionWeekSel'
     ],
 
     stores: [
         'ChickenFarm.store.ProductionStore',
         'ChickenFarm.store.ProductionDayStore',
         'ChickenFarm.store.ProductionWeekStore',
+        'ChickenFarm.store.ProductionWeekSelStore'
     ],
     
     controllers: [

@@ -101,12 +101,12 @@ class chicken_logbook(models.Model):
         return True
      
     @api.one
-    def logbook_week_info(self):
+    def logbook_weeks(self):
         weeks = []
         
         f = format.LangFormat(self._cr, self._uid, self._context)
         week_start = util.getFirstOfWeek(self.date_start)
-        date_end = self.date_end
+        date_end = self.date_end or util.getPrevDayDate(util.getFirstOfNextWeek(util.currentDate()))
         
         while week_start <= date_end:
             week_str = datetime.strftime(util.strToDate(week_start), _("CW %W"))
@@ -116,15 +116,17 @@ class chicken_logbook(models.Model):
             
             weeks.append({
                 "name": week_str,
+                "date_start": week_first,
+                "group": week_first[:7],
                 "start": f.formatLang(week_first, date=True),
                 "end": f.formatLang(week_end,  date=True)
             })                          
             
+        weeks.sort(key=lambda v: v["date_start"], reverse=True)
         return weeks
-        
      
     @api.one
-    def update_day(self, values):
+    def update_day(self, values, next_state=None):
         log_obj = self.env["farm.chicken.log"]
         logs = log_obj.search([("logbook_id","=",self.id),("day","=",values["day"])])
         values["logbook_id"] = self.id
@@ -132,9 +134,19 @@ class chicken_logbook(models.Model):
             log = log_obj.create(values)
         else:
             log = logs[0]
-            if log.state != "draft":
+            if log.state != "draft" and next_state != "draft":
                 raise Warning(_("Unable to change logentry which is already validated"))
             log.write(values)
+            
+        if log.state == "done":
+            raise Warning(_("Done log could not be changed!"))
+            
+        if next_state:           
+            if log.state != next_state:
+                if next_state == "draft":
+                    log.action_draft()
+                elif next_state == "valid":
+                    log.action_validate()
         return log.id
     
     @api.one
@@ -149,55 +161,174 @@ class chicken_logbook(models.Model):
         week_str = datetime.strftime(util.strToDate(week_start), _("CW %W"))
         
         week_day = week_start
+        week_end = week_day
+        
         days = []
         log_obj = self.env["farm.chicken.log"]
         
+        sum_loss = 0
+        sum_eggs_total = 0
+        sum_eggs_broken = 0
+        sum_eggs_dirty = 0
+        sum_eggs_maschine = 0
+        avg_eggs_weight = 0
+        avg_weight = 0
+        
+        valid_count = 0
+        fill_count = 0
+        
         while week_day < week_next:
+            week_end = week_day
             
             loss = 0
+            loss_fix = False
+            loss_fix_amount = 0
+            loss_amount = 0
             eggs_total = 0
             eggs_broken = 0
             eggs_dirty = 0
             eggs_weight = 0.0
+            eggs_machine = 0
             weight = 0.0
+            valid = False
+            filled = False
             note = ""
             chicken_age_weeks = 0
             
             for log in log_obj.search([("logbook_id","=",self.id),("day","=",week_day)]):
                 loss = log.loss
-                eggs_total = log.eggs_total
+                loss_amount = log.loss_amount or 0
+                loss_fix = log.loss_fix
+                loss_fix_amount = log.loss_fix_amount
+                eggs_total = log.eggs_total                
                 eggs_broken = log.eggs_broken
                 eggs_dirty = log.eggs_dirty
                 eggs_weight = log.eggs_weight
+                eggs_machine = log.eggs_machine
                 weight = log.weight
                 note = log.note
                 chicken_age_weeks = log.chicken_age_weeks
+                valid = log.state != "draft"
+                filled = eggs_total and eggs_total > 0
                 break
+            
+            if filled:
+                fill_count += 1
+            if valid:
+                valid_count += 1
+            
+            sum_loss += loss_amount
+            sum_eggs_total += eggs_total
+            sum_eggs_broken += eggs_broken
+            sum_eggs_dirty += eggs_dirty
+            sum_eggs_maschine += eggs_machine
+            avg_eggs_weight += eggs_weight
+            avg_weight += weight
             
             days.append({
                 "name" : format_date(util.strToDate(week_day), "E d.M.y", locale=self._context.get("lang") or tools.config.defaultLang),
                 "day": week_day,
                 "loss": loss,
+                "loss_fix": loss_fix,
+                "loss_fix_amount": loss_fix_amount,
                 "eggs_total": eggs_total,
                 "eggs_broken": eggs_broken,
                 "eggs_dirty": eggs_dirty,
                 "eggs_weight": eggs_weight,
+                "eggs_machine" : eggs_machine,
                 "weight": weight,
                 "note": note,
-                "chicken_age_weeks": chicken_age_weeks
+                "valid": valid,
+                "filled": filled,
+                "chicken_age_weeks": chicken_age_weeks,
+                "overview" :  [               
+                    {
+                        "name" : _("Eggs Total"),
+                        "value": "%s" % eggs_total                  
+                    },
+                    {
+                        "name" : _("Eggs Machine"),
+                        "value": "%s" % eggs_machine
+                    },  
+                    {
+                        "name" : _("Broken Eggs"),
+                        "value": "%s" % eggs_broken
+                    },
+                    {
+                        "name" : _("Loss"),
+                        "value": "%s" % loss_amount,                    
+                    },                 
+                    {
+                        "name" : _("Eggs Weight"),
+                        "value": "%s kg" % f.formatLang(eggs_weight) 
+                    },
+                    {
+                        "name" : _("Chicken Weight"),
+                        "value": "%s kg" % f.formatLang(weight) 
+                    }                           
+                ] 
             })
             
             week_day = util.getNextDayDate(week_day)
+            
+        fill_rate = 0
+        validate_rate = 0
+        days_len = len(days)
+        
+        if days_len:
+            avg_eggs_weight /= days_len
+            avg_weight /= days_len
+            validate_rate = int(100.0 / days_len * valid_count)
+            fill_rate = int(100.0 / days_len * fill_count)
+        else:
+            avg_eggs_weight = 0.0
+            avg_weight = 0.0
             
         return {
             "name": "%s %s" % (self.name, week_str),
             "week" : week_str,
             "date" : week_start,
             "start" : f.formatLang(week_start, date=True),
-            "end" : f.formatLang(week_day, date=True),
-            "days": days            
+            "end" : f.formatLang(week_end, date=True),
+            "filled": days_len == fill_count,
+            "validated": days_len == valid_count,
+            "days": days,
+            "overview" : [               
+                {
+                    "name" : _("Eggs Total"),
+                    "value": "%s" % sum_eggs_total                  
+                },
+                {
+                    "name" : _("Eggs Machine"),
+                    "value": "%s" % sum_eggs_maschine
+                },  
+                {
+                    "name" : _("Broken Eggs"),
+                    "value": "%s" % sum_eggs_broken
+                },
+                {
+                    "name" : _("Loss"),
+                    "value": "%s" % sum_loss,                    
+                },
+                {
+                    "name" : _("Filled"),
+                    "value": "%s %%" % fill_rate,                    
+                },
+                {
+                    "name" : _("Validated"),
+                    "value": "%s %%" % validate_rate,                    
+                },      
+                {
+                    "name" : _("Eggs Weight"),
+                    "value": "%s kg" % f.formatLang(avg_eggs_weight) 
+                },
+                {
+                    "name" : _("Chicken Weight"),
+                    "value": "%s kg" % f.formatLang(avg_weight) 
+                }                           
+            ]            
         }
-        
+            
     
     @api.one
     @api.depends("chicken_age")
@@ -511,7 +642,7 @@ class chicken_log(models.Model):
     loss_fix_amount = fields.Integer("Loss Fix Amount", readonly=True, states={'draft': [('readonly', False)]})
     loss_total = fields.Integer("Loss Total", readonly=True, compute="_compute_loss_total")
     loss_total_real = fields.Integer("Real Loss", readonly=True, compute="_compute_loss_total_real")
-    loss_amount = fields.Integer("Loss Amount", readonly=True, compute="_compute_loss_total_real")
+    loss_amount = fields.Integer("Loss Amount", readonly=True, compute="_compute_loss_total")
     
     weight = fields.Float("Weight [kg]", readonly=True, states={'draft': [('readonly', False)]})
     feed_manual = fields.Boolean("Manual Feed Input", readonly=True, states={'draft': [('readonly', False)]})

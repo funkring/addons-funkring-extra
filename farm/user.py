@@ -18,13 +18,9 @@
 #
 ##############################################################################
 
-from openerp import models, fields
+from openerp import models, fields, api, _
 
-class farm_house(models.Model):
-    _name = "farm.house"
-    _description = "House"
+class res_users(models.Model):
+    _inherit = "res.users"
     
-    name = fields.Char("Name", required=True)
-    parent_id = fields.Many2one("farm.house","Parent House")
-    child_ids = fields.One2many("farm.house","parent_id","Houses")
-    user_ids = fields.Many2many("res.users", "farm_house_user_rel", "user_id", "house_id", string="Users")
+    house_ids = fields.Many2many("farm.house", "farm_house_user_rel", "house_id", "user_id", string="Houses")

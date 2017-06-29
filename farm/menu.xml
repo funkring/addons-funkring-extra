@@ -3,17 +3,17 @@
      
     <menuitem id="menu_farm" 
               name="Farming" sequence="56" 
-              groups="group_manager"/>
+              groups="farm.group_user"/>
               
     <menuitem id="menu_farm_config" 
               name="Configuration" parent="menu_farm" sequence="100"
-              groups="group_manager"/>
+              groups="farm.group_manager"/>
               
     <menuitem id="menu_farm_report"
               name="Farming" 
               parent="base.menu_reporting" 
               sequence="13"
-              groups="group_manager"/>
+              groups="farm.group_user"/>
               
   </data>
 </openerp>
