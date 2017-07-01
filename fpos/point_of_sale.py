@@ -678,6 +678,9 @@ class pos_order(osv.Model):
         inv_line_ref = self.pool.get('account.invoice.line')
         inv_ids = []
 
+        data_obj = self.pool["ir.model.data"]
+        prod_balance_id = data_obj.xmlid_to_res_id(cr, uid, "fpos.product_fpos_balance", raise_if_not_found=True)
+
         for order in self.pool.get('pos.order').browse(cr, uid, ids, context=context):
             if order.invoice_id:
                 inv_ids.append(order.invoice_id.id)
@@ -713,6 +716,7 @@ class pos_order(osv.Model):
                     'product_id': line.product_id.id,
                     'quantity': line.qty,
                 }
+                
                 inv_name = line.name
                 inv_line.update(inv_line_ref.product_id_change(cr, uid, [],
                                                                line.product_id.id,
@@ -729,9 +733,14 @@ class pos_order(osv.Model):
                 # take taxes from fpos line
                 # if available
                 tax_ids = inv_line['invoice_line_tax_id']
+                
+                # add pos line specific
                 fpos_line = line.fpos_line_id
                 if fpos_line:
                     tax_ids = [o.id for o in fpos_line.tax_ids]
+                    inv_line["uos_id"] = fpos_line.uom_id.id
+                    if inv_line.get("product_id") == prod_balance_id:
+                        inv_line["product_id"] = None
                     
                 inv_line['invoice_line_tax_id'] = [(6, 0, tax_ids)]
                 inv_line_ref.create(cr, uid, inv_line, context=context)

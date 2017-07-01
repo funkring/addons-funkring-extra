@@ -20,17 +20,37 @@
 
 from openerp import models, fields, api, _
 
-class account_invoice(models.Model):
-    _inherit = "account.invoice"
+# class account_invoice(models.Model):
+#     _inherit = "account.invoice"
+#     
+#     def invoice_validate(self):
+#         res =  super(account_invoice, self).invoice_validate()
+#         
+#         # check for reconcilation with point of sale order
+#         order_obj = self.env["pos.order"]
+#         for invoice_id in self.ids:            
+#             order = order_obj.search([("state","=","invoiced"),("invoice_id","=",invoice_id),("invoice_id.state","=","open")])
+#             #order.statement_ids.confirm_statement()
+#             order.reconcile_invoice()     
+#         
+#         return res
     
-    def invoice_validate(self):
-        res =  super(account_invoice, self).invoice_validate()
+
+class account_invoice_line(models.Model):
+    _inherit = "account.invoice.line"
+    
+    @api.multi
+    def _line_format(self):
+        res = super(account_invoice_line, self)._line_format()        
+
+        # format status as section
+        data_obj = self.env["ir.model.data"]
+        status_id = data_obj.xmlid_to_res_id("fpos.product_fpos_status",raise_if_not_found=False)
+        if status_id:
+            for line in self:
+                line_format = res.get(line.id,"")
+                if line.product_id and line.product_id.id == status_id and not "s" in line_format:
+                    line_format += "s"
+                    res[line.id] = line_format
         
-        # check for reconcilation with point of sale order
-        order_obj = self.env["pos.order"]
-        for invoice_id in self.ids:            
-            order = order_obj.search([("state","=","invoiced"),("invoice_id","=",invoice_id),("invoice_id.state","=","open")])
-            #order.statement_ids.confirm_statement()
-            order.reconcile_invoice()     
-        
-        return res
+        return res 

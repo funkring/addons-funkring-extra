@@ -9,3 +9,4 @@ import wizard
 import report
 import res_partner
 import controller
+import invoice
