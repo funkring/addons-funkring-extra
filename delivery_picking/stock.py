@@ -51,6 +51,12 @@ class stock_picking(osv.Model):
             if package_count > 0:
                 if package_count > 10:
                     package_count = 10
+                
+                # check if it the only operation in picking
+                # than correct the package count
+                if len(op.picking_id.pack_operation_ids) == 1 and package_count == 1:
+                    package_count += 1
+                
                 qty_done = 1            
             else:
                 qty_done = values.get("qty_done", 0)
