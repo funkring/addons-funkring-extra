@@ -54,7 +54,7 @@ Ext.define('ChickenFarm.view.ProductionDayManagerForm', {
                     {
                         xtype: 'numberfield',
                         name: 'eggs_weight',
-                        label: 'Gewicht Eier (kg)'
+                        label: 'Gewicht Eier (g)'
                     },
                     {
                         xtype: 'numberfield',

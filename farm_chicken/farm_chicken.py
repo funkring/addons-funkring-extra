@@ -167,15 +167,27 @@ class chicken_logbook(models.Model):
         log_obj = self.env["farm.chicken.log"]
         
         sum_loss = 0
-        sum_eggs_total = 0
-        sum_eggs_broken = 0
-        sum_eggs_dirty = 0
-        sum_eggs_maschine = 0
-        avg_eggs_weight = 0
-        avg_weight = 0
         
+        avg_eggs_total = 0.0
+        avg_eggs_broken = 0.0
+        avg_eggs_dirty = 0.0
+        avg_eggs_maschine = 0.0
+        avg_eggs_weight = 0.0
+        avg_weight = 0.0
+        avg_eggs_performance = 0.0
+                
         valid_count = 0
         fill_count = 0
+        
+        chicken_count = 0
+        
+        # get current values
+        logs = log_obj.search([("logbook_id","=",self.id),("day","<=",week_day)], limit=1)
+        if logs:
+            log = logs[0]
+            chicken_count = log.chicken_count
+            eggs_performance = log.eggs_performance
+        
         
         while week_day < week_next:
             week_end = week_day
@@ -209,7 +221,9 @@ class chicken_logbook(models.Model):
                 note = log.note
                 chicken_age_weeks = log.chicken_age_weeks
                 valid = log.state != "draft"
-                filled = eggs_total and eggs_total > 0
+                filled = True
+                chicken_count = log.chicken_count
+                eggs_performance = log.eggs_performance
                 break
             
             if filled:
@@ -218,12 +232,13 @@ class chicken_logbook(models.Model):
                 valid_count += 1
             
             sum_loss += loss_amount
-            sum_eggs_total += eggs_total
-            sum_eggs_broken += eggs_broken
-            sum_eggs_dirty += eggs_dirty
-            sum_eggs_maschine += eggs_machine
+            avg_eggs_total += eggs_total
+            avg_eggs_broken += eggs_broken
+            avg_eggs_dirty += eggs_dirty
+            avg_eggs_maschine += eggs_machine
             avg_eggs_weight += eggs_weight
             avg_weight += weight
+            avg_eggs_performance += eggs_performance
             
             days.append({
                 "name" : format_date(util.strToDate(week_day), "E d.M.y", locale=self._context.get("lang") or tools.config.defaultLang),
@@ -243,29 +258,37 @@ class chicken_logbook(models.Model):
                 "chicken_age_weeks": chicken_age_weeks,
                 "overview" :  [               
                     {
-                        "name" : _("Eggs Total"),
+                        "name": _("Eggs Total"),
                         "value": "%s" % eggs_total                  
                     },
                     {
-                        "name" : _("Eggs Machine"),
+                        "name": _("Eggs Machine"),
                         "value": "%s" % eggs_machine
                     },  
                     {
-                        "name" : _("Broken Eggs"),
+                        "name": _("Broken Eggs"),
                         "value": "%s" % eggs_broken
                     },
                     {
-                        "name" : _("Loss"),
-                        "value": "%s" % loss_amount,                    
-                    },                 
-                    {
-                        "name" : _("Eggs Weight"),
-                        "value": "%s kg" % f.formatLang(eggs_weight) 
+                        "name": _("Loss"),
+                        "value": "%s" % loss_amount                    
                     },
                     {
-                        "name" : _("Chicken Weight"),
+                        "name": _("Chicken Count"),
+                        "value": "%s" % chicken_count
+                    },
+                    {
+                        "name": _("Eggs Weight"),
+                        "value": "%s g" % f.formatLang(eggs_weight) 
+                    },
+                    {
+                        "name": _("Chicken Weight"),
                         "value": "%s kg" % f.formatLang(weight) 
-                    }                           
+                    },
+                    {
+                        "name": _("Egg Performance"),
+                        "value" : "%s %%" % f.formatLang(eggs_performance)
+                    }                         
                 ] 
             })
             
@@ -275,14 +298,17 @@ class chicken_logbook(models.Model):
         validate_rate = 0
         days_len = len(days)
         
-        if days_len:
-            avg_eggs_weight /= days_len
-            avg_weight /= days_len
+        if fill_count:
+            avg_eggs_weight /= fill_count
+            avg_weight /= fill_count
+            avg_eggs_broken /= fill_count 
+            avg_eggs_dirty /= fill_count
+            avg_eggs_maschine /= fill_count
+            avg_eggs_total /= fill_count
+            avg_eggs_performance /= fill_count
+            
             validate_rate = int(100.0 / days_len * valid_count)
             fill_rate = int(100.0 / days_len * fill_count)
-        else:
-            avg_eggs_weight = 0.0
-            avg_weight = 0.0
             
         return {
             "name": "%s %s" % (self.name, week_str),
@@ -295,16 +321,20 @@ class chicken_logbook(models.Model):
             "days": days,
             "overview" : [               
                 {
-                    "name" : _("Eggs Total"),
-                    "value": "%s" % sum_eggs_total                  
+                    "name" : _("Eggs"),
+                    "value": "%s" % f.formatLang(avg_eggs_total)                  
                 },
                 {
                     "name" : _("Eggs Machine"),
-                    "value": "%s" % sum_eggs_maschine
+                    "value": "%s" % f.formatLang(avg_eggs_maschine)
                 },  
                 {
                     "name" : _("Broken Eggs"),
-                    "value": "%s" % sum_eggs_broken
+                    "value": "%s" % f.formatLang(avg_eggs_broken)
+                },
+                {
+                    "name" : _("Dirty Eggs"),
+                    "value": "%s" % f.formatLang(avg_eggs_dirty)
                 },
                 {
                     "name" : _("Loss"),
@@ -320,12 +350,20 @@ class chicken_logbook(models.Model):
                 },      
                 {
                     "name" : _("Eggs Weight"),
-                    "value": "%s kg" % f.formatLang(avg_eggs_weight) 
+                    "value": "%s g" % f.formatLang(avg_eggs_weight) 
                 },
                 {
                     "name" : _("Chicken Weight"),
                     "value": "%s kg" % f.formatLang(avg_weight) 
-                }                           
+                },
+                {
+                    "name" : _("Chicken Count"),
+                    "value": "%s" % chicken_count 
+                },
+                {
+                    "name": _("Egg Performance"),
+                    "value" : "%s %%" % f.formatLang(avg_eggs_performance)
+                }                 
             ]            
         }
             
@@ -475,7 +513,7 @@ class chicken_log(models.Model):
         self.loss_total_real = loss_total
         
     @api.one
-    @api.depends("loss_total_real")
+    @api.depends("loss_total_real","loss")
     def _compute_chicken_count(self):
         self.chicken_count = self.logbook_id.chicken_count-self.loss_total_real
         
@@ -518,7 +556,7 @@ class chicken_log(models.Model):
     @api.depends("eggs_total","chicken_count")    
     def _compute_eggs_performance(self):
         if self.chicken_count:
-            self.eggs_performance = float(self.eggs_total) / float(self.chicken_count) * 100
+            self.eggs_performance = 100.0 / self.chicken_count * self.eggs_total
         else:
             self.eggs_performance = 0.0
     
@@ -657,7 +695,7 @@ class chicken_log(models.Model):
     eggs_nest = fields.Integer("Nest Eggs", readonly=True, states={'draft': [('readonly', False)]})
     eggs_top = fields.Integer("Eggs moved above", readonly=True, states={'draft': [('readonly', False)]})
     eggs_buttom = fields.Integer("Eggs laid down", readonly=True, states={'draft': [('readonly', False)]})    
-    eggs_weight = fields.Float("Eggs Weight [kg]", readonly=True, states={'draft': [('readonly', False)]})
+    eggs_weight = fields.Float("Eggs Weight [g]", readonly=True, states={'draft': [('readonly', False)]})
     eggs_dirty = fields.Integer("Dirty Eggs", readonly=True, states={'draft': [('readonly', False)]})
     eggs_broken = fields.Integer("Broken Eggs", readonly=True, states={'draft': [('readonly', False)]})
     
