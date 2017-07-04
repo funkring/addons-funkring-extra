@@ -186,7 +186,6 @@ class chicken_logbook(models.Model):
         if logs:
             log = logs[0]
             chicken_count = log.chicken_count
-            eggs_performance = log.eggs_performance
         
         
         while week_day < week_next:
