@@ -44,6 +44,8 @@
                         <field name="amount" invisible="1" on_change="onchange_uom(uom_id, amount, context)"/>
                         <field name="hours" widget="float_time" string="Minutes"/>
                         <field name="invoice_address_id"/>
+                        <field name="invoice_monthly"/>
+                        <field name="invoice_per_mail"/>
                         <field name="last_invoice_id"/>
                         <field name="invoice_residual"/>
                     </group>

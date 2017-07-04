@@ -21,14 +21,10 @@
 from openerp.osv import fields, osv
 from openerp.addons.at_base import util
 from openerp.addons.at_base import extfields
-from openerp.addons.at_base import helper
 from openerp.tools.translate import _
-from openerp import tools
 import openerp.addons.decimal_precision as dp
 
 from dateutil.relativedelta import relativedelta
-from datetime import datetime
-from datetime import date
 
 import re
 
@@ -249,7 +245,6 @@ class academy_registration(osv.Model):
 
     def _compute_invoiced(self, cr, uid, ids, field_names, arg, context=None):
         res = dict.fromkeys(ids)
-        semester_id = self._get_semester_id(cr, uid, context)
         for reg in self.browse(cr, uid, ids, context):
             # calc values
             residual = 0.0
@@ -374,7 +369,6 @@ class academy_registration(osv.Model):
     def _use_invoice_address_id(self, cr, uid, ids, field_name, args, context=None):
         res = dict.fromkeys(ids)
         for obj in self.browse(cr, uid, ids):
-            student = obj.student_id
             if obj.invoice_address_id:
                 res[obj.id] = obj.invoice_address_id.id
             elif obj.student_id.partner_id.parent_id:
@@ -469,7 +463,10 @@ class academy_registration(osv.Model):
                               }),
         "read_school_rules" : fields.boolean("Read and accepted school rules"),
 
-        "start_date" : fields.function(_compute_start_date, type="date", readonly=True, string="Start Date")
+        "start_date" : fields.function(_compute_start_date, type="date", readonly=True, string="Start Date"),
+        
+        "invoice_monthly": fields.boolean("Invoice Monthly"),                
+        "invoice_per_mail": fields.boolean("Invoice per Mail")
 
     }
     _sql_constraints = [
@@ -499,7 +496,6 @@ class academy_trainer(osv.Model):
     def _students(self, cr, uid, ids, date_from, date_to, context=None):
         res = []
         reg_obj = self.pool["academy.registration"]
-        sem_obj = self.pool["academy.semester"]
 
         dt_from = util.strToDate(date_from)
         dt_to = util.strToDate(date_to)
@@ -706,7 +702,7 @@ class academy_registration_invoice(osv.Model):
 class academy_fee(osv.Model):
 
     def onchange_uom(self, cursor, user, ids, uom_id, uom_po_id):
-         return self.pool["product.product"].onchange_uom(cursor, user, ids, uom_id, uom_po_id)
+        return self.pool["product.product"].onchange_uom(cursor, user, ids, uom_id, uom_po_id)
 
     def unlink(self, cr, uid, ids, context=None):
         """ Also delete Product """
@@ -725,6 +721,8 @@ class academy_fee(osv.Model):
     _columns = {
         "location_category_ids" : fields.many2many("res.partner.category", "academy_fee_id", "category_id", string="Locations"),
         "apply_uom_id" : fields.boolean("Apply on all with same unit"),
+        "monthly" : fields.boolean("Monthly", help="Apply this fee on invoice paid monthly"),
+        "per_mail" : fields.boolean("Per Mail", help="Apply this fee on invoices send per mail"),
         "per_year" : fields.boolean("Once per Year"),
         "product_id" : fields.many2one("product.product", "Product", select=True, ondelete="restrict", required=True),
         "sibling_discount" : fields.float("Sibling Discount"),

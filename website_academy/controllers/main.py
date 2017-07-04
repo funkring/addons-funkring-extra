@@ -205,6 +205,8 @@ class website_academy(http.Controller):
         invoice_address = False
         extra_info = None
         read_school_rules = None
+        invoice_monthly = False
+        invoice_per_mail = False
 
         for key, value in kwargs.items():
             if key == "is_student_of_loc":
@@ -217,6 +219,10 @@ class website_academy(http.Controller):
                 extra_info = value
             elif key == "read_school_rules":
                 read_school_rules = True
+            elif key == "invoice_monthly":
+                invoice_monthly = True
+            elif key == "invoice_per_mail":
+                invoice_per_mail = True
             else:
                 m = PATTERN_PRODUCT.match(key)
                 if m:
@@ -392,7 +398,9 @@ class website_academy(http.Controller):
                         "location_id" : location_id,
                         "student_of_loc" : is_student_of_loc,
                         "note" : extra_info,
-                        "read_school_rules" : read_school_rules
+                        "read_school_rules" : read_school_rules,
+                        "invoice_monthly": invoice_monthly,
+                        "invoice_per_mail": invoice_per_mail
                     }
 
                     # set invoice address id

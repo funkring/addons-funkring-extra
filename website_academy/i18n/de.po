@@ -5,9 +5,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
+"Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-25 15:47+0000\n"
-"PO-Revision-Date: 2014-11-25 16:49+0100\n"
+"POT-Creation-Date: 2017-07-04 15:55+0000\n"
+"PO-Revision-Date: 2017-07-04 17:56+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,13 +18,13 @@ msgstr ""
 "X-Generator: Poedit 1.5.4\n"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:412
+#: code:addons/website_academy/controllers/main.py:422
 #, python-format
 msgid "<p>Registration %s was created.</p>"
 msgstr "<p>Anmeldung %s wurde erstellt.</p>"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:259
+#: code:addons/website_academy/controllers/main.py:266
 #, python-format
 msgid "<p>Registration %s was done</p>"
 msgstr "<p>Anmeldung %s ist bereits erledigt</p>"
@@ -82,10 +83,10 @@ msgstr ""
 "Identifizierung"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:358
-#: code:addons/website_academy/controllers/main.py:362
-#: code:addons/website_academy/controllers/main.py:367
+#: code:addons/website_academy/controllers/main.py:365
+#: code:addons/website_academy/controllers/main.py:369
 #: code:addons/website_academy/controllers/main.py:374
+#: code:addons/website_academy/controllers/main.py:381
 #, python-format
 msgid "Error"
 msgstr "Fehler"
@@ -126,11 +127,21 @@ msgid "I have read and accepted school rules?"
 msgstr "Ich habe die Schulordnung gelesen und zur Kenntnis genommen."
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:376
+#: code:addons/website_academy/controllers/main.py:383
 #: view:website:website_academy.registration
 #, python-format
 msgid "Invoice Address"
 msgstr "Verrechnungsadresse"
+
+#. module: website_academy
+#: view:website:website_academy.registration
+msgid "Invoice Monthly?"
+msgstr "monatliche Rechnung?"
+
+#. module: website_academy
+#: view:website:website_academy.registration
+msgid "Invoice per Mail?"
+msgstr "Rechnung per Post?"
 
 #. module: website_academy
 #: view:website:website_academy.address
@@ -153,13 +164,13 @@ msgid "Nationality"
 msgstr "Nationaltität"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:358
+#: code:addons/website_academy/controllers/main.py:365
 #, python-format
 msgid "No courses selected"
 msgstr "Es wurde kein Kurs ausgewhält"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:374
+#: code:addons/website_academy/controllers/main.py:381
 #, python-format
 msgid "No invoice address passed"
 msgstr "Es wurde keine Verrechnungsadresse angegeben"
@@ -170,13 +181,13 @@ msgid "No location was selected!"
 msgstr "Es wurde keine Schule bzw. Standort ausgewählt"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:367
+#: code:addons/website_academy/controllers/main.py:374
 #, python-format
 msgid "No parent address passed"
 msgstr "Es wurde keine Adresse für den Erziehungsberchtigten angegeben"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:362
+#: code:addons/website_academy/controllers/main.py:369
 #, python-format
 msgid "No student address passed"
 msgstr "Es wurde keine Schüleradresse angegeben"
@@ -187,7 +198,7 @@ msgid "Nothing was selected!"
 msgstr "Es wurde NICHTS ausgewählt"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:369
+#: code:addons/website_academy/controllers/main.py:376
 #, python-format
 msgid "Parent"
 msgstr "Erziehungsberechtigte(r)"
@@ -215,31 +226,31 @@ msgid "Registration"
 msgstr "Anmeldung"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:258
+#: code:addons/website_academy/controllers/main.py:265
 #, python-format
 msgid "Registration already finished!"
 msgstr "Anmeldung ist bereits abgeschlossen!"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:420
+#: code:addons/website_academy/controllers/main.py:430
 #, python-format
 msgid "Registration finished!"
 msgstr "Anmeldung abgeschlossen!"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:87
+#: code:addons/website_academy/controllers/main.py:88
 #, python-format
 msgid "Select District"
 msgstr "Postleitzahl"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:86
+#: code:addons/website_academy/controllers/main.py:87
 #, python-format
 msgid "Select a Location"
-msgstr "Wählen sie ein Schule"
+msgstr "Wählen sie eine Schule"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:85
+#: code:addons/website_academy/controllers/main.py:86
 #, python-format
 msgid "Select a State"
 msgstr "Wählen sie ein Bundesland"
@@ -265,7 +276,7 @@ msgid "Street is required!"
 msgstr "Die Strasse wird benötigt!"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:382
+#: code:addons/website_academy/controllers/main.py:389
 #, python-format
 msgid "Student"
 msgstr "Schüler"
@@ -288,7 +299,7 @@ msgid "To Registration"
 msgstr "Zur Anmeldung"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:291
+#: code:addons/website_academy/controllers/main.py:298
 #, python-format
 msgid "Value of field '%s' is '%s' but customer typed '%s'"
 msgstr "Der des Feldes '%s' ist '%s' aber der Partner hat '%s' angegeben"

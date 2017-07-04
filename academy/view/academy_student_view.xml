@@ -190,7 +190,7 @@
   
 
     <menuitem id="menu_academy_student" name="Student" parent="menu_academy_management"
-      sequence="1"
+      sequence="10"
       action="action_academy_student"/>
 
   </data>

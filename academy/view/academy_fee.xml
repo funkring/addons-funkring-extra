@@ -15,8 +15,10 @@
             <group>
                 <group>                                        
                     <field name="location_category_ids" widget="many2many_tags" placeholder="Location Tags..."/>
-                    <field name="apply_uom_id"/>
+                    <field name="apply_uom_id"/>                    
                     <field name="per_year"/>
+                    <field name="per_mail"/>
+                    <field name="monthly"/>
                 </group>                
                 <group>
                     <field name="uom_po_id" invisible="1"/>
@@ -37,6 +39,8 @@
             <field name="sequence" widget="handle"/>
             <field name="name"/>
             <field name="list_price"/>
+            <field name="monthly"/>
+            <field name="per_mail"/>
             <field name="per_year"/>
             <field name="apply_uom_id"/>
             <field name="uom_id"/>

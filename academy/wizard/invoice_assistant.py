@@ -18,10 +18,8 @@
 #
 ##############################################################################
 
-from datetime import datetime
 from openerp.osv import fields, osv
 from openerp.addons.at_base import util
-from openerp.addons.at_base import format
 from openerp.tools.translate import _
 
 class academy_invoice_assistant(osv.osv_memory):
@@ -63,9 +61,7 @@ class academy_invoice_assistant(osv.osv_memory):
         sem_start_dt = util.strToDate(semester.date_start)
         sem_end_dt = util.strToDate(semester.date_end)
         
-        f = format.LangFormat(cr, uid, context=context)
         # group registrations
-        invoices = {}        
         for reg in reg_obj.browse(cr, uid, reg_ids, context=context):
             # check if invoice for registration exist
             reg_inv_id = reg_inv_obj.search_id(cr, uid, [("registration_id","=",reg.id),("semester_id","=",semester.id),("invoice_id.state","!=","cancel")], context=context)
@@ -157,12 +153,19 @@ class academy_invoice_assistant(osv.osv_memory):
                           
             # add fees
             
-            location = reg.location_id
             category_set = set([c.id for c in reg.location_id.category_id])
             
             for fee in fees:
                 # check if uom is used and match
                 if fee.apply_uom_id and fee.uom_id.id != reg.uom_id.id:
+                    continue
+                
+                # check fee per mail    
+                if fee.per_mail and not reg.invoice_per_mail:
+                    continue
+                
+                # check monthly invoice
+                if fee.monthly and not reg.invoice_monthly:
                     continue
                 
                 # check if categories match
@@ -187,7 +190,7 @@ class academy_invoice_assistant(osv.osv_memory):
                     rows = cr.fetchone()
                     # check if alfready invoiced this year
                     if rows and rows[0]:
-                        continue       
+                        continue
                                      
                 # check for discount
                 discount = 0.0

@@ -214,7 +214,21 @@
                                             <label for="parent_address">I am over eighteen?</label>
                                         </input>        
                                     </div>
-                                </div>                                
+                                </div>     
+                                <div class="row mt4 mb4">
+                                    <div class="col-md-12">
+                                        <input type="checkbox" id="invoice_monthly" name="invoice_monthly">                                    
+                                            <label for="invoice_address">Invoice Monthly?</label>
+                                        </input>        
+                                    </div>
+                                </div>
+                                <div class="row mt4 mb4">
+                                    <div class="col-md-12">
+                                        <input type="checkbox" id="invoice_per_mail" name="invoice_per_mail">                                    
+                                            <label for="invoice_address">Invoice per Mail?</label>
+                                        </input>        
+                                    </div>
+                                </div>                           
                                 <div class="row mt4 mb4">
                                     <div class="col-md-12">
                                         <input type="checkbox" id="invoice_address" name="has_invoice_address">                                    

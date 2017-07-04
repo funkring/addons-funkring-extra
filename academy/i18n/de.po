@@ -1,31 +1,60 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* academy
+#	* academy
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
+"Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-28 10:39+0000\n"
-"PO-Revision-Date: 2015-11-28 11:39+0100\n"
-"Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
+"POT-Creation-Date: 2017-07-04 14:34+0000\n"
+"PO-Revision-Date: 2017-07-04 14:34+0000\n"
+"Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-"X-Generator: Poedit 1.5.4\n"
+
+#. module: academy
+#: model:email.template,body_html:academy.email_template_registration
+msgid "\n"
+"\n"
+"<h3><span class=\"oe_form_text_content\">Vielen herzlichen Dank für Ihre erfolgreich durchgeführte Anmeldung und herzlich willkommen im Musikinstitut Polyhymnia!</span></h3>\n"
+"\n"
+"\n"
+"\n"
+"<h3><span class=\"oe_form_text_content\">Ihre Online-Anmeldung ist bei uns eingegangen und wird mit Beginn des neuen Schuljahres 2017/18 bearbeitet. <br></span></h3><h3><span class=\"oe_form_text_content\">Ab der zweiten Schulwoche wird telefonisch mit Ihnen Kontakt aufgenommen werden, um den Termin für die erste Einheit zu vereinbaren. In der Zwischenzeit dürfen wir Ihnen alle weiteren Informationen bezüglich des Musikunterrichts elektronisch per Mail zukommen lassen.<br></span></h3><h3><span class=\"oe_form_text_content\">Wir wünschen Ihnen und Ihrem Kind viel Freude im Instrumentalunterricht und freuen uns Sie als neuen Schüler begrüßen zu dürfen!<br></span></h3><h3><br><span class=\"oe_form_text_content\"></span></h3><h3><span class=\"oe_form_text_content\">Mit musikalischen Grüßen - Ihre Musikschule Polyhymnia</span></h3>\n"
+""
+msgstr ""
 
 #. module: academy
 #: model:email.template,body_html:academy.email_template_registration_cancel
-msgid ""
-"\n"
+msgid "\n"
 "<h3>Your Registration was canceled!</h3>\n"
 "            "
-msgstr ""
-"\n"
-"<h3>Ihre Anmeldung wurde storniert!</h3>\n"
+msgstr "\n"
+"<h3>Ihre Anmeldung wurde storniert!</h3><p><br></p><p>Wir bedauern es sehr Sie als Schüler nicht mehr in unserer Musikschule begrüßen zu können, freuen uns aber, dass Sie uns Ihr Vertrauen bisher geschenkt haben!</p><p><br></p><p>Alles Gute auf dem weiteren musikalischen Weg - Ihre Musiksschule Polyhymnia!<br></p>\n"
 "            "
+
+#. module: academy
+#: field:academy.course.product,sales_count:0
+#: field:academy.fee,sales_count:0
+msgid "# Sales"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,product_variant_count:0
+#: field:academy.fee,product_variant_count:0
+msgid "# of Product Variants"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,sale_order_count:0
+#: field:academy.student,sale_order_count:0
+#: field:academy.trainer,sale_order_count:0
+msgid "# of Sales Order"
+msgstr ""
 
 #. module: academy
 #: code:addons/academy/report/trainer_reg_report.py:53
@@ -34,18 +63,16 @@ msgid "%d.%m.%Y KW %W"
 msgstr ""
 
 #. module: academy
-#: code:addons/academy/wizard/invoice_assistant.py:134
+#: code:addons/academy/wizard/invoice_assistant.py:130
 #, python-format
-msgid ""
-"%s - %s\n"
+msgid "%s - %s\n"
 "%s"
 msgstr ""
 
 #. module: academy
-#: code:addons/academy/wizard/invoice_assistant.py:129
+#: code:addons/academy/wizard/invoice_assistant.py:125
 #, python-format
-msgid ""
-"%s - %s\n"
+msgid "%s - %s\n"
 "%s\n"
 "%s"
 msgstr ""
@@ -54,6 +81,105 @@ msgstr ""
 #: view:academy.student:academy.form_academy_student
 msgid "(edit address from parent)"
 msgstr "(editiere die Adresse der Eltern)"
+
+#. module: academy
+#: model:ir.actions.act_window,help:academy.action_academy_trainer
+msgid "<p class=\"oe_view_nocontent_create\">\n"
+"              Click here to create a new Trainer\n"
+"            </p>\n"
+"          "
+msgstr "<p class=\"oe_view_nocontent_create\">\n"
+"              Hier klicken um einen neuen Lehrer zu erstellen\n"
+"            </p>\n"
+"          "
+
+#. module: academy
+#: model:ir.actions.act_window,help:academy.action_academy_student
+msgid "<p class=\"oe_view_nocontent_create\">\n"
+"          Click here to create a new Student\n"
+"        </p><p>\n"
+"          The Students are academy customers\n"
+"        </p>\n"
+"      "
+msgstr "<p class=\"oe_view_nocontent_create\">\n"
+"          Hier klicken um einen neuen Schüler zu erstellen\n"
+"        </p><p>\n"
+"         Schüler sind die Kunden der Schule\n"
+"        </p>\n"
+"      "
+
+#. module: academy
+#: model:ir.actions.act_window,help:academy.action_academy_year
+msgid "<p class=\"oe_view_nocontent_create\">\n"
+"          Click here to create a new academy year and its semester\n"
+"        </p><p>\n"
+"          An academy year is the period for one school year\n"
+"        </p>\n"
+"      "
+msgstr "<p class=\"oe_view_nocontent_create\">\n"
+"         Hier klicken um ein neues Schuljahr zu erstellen inklusive der Semester\n"
+"        </p>      "
+
+#. module: academy
+#: model:ir.actions.act_window,help:academy.action_academy_registration
+#: model:ir.actions.act_window,help:academy.action_academy_registration_check
+#: model:ir.actions.act_window,help:academy.action_academy_registration_draft
+msgid "<p class=\"oe_view_nocontent_create\">\n"
+"          Click here to create a new registration.\n"
+"        </p>\n"
+"      "
+msgstr "<p class=\"oe_view_nocontent_create\">\n"
+"          Klicken sie hier um eine Anmeldung für einen Lehrgang zu erstellen\n"
+"        </p>\n"
+""
+
+#. module: academy
+#: model:ir.actions.act_window,help:academy.action_academy_course_product
+msgid "<p class=\"oe_view_nocontent_create\">\n"
+"          Click to create a new Course Product\n"
+"        </p><p>\n"
+"          A Course Product is an service you offer as academy\n"
+"        </p>\n"
+"      "
+msgstr "<p class=\"oe_view_nocontent_create\">\n"
+"         Klicken sie hier um ein Produkt für einen Lehrgang zu erstellen\n"
+"        </p><p>\n"
+"          Produkte zu Lehrgängen werden für die Abrechnung benötigt\n"
+"        </p>\n"
+"      "
+
+#. module: academy
+#: model:ir.actions.act_window,help:academy.action_academy_location
+msgid "<p class=\"oe_view_nocontent_create\">\n"
+"          Click to create a new location\n"
+"        </p><p>\n"
+"          Location are resources where courses are held\n"
+"        </p>\n"
+"      "
+msgstr "<p class=\"oe_view_nocontent_create\">\n"
+"          Klicken sie hier um einen neuen Standort zu erstellen\n"
+"        </p><p>\n"
+"          Über den Standort wird das Gebäude, der Ort bestimmt, wo ein Lehrgang stattfindet\n"
+"        </p>\n"
+"      "
+
+#. module: academy
+#: help:academy.course.product,description_sale:0
+#: help:academy.fee,description_sale:0
+msgid "A description of the Product that you want to communicate to your customers. This description will be copied to every Sale Order, Delivery Order and Customer Invoice/Refund"
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,description_purchase:0
+#: help:academy.fee,description_purchase:0
+msgid "A description of the Product that you want to communicate to your suppliers. This description will be copied to every Purchase Order, Receipt and Supplier Invoice/Refund."
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,description:0
+#: help:academy.fee,description:0
+msgid "A precise description of the Product, used only for internal information purposes."
+msgstr ""
 
 #. module: academy
 #: field:academy.registration,abort_date:0
@@ -130,12 +256,45 @@ msgid "Academy registration invoice"
 msgstr "Semester Rechnung"
 
 #. module: academy
+#: field:academy.location,property_account_payable:0
+#: field:academy.student,property_account_payable:0
+#: field:academy.trainer,property_account_payable:0
+msgid "Account Payable"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,property_account_receivable:0
+#: field:academy.student,property_account_receivable:0
+#: field:academy.trainer,property_account_receivable:0
+msgid "Account Receivable"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,active:0
+#: field:academy.fee,active:0
+#: field:academy.location,active:0
+#: field:academy.student,active:0
+#: field:academy.trainer,active:0
+msgid "Active"
+msgstr ""
+
+#. module: academy
 #: view:academy.location:academy.form_academy_location
 #: field:academy.location,address_id:0
+#: field:academy.location,display_address:0
 #: view:academy.student:academy.form_academy_student
+#: field:academy.student,display_address:0
 #: view:academy.trainer:academy.form_academy_trainer
+#: field:academy.trainer,display_address:0
 msgid "Address"
 msgstr "Adresse"
+
+#. module: academy
+#: field:academy.location,type:0
+#: field:academy.student,type:0
+#: field:academy.trainer,type:0
+msgid "Address Type"
+msgstr ""
 
 #. module: academy
 #: model:ir.model,name:academy.model_academy_payment
@@ -149,9 +308,15 @@ msgid "Agent"
 msgstr "Bearbeiter"
 
 #. module: academy
-#: field:academy.payment,amount:0 field:academy.registration,amount:0
+#: field:academy.payment,amount:0
+#: field:academy.registration,amount:0
 msgid "Amount"
 msgstr "Menge"
+
+#. module: academy
+#: model:email.template,subject:academy.email_template_registration
+msgid "Anmeldung ${object.name}"
+msgstr ""
 
 #. module: academy
 #: view:academy.config.settings:academy.form_config_settings
@@ -162,6 +327,16 @@ msgstr "Anwenden"
 #: field:academy.fee,apply_uom_id:0
 msgid "Apply on all with same unit"
 msgstr "Auf alle mit der selben Einheit anwenden"
+
+#. module: academy
+#: help:academy.fee,monthly:0
+msgid "Apply this fee on invoice paid monthly"
+msgstr "Diese Gebühr wird hinzugefügt wenn die Rechnung monatlich bezahlt wird"
+
+#. module: academy
+#: help:academy.fee,per_mail:0
+msgid "Apply this fee on invoices send per mail"
+msgstr "Füge diese Gebühr Rechnungen hinzu, die per E-Mail versendet werden"
 
 #. module: academy
 #: view:academy.registration:academy.form_academy_registration
@@ -186,18 +361,78 @@ msgid "Assignment"
 msgstr "Einteilung"
 
 #. module: academy
+#: field:academy.course.product,attribute_value_ids:0
+#: field:academy.fee,attribute_value_ids:0
+msgid "Attributes"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,bank_ids:0
+#: field:academy.student,bank_ids:0
+#: field:academy.trainer,bank_ids:0
+msgid "Banks"
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,list_price:0
+#: help:academy.fee,list_price:0
+msgid "Base price to compute the customer price. Sometimes called the catalog price."
+msgstr ""
+
+#. module: academy
 #: field:academy.journal,begin:0
 msgid "Begin"
 msgstr "Beginn"
 
 #. module: academy
-#: code:addons/academy/academy.py:398
-#, python-format
-msgid ""
-"Can not delete registrations, which are not in state 'Draft' or 'Cancelled'"
+#: model:email.template,subject:academy.email_template_registration_cancel
+msgid "Bestätigung - Anmeldung ${object.name} storniert!"
 msgstr ""
-"Es können  nur Anmeldungen gelöscht werden die entweder im Entwurf sind bzw. "
-"abgebrochen wurden!"
+
+#. module: academy
+#: field:academy.course.product,image:0
+#: field:academy.fee,image:0
+msgid "Big-sized image"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,birthdate:0
+#: field:academy.student,birthdate:0
+#: field:academy.trainer,birthdate:0
+msgid "Birthdate"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,birthday:0
+#: field:academy.student,birthday:0
+#: field:academy.trainer,birthday:0
+msgid "Birthday"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,co_salutation:0
+#: field:academy.student,co_salutation:0
+#: field:academy.trainer,co_salutation:0
+msgid "C/O Salutation"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,rental:0
+#: field:academy.fee,rental:0
+msgid "Can be Rent"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,sale_ok:0
+#: field:academy.fee,sale_ok:0
+msgid "Can be Sold"
+msgstr ""
+
+#. module: academy
+#: code:addons/academy/academy.py:392
+#, python-format
+msgid "Can not delete registrations, which are not in state 'Draft' or 'Cancelled'"
+msgstr "Es können  nur Anmeldungen gelöscht werden die entweder im Entwurf sind bzw. abgebrochen wurden!"
 
 #. module: academy
 #: view:academy.config.settings:academy.form_config_settings
@@ -229,24 +464,60 @@ msgid "Check"
 msgstr "Überprüfung"
 
 #. module: academy
+#: help:academy.location,is_company:0
+#: help:academy.student,is_company:0
+#: help:academy.trainer,is_company:0
+msgid "Check if the contact is a company, otherwise it is a person"
+msgstr ""
+
+#. module: academy
+#: help:academy.location,vat_subjected:0
+#: help:academy.student,vat_subjected:0
+#: help:academy.trainer,vat_subjected:0
+msgid "Check this box if the partner is subjected to the VAT. It will be used for the VAT legal statement."
+msgstr ""
+
+#. module: academy
+#: help:academy.location,customer:0
+#: help:academy.student,customer:0
+#: help:academy.trainer,customer:0
+msgid "Check this box if this contact is a customer."
+msgstr ""
+
+#. module: academy
+#: help:academy.location,supplier:0
+#: help:academy.student,supplier:0
+#: help:academy.trainer,supplier:0
+msgid "Check this box if this contact is a supplier. If it's not checked, purchase people will not see it when encoding a purchase order."
+msgstr ""
+
+#. module: academy
+#: help:academy.location,employee:0
+#: help:academy.student,employee:0
+#: help:academy.trainer,employee:0
+msgid "Check this box if this contact is an Employee."
+msgstr ""
+
+#. module: academy
 #: view:academy.registration:academy.form_academy_registration
 msgid "Checked"
 msgstr "Überprüft"
 
 #. module: academy
 #: view:academy.location:academy.form_academy_location
+#: field:academy.location,city:0
 #: view:academy.student:academy.form_academy_student
+#: field:academy.student,city:0
 #: view:academy.trainer:academy.form_academy_trainer
+#: field:academy.trainer,city:0
 msgid "City"
 msgstr "Stadt"
 
 #. module: academy
 #: view:academy.assign.registration.wizard:academy.wizard_assign_registration
-msgid ""
-"Click to assign all registrations which are in state 'registered' to,\n"
+msgid "Click to assign all registrations which are in state 'registered' to,\n"
 "            it's teachers"
-msgstr ""
-"Klicke, um alle Anmeldungen im Status 'Angemeldet', ihren Lehrern zuzuweisen"
+msgstr "Klicke, um alle Anmeldungen im Status 'Angemeldet', ihren Lehrern zuzuweisen"
 
 #. module: academy
 #: view:academy.assign.registration.wizard:academy.wizard_assign_registration
@@ -256,14 +527,56 @@ msgid "Close"
 msgstr "Schließen"
 
 #. module: academy
+#: help:academy.course.product,uos_coeff:0
+#: help:academy.fee,uos_coeff:0
+msgid "Coefficient to convert default Unit of Measure to Unit of Sale\n"
+" uos = uom * coeff"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,color:0
+#: field:academy.fee,color:0
+#: field:academy.location,color:0
+#: field:academy.student,color:0
+#: field:academy.trainer,color:0
+msgid "Color Index"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,commercial_partner_id:0
+#: field:academy.student,commercial_partner_id:0
+#: field:academy.trainer,commercial_partner_id:0
+msgid "Commercial Entity"
+msgstr ""
+
+#. module: academy
 #: model:ir.model,name:academy.model_res_company
 msgid "Companies"
 msgstr "Unternehmen"
 
 #. module: academy
+#: field:academy.location,ref_companies:0
+#: field:academy.student,ref_companies:0
+#: field:academy.trainer,ref_companies:0
+msgid "Companies that refers to partner"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,company_id:0
+#: field:academy.fee,company_id:0
+#: field:academy.location,company_id:0
+#: field:academy.student,company_id:0
+#: field:academy.trainer,company_id:0
 #: field:academy.year,company_id:0
 msgid "Company"
 msgstr "Organisation"
+
+#. module: academy
+#: field:academy.location,contact_address:0
+#: field:academy.student,contact_address:0
+#: field:academy.trainer,contact_address:0
+msgid "Complete Address"
+msgstr ""
 
 #. module: academy
 #: view:academy.registration:academy.search_academy_registration
@@ -282,6 +595,33 @@ msgid "Configure Academy"
 msgstr "Schule Konfigurieren"
 
 #. module: academy
+#: help:academy.course.product,type:0
+#: help:academy.fee,type:0
+msgid "Consumable are product where you don't manage stock, a service is a non-material product provided by a company or an individual."
+msgstr ""
+
+#. module: academy
+#: field:academy.location,contact_info:0
+#: field:academy.student,contact_info:0
+#: field:academy.trainer,contact_info:0
+msgid "Contact Info"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,ref:0
+#: field:academy.student,ref:0
+#: field:academy.trainer,ref:0
+msgid "Contact Reference"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,child_ids:0
+#: field:academy.student,child_ids:0
+#: field:academy.trainer,child_ids:0
+msgid "Contacts"
+msgstr ""
+
+#. module: academy
 #: view:academy.contract:academy.form_academy_contract
 #: view:academy.contract:academy.tree_academy_contract
 #: model:ir.actions.act_window,name:academy.action_academy_contract
@@ -289,15 +629,36 @@ msgid "Contract"
 msgstr "Vertrag"
 
 #. module: academy
+#: field:academy.location,contract_ids:0
+#: field:academy.location,contracts_count:0
+#: field:academy.student,contract_ids:0
+#: field:academy.student,contracts_count:0
 #: view:academy.topic:academy.form_academy_topic
-#: field:academy.topic,contract_ids:0 field:academy.trainer,contract_ids:0
+#: field:academy.topic,contract_ids:0
+#: field:academy.trainer,contract_ids:0
+#: field:academy.trainer,contracts_count:0
 msgid "Contracts"
 msgstr "Verträge"
 
 #. module: academy
+#: field:academy.course.product,standard_price:0
+#: field:academy.fee,standard_price:0
+msgid "Cost Price"
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,standard_price:0
+#: help:academy.fee,standard_price:0
+msgid "Cost price of the product template used for standard stock valuation in accounting and used as a base price on purchase orders. Expressed in the default unit of measure of the product."
+msgstr ""
+
+#. module: academy
 #: view:academy.location:academy.form_academy_location
+#: field:academy.location,country_id:0
 #: view:academy.student:academy.form_academy_student
+#: field:academy.student,country_id:0
 #: view:academy.trainer:academy.form_academy_trainer
+#: field:academy.trainer,country_id:0
 msgid "Country"
 msgstr "Land"
 
@@ -305,7 +666,8 @@ msgstr "Land"
 #: view:academy.course:academy.form_academy_course
 #: view:academy.course:academy.tree_academy_course
 #: view:academy.course.product:academy.form_academy_course_product
-#: field:academy.journal,course_id:0 field:academy.registration,course_id:0
+#: field:academy.journal,course_id:0
+#: field:academy.registration,course_id:0
 #: field:academy.topic,course_id:0
 #: model:ir.actions.act_window,name:academy.action_academy_course
 #: model:ir.actions.act_window,name:academy.action_academy_course_product
@@ -345,38 +707,47 @@ msgstr "Erstellungsdatum"
 #. module: academy
 #: field:academy.assign.registration.wizard,create_uid:0
 #: field:academy.config.settings,create_uid:0
-#: field:academy.contract,create_uid:0 field:academy.course,create_uid:0
-#: field:academy.course.product,create_uid:0 field:academy.fee,create_uid:0
+#: field:academy.contract,create_uid:0
+#: field:academy.course,create_uid:0
+#: field:academy.course.product,create_uid:0
+#: field:academy.fee,create_uid:0
 #: field:academy.invoice.assistant,create_uid:0
 #: field:academy.journal,create_uid:0
 #: field:academy.journal.absence,create_uid:0
-#: field:academy.location,create_uid:0 field:academy.payment,create_uid:0
+#: field:academy.location,create_uid:0
+#: field:academy.payment,create_uid:0
 #: field:academy.post.payment.wizard,create_uid:0
 #: field:academy.registration,create_uid:0
 #: field:academy.registration.invoice,create_uid:0
 #: field:academy.semester,create_uid:0
 #: field:academy.semester.assistant,create_uid:0
-#: field:academy.student,create_uid:0 field:academy.topic,create_uid:0
+#: field:academy.student,create_uid:0
+#: field:academy.topic,create_uid:0
 #: field:academy.trainer,create_uid:0
 #: field:academy.trainer.reg.wizard,create_uid:0
-#: field:academy.trainer.student,create_uid:0 field:academy.year,create_uid:0
+#: field:academy.trainer.student,create_uid:0
+#: field:academy.year,create_uid:0
 msgid "Created by"
 msgstr "Erstellt von"
 
 #. module: academy
 #: field:academy.assign.registration.wizard,create_date:0
 #: field:academy.config.settings,create_date:0
-#: field:academy.contract,create_date:0 field:academy.course,create_date:0
-#: field:academy.course.product,create_date:0 field:academy.fee,create_date:0
+#: field:academy.contract,create_date:0
+#: field:academy.course,create_date:0
+#: field:academy.course.product,create_date:0
+#: field:academy.fee,create_date:0
 #: field:academy.invoice.assistant,create_date:0
 #: field:academy.journal,create_date:0
 #: field:academy.journal.absence,create_date:0
-#: field:academy.location,create_date:0 field:academy.payment,create_date:0
+#: field:academy.location,create_date:0
+#: field:academy.payment,create_date:0
 #: field:academy.post.payment.wizard,create_date:0
 #: field:academy.registration.invoice,create_date:0
 #: field:academy.semester,create_date:0
 #: field:academy.semester.assistant,create_date:0
-#: field:academy.student,create_date:0 field:academy.topic,create_date:0
+#: field:academy.student,create_date:0
+#: field:academy.topic,create_date:0
 #: field:academy.trainer,create_date:0
 #: field:academy.trainer.reg.wizard,create_date:0
 #: field:academy.trainer.student,create_date:0
@@ -385,14 +756,51 @@ msgid "Created on"
 msgstr "Erstellt am"
 
 #. module: academy
+#: field:academy.location,credit_limit:0
+#: field:academy.student,credit_limit:0
+#: field:academy.trainer,credit_limit:0
+msgid "Credit Limit"
+msgstr ""
+
+#. module: academy
 #: field:academy.semester.assistant,semester_id:0
 msgid "Current Semester"
 msgstr "Aktuelles Semester"
 
 #. module: academy
+#: field:academy.location,customer:0
+#: field:academy.student,customer:0
+#: field:academy.trainer,customer:0
+msgid "Customer"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,property_payment_term:0
+#: field:academy.student,property_payment_term:0
+#: field:academy.trainer,property_payment_term:0
+msgid "Customer Payment Term"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,taxes_id:0
+#: field:academy.fee,taxes_id:0
+msgid "Customer Taxes"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,partner_ref:0
+#: field:academy.fee,partner_ref:0
+msgid "Customer ref"
+msgstr ""
+
+#. module: academy
 #: field:academy.journal,date:0
+#: field:academy.location,date:0
 #: view:academy.payment:academy.search_academy_payment
-#: field:academy.payment,date:0 selection:academy.trainer.reg.wizard,unit:0
+#: field:academy.payment,date:0
+#: field:academy.student,date:0
+#: field:academy.trainer,date:0
+#: selection:academy.trainer.reg.wizard,unit:0
 msgid "Date"
 msgstr "Datum"
 
@@ -407,9 +815,21 @@ msgid "Date from"
 msgstr "Datum von"
 
 #. module: academy
+#: help:academy.course.product,message_last_post:0
+#: help:academy.fee,message_last_post:0
+#: help:academy.location,message_last_post:0
 #: help:academy.registration,message_last_post:0
+#: help:academy.student,message_last_post:0
+#: help:academy.trainer,message_last_post:0
 msgid "Date of the last message posted on the record."
 msgstr "Datum des zuletzt geposteten Eintrags"
+
+#. module: academy
+#: help:academy.location,last_reconciliation_date:0
+#: help:academy.student,last_reconciliation_date:0
+#: help:academy.trainer,last_reconciliation_date:0
+msgid "Date on which the partner accounting entries were fully reconciled last time. It differs from the last date where a reconciliation has been made for this partner, as here we depict the fact that nothing more was to be reconciled at this date. This can be achieved in 2 different ways: either the last unreconciled debit/credit entry of this partner was reconciled, either the user pressed the button \"Nothing more to reconcile\" during the manual reconciliation process."
+msgstr ""
 
 #. module: academy
 #: field:academy.contract,date_start:0
@@ -427,6 +847,18 @@ msgid "Day"
 msgstr "Tag"
 
 #. module: academy
+#: help:academy.course.product,uom_id:0
+#: help:academy.fee,uom_id:0
+msgid "Default Unit of Measure used for all stock operation."
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,uom_po_id:0
+#: help:academy.fee,uom_po_id:0
+msgid "Default Unit of Measure used for purchase orders. It must be in the same category than the default unit of measure."
+msgstr ""
+
+#. module: academy
 #: view:academy.registration:academy.form_academy_registration
 #: field:academy.registration,unreg_semester_id:0
 msgid "Deregistration"
@@ -439,6 +871,8 @@ msgstr "Abmeldung nach beendetem Semester"
 
 #. module: academy
 #: field:academy.course,description:0
+#: field:academy.course.product,description:0
+#: field:academy.fee,description:0
 #: view:academy.journal:academy.form_academy_journal
 #: field:academy.topic,description:0
 msgid "Description"
@@ -450,10 +884,49 @@ msgid "Determined invoice address"
 msgstr "Ermittelte Rechnungsadresse "
 
 #. module: academy
+#: field:academy.assign.registration.wizard,display_name:0
+#: field:academy.config.settings,display_name:0
+#: field:academy.contract,display_name:0
+#: field:academy.course,display_name:0
+#: field:academy.course.product,display_name:0
+#: field:academy.fee,display_name:0
+#: field:academy.invoice.assistant,display_name:0
+#: field:academy.journal,display_name:0
+#: field:academy.journal.absence,display_name:0
+#: field:academy.location,display_name:0
+#: field:academy.payment,display_name:0
+#: field:academy.post.payment.wizard,display_name:0
+#: field:academy.registration,display_name:0
+#: field:academy.registration.invoice,display_name:0
+#: field:academy.semester,display_name:0
+#: field:academy.semester.assistant,display_name:0
+#: field:academy.student,display_name:0
+#: field:academy.topic,display_name:0
+#: field:academy.trainer,display_name:0
+#: field:academy.trainer.reg.wizard,display_name:0
+#: field:academy.trainer.student,display_name:0
+#: field:academy.year,display_name:0
+msgid "Display Name"
+msgstr ""
+
+#. module: academy
 #: selection:academy.registration,state:0
 #: selection:academy.registration.invoice,invoice_state:0
 msgid "Draft"
 msgstr "Entwurf"
+
+#. module: academy
+#: field:academy.location,ean13:0
+#: field:academy.student,ean13:0
+#: field:academy.trainer,ean13:0
+msgid "EAN13"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,ean13:0
+#: field:academy.fee,ean13:0
+msgid "EAN13 Barcode"
+msgstr ""
 
 #. module: academy
 #: view:academy.registration:academy.form_academy_registration
@@ -461,8 +934,24 @@ msgid "Editing"
 msgstr "Bearbeitung"
 
 #. module: academy
-#: field:academy.journal,end:0 field:academy.semester,date_end:0
-#: field:academy.trainer.reg.wizard,date_end:0 field:academy.year,date_end:0
+#: field:academy.location,email:0
+#: field:academy.student,email:0
+#: field:academy.trainer,email:0
+msgid "Email"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,employee:0
+#: field:academy.student,employee:0
+#: field:academy.trainer,employee:0
+msgid "Employee"
+msgstr ""
+
+#. module: academy
+#: field:academy.journal,end:0
+#: field:academy.semester,date_end:0
+#: field:academy.trainer.reg.wizard,date_end:0
+#: field:academy.year,date_end:0
 msgid "End"
 msgstr "Ende"
 
@@ -477,17 +966,37 @@ msgid "End Semester"
 msgstr "Semester Ende"
 
 #. module: academy
-#: code:addons/academy/academy.py:753
-#: code:addons/academy/wizard/semester_assistant.py:30
+#: code:addons/academy/academy.py:751
+#: code:addons/academy/wizard/semester_assistant.py:29
 #, python-format
 msgid "Error"
 msgstr "Fehler"
 
 #. module: academy
-#: code:addons/academy/academy.py:398
+#: code:addons/academy/academy.py:392
 #, python-format
 msgid "Error!"
 msgstr "Fehler!"
+
+#. module: academy
+#: field:academy.course.product,property_account_expense:0
+#: field:academy.fee,property_account_expense:0
+msgid "Expense Account"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,fax:0
+#: field:academy.student,fax:0
+#: field:academy.trainer,fax:0
+msgid "Fax"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,fax_n:0
+#: field:academy.student,fax_n:0
+#: field:academy.trainer,fax_n:0
+msgid "Fax normalized"
+msgstr ""
 
 #. module: academy
 #: view:academy.fee:academy.form_academy_fee
@@ -502,7 +1011,26 @@ msgid "Fees"
 msgstr "Gebühren"
 
 #. module: academy
+#: field:academy.location,firstname:0
+#: field:academy.student,firstname:0
+#: field:academy.trainer,firstname:0
+msgid "First Name"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,property_account_position:0
+#: field:academy.student,property_account_position:0
+#: field:academy.trainer,property_account_position:0
+msgid "Fiscal Position"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,message_follower_ids:0
+#: field:academy.fee,message_follower_ids:0
+#: field:academy.location,message_follower_ids:0
 #: field:academy.registration,message_follower_ids:0
+#: field:academy.student,message_follower_ids:0
+#: field:academy.trainer,message_follower_ids:0
 msgid "Followers"
 msgstr "Beobachter"
 
@@ -518,6 +1046,18 @@ msgid "General"
 msgstr "Allgemein"
 
 #. module: academy
+#: help:academy.course.product,packaging_ids:0
+#: help:academy.fee,packaging_ids:0
+msgid "Gives the different ways to package the same product. This has no impact on the picking order and is mainly used if you use the EDI module."
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,weight:0
+#: field:academy.fee,weight:0
+msgid "Gross Weight"
+msgstr ""
+
+#. module: academy
 #: view:academy.payment:academy.search_academy_payment
 #: view:academy.registration:academy.search_academy_registration
 #: view:academy.student:academy.search_academy_student
@@ -525,14 +1065,14 @@ msgid "Group By..."
 msgstr "Gruppiert nach"
 
 #. module: academy
+#: help:academy.course.product,message_summary:0
+#: help:academy.fee,message_summary:0
+#: help:academy.location,message_summary:0
 #: help:academy.registration,message_summary:0
-msgid ""
-"Holds the Chatter summary (number of messages, ...). This summary is "
-"directly in html format in order to be inserted in kanban views."
-msgstr ""
-"Hier finden Sie die Nachrichtenübersicht (Anzahl Nachrichten etc., ...) im "
-"html Format, um über dieses Format dann später in einer Kanban Ansicht "
-"weiterzuarbeiten.\""
+#: help:academy.student,message_summary:0
+#: help:academy.trainer,message_summary:0
+msgid "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
+msgstr "Hier finden Sie die Nachrichtenübersicht (Anzahl Nachrichten etc., ...) im html Format, um über dieses Format dann später in einer Kanban Ansicht weiterzuarbeiten.\""
 
 #. module: academy
 #: field:academy.semester,holiday_weeks:0
@@ -547,24 +1087,90 @@ msgstr "Stunden"
 
 #. module: academy
 #: field:academy.assign.registration.wizard,id:0
-#: field:academy.config.settings,id:0 field:academy.contract,id:0
-#: field:academy.course,id:0 field:academy.course.product,id:0
-#: field:academy.fee,id:0 field:academy.invoice.assistant,id:0
-#: field:academy.journal,id:0 field:academy.journal.absence,id:0
-#: field:academy.location,id:0 field:academy.payment,id:0
-#: field:academy.post.payment.wizard,id:0 field:academy.registration,id:0
-#: field:academy.registration.invoice,id:0 field:academy.semester,id:0
-#: field:academy.semester.assistant,id:0 field:academy.student,id:0
-#: field:academy.topic,id:0 field:academy.trainer,id:0
-#: field:academy.trainer.reg.wizard,id:0 field:academy.trainer.student,id:0
+#: field:academy.config.settings,id:0
+#: field:academy.contract,id:0
+#: field:academy.course,id:0
+#: field:academy.course.product,id:0
+#: field:academy.fee,id:0
+#: field:academy.invoice.assistant,id:0
+#: field:academy.journal,id:0
+#: field:academy.journal.absence,id:0
+#: field:academy.location,id:0
+#: field:academy.payment,id:0
+#: field:academy.post.payment.wizard,id:0
+#: field:academy.registration,id:0
+#: field:academy.registration.invoice,id:0
+#: field:academy.semester,id:0
+#: field:academy.semester.assistant,id:0
+#: field:academy.student,id:0
+#: field:academy.topic,id:0
+#: field:academy.trainer,id:0
+#: field:academy.trainer.reg.wizard,id:0
+#: field:academy.trainer.student,id:0
 #: field:academy.year,id:0
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #. module: academy
+#: help:academy.course.product,message_unread:0
+#: help:academy.fee,message_unread:0
+#: help:academy.location,message_unread:0
 #: help:academy.registration,message_unread:0
+#: help:academy.student,message_unread:0
+#: help:academy.trainer,message_unread:0
 msgid "If checked new messages require your attention."
 msgstr "Wenn aktiviert, erfordern neue Nachrichten Ihr Handeln"
+
+#. module: academy
+#: help:academy.location,opt_out:0
+#: help:academy.student,opt_out:0
+#: help:academy.trainer,opt_out:0
+msgid "If opt-out is checked, this contact has refused to receive emails for mass mailing and marketing campaign. Filter 'Available for Mass Mailing' allows users to filter the partners when performing mass mailing."
+msgstr ""
+
+#. module: academy
+#: help:academy.location,lang:0
+#: help:academy.student,lang:0
+#: help:academy.trainer,lang:0
+msgid "If the selected language is loaded in the system, all documents related to this contact will be printed in this language. If not, it will be English."
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,active:0
+#: help:academy.fee,active:0
+msgid "If unchecked, it will allow you to hide the product without removing it."
+msgstr ""
+
+#. module: academy
+#: field:academy.location,image:0
+#: field:academy.student,image:0
+#: field:academy.trainer,image:0
+msgid "Image"
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,image:0
+#: help:academy.fee,image:0
+msgid "Image of the product variant (Big-sized image of product template if false). It is automatically resized as a 1024x1024px image, with aspect ratio preserved."
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,image_medium:0
+#: help:academy.fee,image_medium:0
+msgid "Image of the product variant (Medium-sized image of product template if false)."
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,image_small:0
+#: help:academy.fee,image_small:0
+msgid "Image of the product variant (Small-sized image of product template if false)."
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,property_account_income:0
+#: field:academy.fee,property_account_income:0
+msgid "Income Account"
+msgstr ""
 
 #. module: academy
 #: view:academy.registration:academy.search_academy_registration
@@ -574,6 +1180,26 @@ msgstr "Unvollständige Anmeldungen"
 #. module: academy
 #: view:academy.course.product:academy.form_academy_course_product
 msgid "Information"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,categ_id:0
+#: field:academy.fee,categ_id:0
+msgid "Internal Category"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,code:0
+#: field:academy.course.product,default_code:0
+#: field:academy.fee,code:0
+#: field:academy.fee,default_code:0
+msgid "Internal Reference"
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,ean13:0
+#: help:academy.fee,ean13:0
+msgid "International Article Number used for product identification."
 msgstr ""
 
 #. module: academy
@@ -605,6 +1231,11 @@ msgid "Invoice Line"
 msgstr "Rechungsposition"
 
 #. module: academy
+#: field:academy.registration,invoice_monthly:0
+msgid "Invoice Monthly"
+msgstr "monatliche Rechnung"
+
+#. module: academy
 #: selection:academy.trainer.reg.wizard,unit:0
 msgid "Invoice Period"
 msgstr "Verrechnungsperiode"
@@ -615,8 +1246,16 @@ msgid "Invoice State"
 msgstr "Status"
 
 #. module: academy
+#: field:academy.registration,invoice_per_mail:0
+msgid "Invoice per Mail"
+msgstr "Rechnung per Post"
+
+#. module: academy
+#: field:academy.location,invoice_ids:0
 #: view:academy.registration:academy.form_academy_registration
 #: field:academy.registration,invoice_ids:0
+#: field:academy.student,invoice_ids:0
+#: field:academy.trainer,invoice_ids:0
 msgid "Invoices"
 msgstr "Rechnungen"
 
@@ -628,14 +1267,39 @@ msgid "Invoicing"
 msgstr "Verrechnung"
 
 #. module: academy
+#: field:academy.location,is_company:0
+#: field:academy.student,is_company:0
+#: field:academy.trainer,is_company:0
+msgid "Is a Company"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,message_is_follower:0
+#: field:academy.fee,message_is_follower:0
+#: field:academy.location,message_is_follower:0
 #: field:academy.registration,message_is_follower:0
+#: field:academy.student,message_is_follower:0
+#: field:academy.trainer,message_is_follower:0
 msgid "Is a Follower"
 msgstr "Ist ein Beobachter"
+
+#. module: academy
+#: field:academy.course.product,is_product_variant:0
+#: field:academy.fee,is_product_variant:0
+msgid "Is product variant"
+msgstr ""
 
 #. module: academy
 #: field:academy.registration,student_of_loc:0
 msgid "Is student of location?"
 msgstr "Ist Schüler dieser Schule?"
+
+#. module: academy
+#: field:academy.location,function:0
+#: field:academy.student,function:0
+#: field:academy.trainer,function:0
+msgid "Job Position"
+msgstr ""
 
 #. module: academy
 #: field:academy.journal.absence,journal_id:0
@@ -644,55 +1308,132 @@ msgid "Journal"
 msgstr "Kursjournal"
 
 #. module: academy
+#: field:academy.location,journal_item_count:0
+#: field:academy.student,journal_item_count:0
+#: field:academy.trainer,journal_item_count:0
+msgid "Journal Items"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,lang:0
+#: field:academy.student,lang:0
+#: field:academy.trainer,lang:0
+msgid "Language"
+msgstr ""
+
+#. module: academy
 #: field:academy.registration,last_invoice_id:0
 msgid "Last Invoice"
 msgstr "Letzte Rechnung"
 
 #. module: academy
+#: field:academy.course.product,message_last_post:0
+#: field:academy.fee,message_last_post:0
+#: field:academy.location,message_last_post:0
 #: field:academy.registration,message_last_post:0
+#: field:academy.student,message_last_post:0
+#: field:academy.trainer,message_last_post:0
 msgid "Last Message Date"
 msgstr "Datum der letzten Nachricht"
 
 #. module: academy
+#: field:academy.assign.registration.wizard,__last_update:0
+#: field:academy.config.settings,__last_update:0
+#: field:academy.contract,__last_update:0
+#: field:academy.course,__last_update:0
+#: field:academy.course.product,__last_update:0
+#: field:academy.fee,__last_update:0
+#: field:academy.invoice.assistant,__last_update:0
+#: field:academy.journal,__last_update:0
+#: field:academy.journal.absence,__last_update:0
+#: field:academy.location,__last_update:0
+#: field:academy.payment,__last_update:0
+#: field:academy.post.payment.wizard,__last_update:0
+#: field:academy.registration,__last_update:0
+#: field:academy.registration.invoice,__last_update:0
+#: field:academy.semester,__last_update:0
+#: field:academy.semester.assistant,__last_update:0
+#: field:academy.student,__last_update:0
+#: field:academy.topic,__last_update:0
+#: field:academy.trainer,__last_update:0
+#: field:academy.trainer.reg.wizard,__last_update:0
+#: field:academy.trainer.student,__last_update:0
+#: field:academy.year,__last_update:0
+msgid "Last Modified on"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,surname:0
+#: field:academy.student,surname:0
+#: field:academy.trainer,surname:0
+msgid "Last Name"
+msgstr ""
+
+#. module: academy
 #: field:academy.assign.registration.wizard,write_uid:0
 #: field:academy.config.settings,write_uid:0
-#: field:academy.contract,write_uid:0 field:academy.course,write_uid:0
-#: field:academy.course.product,write_uid:0 field:academy.fee,write_uid:0
+#: field:academy.contract,write_uid:0
+#: field:academy.course,write_uid:0
+#: field:academy.course.product,write_uid:0
+#: field:academy.fee,write_uid:0
 #: field:academy.invoice.assistant,write_uid:0
-#: field:academy.journal,write_uid:0 field:academy.journal.absence,write_uid:0
-#: field:academy.location,write_uid:0 field:academy.payment,write_uid:0
+#: field:academy.journal,write_uid:0
+#: field:academy.journal.absence,write_uid:0
+#: field:academy.location,write_uid:0
+#: field:academy.payment,write_uid:0
 #: field:academy.post.payment.wizard,write_uid:0
 #: field:academy.registration,write_uid:0
 #: field:academy.registration.invoice,write_uid:0
 #: field:academy.semester,write_uid:0
 #: field:academy.semester.assistant,write_uid:0
-#: field:academy.student,write_uid:0 field:academy.topic,write_uid:0
+#: field:academy.student,write_uid:0
+#: field:academy.topic,write_uid:0
 #: field:academy.trainer,write_uid:0
 #: field:academy.trainer.reg.wizard,write_uid:0
-#: field:academy.trainer.student,write_uid:0 field:academy.year,write_uid:0
+#: field:academy.trainer.student,write_uid:0
+#: field:academy.year,write_uid:0
 msgid "Last Updated by"
 msgstr "zuletzt aktualisiert von"
 
 #. module: academy
 #: field:academy.assign.registration.wizard,write_date:0
 #: field:academy.config.settings,write_date:0
-#: field:academy.contract,write_date:0 field:academy.course,write_date:0
-#: field:academy.course.product,write_date:0 field:academy.fee,write_date:0
+#: field:academy.contract,write_date:0
+#: field:academy.course,write_date:0
+#: field:academy.course.product,write_date:0
+#: field:academy.fee,write_date:0
 #: field:academy.invoice.assistant,write_date:0
 #: field:academy.journal,write_date:0
 #: field:academy.journal.absence,write_date:0
-#: field:academy.location,write_date:0 field:academy.payment,write_date:0
+#: field:academy.location,write_date:0
+#: field:academy.payment,write_date:0
 #: field:academy.post.payment.wizard,write_date:0
 #: field:academy.registration,write_date:0
 #: field:academy.registration.invoice,write_date:0
 #: field:academy.semester,write_date:0
 #: field:academy.semester.assistant,write_date:0
-#: field:academy.student,write_date:0 field:academy.topic,write_date:0
+#: field:academy.student,write_date:0
+#: field:academy.topic,write_date:0
 #: field:academy.trainer,write_date:0
 #: field:academy.trainer.reg.wizard,write_date:0
-#: field:academy.trainer.student,write_date:0 field:academy.year,write_date:0
+#: field:academy.trainer.student,write_date:0
+#: field:academy.year,write_date:0
 msgid "Last Updated on"
 msgstr "zuletzt aktualisiert am"
+
+#. module: academy
+#: field:academy.location,calendar_last_notif_ack:0
+#: field:academy.student,calendar_last_notif_ack:0
+#: field:academy.trainer,calendar_last_notif_ack:0
+msgid "Last notification marked as read from base Calendar"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,last_reconciliation_date:0
+#: field:academy.student,last_reconciliation_date:0
+#: field:academy.trainer,last_reconciliation_date:0
+msgid "Latest Full Reconciliation Date"
+msgstr ""
 
 #. module: academy
 #: view:academy.location:academy.form_academy_location
@@ -715,17 +1456,95 @@ msgid "Locations"
 msgstr "Standorte"
 
 #. module: academy
+#: field:academy.location,login_id:0
+#: field:academy.student,login_id:0
+#: field:academy.trainer,login_id:0
+msgid "Login"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,packaging_ids:0
+#: field:academy.fee,packaging_ids:0
+msgid "Logistical Units"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,mail_address:0
+#: field:academy.student,mail_address:0
+#: field:academy.trainer,mail_address:0
+msgid "Mail Address"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,mail_without_company:0
+#: field:academy.student,mail_without_company:0
+#: field:academy.trainer,mail_without_company:0
+msgid "Mail Address without company"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,mail_salutation:0
+#: field:academy.student,mail_salutation:0
+#: field:academy.trainer,mail_salutation:0
+msgid "Mail Salutation"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,seller_id:0
+#: field:academy.fee,seller_id:0
+msgid "Main Supplier"
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,seller_id:0
+#: help:academy.fee,seller_id:0
+msgid "Main Supplier who has highest priority in Supplier List."
+msgstr ""
+
+#. module: academy
 #: model:ir.ui.menu,name:academy.menu_academy_management
 msgid "Management"
 msgstr "Verwaltung"
 
 #. module: academy
+#: field:academy.course.product,mes_type:0
+#: field:academy.fee,mes_type:0
+msgid "Measure Type"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,image_medium:0
+#: field:academy.fee,image_medium:0
+#: field:academy.location,image_medium:0
+#: field:academy.student,image_medium:0
+#: field:academy.trainer,image_medium:0
+msgid "Medium-sized image"
+msgstr ""
+
+#. module: academy
+#: help:academy.location,image_medium:0
+#: help:academy.student,image_medium:0
+#: help:academy.trainer,image_medium:0
+msgid "Medium-sized image of this contact. It is automatically resized as a 128x128px image, with aspect ratio preserved. Use this field in form views or some kanban views."
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,message_ids:0
+#: field:academy.fee,message_ids:0
+#: field:academy.location,message_ids:0
 #: field:academy.registration,message_ids:0
+#: field:academy.student,message_ids:0
+#: field:academy.trainer,message_ids:0
 msgid "Messages"
 msgstr "Nachrichen"
 
 #. module: academy
+#: help:academy.course.product,message_ids:0
+#: help:academy.fee,message_ids:0
+#: help:academy.location,message_ids:0
 #: help:academy.registration,message_ids:0
+#: help:academy.student,message_ids:0
+#: help:academy.trainer,message_ids:0
 msgid "Messages and communication history"
 msgstr "Nachrichten und Kommunikationsübersicht"
 
@@ -745,11 +1564,38 @@ msgid "Misc"
 msgstr "Sonstiges"
 
 #. module: academy
-#: field:academy.contract,name:0 field:academy.course,name:0
-#: field:academy.journal,name:0 field:academy.semester,name:0
+#: field:academy.location,mobile:0
+#: field:academy.student,mobile:0
+#: field:academy.trainer,mobile:0
+msgid "Mobile"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,mobile_n:0
+#: field:academy.student,mobile_n:0
+#: field:academy.trainer,mobile_n:0
+msgid "Mobile normalized"
+msgstr ""
+
+#. module: academy
+#: field:academy.fee,monthly:0
+msgid "Monthly"
+msgstr "Monatlich"
+
+#. module: academy
+#: field:academy.contract,name:0
+#: field:academy.course,name:0
+#: field:academy.course.product,name:0
+#: field:academy.fee,name:0
+#: field:academy.journal,name:0
+#: field:academy.location,name:0
+#: field:academy.semester,name:0
 #: view:academy.student:academy.form_academy_student
+#: field:academy.student,name:0
 #: field:academy.topic,name:0
-#: view:academy.trainer:academy.form_academy_trainer field:academy.year,name:0
+#: view:academy.trainer:academy.form_academy_trainer
+#: field:academy.trainer,name:0
+#: field:academy.year,name:0
 msgid "Name"
 msgstr ""
 
@@ -759,14 +1605,23 @@ msgid "Nationality"
 msgstr "Nationalität"
 
 #. module: academy
+#: field:academy.course.product,weight_net:0
+#: field:academy.fee,weight_net:0
+msgid "Net Weight"
+msgstr ""
+
+#. module: academy
 #: view:academy.registration:academy.form_academy_registration
 #: field:academy.registration,note:0
 msgid "Note"
 msgstr "Notizen"
 
 #. module: academy
+#: field:academy.location,comment:0
 #: view:academy.student:academy.form_academy_student
+#: field:academy.student,comment:0
 #: view:academy.trainer:academy.form_academy_trainer
+#: field:academy.trainer,comment:0
 msgid "Notes"
 msgstr "Notizen"
 
@@ -776,7 +1631,8 @@ msgid "Notes..."
 msgstr "Notizen..."
 
 #. module: academy
-#: field:academy.course,number:0 field:academy.registration,name:0
+#: field:academy.course,number:0
+#: field:academy.registration,name:0
 msgid "Number"
 msgstr "Nummer"
 
@@ -786,7 +1642,7 @@ msgid "Once per Year"
 msgstr "Einmal pro Jahr"
 
 #. module: academy
-#: code:addons/academy/wizard/semester_assistant.py:30
+#: code:addons/academy/wizard/semester_assistant.py:29
 #, python-format
 msgid "Only academy manager could change semester!"
 msgstr "Nur ein Lehranstalt Manager darf das Semester ändern!"
@@ -795,6 +1651,13 @@ msgstr "Nur ein Lehranstalt Manager darf das Semester ändern!"
 #: selection:academy.registration.invoice,invoice_state:0
 msgid "Open"
 msgstr "Offen"
+
+#. module: academy
+#: field:academy.location,opt_out:0
+#: field:academy.student,opt_out:0
+#: field:academy.trainer,opt_out:0
+msgid "Opt-Out"
+msgstr ""
 
 #. module: academy
 #: selection:academy.registration.invoice,invoice_state:0
@@ -810,10 +1673,25 @@ msgid "Parent"
 msgstr "Erziehungsberechtigte(r)"
 
 #. module: academy
+#: field:academy.location,parent_name:0
+#: field:academy.student,parent_name:0
+#: field:academy.trainer,parent_name:0
+msgid "Parent name"
+msgstr ""
+
+#. module: academy
 #: field:academy.journal.absence,partner_id:0
-#: field:academy.student,partner_id:0 field:academy.student,tmp_partner_id:0
+#: field:academy.student,partner_id:0
+#: field:academy.student,tmp_partner_id:0
 #: field:academy.trainer,partner_id:0
 msgid "Partner"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,debit_limit:0
+#: field:academy.student,debit_limit:0
+#: field:academy.trainer,debit_limit:0
+msgid "Payable Limit"
 msgstr ""
 
 #. module: academy
@@ -830,7 +1708,7 @@ msgid "Payment Method"
 msgstr "Zahlungsmethode"
 
 #. module: academy
-#: code:addons/academy/academy.py:753
+#: code:addons/academy/academy.py:751
 #, python-format
 msgid "Payment which is posted could not deleted"
 msgstr "Zahlung die gebucht wurde kann nicht gelöscht werden"
@@ -841,9 +1719,37 @@ msgid "Payments"
 msgstr "Zahlungen"
 
 #. module: academy
+#: field:academy.fee,per_mail:0
+msgid "Per Mail"
+msgstr "per Post"
+
+#. module: academy
+#: field:academy.location,phone:0
+#: field:academy.student,phone:0
+#: field:academy.trainer,phone:0
+msgid "Phone"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,phone_n:0
+#: field:academy.student,phone_n:0
+#: field:academy.trainer,phone_n:0
+msgid "Phone normalized"
+msgstr ""
+
+#. module: academy
 #: field:academy.journal,place:0
 msgid "Place"
 msgstr "Ort"
+
+#. module: academy
+#: help:academy.location,notify_email:0
+#: help:academy.student,notify_email:0
+#: help:academy.trainer,notify_email:0
+msgid "Policy to receive emails for new messages pushed to your personal Inbox:\n"
+"- Never: no emails are sent\n"
+"- All Messages: for every notification you receive in your Inbox"
+msgstr ""
 
 #. module: academy
 #: view:academy.post.payment.wizard:academy.wizard_post_payment
@@ -858,20 +1764,81 @@ msgid "Post Payment"
 msgstr "Zahlung buchen"
 
 #. module: academy
+#: field:academy.course.product,price:0
+#: field:academy.fee,price:0
+msgid "Price"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,pricelist_id:0
+#: field:academy.fee,pricelist_id:0
+msgid "Pricelist"
+msgstr ""
+
+#. module: academy
 #: selection:academy.registration.invoice,invoice_state:0
 msgid "Pro-forma"
 msgstr ""
 
 #. module: academy
-#: field:academy.course.product,product_id:0 field:academy.fee,product_id:0
+#: field:academy.course.product,product_id:0
+#: field:academy.fee,product_id:0
 #: field:academy.registration,course_prod_id:0
 msgid "Product"
 msgstr "Produkt"
 
 #. module: academy
+#: field:academy.course.product,attribute_line_ids:0
+#: field:academy.fee,attribute_line_ids:0
+msgid "Product Attributes"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,product_manager:0
+#: field:academy.fee,product_manager:0
+msgid "Product Manager"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,product_tmpl_id:0
+#: field:academy.fee,product_tmpl_id:0
+msgid "Product Template"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,type:0
+#: field:academy.fee,type:0
+msgid "Product Type"
+msgstr ""
+
+#. module: academy
 #: model:ir.model,name:academy.model_product_uom
 msgid "Product Unit of Measure"
 msgstr "Produkt Mengeneinheit (ME)"
+
+#. module: academy
+#: field:academy.course.product,product_variant_ids:0
+#: field:academy.fee,product_variant_ids:0
+msgid "Products"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,lst_price:0
+#: field:academy.fee,lst_price:0
+msgid "Public Price"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,description_purchase:0
+#: field:academy.fee,description_purchase:0
+msgid "Purchase Description"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,uom_po_id:0
+#: field:academy.fee,uom_po_id:0
+msgid "Purchase Unit of Measure"
+msgstr ""
 
 #. module: academy
 #: view:academy.student:academy.form_academy_student
@@ -895,7 +1862,15 @@ msgid "Reassign"
 msgstr "Neuzuweisung"
 
 #. module: academy
-#: field:academy.invoice.assistant,customer_ref:0 field:academy.payment,ref:0
+#: field:academy.location,notify_email:0
+#: field:academy.student,notify_email:0
+#: field:academy.trainer,notify_email:0
+msgid "Receive Inbox Notifications by Email"
+msgstr ""
+
+#. module: academy
+#: field:academy.invoice.assistant,customer_ref:0
+#: field:academy.payment,ref:0
 msgid "Reference"
 msgstr "Referenz"
 
@@ -930,16 +1905,6 @@ msgid "Registration"
 msgstr "Anmeldung"
 
 #. module: academy
-#: model:email.template,subject:academy.email_template_registration
-msgid "Registration ${object.name}"
-msgstr "Anmeldung ${object.name}"
-
-#. module: academy
-#: model:email.template,subject:academy.email_template_registration_cancel
-msgid "Registration ${object.name} Canceled"
-msgstr "Anmeldung ${object.name} storniert!"
-
-#. module: academy
 #: sql_constraint:academy.registration:0
 msgid "Registration name must be unique"
 msgstr "Name der Anmeldung muss eindeutig sein!"
@@ -971,6 +1936,13 @@ msgid "Registrations to check"
 msgstr "Anmeldungen zur Überprüfung"
 
 #. module: academy
+#: field:academy.location,parent_id:0
+#: field:academy.student,parent_id:0
+#: field:academy.trainer,parent_id:0
+msgid "Related Company"
+msgstr ""
+
+#. module: academy
 #: field:academy.registration,invoice_residual:0
 msgid "Residual"
 msgstr "Offen"
@@ -981,9 +1953,45 @@ msgid "Residual Amount"
 msgstr "Offener Betrag"
 
 #. module: academy
+#: field:academy.course.product,description_sale:0
+#: field:academy.fee,description_sale:0
+msgid "Sale Description"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,list_price:0
+#: field:academy.fee,list_price:0
 #: field:product.uom,list_price:0
 msgid "Sale Price"
 msgstr "Verkaufspreis"
+
+#. module: academy
+#: field:academy.location,property_product_pricelist:0
+#: field:academy.student,property_product_pricelist:0
+#: field:academy.trainer,property_product_pricelist:0
+msgid "Sale Pricelist"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,sale_order_ids:0
+#: field:academy.student,sale_order_ids:0
+#: field:academy.trainer,sale_order_ids:0
+msgid "Sales Order"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,section_id:0
+#: field:academy.student,section_id:0
+#: field:academy.trainer,section_id:0
+msgid "Sales Team"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,user_id:0
+#: field:academy.student,user_id:0
+#: field:academy.trainer,user_id:0
+msgid "Salesperson"
+msgstr ""
 
 #. module: academy
 #: view:academy.course.product:academy.search_academy_course_product
@@ -1026,6 +2034,19 @@ msgid "Search Year"
 msgstr "Schuljahrsuche"
 
 #. module: academy
+#: help:academy.course.product,categ_id:0
+#: help:academy.fee,categ_id:0
+msgid "Select category for the current product"
+msgstr ""
+
+#. module: academy
+#: help:academy.location,use_parent_address:0
+#: help:academy.student,use_parent_address:0
+#: help:academy.trainer,use_parent_address:0
+msgid "Select this if you want to set company's address information  for this contact"
+msgstr ""
+
+#. module: academy
 #: field:academy.config.settings,semester_id:0
 #: field:academy.invoice.assistant,semester_id:0
 #: view:academy.payment:academy.search_academy_payment
@@ -1057,7 +2078,8 @@ msgid "Semester Weeks minus Holiday Weeks"
 msgstr "Semester Woche minus der Ferien Wochen"
 
 #. module: academy
-#: field:academy.course.product,sequence:0 field:academy.fee,sequence:0
+#: field:academy.course.product,sequence:0
+#: field:academy.fee,sequence:0
 msgid "Sequence"
 msgstr "Sequenz"
 
@@ -1065,6 +2087,81 @@ msgstr "Sequenz"
 #: field:academy.fee,sibling_discount:0
 msgid "Sibling Discount"
 msgstr "Geschwister Nachlass"
+
+#. module: academy
+#: field:academy.location,signup_expiration:0
+#: field:academy.student,signup_expiration:0
+#: field:academy.trainer,signup_expiration:0
+msgid "Signup Expiration"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,signup_token:0
+#: field:academy.student,signup_token:0
+#: field:academy.trainer,signup_token:0
+msgid "Signup Token"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,signup_type:0
+#: field:academy.student,signup_type:0
+#: field:academy.trainer,signup_type:0
+msgid "Signup Token Type"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,signup_valid:0
+#: field:academy.student,signup_valid:0
+#: field:academy.trainer,signup_valid:0
+msgid "Signup Token is Valid"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,signup_url:0
+#: field:academy.student,signup_url:0
+#: field:academy.trainer,signup_url:0
+msgid "Signup URL"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,image_small:0
+#: field:academy.fee,image_small:0
+#: field:academy.location,image_small:0
+#: field:academy.student,image_small:0
+#: field:academy.trainer,image_small:0
+msgid "Small-sized image"
+msgstr ""
+
+#. module: academy
+#: help:academy.location,image_small:0
+#: help:academy.student,image_small:0
+#: help:academy.trainer,image_small:0
+msgid "Small-sized image of this contact. It is automatically resized as a 64x64px image, with aspect ratio preserved. Use this field anywhere a small image is required."
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,uos_id:0
+#: help:academy.fee,uos_id:0
+msgid "Specify a unit of measure here if invoicing is made in another unit of measure than inventory. Keep empty to use the default unit of measure."
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,sale_ok:0
+#: help:academy.fee,sale_ok:0
+msgid "Specify if the product can be selected in a sales order line."
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,account_expense_standard_id:0
+#: field:academy.fee,account_expense_standard_id:0
+msgid "Standard expense account"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,account_income_standard_id:0
+#: field:academy.fee,account_income_standard_id:0
+msgid "Standard income account"
+msgstr ""
 
 #. module: academy
 #: field:academy.semester,date_start:0
@@ -1091,12 +2188,28 @@ msgstr "Semester Beginn"
 
 #. module: academy
 #: view:academy.location:academy.form_academy_location
+#: field:academy.location,state_id:0
 #: view:academy.registration:academy.search_academy_registration
 #: field:academy.registration,state:0
 #: view:academy.student:academy.form_academy_student
+#: field:academy.student,state_id:0
 #: view:academy.trainer:academy.form_academy_trainer
+#: field:academy.trainer,state_id:0
 msgid "State"
 msgstr "Status"
+
+#. module: academy
+#: field:academy.course.product,state:0
+#: field:academy.fee,state:0
+msgid "Status"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,street:0
+#: field:academy.student,street:0
+#: field:academy.trainer,street:0
+msgid "Street"
+msgstr ""
 
 #. module: academy
 #: view:academy.location:academy.form_academy_location
@@ -1104,6 +2217,13 @@ msgstr "Status"
 #: view:academy.trainer:academy.form_academy_trainer
 msgid "Street..."
 msgstr "Strasse..."
+
+#. module: academy
+#: field:academy.location,street2:0
+#: field:academy.student,street2:0
+#: field:academy.trainer,street2:0
+msgid "Street2"
+msgstr ""
 
 #. module: academy
 #: view:academy.course:academy.form_academy_course
@@ -1116,15 +2236,55 @@ msgid "Student"
 msgstr "Schüler"
 
 #. module: academy
-#: field:academy.course,student_ids:0 field:academy.journal,student_ids:0
+#: field:academy.course,student_ids:0
+#: field:academy.journal,student_ids:0
 #: view:academy.student:academy.tree_academy_student
 msgid "Students"
 msgstr "Schüler"
 
 #. module: academy
+#: field:academy.course.product,message_summary:0
+#: field:academy.fee,message_summary:0
+#: field:academy.location,message_summary:0
 #: field:academy.registration,message_summary:0
+#: field:academy.student,message_summary:0
+#: field:academy.trainer,message_summary:0
 msgid "Summary"
 msgstr "Beschreibung"
+
+#. module: academy
+#: field:academy.course.product,seller_ids:0
+#: field:academy.fee,seller_ids:0
+#: field:academy.location,supplier:0
+#: field:academy.student,supplier:0
+#: field:academy.trainer,supplier:0
+msgid "Supplier"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,seller_delay:0
+#: field:academy.fee,seller_delay:0
+msgid "Supplier Lead Time"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,property_supplier_payment_term:0
+#: field:academy.student,property_supplier_payment_term:0
+#: field:academy.trainer,property_supplier_payment_term:0
+msgid "Supplier Payment Term"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,seller_qty:0
+#: field:academy.fee,seller_qty:0
+msgid "Supplier Quantity"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,supplier_taxes_id:0
+#: field:academy.fee,supplier_taxes_id:0
+msgid "Supplier Taxes"
+msgstr ""
 
 #. module: academy
 #: help:academy.semester.assistant,semester_id:0
@@ -1132,9 +2292,23 @@ msgid "Switch to the current semester"
 msgstr "Wechsle zu Semester"
 
 #. module: academy
+#: field:academy.location,vat:0
+#: field:academy.student,vat:0
+#: field:academy.trainer,vat:0
+msgid "TIN"
+msgstr ""
+
+#. module: academy
 #: view:academy.student:academy.search_academy_student
 msgid "Tag"
 msgstr "Stichwort"
+
+#. module: academy
+#: field:academy.location,category_id:0
+#: field:academy.student,category_id:0
+#: field:academy.trainer,category_id:0
+msgid "Tags"
+msgstr ""
 
 #. module: academy
 #: view:academy.location:academy.form_academy_location
@@ -1144,34 +2318,177 @@ msgid "Tags..."
 msgstr "Stichworte..."
 
 #. module: academy
-#: help:academy.registration,intership_date:0
-msgid ""
-"The Date when the Course starts. If no date was entered the Semester start "
-"date are used"
+#: help:academy.location,vat:0
+#: help:academy.student,vat:0
+#: help:academy.trainer,vat:0
+msgid "Tax Identification Number. Check the box if this contact is subjected to taxes. Used by the some of the legal statements."
 msgstr ""
-"Das Beginndatum des Kurses. Wird kein Datum eingegeben, wird das Beginndatum "
-"des Semesters verwendet"
 
 #. module: academy
-#: help:academy.journal,end:0 help:academy.journal.absence,time_to:0
+#: field:academy.course.product,name_template:0
+#: field:academy.fee,name_template:0
+msgid "Template Name"
+msgstr ""
+
+#. module: academy
+#: help:academy.registration,intership_date:0
+msgid "The Date when the Course starts. If no date was entered the Semester start date are used"
+msgstr "Das Beginndatum des Kurses. Wird kein Datum eingegeben, wird das Beginndatum des Semesters verwendet"
+
+#. module: academy
+#: help:academy.location,property_account_position:0
+#: help:academy.student,property_account_position:0
+#: help:academy.trainer,property_account_position:0
+msgid "The fiscal position will determine taxes and accounts used for the partner."
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,weight:0
+#: help:academy.fee,weight:0
+msgid "The gross weight in Kg."
+msgstr ""
+
+#. module: academy
+#: help:academy.location,user_id:0
+#: help:academy.student,user_id:0
+#: help:academy.trainer,user_id:0
+msgid "The internal user that is in charge of communicating with this contact if any."
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,weight_net:0
+#: help:academy.fee,weight_net:0
+msgid "The net weight in Kg."
+msgstr ""
+
+#. module: academy
+#: help:academy.location,tz:0
+#: help:academy.student,tz:0
+#: help:academy.trainer,tz:0
+msgid "The partner's timezone, used to output proper date and time values inside printed reports. It is important to set a value for this field. You should use the same timezone that is otherwise used to pick and render date and time values: your computer's timezone."
+msgstr ""
+
+#. module: academy
+#: help:academy.journal,end:0
+#: help:academy.journal.absence,time_to:0
 msgid "The time must be between 00:00 and 24:00 o'clock"
 msgstr "Die Zeit muss zwischen 00:00 und 24:00 Uhr sein."
 
 #. module: academy
-#: help:academy.journal,begin:0 help:academy.journal.absence,time_from:0
-msgid ""
-"The time must be between 00:00 and 24:00 o'clock and must not be bigger than "
-"the end"
+#: help:academy.journal,begin:0
+#: help:academy.journal.absence,time_from:0
+msgid "The time must be between 00:00 and 24:00 o'clock and must not be bigger than the end"
+msgstr "Die Zeit muss zwischen 00:00 und 24:00 Uhr und darf nicht größer als das Ende sein."
+
+#. module: academy
+#: help:academy.course.product,volume:0
+#: help:academy.fee,volume:0
+msgid "The volume in m3."
 msgstr ""
-"Die Zeit muss zwischen 00:00 und 24:00 Uhr und darf nicht größer als das "
-"Ende sein."
 
 #. module: academy
 #: help:academy.registration,abort_date:0
 msgid "This Date must be set, if the semester was not finished"
+msgstr "Dieses Datum muss gesetzt werden, wenn das Semester vorzeitig abgebrochen wird"
+
+#. module: academy
+#: help:academy.course.product,property_account_expense:0
+#: help:academy.fee,property_account_expense:0
+msgid "This account will be used for invoices instead of the default one to value expenses for the current product."
 msgstr ""
-"Dieses Datum muss gesetzt werden, wenn das Semester vorzeitig abgebrochen "
-"wird"
+
+#. module: academy
+#: help:academy.course.product,property_account_income:0
+#: help:academy.fee,property_account_income:0
+msgid "This account will be used for invoices instead of the default one to value sales for the current product."
+msgstr ""
+
+#. module: academy
+#: help:academy.location,property_account_payable:0
+#: help:academy.student,property_account_payable:0
+#: help:academy.trainer,property_account_payable:0
+msgid "This account will be used instead of the default one as the payable account for the current partner"
+msgstr ""
+
+#. module: academy
+#: help:academy.location,property_account_receivable:0
+#: help:academy.student,property_account_receivable:0
+#: help:academy.trainer,property_account_receivable:0
+msgid "This account will be used instead of the default one as the receivable account for the current partner"
+msgstr ""
+
+#. module: academy
+#: help:academy.location,image:0
+#: help:academy.student,image:0
+#: help:academy.trainer,image:0
+msgid "This field holds the image used as avatar for this contact, limited to 1024x1024px"
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,image_variant:0
+#: help:academy.fee,image_variant:0
+msgid "This field holds the image used as image for the product variant, limited to 1024x1024px."
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,seller_qty:0
+#: help:academy.fee,seller_qty:0
+msgid "This is minimum quantity to purchase from Main Supplier."
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,seller_delay:0
+#: help:academy.fee,seller_delay:0
+msgid "This is the average delay in days between the purchase order confirmation and the receipts for this product and for the default supplier. It is used by the scheduler to order requests based on reordering delays."
+msgstr ""
+
+#. module: academy
+#: help:academy.course.product,price_extra:0
+#: help:academy.fee,price_extra:0
+msgid "This is the sum of the extra price of all attributes"
+msgstr ""
+
+#. module: academy
+#: help:academy.location,property_supplier_payment_term:0
+#: help:academy.student,property_supplier_payment_term:0
+#: help:academy.trainer,property_supplier_payment_term:0
+msgid "This payment term will be used instead of the default one for purchase orders and supplier invoices"
+msgstr ""
+
+#. module: academy
+#: help:academy.location,property_payment_term:0
+#: help:academy.student,property_payment_term:0
+#: help:academy.trainer,property_payment_term:0
+msgid "This payment term will be used instead of the default one for sale orders and customer invoices"
+msgstr ""
+
+#. module: academy
+#: help:academy.location,property_product_pricelist:0
+#: help:academy.student,property_product_pricelist:0
+#: help:academy.trainer,property_product_pricelist:0
+msgid "This pricelist will be used, instead of the default one, for sales to the current partner"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,tz:0
+#: field:academy.student,tz:0
+#: field:academy.trainer,tz:0
+msgid "Timezone"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,tz_offset:0
+#: field:academy.student,tz_offset:0
+#: field:academy.trainer,tz_offset:0
+msgid "Timezone offset"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,title:0
+#: field:academy.student,title:0
+#: field:academy.trainer,title:0
+msgid "Title"
+msgstr ""
 
 #. module: academy
 #: field:academy.journal.absence,time_to:0
@@ -1198,6 +2515,41 @@ msgstr "Thema"
 #: field:academy.course,topic_ids:0
 msgid "Topics"
 msgstr "Themen"
+
+#. module: academy
+#: field:academy.location,total_invoiced:0
+#: field:academy.student,total_invoiced:0
+#: field:academy.trainer,total_invoiced:0
+msgid "Total Invoiced"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,debit:0
+#: field:academy.student,debit:0
+#: field:academy.trainer,debit:0
+msgid "Total Payable"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,credit:0
+#: field:academy.student,credit:0
+#: field:academy.trainer,credit:0
+msgid "Total Receivable"
+msgstr ""
+
+#. module: academy
+#: help:academy.location,credit:0
+#: help:academy.student,credit:0
+#: help:academy.trainer,credit:0
+msgid "Total amount this customer owes you."
+msgstr ""
+
+#. module: academy
+#: help:academy.location,debit:0
+#: help:academy.student,debit:0
+#: help:academy.trainer,debit:0
+msgid "Total amount you have to pay to this supplier."
+msgstr ""
 
 #. module: academy
 #: field:academy.contract,trainer_id:0
@@ -1233,7 +2585,8 @@ msgid "Transport Expenses"
 msgstr "Fahrtkosten"
 
 #. module: academy
-#: field:academy.registration,uom_id:0 field:academy.trainer.reg.wizard,unit:0
+#: field:academy.registration,uom_id:0
+#: field:academy.trainer.reg.wizard,unit:0
 msgid "Unit"
 msgstr "Einheit"
 
@@ -1243,12 +2596,31 @@ msgid "Unit Category"
 msgstr "Einheitenkategorie"
 
 #. module: academy
+#: field:academy.course.product,uom_id:0
+#: field:academy.fee,uom_id:0
+msgid "Unit of Measure"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,uos_coeff:0
+#: field:academy.fee,uos_coeff:0
+msgid "Unit of Measure -> UOS Coeff"
+msgstr ""
+
+#. module: academy
 #: model:ir.ui.menu,name:academy.menu_academy_uom_category
 msgid "Unit of Measure Categories"
 msgstr "Einheiten"
 
 #. module: academy
-#: field:academy.journal,duration:0 field:academy.topic,duration:0
+#: field:academy.course.product,uos_id:0
+#: field:academy.fee,uos_id:0
+msgid "Unit of Sale"
+msgstr ""
+
+#. module: academy
+#: field:academy.journal,duration:0
+#: field:academy.topic,duration:0
 msgid "Unit(s)"
 msgstr "Einheit(en)"
 
@@ -1264,9 +2636,21 @@ msgid "Unpostet"
 msgstr "Ungebucht"
 
 #. module: academy
+#: field:academy.course.product,message_unread:0
+#: field:academy.fee,message_unread:0
+#: field:academy.location,message_unread:0
 #: field:academy.registration,message_unread:0
+#: field:academy.student,message_unread:0
+#: field:academy.trainer,message_unread:0
 msgid "Unread Messages"
 msgstr "Ungelesene Nachrichten"
+
+#. module: academy
+#: field:academy.location,use_parent_address:0
+#: field:academy.student,use_parent_address:0
+#: field:academy.trainer,use_parent_address:0
+msgid "Use Company Address"
+msgstr ""
 
 #. module: academy
 #: view:academy.student:academy.form_academy_student
@@ -1274,9 +2658,61 @@ msgid "Use parents address?"
 msgstr "Adresse vom Erziehungsberechtigten benutzen?"
 
 #. module: academy
+#: help:academy.location,type:0
+#: help:academy.student,type:0
+#: help:academy.trainer,type:0
+msgid "Used to select automatically the right address according to the context in sales and purchases documents."
+msgstr ""
+
+#. module: academy
+#: field:academy.location,user_ids:0
+#: field:academy.student,user_ids:0
+#: field:academy.trainer,user_ids:0
+msgid "Users"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,vat_subjected:0
+#: field:academy.student,vat_subjected:0
+#: field:academy.trainer,vat_subjected:0
+msgid "VAT Legal Statement"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,price_extra:0
+#: field:academy.fee,price_extra:0
+msgid "Variant Extra Price"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,image_variant:0
+#: field:academy.fee,image_variant:0
+msgid "Variant Image"
+msgstr ""
+
+#. module: academy
+#: field:academy.course.product,volume:0
+#: field:academy.fee,volume:0
+msgid "Volume"
+msgstr ""
+
+#. module: academy
 #: field:academy.payment,voucher_id:0
 msgid "Voucher"
 msgstr "Zahlung"
+
+#. module: academy
+#: field:academy.course.product,warranty:0
+#: field:academy.fee,warranty:0
+msgid "Warranty"
+msgstr ""
+
+#. module: academy
+#: field:academy.location,website:0
+#: field:academy.student,website:0
+#: field:academy.trainer,website:0
+msgid "Website"
+msgstr ""
 
 #. module: academy
 #: field:academy.registration,website_message_ids:0
@@ -1287,6 +2723,13 @@ msgstr "Nachrichten"
 #: help:academy.registration,website_message_ids:0
 msgid "Website communication history"
 msgstr "Kommunikationsübersicht"
+
+#. module: academy
+#: help:academy.location,website:0
+#: help:academy.student,website:0
+#: help:academy.trainer,website:0
+msgid "Website of Partner or Company"
+msgstr ""
 
 #. module: academy
 #: field:academy.semester,year_id:0
@@ -1307,6 +2750,13 @@ msgstr "Jahre"
 #: view:academy.trainer:academy.form_academy_trainer
 msgid "ZIP"
 msgstr "PLZ"
+
+#. module: academy
+#: field:academy.location,zip:0
+#: field:academy.student,zip:0
+#: field:academy.trainer,zip:0
+msgid "Zip"
+msgstr ""
 
 #. module: academy
 #: model:ir.module.category,description:academy.module_category_academy
@@ -1343,3 +2793,11 @@ msgstr "Beschreibung welche auf Angeboten gezeigt werden soll"
 #: view:academy.trainer.reg.wizard:academy.wizard_trainer_reg
 msgid "or"
 msgstr "oder"
+
+#. module: academy
+#: field:academy.location,has_image:0
+#: field:academy.student,has_image:0
+#: field:academy.trainer,has_image:0
+msgid "unknown"
+msgstr ""
+
