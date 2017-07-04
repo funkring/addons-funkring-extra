@@ -205,6 +205,8 @@ class chicken_logbook(models.Model):
             filled = False
             note = ""
             chicken_age_weeks = 0
+            chicken_count = 0
+            eggs_performance = 0.0
             
             for log in log_obj.search([("logbook_id","=",self.id),("day","=",week_day)]):
                 loss = log.loss
