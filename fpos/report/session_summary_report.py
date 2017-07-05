@@ -261,7 +261,6 @@ class Parser(extreport.basic_parser):
         io_dict = {}
         st_dict = {}
         st_user_dict = {}
-        tax_dict = {}
 
         statements = []
         details = []
@@ -448,14 +447,9 @@ class Parser(extreport.basic_parser):
                 product = line.product_id
                 if product.id == status_id:
                     continue
-                #if line.qty == 0.0:
-                #    continue
 
                 # get taxes
-                taxes = tax_dict.get(product.id,None)
-                if taxes is None:
-                    taxes = order_line_obj._get_taxes(self.cr, self.uid, line, context=self.localcontext)
-                    tax_dict[product.id] = taxes
+                taxes = order_line_obj._get_taxes(self.cr, self.uid, line, context=self.localcontext)
 
                 # compute taxes
                 price = line.price_unit * (1.0 - (line.discount or 0.0) / 100.0)
