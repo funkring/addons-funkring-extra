@@ -39,6 +39,9 @@ class account_invoice(osv.Model):
         return res
         
     _inherit = "account.invoice"
+    _columns = {
+        "invoice_per_mail" : fields.boolean("Send per Mail")
+    }
         
 
 class account_invoice_line(osv.Model):

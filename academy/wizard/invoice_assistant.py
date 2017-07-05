@@ -223,10 +223,16 @@ class academy_invoice_assistant(osv.osv_memory):
                                           "invoice_id" : invoice_id})      
             
             # write origin
-            origin = reg.name
+            origin = reg.name            
             if invoice.origin and origin:
                 origin = "%s:%s" % (invoice.origin,origin)
-            invoice_obj.write(cr, uid, invoice_id, { "origin" : origin}, context=context)
+                
+            # check invoice per mail
+            inv_values = {"origin" : origin}
+            if reg.invoice_per_mail and not invoice.invoice_per_mail:
+                inv_values["invoice_per_mail"] = True
+                
+            invoice_obj.write(cr, uid, invoice_id, inv_values, context=context)
             
             # validate invoice
             invoice_obj.button_compute(cr, uid, [invoice_id], context=context)
