@@ -82,8 +82,23 @@
                         <field name="dep_key" attrs="{'invisible' : ['|','|',('sign_method','=',False),('liveop','=',False),('sign_status','=','draft')]}"/>
                     </group>
                 </group>
-            </group>             
-            <group string="Receipt" position="after">               
+            </group>   
+            <group string="Receipt" position="replace">
+                <group string="Receipt">
+                    <group>
+                        <div>
+                            <label for="receipt_header" class="oe_edit_only"/>                            
+                            <field name="receipt_header" placeholder="A custom receipt header message"/>
+                            <label for="receipt_footer" class="oe_edit_only"/>
+                            <field name="receipt_footer" placeholder="A custom receipt footer message"/>
+                        </div>
+                    </group>
+                    <group>                        
+                        <div>
+                            <field name="image_80mm" widget="image" class="oe_avatar oe_left"/>
+                        </div>
+                    </group>
+                </group>               
                 <group string="User" colspan="4">                  
                     <div>
                         <field name="user_ids"/>

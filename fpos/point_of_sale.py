@@ -27,6 +27,7 @@ from openerp.tools.translate import _
 from openerp.addons.at_base import util
 from openerp.addons.at_base import helper
 from openerp import api
+from openerp import tools
 
 from Crypto import Random
 from Crypto.Hash import SHA256
@@ -89,6 +90,21 @@ class pos_category(osv.osv):
 
 
 class pos_config(osv.Model):
+    
+    def _get_image(self, cr, uid, ids, name, args, context=None):
+        result = dict.fromkeys(ids, False)
+        for obj in self.browse(cr, uid, ids, context=context):
+            image_data = obj.image
+            result[obj.id] = {
+                "image": tools.image_resize_image(image_data, (1024,2024), avoid_if_small=True),
+                "image_80mm": tools.image_resize_image(image_data, (576,576), avoid_if_small=True),
+                "image_56mm": tools.image_resize_image(image_data, (384,384), avoid_if_small=True)
+            }
+        return result
+
+    def _set_image(self, cr, uid, oid, name, value, args, context=None):
+        image_data = tools.image_resize_image(value, (1024,2024), avoid_if_small=True)
+        return self.write(cr, uid, [oid], {"image": image_data}, context=context)
 
     _inherit = "pos.config"
     _columns = {
@@ -161,7 +177,24 @@ class pos_config(osv.Model):
                 ("tablet","Tablet POS"),
                 ("pc","PC POS"),
                 ("jim","OrderJIM")
-            ], "Fpos Model")
+            ], "Fpos Model"),
+                
+                
+        # image: all image fields are base64 encoded and PIL-supported
+        'image': fields.binary("Image",
+            help="Receipt Image"),
+        'image_80mm': fields.function(_get_image, fnct_inv=_set_image,
+            string="Receipt Image 80mm", type="binary",
+            multi="_get_image",
+            store={
+                "pos.config": (lambda self, cr, uid, ids, c={}: ids, ['image'], 10),
+            }),
+        'image_58mm': fields.function(_get_image, fnct_inv=_set_image,
+            string="Receipt Image 56mm", type="binary",
+            multi="_get_image",
+            store={
+                "pos.config": (lambda self, cr, uid, ids, c={}: ids, ['image'], 10),
+            })        
     }
     _sql_constraints = [
         ("user_uniq", "unique (user_id)", "Fpos User could only assinged once"),
