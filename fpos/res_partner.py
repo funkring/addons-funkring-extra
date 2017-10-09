@@ -113,7 +113,7 @@ class res_partner(osv.Model):
             filtered_order_ids.append(order.id)  
             lines.append({
                 "name": " ".join([f.formatLang(fpos_order.date, date_time=True), order.name]),
-                "note": order.pos_reference,
+                "notice": order.pos_reference,
                 "qty": 1,
                 "price": fpos_order.amount_total,
                 "subtotal_incl": fpos_order.amount_total,
@@ -139,6 +139,15 @@ class res_partner(osv.Model):
                     flags += "2"
                 if flags.find("x") < 0:
                     flags += "x"
+                
+                # correct negative
+                idx_minus = flags.find("-")
+                if idx_minus < 0 and fpos_line.subtotal_incl < 0:
+                    flags += "-"                    
+                elif idx_minus >= 0 and fpos_line.subtotal_incl > 0:
+                    flags = flags.replace("-","")
+
+                # set flags                    
                 line_values["flags"] = flags
                                          
                 # add            

@@ -24,7 +24,8 @@ Ext.application({
 
     models: [
         'BarKeeper.model.Status',
-        'BarKeeper.model.PosConfig'
+        'BarKeeper.model.PosConfig',
+        'BarKeeper.model.FilterModel'
     ],
     
     stores: [

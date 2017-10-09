@@ -7,11 +7,11 @@ Ext.define('BarKeeper.controller.StatusCtrl', {
          'Ext.ux.Deferred',
          'Ext.dataview.List',
          'Ext.form.Panel',
-         'Ext.field.DatePicker',
-         'Ext.field.Select',
+         'Ext.data.Store',
          'BarKeeper.core.Core',
          'BarKeeper.view.StatusView',
-         'BarKeeper.model.Status'
+         'BarKeeper.model.Status',
+         'BarKeeper.model.FilterModel'
     ],
     config: {
          refs: {            
@@ -158,7 +158,7 @@ Ext.define('BarKeeper.controller.StatusCtrl', {
         
         // load status
         ViewManager.startLoading('Lade Daten...');
-        Core.getModel('pos.config').call('barkeeper_status',[options],{context:Core.getContext()}).then(function(data) {
+        Core.call('pos.config', 'barkeeper_status', [options]).then(function(data) {
             ViewManager.stopLoading();
             self.data.set('status', data);  
         }, function(err) {            
@@ -185,7 +185,7 @@ Ext.define('BarKeeper.controller.StatusCtrl', {
     selectPosConfig: function() {
         var self = this;
         ViewManager.startLoading('Lade Daten...');
-        Core.getModel('pos.config').call('search_read', [[['parent_user_id','=',null],['state','=','active']], ['name']],{context:Core.getContext()}).then(function(rows) {
+        Core.call('pos.config', 'search_read', [[['parent_user_id','=',null],['state','=','active']], ['name']]).then(function(rows) {
             ViewManager.stopLoading();
             Ext.StoreMgr.lookup("PosConfigStore").setData(rows);
             self.getMainView().push({
@@ -219,57 +219,79 @@ Ext.define('BarKeeper.controller.StatusCtrl', {
         // mode
         var mode = options.mode || 'today';
         
+        /*
         // date
         var date = new Date();
         if ( options.date ) {
             date = futil.strToDate(options.date);
-        }
+        }*/
         
-        var configForm = Ext.create('Ext.form.Panel',{
-           title: 'Bereich',
-           fullscreen: true,
-           saveable: true,
-           saveHandler: function(view) {            
-               var values = view.getValues();               
-               options.date = futil.dateToStr(values.date);
-               options.mode = values.mode;
-               setTimeout(function() {
-                    self.loadData(options);    
-               }, 0);
-           },
-           items: [{
-                xtype: 'fieldset',
-                items: [                   
-                    {
-                        xtype: 'selectfield',
-                        label: 'Ansicht',
-                        name: 'mode',
-                        doneButton: 'Auswählen',
-                        cancelButton: 'Abbrechen',
-                        options: [
-                             { text: 'Heute', value: 'today' },
-                             { text: 'Tag', value: 'day' },
-                             { text: 'Woche', value: 'week' },
-                             { text: 'Monat', value: 'month' }
-                        ]
-                    },
-                    {
-                        xtype: 'datepickerfield',
-                        label: 'Datum',
-                        name: 'date',
-                        dateFormat: 'd.m.Y',
-                        doneButton: 'Auswählen',
-                        cancelButton: 'Abbrechen'
-                    }                    
-                ]  
-           }]
-        });
+        var filterMode = null;
+        var level = 0;
+                
+        var createListView = function(filter_data) {
+          level++;
+          
+          var filterStoreConfig = {
+            model: 'BarKeeper.model.FilterModel',
+            data: filter_data.data           
+          };
+          
+          var grouped = false;
+          if ( filter_data.group ) {
+            grouped = true;
+            filterStoreConfig.sorters = {
+              property: 'date',
+              direction: 'DESC'
+            };
+            filterStoreConfig.grouper = {
+              property: 'group',
+              direction: 'DESC'
+            };
+          }
+          
+          return {
+              xtype: 'list',
+              itemTpl: '{name}',
+              store: Ext.create("Ext.data.Store", filterStoreConfig),
+              grouped: grouped,
+              fullscreen: true,
+              title: filter_data.title,
+              disableSelection: true,
+              listeners: {
+                itemtap: function(list, index, target, record)  {
+                  // load filter
+                  var next = record.get('next');
+                  if ( !next || filterMode == record.get('mode')) {
+                    options.mode = record.get('mode');
+                    options.date = record.get('date');
+                    self.getMainView().pop(level);
+                    self.loadData(options);                  
+                  } else { 
+                    // go deeper
+                    ViewManager.startLoading("Lade Daten...");
+                    Core.call("pos.config", next, [record.get('date')]).then(function(filter_data) {
+                      ViewManager.stopLoading();
+                      self.getMainView().push(createListView(filter_data));
+                    }, function(err) {
+                      ViewManager.handleError(err);                      
+                    });
+                  }
+                  if ( !filterMode ) {
+                    filterMode = record.get('mode');
+                  }
+                }
+              }
+            };
+        };
         
-        configForm.setValues({
-            mode: mode,
-            date: date
+        ViewManager.startLoading("Lade Filter...");
+        Core.call("pos.config","barkeeper_range_filter").then(function(filter_data) {
+          ViewManager.stopLoading();
+          self.getMainView().push(createListView(filter_data));
+        }, function(err) {
+          ViewManager.handleError(err);
         });
-        self.getMainView().push(configForm);
     }
     
 });

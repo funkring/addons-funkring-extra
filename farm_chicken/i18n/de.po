@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-03 14:53+0000\n"
-"PO-Revision-Date: 2017-07-03 16:57+0100\n"
+"POT-Creation-Date: 2017-08-30 14:16+0000\n"
+"PO-Revision-Date: 2017-08-30 16:16+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -122,6 +122,7 @@ msgstr ""
 "        </p>\n"
 
 #. module: farm_chicken
+#: view:farm.chicken.log:farm_chicken.search_chicken_log
 #: selection:farm.chicken.logbook,state:0
 msgid "Active"
 msgstr "Aktiv"
@@ -132,8 +133,8 @@ msgid "Available"
 msgstr "Verfügbar"
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:267
-#: code:addons/farm_chicken/farm_chicken.py:325
+#: code:addons/farm_chicken/farm_chicken.py:320
+#: code:addons/farm_chicken/farm_chicken.py:385
 #: field:farm.chicken.log,eggs_broken:0
 #: field:farm.chicken.log.report,eggs_broken:0
 #, python-format
@@ -141,8 +142,8 @@ msgid "Broken Eggs"
 msgstr "Brucheier"
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:112
-#: code:addons/farm_chicken/farm_chicken.py:161
+#: code:addons/farm_chicken/farm_chicken.py:124
+#: code:addons/farm_chicken/farm_chicken.py:173
 #, python-format
 msgid "CW %W"
 msgstr "KW %W"
@@ -177,8 +178,8 @@ msgid "Chicken Age [Weeks]"
 msgstr "Hühner Alter [Wochen]"
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:275
-#: code:addons/farm_chicken/farm_chicken.py:353
+#: code:addons/farm_chicken/farm_chicken.py:340
+#: code:addons/farm_chicken/farm_chicken.py:405
 #: view:farm.chicken.log:farm_chicken.form_chicken_log
 #: field:farm.chicken.log,chicken_count:0
 #: field:farm.chicken.log.report,chicken_count:0
@@ -214,8 +215,8 @@ msgid "Chicken Loss"
 msgstr "Hühner Ausfall"
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:283
-#: code:addons/farm_chicken/farm_chicken.py:349
+#: code:addons/farm_chicken/farm_chicken.py:344
+#: code:addons/farm_chicken/farm_chicken.py:410
 #, python-format
 msgid "Chicken Weight"
 msgstr "Gewicht Hühner"
@@ -283,6 +284,17 @@ msgid "Day"
 msgstr "Tag"
 
 #. module: farm_chicken
+#: code:addons/farm_chicken/farm_chicken.py:348
+#, python-format
+msgid "Day Age"
+msgstr "Tagesalter"
+
+#. module: farm_chicken
+#: view:farm.chicken.log:farm_chicken.tree_chicken_log_input
+msgid "Days"
+msgstr "Tage"
+
+#. module: farm_chicken
 #: field:farm.chicken.log,delivered_eggs_mixed:0
 msgid "Delivered Eggs"
 msgstr "Gelieferte Eier"
@@ -304,7 +316,8 @@ msgid "Delivery"
 msgstr "Lieferung"
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:329
+#: code:addons/farm_chicken/farm_chicken.py:324
+#: code:addons/farm_chicken/farm_chicken.py:389
 #: field:farm.chicken.log,eggs_dirty:0
 #: field:farm.chicken.log.report,eggs_dirty:0
 #, python-format
@@ -325,7 +338,7 @@ msgid "Done"
 msgstr "Abgeschlossen"
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:142
+#: code:addons/farm_chicken/farm_chicken.py:154
 #, python-format
 msgid "Done log could not be changed!"
 msgstr "Abgeschlossener Eintrag kann nicht verändert werden!"
@@ -336,7 +349,8 @@ msgid "Draft"
 msgstr "Entwurf"
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:357
+#: code:addons/farm_chicken/farm_chicken.py:332
+#: code:addons/farm_chicken/farm_chicken.py:397
 #, python-format
 msgid "Egg Performance"
 msgstr "Legeleistung"
@@ -347,7 +361,7 @@ msgid "Egg Quality"
 msgstr "Eierqualität"
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:317
+#: code:addons/farm_chicken/farm_chicken.py:377
 #: view:farm.chicken.log:farm_chicken.form_chicken_log
 #, python-format
 msgid "Eggs"
@@ -384,8 +398,8 @@ msgid "Eggs Dote Color"
 msgstr "Farbe Eierdotter"
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:263
-#: code:addons/farm_chicken/farm_chicken.py:321
+#: code:addons/farm_chicken/farm_chicken.py:316
+#: code:addons/farm_chicken/farm_chicken.py:381
 #: field:farm.chicken.log,eggs_machine:0
 #, python-format
 msgid "Eggs Machine"
@@ -421,7 +435,7 @@ msgid "Eggs Top"
 msgstr "Eier verlegt oben"
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:259
+#: code:addons/farm_chicken/farm_chicken.py:312
 #: field:farm.chicken.log,eggs_total:0
 #: field:farm.chicken.log.report,eggs_total:0
 #, python-format
@@ -429,8 +443,8 @@ msgid "Eggs Total"
 msgstr "Eier Gesamt"
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:279
-#: code:addons/farm_chicken/farm_chicken.py:345
+#: code:addons/farm_chicken/farm_chicken.py:328
+#: code:addons/farm_chicken/farm_chicken.py:393
 #, python-format
 msgid "Eggs Weight"
 msgstr "Gewicht Eier"
@@ -466,6 +480,13 @@ msgid "Environment"
 msgstr "Umgebung"
 
 #. module: farm_chicken
+#: code:addons/farm_chicken/farm_chicken.py:352
+#: code:addons/farm_chicken/farm_chicken.py:418
+#, python-format
+msgid "Feed"
+msgstr "Futter"
+
+#. module: farm_chicken
 #: field:farm.chicken.log.report,feed:0
 msgid "Feet"
 msgstr "Futter"
@@ -474,12 +495,6 @@ msgstr "Futter"
 #: field:farm.chicken.log,feed:0
 msgid "Feet [kg]"
 msgstr "Futter [kg]"
-
-#. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:337
-#, python-format
-msgid "Filled"
-msgstr "Ausgefüllt"
 
 #. module: farm_chicken
 #: field:farm.chicken.log,message_follower_ids:0
@@ -541,6 +556,12 @@ msgstr "Wenn aktiv, dann sollte die Nachricht angechaut werden"
 #: selection:farm.chicken.logbook,state:0
 msgid "Inactive"
 msgstr "Inaktiv"
+
+#. module: farm_chicken
+#: model:ir.actions.act_window,name:farm_chicken.action_chicken_log_input_tree
+#: model:ir.ui.menu,name:farm_chicken.menu_chicken_log_input
+msgid "Input"
+msgstr "Eingabe"
 
 #. module: farm_chicken
 #: field:farm.chicken.log,inv_exists:0
@@ -651,8 +672,8 @@ msgid "Logs"
 msgstr "Tage"
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:271
-#: code:addons/farm_chicken/farm_chicken.py:333 field:farm.chicken.log,loss:0
+#: code:addons/farm_chicken/farm_chicken.py:336
+#: code:addons/farm_chicken/farm_chicken.py:401 field:farm.chicken.log,loss:0
 #: field:farm.chicken.log.report,loss:0
 #, python-format
 msgid "Loss"
@@ -706,7 +727,7 @@ msgid "Nest Eggs"
 msgstr "Nesteier"
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:86
+#: code:addons/farm_chicken/farm_chicken.py:95
 #, python-format
 msgid "No active logbook for house %s"
 msgstr "Keine aktive Produktion für Stall mit ID %s"
@@ -808,7 +829,7 @@ msgid "To Draft"
 msgstr "Zurücksetzen"
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:138
+#: code:addons/farm_chicken/farm_chicken.py:150
 #, python-format
 msgid "Unable to change logentry which is already validated"
 msgstr ""
@@ -828,6 +849,7 @@ msgstr "Gültig"
 
 #. module: farm_chicken
 #: view:farm.chicken.log:farm_chicken.form_chicken_log
+#: view:farm.chicken.logbook:farm_chicken.form_logbook
 #: view:farm.chicken.validate.log.wizard:farm_chicken.wizard_validate_log
 msgid "Validate"
 msgstr "Validieren"
@@ -849,13 +871,10 @@ msgstr ""
 "könn sie nicht mehr editiert werden."
 
 #. module: farm_chicken
-#: code:addons/farm_chicken/farm_chicken.py:341
-#, python-format
-msgid "Validated"
-msgstr "Validiert"
-
-#. module: farm_chicken
+#: code:addons/farm_chicken/farm_chicken.py:356
+#: code:addons/farm_chicken/farm_chicken.py:422
 #: field:farm.chicken.log.report,water:0
+#, python-format
 msgid "Water"
 msgstr "Wasser"
 
@@ -863,6 +882,12 @@ msgstr "Wasser"
 #: field:farm.chicken.log,water:0
 msgid "Water [l]"
 msgstr "Wasser [l]"
+
+#. module: farm_chicken
+#: code:addons/farm_chicken/farm_chicken.py:414
+#, python-format
+msgid "Week Age"
+msgstr "Wochenalter"
 
 #. module: farm_chicken
 #: field:farm.chicken.log,weight:0

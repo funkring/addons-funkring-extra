@@ -10,7 +10,8 @@
             <button name="action_start" type="object" states="draft" string="Start" class="oe_highlight"/>            
             <button name="action_done" type="object" states="active,inactive" string="Close" class="oe_highlight"/>
             <button name="action_draft" type="object" states="active,done,inactive" string="To Draft"/>
-            <button name="action_inactive" type="object" states="active" string="Inactive"/>          
+            <button name="action_inactive" type="object" states="active" string="Inactive"/>
+            <button name="action_validate" type="object" states="active" string="Validate"/>          
             <field name="state" widget="statusbar" statusbar_visible="draft,active"/>
           </header>
           <sheet string="Production">
@@ -81,16 +82,11 @@
       <field name="res_model">farm.chicken.logbook</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
-      <field name="context">{'search_default_filter_available':1}</field>
-      <field name="help" type="html">
-        <p class="oe_view_nocontent_create">
-            Click here to create a new Logbook for an chicken house
-        </p>
-      </field>
+      <field name="context">{'search_default_filter_available':1}</field>      
     </record>
 
     <menuitem id="menu_logbook" name="Production" parent="menu_farm_chicken" 
-      sequence="10" 
+      sequence="20" 
       action="action_logbook" />
       
   </data>

@@ -125,10 +125,11 @@
             <field name="day"/>
             <field name="logbook_id"/>
             <field name="state"/>
+            <filter name="filter_logbook" string="Active" domain="[('logbook_id.state','=','active'),('logbook_id.house_id.hidden','!=',True)]"/>
             <group expand="0" string="Group By...">
-                <filter string="Day" context="{'group_by': 'day'}"/>
-                <filter string="Logbook" context="{'group_by': 'logbook_id'}"/>
-                <filter string="Status" context="{'group_by': 'state'}"/>
+                <filter name="group_day" string="Day" context="{'group_by': 'day'}"/>
+                <filter name="group_logbook" string="Logbook" context="{'group_by': 'logbook_id'}"/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
             </group>
         </search>
       </field>
@@ -139,15 +140,11 @@
       <field name="res_model">farm.chicken.log</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
-      <field name="help" type="html">
-        <p class="oe_view_nocontent_create">
-          Click here to create a new daily chicken log
-        </p>
-      </field>
+      <field name="context">{'search_default_filter_logbook':1,'search_default_group_logbook':1}</field>
     </record>
 
     <menuitem id="menu_chicken_log" name="Logs" parent="menu_farm_chicken" 
-      sequence="1"  
+      sequence="11"  
       action="action_chicken_log" />
   </data>
 </openerp>

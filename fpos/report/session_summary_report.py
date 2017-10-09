@@ -22,6 +22,9 @@ class Parser(extreport.basic_parser):
             "getSessions" : self._getSessions,
             "print_detail" : context.get("print_detail", name == "fpos.report_session_detail"),
             "print_product" : context.get("print_product", name == "fpos.report_session_product"),
+            "print_product_summary" : context.get("print_product_summary", False),
+            "print_product_intern" : context.get("print_product_intern", False),
+            "journal_ids": context.get("journal_ids"),
             "no_group" : context.get("no_group", False),
             "summary" : context.get("summary", False),
             "cashreport_name" : context.get("cashreport_name",""),
@@ -31,7 +34,8 @@ class Parser(extreport.basic_parser):
             "dailyRange" : self._dailyRange,
             "dailyEnd" : self._dailyEnd,
             "dailyStart" : self._dailyStart,
-            "groupDetail" : self._groupedDetail
+            "groupDetail" : self._groupedDetail,
+            "taxInfo": self._taxInfo
         })
 
     def _groupByConfig(self, sessions):
@@ -173,34 +177,75 @@ class Parser(extreport.basic_parser):
                 qtyStr = self.formatLang(qty, digits=product.pos_amount_dec)
             return "%s %s %s" % (qtyStr, uom.name, line.name)
 
+    def _taxInfo(self, taxes, currency):
+        taxInfo = []
+        for tax in taxes:
+            taxInfo.append("%s: %s %s" % (tax["name"], self.formatLang(tax["amount"]), currency))
+        if taxInfo:
+            return ", ".join(taxInfo)
+        return ""
+        
     def _sortedDetail(self, details):
-        return sorted(details, key=lambda val: (val.get("qty",0.0), val.get("name")), reverse=True)
+        nameGroups = {}
+
+        for detail in details:
+            groupName = detail.get("name","")[:10]
+            nameGroup = nameGroups.get(groupName)
+            if nameGroup is None:
+                nameGroup = {
+                    "details": [],
+                    "name": groupName,
+                    "qty": 0.0
+                }
+                nameGroups[groupName] = nameGroup
+                
+            qty = nameGroup["qty"] + detail.get("qty",0.0)
+            nameGroup["details"].append(detail)
+            nameGroup["qty"] = qty
+            
+            # add product code
+            product = detail.get("product")
+            if product and product.default_code:
+                detail["name"] = "[%s] %s" % (product.default_code, detail["name"])
+            
+        nameGroups = sorted(nameGroups.itervalues(), key=lambda v: v["qty"], reverse=True)
+        res = []
+        for nameGroup in nameGroups:
+            details = sorted(nameGroup["details"], key=lambda v: v["qty"], reverse=True)
+            res.extend(nameGroup["details"])
+            
+        return res
     
     def _sortedTurnover(self, values):
         return sorted(values, key=lambda val: (val.get("is_taxed") and 1 or 0, val.get("name")), reverse=True)
     
     def _groupedDetail(self, details):
         groups = {}
-
+        
+        add_detail = not self.localcontext.get("print_product_summary")
+        use_intern_categ = self.localcontext.get("print_product_intern")
+        
         for detail in details:
             product = detail["product"]
             tax_name = detail["tax_name"]
             categ = product.pos_categ_id
             
-            if not categ:
+            if not categ or use_intern_categ:
                 internCategId = product.categ_id.id*-1
-                groupEntry = groups.get(internCategId, None)
+                key = (internCategId, tax_name)
+                groupEntry = groups.get(key, None)
                 if groupEntry is None:
                     groupEntry = {
                         "id" : internCategId,
                         "name" : product.categ_id.name_get()[0][1],
+                        "tax_name" : tax_name,
                         "amount" : 0.0,
                         "details" : [],
                         "ids" : [internCategId],
                         "level" : 1,
                         "amount_tax" : {}
                     }
-                    groups[internCategId] = groupEntry
+                    groups[key] = groupEntry
             else:
                 groupEntry = groups.get(categ.id, None)
                 if groupEntry is None:
@@ -219,37 +264,63 @@ class Parser(extreport.basic_parser):
                     
                     # add group entries
                     for i in range(0, len(categoryIds)):
-                        categoryId = categoryIds[i]                    
-                        groupEntry = groups.get(categoryId, None)
+                        categoryId = categoryIds[i]
+                        key = (categoryId, tax_name)                  
+                        groupEntry = groups.get(key, None)
                         if groupEntry is None:
                             groupEntry = {
                                 "id" : categoryId,
                                 "name" : " / ".join(names[:i+1]),
+                                "tax_name" : tax_name,
                                 "amount" : 0.0,
                                 "details" : [],
                                 "level" : i+1,
                                 "ids" : categoryIds[:i+1],
                                 "amount_tax" : {}
                             }
-                        groups[categoryId] = groupEntry
+                        groups[key] = groupEntry
                     
-            groupEntry["details"].append(detail)
+            if add_detail:
+                groupEntry["details"].append(detail)
             for categId in groupEntry["ids"]:
-                curEntry = groups[categId] 
+                curEntry = groups[(categId,tax_name)] 
                 detail_amount = detail["amount"]
                 curEntry["amount"] = curEntry["amount"] + detail_amount
                 curEntry["amount_tax"][tax_name] = curEntry["amount_tax"].get(tax_name, 0.0) + detail_amount
         
-        for group in groups.values():
+        for group in groups.itervalues():
             amount_tax = group["amount_tax"]
             amount_tax_list = []
-            for key in sorted(amount_tax.keys()):        
+            for key in sorted(amount_tax.iterkeys()):        
                 amount_tax_list.append({ "name": key, 
                                          "amount": amount_tax.get(key,0.0)})
                 
             group["amount_tax"] = amount_tax_list
         
-        return sorted(groups.values(), key=lambda val: val.get("name")) 
+        taxSummary = None
+        res = []
+        for detail in  sorted(groups.itervalues(), key=lambda val: (val.get("tax_name"),val.get("name"))):
+            tax_name = detail.get("tax_name")
+            if taxSummary is None or taxSummary["tax_name"] != tax_name:
+                taxSummary = {
+                    "id" : 0,
+                    "name" : tax_name or _("No Tax"),
+                    "tax_name" : tax_name,
+                    "amount" : 0.0,
+                    "details" : [],
+                    "ids" : [],
+                    "level" : 0,
+                    "amount_tax" : {}
+                }
+                res.append(taxSummary)
+            
+            res.append(detail)
+            
+            if detail.get("level") == 1:
+                taxSummary["amount"] = taxSummary["amount"] + detail["amount"]
+            
+        return res
+             
 
     def _buildStatistic(self, sessions):
         if not sessions:
@@ -269,9 +340,11 @@ class Parser(extreport.basic_parser):
         sum_turnover_all = 0.0
         sum_in = 0.0
         sum_out = 0.0
-        sum_all = 0.0
+        sum_all = 0.0     
         st_sum = 0.0
-
+        balance_io = 0.0
+        noturnover_active = False
+        
         first_session = sessions[0]
         last_session = sessions[-1]
         session_ids = [s.id for s in sessions]
@@ -290,6 +363,11 @@ class Parser(extreport.basic_parser):
 
         currency = first_session.currency_id.symbol
         status_id = self.pool["ir.model.data"].xmlid_to_res_id(self.cr, self.uid, "fpos.product_fpos_status", raise_if_not_found=True)
+        
+        date_min = None
+        date_max = None
+        
+        journal_ids = set(self.localcontext.get("journal_ids") or [])
         
         # add turnover
         def addTurnover(data, name, amount, line, tax_amount, is_taxed):
@@ -345,6 +423,7 @@ class Parser(extreport.basic_parser):
             "name":  first_session == last_session and cash_statement.name or "",
             "journal": cash_statement.journal_id.name,
             "turnover": 0.0,
+            "balance_io": 0.0,
             "sum": 0.0,
             "income": 0.0,
             "expense": 0.0,
@@ -364,7 +443,20 @@ class Parser(extreport.basic_parser):
         order_count = 0
 
         for order in order_obj.browse(self.cr, self.uid, order_ids, context=self.localcontext):
+            # get min date
+            if date_min is None:
+                date_min = order.date_order
+            else:
+                date_min = min(date_min, order.date_order)
+                
+            # get max date
+            if date_max is None:
+                date_max = order.date_order
+            else:
+                date_max = max(date_max, order.date_order)
+            
             # current sum in and out
+            cur_balance_io = 0
             cur_sum_in = 0
             cur_sum_out = 0
 
@@ -406,29 +498,33 @@ class Parser(extreport.basic_parser):
 
             order_count += 1
 
-            # details
-            if print_detail:
-                detail_lines = []
-                detail_tax = {}
-                detail = {
-                    "order" : order,
-                    "lines" : detail_lines
-                }
-                details.append(detail)
-                
+            # if no journal filter is true
+            has_journal = not journal_ids
+            
             # create statements
             atomic_entry = None
-            noturnover = False                        
+            noturnover = False
             for st_line in order.statement_ids:
                 st = st_line.statement_id
                 st_journal = st.journal_id
-                     
+                
+                # check journal filter
+                if not has_journal and st_journal.id in journal_ids:
+                    has_journal = True
+                
                 entry = st_dict.get(st_journal.id, None)                
                 if entry is None:
+                    journal_name = st.journal_id.name
+                    if st_journal.fpos_noturnover:
+                        journal_name = "%s*" % journal_name
+                        noturnover_active = True
+                        
                     entry = {
-                        "journal" : st.journal_id.name,
+                        "journal" : journal_name,
+                        "noturnover": st_journal.fpos_noturnover,
                         "name" : first_session == last_session and st.name or "",
                         "sum" : 0.0,
+                        "payment" : 0.0,
                         "income" : 0.0,
                         "expense" : 0.0,
                         "users" : {},
@@ -441,6 +537,20 @@ class Parser(extreport.basic_parser):
                     atomic_entry = entry
                     noturnover = st_journal.fpos_noturnover
              
+            # details
+            order_print_detail = False
+            if print_detail and has_journal:
+                order_print_detail = True
+                detail_lines = []
+                detail_tax = {}
+                detail = {
+                    "order" : order,
+                    "lines" : detail_lines
+                }
+                details.append(detail)
+
+            # get fpos order
+            fpos_order = order.fpos_order_id
 
             # iterate line
             for line in order.lines:
@@ -458,7 +568,7 @@ class Parser(extreport.basic_parser):
                 total_inc = currency_obj.round(self.cr, self.uid, first_session.currency_id, computed_taxes['total_included'])
 
                 # add detail
-                if print_detail:
+                if order_print_detail:
                     if tax_details:
                         for tax in tax_details:
                             tax_name = tax["name"]
@@ -473,6 +583,11 @@ class Parser(extreport.basic_parser):
 
                 # add expense
                 if product.expense_pdt:
+                    # add balance io
+                    if fpos_order.tag == "s":
+                        cur_balance_io += total_inc
+                        balance_io += total_inc
+                        
                     sum_out += total_inc
                     cur_sum_out += total_inc
                     expense = expense_dict.get(line.name, None)
@@ -492,6 +607,11 @@ class Parser(extreport.basic_parser):
 
                 # add income
                 if product.income_pdt:
+                    # add balance io
+                    if fpos_order.tag == "s":
+                        cur_balance_io += total_inc
+                        balance_io += total_inc
+                        
                     sum_in += total_inc
                     cur_sum_in += total_inc
                     income = income_dict.get(line.name, None)
@@ -509,8 +629,7 @@ class Parser(extreport.basic_parser):
                     addIo("i", income, total_inc)
 
                 # add turnover
-                if not product.income_pdt and not product.expense_pdt:
-                    
+                if not product.income_pdt and not product.expense_pdt:     
                     # turnover add function
                     def addTurnoverForData(data):
                         if tax_details:
@@ -547,34 +666,40 @@ class Parser(extreport.basic_parser):
                 if user_entry is None:
                     user_entry = {
                         "user": order.user_id,
+                        "payment" : 0.0,
                         "sum": 0.0
                     }
                     entry["users"][order.user_id.id] = user_entry
 
                 # remove i/o payment
                 user_amount = st_line.amount
+                user_payment = user_amount
                 if st.journal_id.id == cashJournalId:
                     user_amount = user_amount - cur_sum_in - cur_sum_out
+                    user_payment = user_payment - cur_balance_io
 
                 user_entry["sum"] = user_entry["sum"] + user_amount
+                user_entry["payment"] = user_entry["payment"] + user_payment
 
                 # total user
                 st_user_entry = st_user_dict.get(order.user_id.id, None)
                 if st_user_entry is None:
                     st_user_entry = {
                         "user" : order.user_id,
+                        "payment" : 0.0,
                         "sum" : 0.0
                     }
                     st_user_dict[order.user_id.id] = st_user_entry
 
                 st_user_entry["sum"] = st_user_entry["sum"] + user_amount
+                st_user_entry["payment"] = st_user_entry["payment"] + user_payment
 
                 # total
                 st_sum += st_line.amount
 
             # details
-            if print_detail:
-                detail["taxes"] = sorted(detail_tax.items(), key=lambda v: v[0])
+            if order_print_detail:
+                detail["taxes"] = sorted(detail_tax.iteritems(), key=lambda v: v[0])
 
 
         # remember sum_in, sum_out which based
@@ -593,14 +718,16 @@ class Parser(extreport.basic_parser):
                 sum_out+=line.amount
 
         # calc turnover
-        for entry in st_dict.values():
+        for entry in st_dict.itervalues():
             if entry == cashEntry:
                 entry["turnover"] = entry["sum"] - order_sum_in - order_sum_out
+                entry["payment"] = entry["sum"] - balance_io
                 entry["income"] = sum_in
                 entry["expense"] = sum_out
                 entry["sum"] = entry["sum"] + sum_unexpected
             else:
                 entry["turnover"] = entry["sum"]
+                entry["payment"] = entry["sum"]
 
         # description
         dates = []
@@ -611,6 +738,10 @@ class Parser(extreport.basic_parser):
         if cash_statement.state  != "confirm":
             dates.append(_("Open"))
         description  = " - ".join(dates)
+        
+        if journal_ids:
+            journal_names = [j.name for j in self.pool["account.journal"].browse(self.cr, self.uid, list(journal_ids), context=self.localcontext)]
+            description = "%s / %s" % (description, ", ".join(journal_names))
 
         # name
         name = self._getName(sessions)
@@ -628,20 +759,20 @@ class Parser(extreport.basic_parser):
 
         # format users
 
-        usersTurnover = sorted(st_user_dict.values(), key=lambda val: val.get("sum",0.0), reverse=True)
-        for st in st_dict.values():
+        usersTurnover = sorted(st_user_dict.itervalues(), key=lambda val: val.get("sum",0.0), reverse=True)
+        for st in st_dict.itervalues():
             users = st.get("users")
-            st["users"] = sorted(users.values(), key=lambda val: val.get("sum",0.0), reverse=True)
+            st["users"] = sorted(users.itervalues(), key=lambda val: val.get("sum",0.0), reverse=True)
 
-        for io_value in io_dict.values():
+        for io_value in io_dict.itervalues():
             users = io_value.get("users")
-            io_value["users"] = sorted(users.values(), key=lambda val: val.get("sum",0.0), reverse=True)
+            io_value["users"] = sorted(users.itervalues(), key=lambda val: val.get("sum",0.0), reverse=True)
 
         # sort details
         turnoverDetails = []
-        turnoverList = self._sortedTurnover(turnover_dict.values())
+        turnoverList = self._sortedTurnover(turnover_dict.itervalues())
         for to in turnoverList:
-            detailList = self._sortedDetail(to["detail"].values())
+            detailList = self._sortedDetail(to["detail"].itervalues())
             for d in detailList:
                 d["description"] = self._getDetailName(d, currency)
             to["detail"] = detailList
@@ -651,13 +782,22 @@ class Parser(extreport.basic_parser):
 
         # convert statement turnovers to list
         for st in statements:
-            st["turnover_detail"] = self._sortedTurnover(st["turnover_detail"].values())
+            st["turnover_detail"] = self._sortedTurnover(st["turnover_detail"].itervalues())
+
+        # get date range
+        date_range = []
+        if date_min:
+            date_range.append(self.formatLang(date_min, date_time=True))
+        if date_max:
+            date_range.append(self.formatLang(date_max, date_time=True))
+        date_range = " - ".join(date_range)
 
         # stat
         stat = {
             "name" : name,
             "first_session" : first_session.name,
             "last_session" : last_session.name,
+            "date_range" : date_range,
             "date_start" : first_session.start_at,
             "date_end" : last_session.stop_at,
             "first_order" : first_order,
@@ -674,22 +814,25 @@ class Parser(extreport.basic_parser):
             "turnover_all" : sum_turnover_all,
             "statements" : statements,
             "statement_sum" : st_sum,
+            "payment" : st_sum - balance_io,
             "cash_income" : cashEntry["income"],
             "cash_expense" : cashEntry["expense"],
             "cash_sum" : cashEntry["sum"],
             "cash_turnover" : cashEntry["turnover"],
+            "cash_payment" : cashEntry["payment"],
             "balance" : cash_statement.balance_start+cash_statement.total_entry_encoding,
             "balance_diff" : cash_statement.difference,
             "balance_start" : first_cash_statement.balance_start,
             "balance_end" : cash_statement.balance_end_real,
-            "expenseList" : expense_dict.values(),
-            "incomeList" : income_dict.values(),
+            "expenseList" : expense_dict.itervalues(),
+            "incomeList" : income_dict.itervalues(),
             "turnoverList" : turnoverList,
             "turnoverDetails" : turnoverDetails,
             "details_start" : first_session.details_ids,
             "details_end" : last_session.details_ids,
             "details" : details,
             "order_count" : order_count,
+            "noturnover_active": noturnover_active,
             "days" : []
         }
         return stat

@@ -24,32 +24,15 @@ from openerp import SUPERUSER_ID
 from openerp.addons.web import http
 from openerp.addons.web.http import request
 from openerp.tools.translate import _
+from openerp.addons.at_base import util
+from openerp.addons.at_base import format
 
-#from openerp.addons.website.controllers.main import Website as controllers
-#controllers = controllers()
+import re
+from werkzeug.exceptions import BadRequest
 
 import logging
 _logger = logging.getLogger(__name__)
 
-from datetime import datetime, timedelta
-import time
-from dateutil.relativedelta import relativedelta
-from openerp import tools
-import werkzeug.urls
-from openerp.addons.website.models.website import slug
-from openerp.tools.translate import _
-import re
-
-from openerp.addons.at_base import util
-from datetime import datetime
-
-from werkzeug.exceptions import BadRequest
-
-try:
-    import GeoIP
-except ImportError:
-    GeoIP = None
-    _logger.warn("Please install GeoIP python module to use events localisation.")
 
 PATTERN_PRODUCT = re.compile("^product-([0-9]+)$")
 
@@ -80,7 +63,6 @@ class website_academy(http.Controller):
         location_obj = request.registry["academy.location"]
         academy_product_obj = request.registry["academy.course.product"]
         state_obj = request.registry["res.country.state"]
-        city_obj = request.registry["res.city"]
 
         # default
         state_item = _("Select a State")
@@ -186,7 +168,11 @@ class website_academy(http.Controller):
     @http.route(["/academy/registration","/academy/registration/<int:stage>"], type="http", auth="public", website=True, methods=['POST'])
     def registration_post(self, stage=1, **kwargs):
         cr, uid, context = request.cr, request.uid, request.context
-        hidden_uid = self.get_hidden_user().id
+        
+        public_user = request.registry["res.users"].browse(request.cr, request.uid, request.uid, context=request.context)
+        company = public_user.company_id
+        hidden_user = company.academy_webuser_id or public_user     
+        hidden_uid = hidden_user.id
 
         courses = []
 
@@ -198,7 +184,7 @@ class website_academy(http.Controller):
         partner_obj = request.registry["res.partner"]
         city_obj = request.registry["res.city"]
         reg_obj = request.registry["academy.registration"]
-
+        
         # build selection
         is_student_of_loc = False
         parent_address = True
@@ -221,8 +207,8 @@ class website_academy(http.Controller):
                 read_school_rules = True
             elif key == "invoice_monthly":
                 invoice_monthly = True
-            elif key == "invoice_per_mail":
-                invoice_per_mail = True
+            elif key == "invoice_mail":
+                invoice_per_mail = value == "mail"
             else:
                 m = PATTERN_PRODUCT.match(key)
                 if m:
@@ -330,12 +316,12 @@ class website_academy(http.Controller):
 
                     name =  "%s %s" % (lastname, firstname)
                     city = get("city")
-                    zip = get("zip")
+                    zip_code = get("zip")
                     res = {
                         "name" : name,
                         "email": email,
                         "street" : get("street"),
-                        "zip" : zip,
+                        "zip" : zip_code,
                         "city" : city
                     }
 
@@ -432,13 +418,24 @@ class website_academy(http.Controller):
                 }
                 return request.website.render("website_academy.message", values, context=context)
             else:
+                # check for fee
+                f = format.LangFormat(cr, uid, context=context)                
+                mail_fee_option = ""
+                fee_obj = request.registry["academy.fee"]
+                fee_values = fee_obj.search_read(cr, SUPERUSER_ID, [("per_mail","=",True)], ["list_price"], context=context)
+                if fee_values:
+                  price = fee_values[0]["list_price"]
+                  mail_fee_option = _("Invoice per mail with additional fee of %s %s") % (f.formatLang(price), company.currency_id.symbol) 
+                
                 # begin registration
                 values = {
                     "courses" : courses,
                     "location" : location,
                     "location_lines" : location_lines,
                     "is_student_of_loc" : is_student_of_loc,
+                    "invoice_per_mail" : invoice_per_mail,
                     "location_id" : location_id,
+                    "mail_fee_option" : mail_fee_option,
                     "registration" : reg_obj._next_sequence(cr, hidden_uid, context)
                 }
                 return request.website.render("website_academy.registration", values)

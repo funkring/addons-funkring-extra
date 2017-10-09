@@ -20,15 +20,28 @@
 
 from openerp.osv import osv
 from openerp.exceptions import Warning
+from openerp import _
 
 class stock_picking(osv.Model):
     _inherit = "stock.picking"
             
-    def picking_app_pack(self, cr, uid, picking_id, weight=0.0, context=None):
+    def picking_app_pack(self, cr, uid, picking_id, weight=0.0, add_picking_id=None, context=None):
+        values = {}
         if weight:
-            self.write(cr, uid, picking_id, {"carrier_weight":weight}, context=context)
+            values["carrier_weight"] = weight
+        if add_picking_id:
+            values["carrier_picking_id"] = add_picking_id
+        
+        if values:
+            self.write(cr, uid, picking_id, values, context=context)
         
         self.action_done_from_ui(cr, uid, picking_id, context=context)
+        
+        # check error
+        carrier_error = self.read(cr, uid, picking_id, ["carrier_error"], context=context)["carrier_error"]
+        if carrier_error:
+            raise Warning(carrier_error)
+        
         return self.picking_app_get(cr, uid, picking_id, context=context)
     
     def picking_app_pack_notify(self, cr, uid, picking_id, context=None):
@@ -82,7 +95,7 @@ class stock_picking(osv.Model):
             "package_count" : op.package_count or 0
         }
     
-    def picking_app_get(self, cr, uid, picking_id, context=None):
+    def picking_app_get(self, cr, uid, picking_id, same_partner_as_picking_id=None, context=None):
         if not picking_id:
             return {}
         
@@ -92,8 +105,13 @@ class stock_picking(osv.Model):
         found_picking = self.browse(cr, uid, picking_id, context=context)
         res = {
             "found_picking_id" : found_picking.id,
-            "found_picking_name" : found_picking.name
+            "found_picking_name": found_picking.name
         }
+        
+        if same_partner_as_picking_id:
+            other_picking = self.browse(cr, uid, same_partner_as_picking_id, context=context)
+            if other_picking and other_picking.partner_id.id != found_picking.partner_id.id:
+                raise Warning(_("Picking has address '%s' but should be '%s'" % (other_picking.partner_id.name, found_picking.partner_id.name)))
         
         # check picking
         if not found_picking.state in ("partially_available","assigned"):
@@ -130,12 +148,12 @@ class stock_picking(osv.Model):
         
         return res
     
-    def picking_app_scan(self, cr, uid, code, context=None):
+    def picking_app_scan(self, cr, uid, code, same_partner_as_picking_id=None, context=None):
         if not code:
             return {}
         
         picking_id = self.pool["stock.picking"].search_id(cr, uid, [("name","ilike","%%%s" % code)], context=context)
-        return self.picking_app_get(cr, uid, picking_id, context=context)
+        return self.picking_app_get(cr, uid, picking_id, same_partner_as_picking_id=same_partner_as_picking_id, context=context)
     
     def action_print_label(self, cr, uid, ids, context=None):
         res = super(stock_picking, self).action_print_label(cr, uid, ids, context=context)

@@ -19,27 +19,14 @@
 ##############################################################################
 
 from openerp.addons.web import http
-from openerp.addons.web.http import request
 import logging
 import werkzeug.utils
 
 _logger = logging.getLogger(__name__)
 
 class chicken_farm(http.Controller):
-        
-    @http.route(["/farm_chicken/static/src/index.html"], type="http", auth="user")
-    def app_index(self, debug=False, **kwargs):
-        cr, session = request.cr, request.session
-        html = request.registry["ir.ui.view"].render(cr, session.uid, "farm_chicken.app_index", {})
-        return html
     
-    @http.route(["/farm_chicken/static/app/index.html"], type="http", auth="user")
-    def app_release_index(self, debug=False, **kwargs):
-        cr, session = request.cr, request.session
-        html = request.registry["ir.ui.view"].render(cr, session.uid, "farm_chicken.app_release_index", {})
-        return html
-    
-    @http.route(["/farm/chicken"], type="http", auth="user")
+    @http.route(["/farm/chicken"], type="http", auth="public")
     def app_redirect(self, debug=False, **kwargs):
         if debug:
             return werkzeug.utils.redirect("/farm_chicken/static/src/index.html?debug")

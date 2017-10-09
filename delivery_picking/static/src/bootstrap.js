@@ -22,8 +22,11 @@ Ext.Loader.addClassPathMappings({
   "Ext.Element-static": "touch/src/dom/Element.static.js",
   "Ext.Element-style": "touch/src/dom/Element.style.js",
   "Ext.Element-traversal": "touch/src/dom/Element.traversal.js",
-  "Ext.cmd": "../../../../../../.local/opt/Sencha/Cmd/6.2.2.36/plugins/src",
+  "Ext.client": "app/addon",
   "Ext.core.DomQuery": "touch/src/dom/Query.js",
+  "Ext.core.Odoo": "app/addon/OdooCore.js",
+  "Ext.data.proxy.Odoo": "app/addon/OdooProxy.js",
+  "Ext.data.reader.JsonOdoo": "app/addon/OdooProxy.js",
   "Ext.device.Purchases.Product": "touch/src/device/purchases/Sencha.js",
   "Ext.device.filesystem.DirectoryEntry": "touch/src/device/filesystem/Sencha.js",
   "Ext.device.filesystem.Entry": "touch/src/device/filesystem/Sencha.js",
@@ -183,6 +186,10 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.chart.series.sprite.Radar": [],
   "Ext.chart.series.sprite.Scatter": [],
   "Ext.chart.series.sprite.StackedCartesian": [],
+  "Ext.client.OdooClient": [
+    "OdooClient"
+  ],
+  "Ext.core.Odoo": [],
   "Ext.data.ArrayStore": [],
   "Ext.data.Batch": [],
   "Ext.data.Connection": [],
@@ -255,6 +262,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.data.proxy.Memory": [
     "Ext.data.MemoryProxy"
   ],
+  "Ext.data.proxy.Odoo": [],
   "Ext.data.proxy.Proxy": [
     "Ext.data.DataProxy",
     "Ext.data.Proxy"
@@ -280,6 +288,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "Ext.data.reader.Json": [
     "Ext.data.JsonReader"
   ],
+  "Ext.data.reader.JsonOdoo": [],
   "Ext.data.reader.Reader": [
     "Ext.data.Reader",
     "Ext.data.DataReader"
@@ -1046,6 +1055,8 @@ Ext.ClassManager.addNameAliasMappings({
     "sprite.scatterSeries"
   ],
   "Ext.chart.series.sprite.StackedCartesian": [],
+  "Ext.client.OdooClient": [],
+  "Ext.core.Odoo": [],
   "Ext.data.ArrayStore": [
     "store.array"
   ],
@@ -1121,6 +1132,9 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.data.proxy.Memory": [
     "proxy.memory"
   ],
+  "Ext.data.proxy.Odoo": [
+    "proxy.odoo"
+  ],
   "Ext.data.proxy.Proxy": [
     "proxy.proxy"
   ],
@@ -1142,6 +1156,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "Ext.data.reader.Json": [
     "reader.json"
+  ],
+  "Ext.data.reader.JsonOdoo": [
+    "reader.odoo"
   ],
   "Ext.data.reader.Reader": [],
   "Ext.data.reader.Xml": [

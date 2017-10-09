@@ -1,30 +1,29 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* website_academy
+#	* website_academy
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-04 15:55+0000\n"
-"PO-Revision-Date: 2017-07-04 17:56+0100\n"
-"Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
+"POT-Creation-Date: 2017-09-28 09:51+0000\n"
+"PO-Revision-Date: 2017-09-28 09:51+0000\n"
+"Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-"X-Generator: Poedit 1.5.4\n"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:422
+#: code:addons/website_academy/controllers/main.py:408
 #, python-format
 msgid "<p>Registration %s was created.</p>"
 msgstr "<p>Anmeldung %s wurde erstellt.</p>"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:266
+#: code:addons/website_academy/controllers/main.py:252
 #, python-format
 msgid "<p>Registration %s was done</p>"
 msgstr "<p>Anmeldung %s ist bereits erledigt</p>"
@@ -78,15 +77,13 @@ msgstr ""
 #. module: website_academy
 #: view:website:website_academy.address
 msgid "E-Mail is required!"
-msgstr ""
-"Eine E-Mail Adresse wird benötigt! Dient zur Verständigung und für die "
-"Identifizierung"
+msgstr "Eine E-Mail Adresse wird benötigt! Dient zur Verständigung und für die Identifizierung"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:365
-#: code:addons/website_academy/controllers/main.py:369
-#: code:addons/website_academy/controllers/main.py:374
-#: code:addons/website_academy/controllers/main.py:381
+#: code:addons/website_academy/controllers/main.py:351
+#: code:addons/website_academy/controllers/main.py:355
+#: code:addons/website_academy/controllers/main.py:360
+#: code:addons/website_academy/controllers/main.py:367
 #, python-format
 msgid "Error"
 msgstr "Fehler"
@@ -127,7 +124,7 @@ msgid "I have read and accepted school rules?"
 msgstr "Ich habe die Schulordnung gelesen und zur Kenntnis genommen."
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:383
+#: code:addons/website_academy/controllers/main.py:369
 #: view:website:website_academy.registration
 #, python-format
 msgid "Invoice Address"
@@ -140,8 +137,14 @@ msgstr "monatliche Rechnung?"
 
 #. module: website_academy
 #: view:website:website_academy.registration
-msgid "Invoice per Mail?"
-msgstr "Rechnung per Post?"
+msgid "Invoice per E-Mail?"
+msgstr "Rechnung per E-Mail?"
+
+#. module: website_academy
+#: code:addons/website_academy/controllers/main.py:428
+#, python-format
+msgid "Invoice per mail with additional fee of %s %s"
+msgstr "Rechnung per Post mit einer zusätzlichen Gebühr von %s %s?"
 
 #. module: website_academy
 #: view:website:website_academy.address
@@ -164,13 +167,13 @@ msgid "Nationality"
 msgstr "Nationaltität"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:365
+#: code:addons/website_academy/controllers/main.py:351
 #, python-format
 msgid "No courses selected"
 msgstr "Es wurde kein Kurs ausgewhält"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:381
+#: code:addons/website_academy/controllers/main.py:367
 #, python-format
 msgid "No invoice address passed"
 msgstr "Es wurde keine Verrechnungsadresse angegeben"
@@ -181,13 +184,13 @@ msgid "No location was selected!"
 msgstr "Es wurde keine Schule bzw. Standort ausgewählt"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:374
+#: code:addons/website_academy/controllers/main.py:360
 #, python-format
 msgid "No parent address passed"
 msgstr "Es wurde keine Adresse für den Erziehungsberchtigten angegeben"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:369
+#: code:addons/website_academy/controllers/main.py:355
 #, python-format
 msgid "No student address passed"
 msgstr "Es wurde keine Schüleradresse angegeben"
@@ -198,7 +201,7 @@ msgid "Nothing was selected!"
 msgstr "Es wurde NICHTS ausgewählt"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:376
+#: code:addons/website_academy/controllers/main.py:362
 #, python-format
 msgid "Parent"
 msgstr "Erziehungsberechtigte(r)"
@@ -216,9 +219,7 @@ msgstr "Telefonnummer z.B. +43 3332 86927"
 #. module: website_academy
 #: view:website:website_academy.address
 msgid "Phone number is required! Use following format e.g. +43 3332 86927"
-msgstr ""
-"Die Telefonnummer wird benötigt! Benutzer folgendes Format z.B. +43 3332 "
-"86927"
+msgstr "Die Telefonnummer wird benötigt! Benutzer folgendes Format z.B. +43 3332 86927"
 
 #. module: website_academy
 #: view:website:website_academy.registration
@@ -226,31 +227,31 @@ msgid "Registration"
 msgstr "Anmeldung"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:265
+#: code:addons/website_academy/controllers/main.py:251
 #, python-format
 msgid "Registration already finished!"
 msgstr "Anmeldung ist bereits abgeschlossen!"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:430
+#: code:addons/website_academy/controllers/main.py:416
 #, python-format
 msgid "Registration finished!"
 msgstr "Anmeldung abgeschlossen!"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:88
+#: code:addons/website_academy/controllers/main.py:70
 #, python-format
 msgid "Select District"
 msgstr "Postleitzahl"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:87
+#: code:addons/website_academy/controllers/main.py:69
 #, python-format
 msgid "Select a Location"
 msgstr "Wählen sie eine Schule"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:86
+#: code:addons/website_academy/controllers/main.py:68
 #, python-format
 msgid "Select a State"
 msgstr "Wählen sie ein Bundesland"
@@ -276,7 +277,7 @@ msgid "Street is required!"
 msgstr "Die Strasse wird benötigt!"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:389
+#: code:addons/website_academy/controllers/main.py:375
 #, python-format
 msgid "Student"
 msgstr "Schüler"
@@ -288,10 +289,8 @@ msgstr "Schüleradresse"
 
 #. module: website_academy
 #: view:website:website_academy.registration
-msgid ""
-"The school rules have to be accepted before you can finish the registration!"
-msgstr ""
-"Die Schulordnung muss akzeptiert werden um die Anmeldung abzuschließen!"
+msgid "The school rules have to be accepted before you can finish the registration!"
+msgstr "Die Schulordnung muss akzeptiert werden um die Anmeldung abzuschließen!"
 
 #. module: website_academy
 #: view:website:website_academy.index
@@ -299,7 +298,7 @@ msgid "To Registration"
 msgstr "Zur Anmeldung"
 
 #. module: website_academy
-#: code:addons/website_academy/controllers/main.py:298
+#: code:addons/website_academy/controllers/main.py:284
 #, python-format
 msgid "Value of field '%s' is '%s' but customer typed '%s'"
 msgstr "Der des Feldes '%s' ist '%s' aber der Partner hat '%s' angegeben"
@@ -311,12 +310,8 @@ msgstr "PLZ"
 
 #. module: website_academy
 #: view:website:website_academy.address
-msgid ""
-"ZIP code is required! A minimum of 4 numbers must be given and only numbers "
-"are allowed!"
-msgstr ""
-"Die Postleitzahl wird benötigt! Sie muss mindestens aus 4 Zahlen bestehen "
-"und es sind nur Nummern erlaubt!"
+msgid "ZIP code is required! A minimum of 4 numbers must be given and only numbers are allowed!"
+msgstr "Die Postleitzahl wird benötigt! Sie muss mindestens aus 4 Zahlen bestehen und es sind nur Nummern erlaubt!"
 
 #. module: website_academy
 #: view:website:website_academy.registration
@@ -332,3 +327,4 @@ msgstr ""
 #: view:website:website_academy.registration
 msgid "form_student"
 msgstr ""
+

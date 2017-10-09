@@ -19,7 +19,6 @@
 ##############################################################################
 
 from openerp.addons.web import http
-from openerp.addons.web.http import request
 import logging
 import werkzeug.utils
 
@@ -27,19 +26,7 @@ _logger = logging.getLogger(__name__)
 
 class delivery_picking(http.Controller):
         
-    @http.route(["/delivery_picking/static/src/index.html"], type="http", auth="user")
-    def app_index(self, debug=False, **kwargs):
-        cr, session = request.cr, request.session
-        html = request.registry["ir.ui.view"].render(cr, session.uid, "delivery_picking.app_index", {})
-        return html
-    
-    @http.route(["/delivery_picking/static/app/index.html"], type="http", auth="user")
-    def app_release_index(self, debug=False, **kwargs):
-        cr, session = request.cr, request.session
-        html = request.registry["ir.ui.view"].render(cr, session.uid, "delivery_picking.app_release_index", {})
-        return html
-    
-    @http.route(["/picking"], type="http", auth="user")
+    @http.route(["/picking"], type="http", auth="public")
     def app_redirect(self, debug=False, **kwargs):
         if debug:
             return werkzeug.utils.redirect("/delivery_picking/static/src/index.html?debug")

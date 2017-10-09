@@ -9,6 +9,7 @@
         <page string="Point of Sale" position="inside">
             <group string="Processing">
                 <field name="fpos_invoice"/>
+                <field name="fpos_invoice_email" attrs="{'invisible': [('fpos_invoice','!=',True)]}"/>
                 <field name="fpos_noreconcile"/>            
                 <field name="fpos_atomic"/>
                 <field name="fpos_noturnover" attrs="{'invisible': ['|',('fpos_atomic','!=',True),('type','=','cash')]}"/>

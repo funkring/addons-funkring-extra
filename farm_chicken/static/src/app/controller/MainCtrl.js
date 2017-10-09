@@ -31,27 +31,18 @@ Ext.define('ChickenFarm.controller.MainCtrl', {
 
     prepare: function() {
         var self = this;
-        ViewManager.startLoading("Setup...");        
-        Core.setup().then(function() {
-            try {
-                ViewManager.stopLoading();
-                self.loadMainView();                
-            } catch (err) {
-                console.error(err);
-            }
-        }, function(err) {
+        ViewManager.startLoading("Setup...");   
+        Core.getClient().then(function(client) {
             ViewManager.stopLoading();
-            Ext.Msg.alert('Verbindungsfehler','Keine Verbindung zum Server möglich', function() {
-                self.restart();
-            });            
-        });
+            self.loadMainView();
+        }, function(err) {
+            ViewManager.handleError(err, {
+              name: 'connection_error',
+              message: 'Keine Verbindung zum Server möglich'
+            });
+        }); 
     },
-    
-    restart: function() {
-        ViewManager.startLoading("Neustart...");
-        Core.restart();  
-    },
-
+   
     loadMainView: function() {
         var self = this;
         if ( !self.basePanel ) {

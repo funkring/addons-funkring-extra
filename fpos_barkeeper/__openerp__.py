@@ -36,9 +36,7 @@ Fpos - Barkeeper App
                  "bus",
                  "web"
                 ],
-    "data" : ["view/app_index.xml",
-              "view/app_release_index.xml"
-             ],
+    "data" : [],
     "auto_install" : False,
     "installable": True
 }

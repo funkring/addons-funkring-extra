@@ -7,7 +7,7 @@
     /**
      * The file path to this application's front HTML document, relative to this app.json file
      */
-    "indexHtmlPath": "app.html",
+    "indexHtmlPath": "index.html",
 
     /**
      * The Sencha Framework for this application: "ext" or "touch".
@@ -53,15 +53,26 @@
             "x-bootstrap": true
         },
         {
-            "path": "app.js",
-            "bundle": true,  /* Indicates that all class dependencies are concatenated into this file when build */
-            "update": "full"
+            "path": "lib/URI.js",
+            "bundle" : true,
+            "update" : "delta"
         },
         {
             "path": "lib/futil.js",
             "bundle" : true,
-            "update" : "full"
+            "update" : "delta"
+        },         
+        {
+            "path": "lib/openerplib.js",
+            "bundle" : true,
+            "update" : "delta"
+        },        
+        {
+            "path": "app.js",
+            "bundle": true,  /* Indicates that all class dependencies are concatenated into this file when build */
+            "update": "delta"
         }
+       
     ],
 
     /**
@@ -95,7 +106,7 @@
          * List of items in the CACHE MANIFEST section
          */
         "cache": [
-            "app.html"
+            "index.html"
         ],
         /**
          * List of items in the NETWORK section
@@ -153,8 +164,7 @@
      *   }
      */
     "cache": {
-        "enable": true,
-        "deltas": "deltas"
+        "enable": false
     },
 
     /**
@@ -169,6 +179,6 @@
      "production": {
         "output": {
             "base" : "${workspace.build.dir}/../../app"
-        }   
+        }
      }
 }

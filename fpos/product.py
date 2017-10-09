@@ -26,6 +26,7 @@ from openerp.addons.at_base import util
 
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from decimal import localcontext
 
 COLOR_NAMES = [("white", "White"),
                ("silver","Silver"),
@@ -70,7 +71,7 @@ class product_template(osv.Model):
     _inherit = "product.template"    
     _columns = {
         "sequence" : fields.integer("Sequence"),
-        "pos_name" : fields.char("Point of Sale Name"),
+        "pos_name" : fields.char("Point of Sale Name", copy=False),
         "pos_report" : fields.boolean("Show on Report"),
         "pos_color" : fields.selection(COLOR_NAMES, string="Color"),
         "pos_nogroup" : fields.boolean("No Grouping", help="If product selected again a extra line was created"),
@@ -84,7 +85,8 @@ class product_template(osv.Model):
         "pos_fav" : fields.boolean("Favorite"),        
         "pos_cm" : fields.boolean("Comment"),
         "pos_action" : fields.selection([("pact_partner","Show Partner"),
-                                         ("pact_scan","Scan")
+                                         ("pact_scan","Scan"),
+                                         ("pact_cancel","Cancel Order")
                                          ], string="Action", help="Action on product selection"),
         "pos_sec" : fields.selection([("1","Section 1"),
                                       ("2","Section 2"),
@@ -104,13 +106,24 @@ class product_product(osv.Model):
         "pos_rate" : fields.float("POS Rate %", readonly=True)
     }
     
-    def _pos_product_overview(self, cr, uid, ids, context=None):
+    def _pos_product_overview(self, cr, uid, ids, pricelist=None, context=None):
         categories = {}
         
         products = self.browse(cr, uid, ids, context=context)
-        category_ids = list(set([p.pos_categ_id.id for p in products]))
+        category_ids = list(set([p.pos_categ_id.id for p in products if p.pos_categ_id]))
         category_names = dict(self.pool["pos.category"].name_get(cr, uid, category_ids, context=context))
         product_names = dict(self.name_get(cr, uid, ids, context=context))
+        
+        prices = {}
+        
+        pricelist_id = context.get("pricelist_id")
+        pricelist_obj = self.pool["product.pricelist"]
+        if pricelist_id:
+            pricelist = pricelist_obj.browse(cr, uid, pricelist_id, context=context)
+        
+        if pricelist:
+            prices = pricelist_obj._price_get_multi(cr, uid, pricelist, 
+                                        [(p, 1.0, None) for p in products], context=context)
         
         for product in products:
             category = product.pos_categ_id
@@ -123,14 +136,15 @@ class product_product(osv.Model):
                 ncategory = {
                     "name" : category_name,
                     "category" : category,
-                    "products" : []     
+                    "products" : []                     
                 }
                 categories[category_name] = ncategory
             
             # add for template
             nprod = {
                 "product" : product,
-                "name" : product_names.get(product.id, product.name)
+                "name" : product_names.get(product.id, product.name),
+                "price": prices.get(product.id) or product.lst_price
             }   
             ncategory["products"].append(nprod)
 

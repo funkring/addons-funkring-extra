@@ -1,1 +1,106 @@
-function _492603dd121ba528e3c0c9c373ae20d58df9020d(){};function _67e63fb59549cb2ed33ee3faad7aad37509f5476(){}function _162fcf59f3f3d7afa4739cc762ee18631a088dd2(){}function _c95a6244d912a8e70d9d39783d76b78c10c1aef8(){}function _ea3be2ef8b8c4af3c5538c991a87e9aec6ca70d2(){}function _ef1c1babb140235af450e06940ebda81223579c7(){}function _58b10fd9c1a09e58a5e4e872e0a84224abe8c921(){}function _f6fa6cbc396fd09d24a198ed06364125c73ad83d(){}function _f80e5061d6b77250ee052dda1836ed7e9c2d1ad4(){}function _99dff9a040dae742d435840db88e98f27dc359f3(){}function _8421a0a98ea7b8c7855a101ecfc43fb13964f81f(){}function _b58ea9284c6229462439ec9a579f35db93a7633e(){}function _a6c5ac4ba6feda516bc590a542cd058a73f335b7(){}function _c818adaf1c294012d5dc5d9f851809d050d61a6d(){}function _e0077b59151a4ee1fd6e103ac08fe3841ee9ea56(){}function _c50dc921500fed874f3d094cebf456ebf2230352(){}function _fbd1036fd68cbdb646c0991d569f28a79f237f94(){}function _fb83b3a2b6d81635534e9f5a317b5fc94f0406e3(){}function _6c5f8532e564ed1cc358ca7580d594baae8c4dad(){}function _5f0173b8bdecfb4a608885aa3e7f134e84d480aa(){}function _309589398826cb8dd419fd2139df8e66bf661b1d(){}function _152001b4fccbc235c0db7a74e6641ed2859ec3ac(){}function _2d9de205be600bcc20e5e09272850aff2c94e261(){}function _49981e4f5c066f79bbff028800daf7e546bc8332(){}function _72d5f9d39396869879f4e9876ec96641fcc3a4a0(){}var futil={comma:",",activetap:false};futil.keys=function(a){if(typeof a!="object"&&typeof a!="function"||a===null){throw TypeError("Object.keys called on non-object")}var b=[];for(var c in a){if(a.hasOwnProperty(c)){b.push(c)}}return b};futil.dateToStr=function(a){var b=new Date();b.setTime(a.getTime()-(a.getTimezoneOffset()*60*1000));return b.toISOString().substring(0,10)};futil.datetimeToStr=function(a){var b=a.toISOString();return b.substring(0,10)+" "+b.substring(11,19)};futil.strToDate=function(b){if(b.length==19){b=b.substring(0,10)+"T"+b.substring(11,19)+"Z"}var a=new Date(b);return a};futil.strToIsoDate=function(b){var a=futil.strToDate(b);return a.toISOString()};futil.padLeft=function(a,b,c){if(!c){c=" "}while(a.length<b){a=c+a}return a};futil.isDoubleTap=function(){if(!futil.activetap){futil.activetap=true;setTimeout(function(){futil.activetap=false},500);return false}return true};futil.screenWidth=function(){var a=(window.innerWidth>0)?window.innerWidth:screen.width;return a};futil.screenHeight=function(){var a=(window.innerHeight>0)?window.innerHeight:screen.height;return a};futil.physicalScreenWidth=function(){return window.screen.width*window.devicePixelRatio};futil.physicalScreenHeight=function(){return window.screen.height*window.devicePixelRatio};futil.hasSmallRes=function(){return Math.max(futil.screenWidth(),futil.screenHeight())<1024};futil.formatFloat=function(a,b){if(!a){a=0}if(b===0){return a.toString().replace(".",futil.comma)}else{if(!b){b=2}}return a.toFixed(b).replace(".",futil.comma)};futil.parseFloat=function(a){if(!a){return 0}return parseFloat(a.replace(futil.comma,"."))};
+/*global Ext:false*/
+
+/**
+ * funkring util lib
+ */
+var futil = {
+    comma: ",",
+    activetap: false
+};
+
+futil.keys = function(obj) {
+    if (typeof obj != "object" && typeof obj != "function" || obj === null) {
+        throw TypeError("Object.keys called on non-object");
+    }
+    var keys = [];
+    for (var p in obj) 
+        if ( obj.hasOwnProperty(p) )
+            keys.push(p);
+    return keys;
+};
+
+futil.dateToStr = function(date) {
+    //2016-02-03T22:46:46.011Z
+    var d = new Date();
+    //correct time zone
+    d.setTime( date.getTime() - (date.getTimezoneOffset()*60*1000) );
+    return d.toISOString().substring(0, 10);
+};
+
+futil.datetimeToStr = function(date) {
+    //2016-02-03T22:46:46.011Z
+    var isoStr = date.toISOString();
+    return isoStr.substring(0, 10) + " " + isoStr.substring(11,19);
+};
+
+futil.strToDate = function(str) {
+    if ( str.length == 19) 
+        str = str.substring(0, 10) + "T" + str.substring(11,19) + "Z";
+    var date = new Date(str);
+    return date;
+};
+
+futil.strToIsoDate = function(str) {
+    var date = futil.strToDate(str);
+    return date.toISOString();
+};
+
+futil.padLeft = function(val, count, pad) {
+    if ( !pad ) pad = ' ';
+    while ( val.length < count ) val=pad+val;
+    return val; 
+};
+
+futil.isDoubleTap = function() {
+    if ( !futil.activetap ) {
+        futil.activetap = true;
+        setTimeout(function() {
+            futil.activetap = false;
+        },500);
+        return false;
+    }        
+    return true;
+};
+
+futil.screenWidth = function() {
+    var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    return width;
+};
+
+futil.screenHeight = function() {
+    var height = (window.innerHeight > 0) ? window.innerHeight : screen.height;
+    return height;
+};
+
+futil.physicalScreenWidth = function() {
+    return window.screen.width * window.devicePixelRatio;
+};
+
+futil.physicalScreenHeight = function() {
+    return window.screen.height * window.devicePixelRatio;
+};
+
+futil.hasSmallRes = function() {
+    return Math.max(futil.screenWidth(), futil.screenHeight()) < 1024;
+};
+
+futil.formatFloat = function(num, digits) {    
+    if ( !num) {
+        num = 0.0;
+    }
+    
+    if (digits === 0) {
+        return num.toString().replace(".",futil.comma);    
+    } else if (!digits) {
+        digits=2;
+    }
+    
+    return num.toFixed(digits).replace(".",futil.comma);  
+};
+
+futil.parseFloat = function(num) {
+    if (!num) {
+        return 0.0;
+    }
+    return parseFloat(num.replace(futil.comma,"."));
+};

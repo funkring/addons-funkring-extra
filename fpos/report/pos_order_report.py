@@ -32,8 +32,12 @@ class Parser(extreport.basic_parser):
     def _prepare(self, orders):
         res = []
         
+        tax_obj = self.pool["account.tax"]
+        cur_obj = self.pool["res.currency"]
+        
         for order in orders:
             fpos_order = None
+                       
             if order._model._name == "pos.order":
                 fpos_order = order.fpos_order_id
             if order._model._name == "fpos.order":
@@ -44,16 +48,23 @@ class Parser(extreport.basic_parser):
             
             lines = []
             pos = 1
+            
+            partner = fpos_order.partner_id
+            cur = fpos_order.currency_id
+            
             for line in fpos_order.line_ids:
                 values = { 
                     "line" : line,
-                    "pos" : pos,
-                    "price_netto" : line.subtotal                 
+                    "pos" : pos             
                 }
                 
-                if line.qty:
-                    values["price_netto"] = line.subtotal / line.qty
-                
+                price = line.price
+                if line.netto:
+                    values["price_netto"] = price
+                else:
+                    taxes = tax_obj.compute_all(self.cr, self.uid, line.tax_ids, price, 1, line.product_id.id, partner and partner.id or False)
+                    values["price_netto"] = cur_obj.round(self.cr, self.uid, cur, taxes['total'])
+                              
                 lines.append(values)
                 pos += 1
             

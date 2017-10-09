@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+  
+    <record id="wizard_product_list" model="ir.ui.view">
+      <field name="name">fpos.wizard_product_list</field>
+      <field name="model">fpos.product.list.wizard</field>
+      <field name="arch" type="xml">
+        <form string="product_list">
+          <group>
+            <group>
+              <field name="type"/> 
+              <field name="pricelist_id"/> 
+              <field name="category_less"/>
+            </group>
+            <group>             
+            </group>
+          </group>
+          <footer>
+            <button name="action_print" string="Print"  type="object" class="oe_highlight" />
+            or
+            <button special="cancel" string="Close" class="oe_link" />
+          </footer>
+        </form>
+      </field>
+    </record>
+    
+    
+    <record id="action_wizard_product_list" model="ir.actions.act_window">
+       <field name="name">Pricelist</field>
+       <field name="type">ir.actions.act_window</field>
+       <field name="res_model">fpos.product.list.wizard</field>
+       <field name="view_type">form</field>
+       <field name="view_mode">form</field>
+       <field name="target">new</field>
+     </record>
+    
+     <menuitem id="menu_wizard_product_list" name="Pricelist" parent="point_of_sale.menu_point_of_sale"
+           sequence="50"
+           action="action_wizard_product_list"/>
+    
+  </data>
+</openerp>

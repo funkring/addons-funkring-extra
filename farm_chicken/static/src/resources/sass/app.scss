@@ -15,23 +15,37 @@ $custom-lightestgreen: #f6ffd5;  // 246,255,213
 $custom-green: #256235;
 $custom-lightestyellow: #fdf7e0; 
 
+// ******************************************************************
+// BUGFIXES
+// ******************************************************************
+
+.x-container {   
+  touch-action: none;
+}
+
 // Overrides
 
-.x-form-label {
-    font-size: 1.2em;
+.x-form-label {    
     min-width: 160px;
+    
+    @media only screen and (min-width: 601px) {
+        font-size: 1.2em;
+    }
 }
 
 .x-form-field {
-    font-size: 1.2em;
+    @media only screen and (min-width: 601px) {
+        font-size: 1.2em;
+    }
 }
-
 
 
 // Items
 
 .ListItem {
-    font-size: 1.2em;   
+    @media only screen and (min-width: 601px) {
+        font-size: 1.2em;
+    }   
 }
 
 .WeekItem {
@@ -81,7 +95,11 @@ div.DayItem > div.x-innerhtml {
 // Week
 
 .WeekNameHeader {
-    font-weight: bold;   
+    font-weight: bold;
+    
+    @media only screen and (max-width: 600px) {
+        font-size: 0.9em;
+    }
 }
 
 .WeekNameLabel {
@@ -97,15 +115,35 @@ div.DayItem > div.x-innerhtml {
     padding-right: 10px;
     padding-top: 4px;
     padding-bottom: 4px;
-    font-size: 0.9em; 
+    font-size: 0.9em;
+    
+    @media only screen and (max-width: 600px) {
+        font-size: 0.76em;
+        min-width: 68px;
+        width: 68px;   
+    }
 }
 
 .WeekInfoValue {
+    @media only screen and (max-width: 600px) {
+        font-size: 0.76em;
+        min-width: 56px;
+    }
 }
 
 .WeekInfoLabel {
     font-size: 0.7em;
     color: $custom-grey;    
+    
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    
+    @media only screen and (max-width: 600px) {
+        font-size: 0.56em;
+        min-width: 56px;
+        
+    }
 }
 
 .DayInfo {
@@ -116,14 +154,39 @@ div.DayItem > div.x-innerhtml {
     padding-top: 2px;
     padding-bottom: 6px;
     font-size: 0.7em;
+    
+    @media only screen and (max-width: 600px) {
+        font-size: 0.7em;
+        min-width: 58px;
+        width: 58px;   
+    }
+}
+
+.DayName {
+    @media only screen and (max-width: 600px) {
+        font-size: 0.8em;
+    }   
 }
 
 .DayInfoValue {
+    @media only screen and (max-width: 600px) {
+        font-size: 0.76em;
+        min-width: 52px;
+    }
 }
 
 .DayInfoLabel {
     font-size: 0.6em;
     color: $custom-grey;    
+    
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    
+    @media only screen and (max-width: 600px) {
+        font-size: 0.56em;
+        min-width: 52px;
+    }
 }
 
 .WeekSelHeader {

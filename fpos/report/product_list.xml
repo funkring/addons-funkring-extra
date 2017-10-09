@@ -10,7 +10,6 @@
             process_sep="False" 
             in_format="oo-odt" 
             out_format="oo-pdf" 
-            stylesheet="none" 
             parser="fpos/report/product_list.py" 
             rml="fpos/report/product_list.odt" />
             
@@ -23,7 +22,6 @@
             process_sep="False" 
             in_format="oo-odt" 
             out_format="oo-pdf" 
-            stylesheet="none" 
             parser="fpos/report/product_list.py" 
             rml="fpos/report/product_list.odt" />
             
@@ -36,7 +34,6 @@
             process_sep="False" 
             in_format="oo-odt" 
             out_format="oo-odt" 
-            stylesheet="none" 
             parser="fpos/report/product_list.py" 
             rml="fpos/report/product_list.odt" />
     

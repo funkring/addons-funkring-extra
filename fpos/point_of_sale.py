@@ -90,20 +90,20 @@ class pos_category(osv.osv):
 
 
 class pos_config(osv.Model):
-    
+
     def _get_image(self, cr, uid, ids, name, args, context=None):
         result = dict.fromkeys(ids, False)
         for obj in self.browse(cr, uid, ids, context=context):
             image_data = obj.image
-            result[obj.id] = {
-                "image": tools.image_resize_image(image_data, (1024,2024), avoid_if_small=True),
-                "image_80mm": tools.image_resize_image(image_data, (576,576), avoid_if_small=True),
-                "image_56mm": tools.image_resize_image(image_data, (384,384), avoid_if_small=True)
+            result[obj.id] = {                
+                "image_80mm": tools.image_resize_image(image_data, (576,576), avoid_if_small=True, preserve_aspect_ratio=True),
+                "image_58mm": tools.image_resize_image(image_data, (384,384), avoid_if_small=True, preserve_aspect_ratio=True),
+                "image_format" : image_data and "png" or None
             }
         return result
 
     def _set_image(self, cr, uid, oid, name, value, args, context=None):
-        image_data = tools.image_resize_image(value, (1024,2024), avoid_if_small=True)
+        image_data = tools.image_resize_image(value, (1024,2024), filetype="PNG", avoid_if_small=True, preserve_aspect_ratio=True)
         return self.write(cr, uid, [oid], {"image": image_data}, context=context)
 
     _inherit = "pos.config"
@@ -121,6 +121,7 @@ class pos_config(osv.Model):
         "iface_ponline" : fields.boolean("Search Partner Online"),
         "iface_nosearch" : fields.boolean("No Search"),
         "iface_printleft" : fields.boolean("Print Button Left"),
+        "iface_receipt" : fields.selection([("s","Simple"),("d","Simple with Detail"),("n","Normal")], string="Receipt Format"),
         "iface_autofav" : fields.boolean("Auto Favorites"),
         "fpos_printer_ids" : fields.many2many("fpos.printer", "fpos_config_printer_rel", "config_id", "printer_id", "Printer", copy=True, composition=True),
         "fpos_dist_ids" : fields.many2many("fpos.dist","fpos_config_dist_rel","config_id","dist_id","Distributor", copy=True, composition=True),
@@ -141,60 +142,71 @@ class pos_config(osv.Model):
                                       "Users",
                                       help="Allowed users for the Point of Sale"),
         "fpos_hwproxy_id" : fields.many2one("fpos.hwproxy","Hardware Proxy", copy=True, select=True, composition=True),
-        "parent_user_id" : fields.many2one("res.users","Parent Sync User", help="Transfer all open orders to this user before pos is closing", copy=True, select=True),           
+        "parent_user_id" : fields.many2one("res.users","Parent Sync User", help="Transfer all open orders to this user before pos is closing", copy=True, select=True),
         "payment_iface_ids" : fields.one2many("fpos.payment.iface","config_id","Payment Interfaces", copy=True, composition=True),
-        
+
         "sign_method" : fields.selection([("card","Card"),
                                           ("online","Online")],
-                                         string="Signature Method"),
-                
+                                         string="Signature Method", copy=False),
+
         "sign_status" : fields.selection([("draft", "Draft"),
                                           ("config","Configuration"),
                                           ("active","Active"),
-                                          ("react","(Re)Activation")], 
-                                          string="Signature Status", readonly=True),
-        
+                                          ("react","(Re)Activation")],
+                                          string="Signature Status", readonly=True, copy=False),
+
         "sign_serial" : fields.char("Serial"),
         "sign_cid" : fields.char("Company ID"),
-        "sign_pid" : fields.char("POS ID"),
-        "sign_key" : fields.char("Encryption Key", help="AES256 encryption key, Base64 coded"),
-        "sign_crc" : fields.char("Checksum", readonly=True),
-        "sign_certs" : fields.binary("Certificate", readonly=True),
-        
+        "sign_pid" : fields.char("POS ID", copy=False),
+        "sign_key" : fields.char("Encryption Key", copy=False, help="AES256 encryption key, Base64 coded"),
+        "sign_crc" : fields.char("Checksum", copy=False, readonly=True),
+        "sign_certs" : fields.binary("Certificate", copy=False, readonly=True),
+
         "sign_user" : fields.char("Online Sign User"),
-        "sign_password" : fields.char("Online Sign Password"), 
-        
-        "dep_key" : fields.char("DEP Key"),
-        
+        "sign_password" : fields.char("Online Sign Password"),
+
+        "dep_key" : fields.char("DEP Key", copy=False),
+
         "fpos_model" : fields.selection([
-                ("hand", "Touch&Cash Hand"),
-                ("flex", "Touch&Cash Flex"),
-                ("flex2", "Touch&Cash Flex 2"),
-                ("mpos", "Touch&Cash Fine"),
-                ("npos", "Touch&Cash Raw"),
-                ("pos", "Touch&Cash POS"),
-                ("online","Online POS"),
-                ("tablet","Tablet POS"),
-                ("pc","PC POS"),
+                ("hand", "Hand"),
+                ("flex", "Flex"),
+                ("flex2", "Flex 2"),
+                ("mpos", "Fine"),
+                ("npos", "Raw"),
+                ("pos", "POS"),
+                ("online","Online"),
+                ("tablet","Tablet"),
+                ("pc","PC"),
                 ("jim","OrderJIM")
             ], "Fpos Model"),
-                
-                
+
+
         # image: all image fields are base64 encoded and PIL-supported
-        'image': fields.binary("Image",
-            help="Receipt Image"),
-        'image_80mm': fields.function(_get_image, fnct_inv=_set_image,
-            string="Receipt Image 80mm", type="binary",
+        "image": fields.binary("Image",
+            help="Receipt Image", export=False),
+        "image_format" : fields.function(_get_image, 
+            string="Image Format", 
+            type="char",
             multi="_get_image",
+            readonly=True,
+            export=True,
             store={
                 "pos.config": (lambda self, cr, uid, ids, c={}: ids, ['image'], 10),
             }),
-        'image_58mm': fields.function(_get_image, fnct_inv=_set_image,
-            string="Receipt Image 56mm", type="binary",
+        "image_80mm": fields.function(_get_image, fnct_inv=_set_image,
+            string="Receipt Image 80mm", type="binary",
             multi="_get_image",
+            export=True,
             store={
                 "pos.config": (lambda self, cr, uid, ids, c={}: ids, ['image'], 10),
-            })        
+            }),
+        "image_58mm": fields.function(_get_image, fnct_inv=_set_image,
+            string="Receipt Image 56mm", type="binary",
+            multi="_get_image",
+            export=True,
+            store={
+                "pos.config": (lambda self, cr, uid, ids, c={}: ids, ['image'], 10),
+            })
     }
     _sql_constraints = [
         ("user_uniq", "unique (user_id)", "Fpos User could only assinged once"),
@@ -203,54 +215,54 @@ class pos_config(osv.Model):
     _defaults = {
         "fpos_sync_clean" : 15,
         "fpos_sync_version" : 1,
-        "sign_status" : "draft" 
+        "sign_status" : "draft"
     }
     _order = "company_id, name"
-    
+
     def action_sign_config(self, cr, uid, ids, context=None):
         fpos_order_obj = self.pool["fpos.order"]
         for config in self.browse(cr, uid, ids, context=context):
-            
+
             if config.liveop and config.sign_status == "draft":
 
                 key = base64.decodestring(config.sign_key)
                 if not key or len(key) != AES_KEY_SIZE:
                     raise Warning(_("Invalid AES Key"))
-                
+
                 checksum = SHA256.new(config.sign_key).digest()[:CRC_N]
                 checksum = base64.encodestring(checksum).replace("=", "")
-                
+
                 values = {
-                   "sign_crc": checksum, 
+                   "sign_crc": checksum,
                    "sign_status": "config",
-                   "dep_key":  util.password() 
+                   "dep_key":  util.password()
                 }
-                
+
                 if config.sign_method == "online":
                     values["sign_status"] = "active"
-                
+
                 self.write(cr, uid, config.id, values, context=context)
-                
+
                 # update turnover
                 lastOrderEntries = fpos_order_obj.search_read(cr, uid,
                                     [("fpos_user_id","=",uid),("state","!=","draft")],
                                     ["seq", "turnover", "cpos", "date"],
                                     order="seq desc", limit=1, context={"active_test" : False})
-        
+
 
                 # reset turn over
                 for lastOrderEntry in lastOrderEntries:
                     if lastOrderEntry["turnover"]:
                         fpos_order_obj.write(cr, uid, lastOrderEntry["id"], {"turnover": 0.0}, context=context)
-                
+
         return True
-    
+
     def activate_card(self, cr, uid, oid, certs, context=None):
-        
+
         # check if oid is uuid
         if isinstance(oid, basestring):
             oid = self.pool["res.mapping"].get_id(cr, uid, self._name, oid)
-            
+
         profile = self.browse(cr, uid, oid, context=context)
         if not profile.sign_status in ("config","react"):
             raise Warning(_("No activiation in this sign status possible"))
@@ -258,20 +270,20 @@ class pos_config(osv.Model):
             raise Warning(_("Card could only activated by Fpos"))
         if not certs:
             raise Warning(_("Card certifcate is empty"))
-        
+
         certData = base64.b64decode(certs)
         cert = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_ASN1, certData)
-        cert_serial = "%x" % cert.get_serial_number()        
+        cert_serial = "%x" % cert.get_serial_number()
         if cert_serial != profile.sign_serial:
             raise Warning(_("Invalid SerialNo: Expected is %s, but transmitted was %s") % (profile.sign_serial, cert_serial))
-        
+
         self.write(cr, uid, oid, {
             "sign_certs": certs,
-            "sign_status" : "active"    
+            "sign_status" : "active"
         })
-        
+
         return True
-    
+
     def action_sign_reactivate(self, cr, uid, ids, context=None):
         for config in self.browse(cr, uid, ids, context=context):
             if config.liveop and config.sign_status == "active":
@@ -306,7 +318,7 @@ class pos_config(osv.Model):
     def action_post_all(self, cr, uid, context=None):
         config_ids = self.search(cr, uid, [("liveop","=",True),("user_id","!=",False)])
         return self.action_post(cr, uid, config_ids, context=context)
-    
+
     def sign_data(self, cr, uid, data, build_hash=False, context=None):
         profile_data = self.search_read(cr, uid, [("user_id","=", uid)], ["sign_status",
                                                                           "sign_user",
@@ -314,21 +326,21 @@ class pos_config(osv.Model):
                                                                           "sign_key"], context=context)
         if not profile_data:
             raise Warning(_("No profile for user %s") % uid)
-        
+
         profile = profile_data[0]
         if profile["sign_status"] != "active":
             raise Warning(_("Signation is not configured for user %s") % uid)
-                
+
         sign_user = profile["sign_user"]
         sign_password = profile["sign_password"]
         sign_key = profile["sign_key"]
-        
+
         def floatToStr(val):
             return ("%0.2f" % val).replace(".",",")
-        
+
         def dateToStr(val):
             return util.strToTime(val).strftime("%Y-%m-%dT%H:%M:%S")
-        
+
         def encryptTurnover():
             st = data["st"]
             specialType = None
@@ -336,22 +348,22 @@ class pos_config(osv.Model):
                 specialType = "STO"
             elif st == "t":
                 specialType = "TRA"
-                
-            if specialType:                
+
+            if specialType:
                 return base64.encodestring(specialType)
             else:
                 receiptId = "%s%s" % (data["sign_pid"],data["seq"])
                 turnoverHash = SHA256.new(receiptId).digest()[:16]
                 cipher = AES.new(base64.b64decode(sign_key), counter=lambda: turnoverHash, mode=AES.MODE_CTR)
-                turnover = struct.pack(">qq", long(data["turnover"] * 100.0), 0)          
+                turnover = struct.pack(">qq", long(data["turnover"] * 100.0), 0)
                 return base64.b64encode(cipher.encrypt(turnover)[:8])
-            
+
         def b64urldecode_nopadding(val):
             missing_padding = len(val) % 4
             if missing_padding != 0:
                 val += b'='* (4 - missing_padding)
             return base64.urlsafe_b64decode(val)
-        
+
         data["turnover_enc"] = encryptTurnover()
         prevHash = base64.b64encode(SHA256.new(data["last_dep"]).digest()[:8])
         payload = [
@@ -368,23 +380,23 @@ class pos_config(osv.Model):
             data["sign_serial"],            # 10
             prevHash                        # 11
         ]
-                
+
         payload = "_%s" % "_".join(payload)
         url = "https://www.a-trust.at/asignrkonline/v2/%s/Sign/JWS" % sign_user
         json = {
            "password": sign_password,
            "jws_payload" : payload
         }
-        
+
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         resp = requests.post(url, data=simplejson.dumps(json), headers=headers, timeout=10)
-        resp.raise_for_status()        
+        resp.raise_for_status()
         res = simplejson.loads(resp.text)
         res = res.get("result")
-        
+
         if not res:
             raise Warning(_("Signation failed for user %s") % uid)
-        
+
         signation = str(res.split(".")[-1])
         signation = b64urldecode_nopadding(signation)
         plaindata = "%s_%s" % (payload, base64.b64encode(signation))
@@ -392,9 +404,9 @@ class pos_config(osv.Model):
         data["dep"] = res
         data["sig"] = True
         data["hs"] = None
-        
+
         if build_hash:
-            data["hs"] = base64.urlsafe_b64encode(SHA256.new(plaindata).digest()[:8]) 
+            data["hs"] = base64.urlsafe_b64encode(SHA256.new(plaindata).digest()[:8])
 
         return data
 
@@ -408,37 +420,37 @@ class pos_config(osv.Model):
                                                                           "fpos_sync_version"], context=context)
         if not profile_data:
             raise Warning(_("No profile for user %s") % uid)
-        
-        
+
+
         # eval data
         profile_data = profile_data[0]
         fpos_sync_count = profile_data["fpos_sync_count"] or 0
         fpos_sync_clean = profile_data["fpos_sync_clean"] or 0
         fpos_sync_version = profile_data["fpos_sync_version"] or 1
-        profile_id = profile_data["id"]        
-        
+        profile_id = profile_data["id"]
+
         # get parent or childs
         parent_user_id = profile_data["parent_user_id"]
         parent_profile_id = None
         child_ids = None
         if parent_user_id:
             parent_user_id = parent_user_id[0]
-            child_ids = []  
-                      
+            child_ids = []
+
             parent_profile_data = self.search_read(cr, uid, [("user_id","=",parent_user_id)],["fpos_sync_version"], context=context)
             if parent_profile_data:
                 parent_profile_data = parent_profile_data[0]
                 parent_profile_id = parent_profile_data["id"]
-                
+
                 # update child SYNC VERSION
                 parent_sync_version = parent_profile_data["fpos_sync_version"] or 1
                 if parent_sync_version != fpos_sync_version:
                     self.write(cr, uid, profile_id, {
                             "fpos_sync_version": parent_sync_version
                         }, context=context)
-                    
+
                     fpos_sync_version = parent_sync_version
-            
+
         else:
             child_ids = self.search(cr, uid, [("parent_user_id","=",uid)], context=context)
 
@@ -450,63 +462,82 @@ class pos_config(osv.Model):
                     "compositions" : ["journal_ids","user_ids","company_id","sequence_id"]
                 },
                 "res.company" : {
-                    "fields" : ["name", 
+                    "fields" : ["name",
                                 "currency_id"],
                     "compositions" : ["currency_id"]
                 }
             }
         }
-        
+
         # check sync action
-        if action:            
+        if action:
             if action == "inc":
                 # ONLY increment if MAIN POS
                 fpos_sync_count += 1
                 sync_data = {
                     "fpos_sync_count" : fpos_sync_count
                 }
-                
+
                 # RESET MARK for MAIN POS
                 if not parent_profile_id and fpos_sync_clean and fpos_sync_count >= fpos_sync_clean:
                     sync_data["fpos_sync_reset"] = True
-                
+
                 self.write(cr, uid, profile_id, sync_data, context=context)
-                    
+
             elif action == "reset":
+                # new sync data
                 sync_data = {
                     "fpos_sync_count" : 0,
                     "fpos_sync_reset" : False
                 }
-                
-                # if MAIN POS increment VERSION                
+
+                # if MAIN POS increment VERSION
                 if not parent_profile_id:
                     fpos_sync_version += 1
                     sync_data["fpos_sync_version"] = fpos_sync_version
-                    
+
                     # set RESET FLAG for all child POS
                     self.write(cr, uid, child_ids, {
                             "fpos_sync_version" : fpos_sync_version,
                             "fpos_sync_reset" : True
                     }, context=context)
-                
+
                 # write sync data
                 self.write(cr, uid, profile_id, sync_data, context=context)
-            
-     
+                
+            elif action == "check":
+               
+                # check orders   
+                fpos_order_obj = self.pool["fpos.order"]
+                check_version = max(fpos_sync_version-1,0)
+                
+                fpos_order_vals = fpos_order_obj.search_read(cr, uid, [("fpos_user_id","=",uid),("sv",">=",check_version),("seq",">",0)], ["seq"], order="seq asc", context={"active_test":False})
+                check_seq = 0
+                
+                for order_val in fpos_order_vals:
+                    if not check_seq:
+                        check_seq = order_val["seq"]
+                    else:
+                        check_seq += 1
+                        if check_seq != order_val["seq"]:
+                            raise Warning(_("Invalid Sequence %s/%s") % (uid,check_seq))
+           
+
+
         # query config
         res = jdoc_obj.jdoc_by_id(cr, uid, "pos.config", profile_id, options=jdoc_options, context=context)
         res["dbid"]  = profile_id
-        
+
         # get counting values
         fpos_order_obj = self.pool.get("fpos.order")
         last_order_values = fpos_order_obj.search_read(cr, uid,
                                     [("fpos_user_id","=",uid),("state","!=","draft")],
                                     ["seq", "turnover", "cpos", "date", "dep"],
                                     order="seq desc", limit=1, context={"active_test" : False})
-        
+
 
         if last_order_values:
-            last_order_values = last_order_values[0]            
+            last_order_values = last_order_values[0]
             res["last_seq"] = last_order_values["seq"]
             res["last_turnover"] = last_order_values["turnover"]
             res["last_cpos"] = last_order_values["cpos"]
@@ -534,7 +565,7 @@ class pos_config(osv.Model):
             for bank in banks:
                 accounts.append(bank.acc_number)
             res["bank_accounts"] = accounts
-        
+
         # finished
         return res
 
@@ -557,10 +588,10 @@ class pos_config(osv.Model):
             date_from = next_date
 
         return res
-    
+
     def onchange_sign_method(self, cr, uid, ids, sign_method, sign_status, sign_serial, sign_cid, sign_pid, sign_key, fpos_prefix, company_id, context=None):
         value =  {}
-        
+
         if sign_method and sign_status == "draft":
             if not sign_cid and company_id:
                 company = self.pool["res.company"].browse(cr, uid, company_id, context=context)
@@ -569,12 +600,12 @@ class pos_config(osv.Model):
                 value["sign_pid"] = re.sub("[^0-9A-Za-z]", "", fpos_prefix)
             if not sign_key:
                 value["sign_key"] = base64.b64encode(Random.new().read(AES_KEY_SIZE))
-        
+
         res = {"value": value}
         return res
-            
+
     def copy(self, cr, uid, oid, default, context=None):
-                        
+
         def incField(model_obj, oid, field, default):
             val = default.get(field)
             if not val and model_obj:
@@ -587,23 +618,23 @@ class pos_config(osv.Model):
         incField(self, oid, "name", default)
         incField(self, oid, "fpos_prefix", default)
         incField(self, oid, "sign_pid", default)
-        
+
         fpos_prefix =  default.get("fpos_prefix")
         if fpos_prefix:
             user_ref = self.read(cr, uid, oid, ["user_id"], context=context)["user_id"]
             if user_ref:
                 userObj = self.pool["res.users"]
                 userFields = ["name","email","login"]
-                userDefaults = {}                
+                userDefaults = {}
                 for userField in userFields:
                     incField(userObj, user_ref[0], userField, userDefaults)
                 if userDefaults:
                     default["user_id"] = userObj.copy(cr, uid, user_ref[0], userDefaults, context=context)
-                    
+
         return super(pos_config, self).copy(cr, uid, oid, default, context=context)
-    
+
     def create(self, cr, uid, values, context=None):
-        
+
         fpos_prefix = values.get("fpos_prefix")
         long_name = None
         if fpos_prefix:
@@ -611,31 +642,31 @@ class pos_config(osv.Model):
             if short_name:
                 long_name = values["name"]
                 values["name"] = short_name
-            
+
         config_id = super(pos_config, self).create(cr, uid, values, context=context)
-        
+
         if long_name:
             self.write(cr, uid, config_id, {"name": long_name}, context=context)
-        
+
         return config_id
 
     def _dep_export(self, cr, uid, profile, context=None):
         forder_obj = self.pool["fpos.order"]
-        
+
         if context is None:
             export_context = {}
         else:
             export_context = dict(context)
-        
-        export_context["active_test"] = False    
-        
+
+        export_context["active_test"] = False
+
         receipts = []
-        data = {            
+        data = {
             "Signaturzertifikat" : "",
             "Zertifizierungsstellen" : [],
             "Belege-kompakt" : receipts
         }
-                
+
         fpos_user = profile.user_id
         if fpos_user:
             # search start seq
@@ -646,17 +677,17 @@ class pos_config(osv.Model):
                 orderEntries = forder_obj.search_read(cr, uid, [("fpos_user_id", "=", fpos_user.id),("seq", ">=", startSeq)], ["dep"], order="seq asc", context=export_context)
                 for entry in orderEntries:
                     receipts.append(entry["dep"])
-                    
+
         return {
              "Belege-Gruppe" : [data]
         }
-        
+
     def action_dep_export(self, cr, uid, ids, context=None):
         for profile in self.browse(cr, uid, ids, context=context):
-            
+
             if not profile.sign_status or profile.sign_status == "draft":
                 raise Warning(_("No signation activated for %s") % profile.name)
-            
+
             url = "/fpos/dep/%s" % profile.id
             return {
                'name': _('DEP Export %s') % profile.sign_pid,
@@ -664,8 +695,8 @@ class pos_config(osv.Model):
                'url': url,
                'target': 'self'
             }
-        
-        
+
+
 
 class pos_order(osv.Model):
 
@@ -705,7 +736,7 @@ class pos_order(osv.Model):
 
     def _after_invoice(self, cr, uid, order, context=None):
         self.reconcile_invoice(cr, uid, [order.id], context=context)
-        
+
     def action_invoice(self, cr, uid, ids, context=None):
         inv_ref = self.pool.get('account.invoice')
         inv_line_ref = self.pool.get('account.invoice.line')
@@ -723,8 +754,13 @@ class pos_order(osv.Model):
                 raise osv.except_osv(_('Error!'), _('Please provide a partner for the sale.'))
 
             acc = order.partner_id.property_account_receivable.id
+            
+            order_name = [order.name]
+            if order.pos_reference:
+                order_name.append(order.pos_reference)
+                
             inv = {
-                'name': order.name,
+                'name': ' / '.join(order_name),
                 'origin': order.name,
                 'account_id': acc,
                 'journal_id': order.sale_journal.id or None,
@@ -733,6 +769,7 @@ class pos_order(osv.Model):
                 'partner_id': order.partner_id.id,
                 'comment': order.note or '',
                 'currency_id': order.pricelist_id.currency_id.id, # considering partner's sale pricelist's currency
+                'perf_enabled': False
             }
             inv.update(inv_ref.onchange_partner_id(cr, uid, [], 'out_invoice', order.partner_id.id)['value'])
             # FORWARDPORT TO SAAS-6 ONLY!
@@ -749,7 +786,7 @@ class pos_order(osv.Model):
                     'product_id': line.product_id.id,
                     'quantity': line.qty,
                 }
-                
+
                 inv_name = line.name
                 inv_line.update(inv_line_ref.product_id_change(cr, uid, [],
                                                                line.product_id.id,
@@ -762,11 +799,11 @@ class pos_order(osv.Model):
                 inv_line['price_unit'] = line.price_unit
                 inv_line['discount'] = line.discount
                 inv_line['name'] = inv_name
-                
+
                 # take taxes from fpos line
                 # if available
                 tax_ids = inv_line['invoice_line_tax_id']
-                
+
                 # add pos line specific
                 fpos_line = line.fpos_line_id
                 if fpos_line:
@@ -774,10 +811,10 @@ class pos_order(osv.Model):
                     inv_line["uos_id"] = fpos_line.uom_id.id
                     if inv_line.get("product_id") == prod_balance_id:
                         inv_line["product_id"] = None
-                    
+
                 inv_line['invoice_line_tax_id'] = [(6, 0, tax_ids)]
                 inv_line_ref.create(cr, uid, inv_line, context=context)
-                
+
             inv_ref.button_reset_taxes(cr, uid, [inv_id], context=context)
             self.signal_workflow(cr, uid, [order.id], 'invoice')
             inv_ref.signal_workflow(cr, uid, [inv_id], 'validate')

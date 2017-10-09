@@ -32,14 +32,14 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
             'button[action=saveRecord]': {
                 tap: 'onSaveRecord'
             },
-            'button[action=pack]' : {
-               tap: 'onPack' 
+            'button[action=pack]': {
+                tap: 'onPack' 
             },
-            'button[action=createDelivery]' : {
-               tap: 'onCreateDelivery' 
+            'button[action=createDelivery]': {
+                tap: 'onCreateDelivery' 
             },
-            'button[action=reprintDelivery]' : {
-               tap: 'onReprintDelivery' 
+            'button[action=reprintDelivery]': {
+                tap: 'onReprintDelivery' 
             },
             mainMenuButton: {
                 tap: 'onShowMainMenu'                
@@ -52,7 +52,7 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
         ViewManager.startLoading("Setup...");
         
         // setup         
-        Core.setup().then(function() {
+        Core.getClient().then(function() {
             try {
                 ViewManager.stopLoading();
                 self.loadMainView();                
@@ -230,7 +230,7 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
         // get store
         var opStore = activeView.getStore();
         
-        var preparePack = function(weight) {                
+        var preparePack = function(weight, add_picking_id) {                
             // set all for packing if no quantity 
             // was set
             var qty_done = 0;
@@ -241,7 +241,7 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
             var pack = function() {
                 // pack
                 ViewManager.startLoading('Packvorgang');
-                Core.call('stock.picking','picking_app_pack',[picking_id, weight]).then(function(next_picking) {            
+                Core.call('stock.picking','picking_app_pack',[picking_id, weight, add_picking_id]).then(function(next_picking) {            
                     ViewManager.stopLoading();
                     self.getMainView().pop();
                     
@@ -286,23 +286,61 @@ Ext.define('DeliveryPicking.controller.MainCtrl', {
             }
         };
         
-        // create weight input
+        // create weight input        
         if ( !self.weightInput ) {
+            // create
             self.weightInput = Ext.create('Ext.view.NumberInputView', {
+                xtype: 'numberinput',
                 centered : true,
                 autoRemoveHandler: true,
-                title: 'Gewicht in Kg'           
+                title: 'Gewicht in Kg'
             });
+            
+            // override keydown
+            self.weightInput.onKeyDown = function(e) {
+              if ( !self.weightInput.barcodeScanner ) {
+                  self.weightInput.barcodeScanner = Ext.create('Ext.util.BarcodeScanner', {
+                          keyListener : function(keycode) {
+                              self.weightInput.onKeyCode(keycode);
+                          },
+                          barcodeListener : function(code) { 
+                              ViewManager.startLoading("Lade Lieferschein...");
+                              Core.call('stock.picking','picking_app_scan', [code, picking_id]).then(function(picking) {
+                                  ViewManager.stopLoading();
+                                  try {
+                                      // check picking
+                                      if ( picking.found_picking_id && picking.found_picking_id != picking.id ) {
+                                          self.addToPickingId = picking.found_picking_id;
+                                          self.weightInput.setTitle('Gewicht in Kg</br>dazupacken zu <larger>'+picking.found_picking_name+'</larger>');                                                               
+                                      } else {
+                                          ViewManager.handleError({name:'not_finished', message: 'Der Lieferschein wo hinzugefügt werden soll wurde noch nicht gepackt!'});
+                                      }
+                                  } catch (err) {
+                                      ViewManager.handleError(err, {name:'scan_failed', message: 'Scan fehlgeschlagen'});
+                                  }
+                              }, function(err) {
+                                  ViewManager.handleError(err, {name:'scan_failed', message: 'Scan fehlgeschlagen'});
+                              });
+                      }
+                  });
+              }
+              
+              // detect barcode
+              self.weightInput.barcodeScanner.detectBarcode(e);
+            };
+             
             self.getMainView().add(self.weightInput);           
         }
         
         // show weight input
+        self.addToPickingId = 0;
+        self.weightInput.setTitle('Gewicht in Kg');
         self.weightInput.setHandler(function(view, value) {
-            preparePack(value);
+            preparePack(value, self.addToPickingId);
         });        
         self.weightInput.show();       
-    },    
-        
+    },
+
     showPicking: function(picking) {
         if ( !picking || !picking.name ) return;
         

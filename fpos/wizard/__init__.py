@@ -23,3 +23,4 @@ import export_wizard_rzl
 import report_wizard
 import product_opt_wizard
 import product_ean_wizard
+import product_list_wizard

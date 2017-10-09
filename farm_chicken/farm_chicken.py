@@ -39,7 +39,7 @@ class chicken_logbook(models.Model):
     def action_draft(self):
         log_obj = self.env["farm.chicken.log"]
         logs = log_obj.search([("logbook_id","in",self.ids)])
-        logs.write({"state":"valid"})
+        logs.write({"state":"valid"})        
         return self.write({"state":"draft"})
     
     @api.multi
@@ -58,6 +58,15 @@ class chicken_logbook(models.Model):
         logs = log_obj.search([("logbook_id","in",self.ids),("state","=","valid")])
         logs.write({"state":"done"})
         return self.write({"state":"done"})
+    
+    @api.multi
+    def action_validate(self):
+        log_obj = self.env["farm.chicken.log"]
+        for logbook in self:
+            if logbook.state == "active":
+                logs = log_obj.search([("logbook_id","=",logbook.id)], order="day asc")
+                logs._calc_beyond()
+        return True
     
     @api.multi
     def action_inactive(self):
@@ -87,6 +96,9 @@ class chicken_logbook(models.Model):
         
         log_obj = self.env["farm.chicken.log"]
         for day, values in data.iteritems():
+            if day < logbook.date_start or (logbook.date_end and logbook.date_end < day):
+                continue
+            
             log = log_obj.search([("logbook_id","=",logbook.id),("day","=",day)],limit=1)
             log = log and log[0] or None
             
@@ -155,7 +167,7 @@ class chicken_logbook(models.Model):
             date_start = util.currentDate()
         
         f = format.LangFormat(self._cr, self._uid, self._context)
-        
+                
         week_start = util.getFirstOfWeek(date_start)
         week_next = util.getFirstOfNextWeek(date_start)
         week_str = datetime.strftime(util.strToDate(week_start), _("CW %W"))
@@ -168,25 +180,52 @@ class chicken_logbook(models.Model):
         
         sum_loss = 0
         
-        avg_eggs_total = 0.0
-        avg_eggs_broken = 0.0
-        avg_eggs_dirty = 0.0
-        avg_eggs_maschine = 0.0
-        avg_eggs_weight = 0.0
-        avg_weight = 0.0
-        avg_eggs_performance = 0.0
-                
+        first_weight = 0.0
+        
         valid_count = 0
         fill_count = 0
+        day_count = 0
         
         chicken_count = 0
         
-        # get current values
-        logs = log_obj.search([("logbook_id","=",self.id),("day","<=",week_day)], limit=1)
-        if logs:
-            log = logs[0]
-            chicken_count = log.chicken_count
+        avg_data = {}
         
+        def getAvg(name, calc=True):
+            data = avg_data.get(name, None)
+            if data is None:
+                data = {
+                    "val": [],
+                    "avg": 0.0
+                }
+                avg_data[name] = data
+                
+            if calc:
+                val = data["val"][:7]
+                val_len = len(val)
+                if val_len:
+                    data["avg"] = sum(val) / val_len
+                
+            return data
+        
+        def addAvg(name, val):
+            if val:
+                data = getAvg(name, calc=False)                
+                data["val"].insert(0,val)
+            return val
+        
+        # get 14 logs for average calc
+        logByDay = {}        
+        logs = log_obj.search([("logbook_id","=",self.id),("day","<",week_next)], limit=14, order="day desc")
+        if logs:
+            # set new start
+            week_day_avg = logs[-1].day
+            if week_day_avg < week_day:
+                week_day = week_day_avg
+            # assign log  
+            for log in logs:
+                logByDay[log.day] = log
+                
+        chicken_age_weeks = 0
         
         while week_day < week_next:
             week_end = week_day
@@ -194,123 +233,136 @@ class chicken_logbook(models.Model):
             loss = 0
             loss_fix = False
             loss_fix_amount = 0
-            loss_amount = 0
+            loss_amount = 0            
+            eggs_performance = 0.0
+            weight = 0
+            
             eggs_total = 0
             eggs_broken = 0
             eggs_dirty = 0
-            eggs_weight = 0.0
+            eggs_weight = 0
             eggs_machine = 0
-            weight = 0.0
+            chicken_age = 0
+            
+            feed = 0
+            water = 0
+            
             valid = False
             filled = False
             note = ""
-            chicken_age_weeks = 0
-            chicken_count = 0
-            eggs_performance = 0.0
             
-            for log in log_obj.search([("logbook_id","=",self.id),("day","=",week_day)]):
+            log = logByDay.get(week_day)
+            if log:
                 loss = log.loss
                 loss_amount = log.loss_amount or 0
                 loss_fix = log.loss_fix
                 loss_fix_amount = log.loss_fix_amount
-                eggs_total = log.eggs_total                
-                eggs_broken = log.eggs_broken
-                eggs_dirty = log.eggs_dirty
-                eggs_weight = log.eggs_weight
-                eggs_machine = log.eggs_machine
+                
+                eggs_total = addAvg("eggs_total", log.eggs_total)                
+                eggs_broken = addAvg("eggs_broken", log.eggs_broken)
+                eggs_dirty = addAvg("eggs_dirty", log.eggs_dirty)
+                eggs_weight = addAvg("eggs_weight", log.eggs_weight)
+                eggs_machine = addAvg("eggs_machine", log.eggs_machine)
+                eggs_performance = addAvg("eggs_performance", log.eggs_performance)
+                
+                feed = addAvg("feed", log.feed)
+                water = addAvg("water", log.water)
+                
                 weight = log.weight
-                note = log.note
+                if weight and not first_weight:
+                    first_weight = weight
+                
+                chicken_count = log.chicken_count
+                
+                note = log.note or note
                 chicken_age_weeks = log.chicken_age_weeks
+                chicken_age = log.chicken_age
                 valid = log.state != "draft"
                 filled = True
-                chicken_count = log.chicken_count
-                eggs_performance = log.eggs_performance
-                break
             
             if filled:
-                fill_count += 1
-            if valid:
-                valid_count += 1
+                day_count += 1            
+                sum_loss += loss_amount
             
-            sum_loss += loss_amount
-            avg_eggs_total += eggs_total
-            avg_eggs_broken += eggs_broken
-            avg_eggs_dirty += eggs_dirty
-            avg_eggs_maschine += eggs_machine
-            avg_eggs_weight += eggs_weight
-            avg_weight += weight
-            avg_eggs_performance += eggs_performance
-            
-            days.append({
-                "name" : format_date(util.strToDate(week_day), "E d.M.y", locale=self._context.get("lang") or tools.config.defaultLang),
-                "day": week_day,
-                "loss": loss,
-                "loss_fix": loss_fix,
-                "loss_fix_amount": loss_fix_amount,
-                "eggs_total": eggs_total,
-                "eggs_broken": eggs_broken,
-                "eggs_dirty": eggs_dirty,
-                "eggs_weight": eggs_weight,
-                "eggs_machine" : eggs_machine,
-                "weight": weight,
-                "note": note,
-                "valid": valid,
-                "filled": filled,
-                "chicken_age_weeks": chicken_age_weeks,
-                "overview" :  [               
-                    {
-                        "name": _("Eggs Total"),
-                        "value": "%s" % eggs_total                  
-                    },
-                    {
-                        "name": _("Eggs Machine"),
-                        "value": "%s" % eggs_machine
-                    },  
-                    {
-                        "name": _("Broken Eggs"),
-                        "value": "%s" % eggs_broken
-                    },
-                    {
-                        "name": _("Loss"),
-                        "value": "%s" % loss_amount                    
-                    },
-                    {
-                        "name": _("Chicken Count"),
-                        "value": "%s" % chicken_count
-                    },
-                    {
-                        "name": _("Eggs Weight"),
-                        "value": "%s g" % f.formatLang(eggs_weight) 
-                    },
-                    {
-                        "name": _("Chicken Weight"),
-                        "value": "%s kg" % f.formatLang(weight) 
-                    },
-                    {
-                        "name": _("Egg Performance"),
-                        "value" : "%s %%" % f.formatLang(eggs_performance)
-                    }                         
-                ] 
-            })
+            # add day only if within week
+            if week_day >= week_start:
+                if filled:
+                    fill_count += 1
+                if valid:
+                    valid_count += 1
+                
+                days.append({
+                    "name" : format_date(util.strToDate(week_day), "E d.M.y", locale=self._context.get("lang") or tools.config.defaultLang),
+                    "day": week_day,
+                    "loss": loss,
+                    "loss_fix": loss_fix,
+                    "loss_fix_amount": loss_fix_amount,
+                    "eggs_total": eggs_total,
+                    "eggs_broken": eggs_broken,
+                    "eggs_dirty": eggs_dirty,
+                    "eggs_weight": eggs_weight,
+                    "eggs_machine" : eggs_machine,
+                    "weight": weight,
+                    "note": note,
+                    "valid": valid,
+                    "filled": filled,
+                    "chicken_age_weeks": chicken_age_weeks,
+                    "overview" :  [               
+                        {
+                            "name": _("Eggs Total"),
+                            "value": "%s" % eggs_total                  
+                        },
+                        {
+                            "name": _("Eggs Machine"),
+                            "value": "%s" % eggs_machine
+                        },  
+                        {
+                            "name": _("Broken Eggs"),
+                            "value": "%s" % eggs_broken
+                        },
+                        {
+                            "name" : _("Dirty Eggs"),
+                            "value": "%s" % eggs_dirty
+                        },
+                        {
+                            "name": _("Eggs Weight"),
+                            "value": "%s g" % f.formatLang(eggs_weight) 
+                        },
+                        {
+                            "name": _("Egg Performance"),
+                            "value" : "%s %%" % f.formatLang(eggs_performance)
+                        },
+                        {
+                            "name": _("Loss"),
+                            "value": "%s" % loss_amount                    
+                        },
+                        {
+                            "name": _("Chicken Count"),
+                            "value": "%s" % chicken_count
+                        },                        
+                        {
+                            "name": _("Chicken Weight"),
+                            "value": "%s kg" % f.formatLang(weight) 
+                        },
+                        {
+                            "name": _("Day Age"),
+                            "value": "%s" % chicken_age
+                        },
+                        {
+                            "name": _("Feed"),
+                            "value": "%s kg" % f.formatLang(feed, digits=0) 
+                        },
+                        {
+                            "name": _("Water"),
+                            "value" : "%s l" % f.formatLang(water)
+                        }                        
+                    ] 
+                })
             
             week_day = util.getNextDayDate(week_day)
             
-        fill_rate = 0
-        validate_rate = 0
+       
         days_len = len(days)
-        
-        if fill_count:
-            avg_eggs_weight /= fill_count
-            avg_weight /= fill_count
-            avg_eggs_broken /= fill_count 
-            avg_eggs_dirty /= fill_count
-            avg_eggs_maschine /= fill_count
-            avg_eggs_total /= fill_count
-            avg_eggs_performance /= fill_count
-            
-            validate_rate = int(100.0 / days_len * valid_count)
-            fill_rate = int(100.0 / days_len * fill_count)
-            
         return {
             "name": "%s %s" % (self.name, week_str),
             "week" : week_str,
@@ -323,48 +375,53 @@ class chicken_logbook(models.Model):
             "overview" : [               
                 {
                     "name" : _("Eggs"),
-                    "value": "%s" % f.formatLang(avg_eggs_total)                  
+                    "value": "%s" % f.formatLang(getAvg("eggs_total")["avg"])                  
                 },
                 {
                     "name" : _("Eggs Machine"),
-                    "value": "%s" % f.formatLang(avg_eggs_maschine)
+                    "value": "%s" % f.formatLang(getAvg("eggs_machine")["avg"])
                 },  
                 {
                     "name" : _("Broken Eggs"),
-                    "value": "%s" % f.formatLang(avg_eggs_broken)
+                    "value": "%s" % f.formatLang(getAvg("eggs_broken")["avg"])
                 },
                 {
                     "name" : _("Dirty Eggs"),
-                    "value": "%s" % f.formatLang(avg_eggs_dirty)
+                    "value": "%s" % f.formatLang(getAvg("eggs_dirty")["avg"])
+                },
+                {
+                    "name" : _("Eggs Weight"),
+                    "value": "%s g" % f.formatLang(getAvg("eggs_weight")["avg"]) 
+                },
+                {
+                    "name": _("Egg Performance"),
+                    "value" : "%s %%" % f.formatLang(getAvg("eggs_performance")["avg"])
                 },
                 {
                     "name" : _("Loss"),
                     "value": "%s" % sum_loss,                    
                 },
                 {
-                    "name" : _("Filled"),
-                    "value": "%s %%" % fill_rate,                    
-                },
-                {
-                    "name" : _("Validated"),
-                    "value": "%s %%" % validate_rate,                    
-                },      
-                {
-                    "name" : _("Eggs Weight"),
-                    "value": "%s g" % f.formatLang(avg_eggs_weight) 
-                },
-                {
-                    "name" : _("Chicken Weight"),
-                    "value": "%s kg" % f.formatLang(avg_weight) 
-                },
-                {
                     "name" : _("Chicken Count"),
                     "value": "%s" % chicken_count 
+                },                
+                
+                {
+                    "name" : _("Chicken Weight"),
+                    "value": "%s kg" % f.formatLang(first_weight) 
                 },
                 {
-                    "name": _("Egg Performance"),
-                    "value" : "%s %%" % f.formatLang(avg_eggs_performance)
-                }                 
+                    "name": _("Week Age"),
+                    "value": "%s" % chicken_age_weeks
+                },                
+                {
+                    "name": _("Feed"),
+                    "value": "%s kg" % f.formatLang(getAvg("feed")["avg"], digits=0) 
+                },
+                {
+                    "name": _("Water"),
+                    "value" : "%s l" % f.formatLang(getAvg("water")["avg"])
+                }       
             ]            
         }
             
@@ -453,21 +510,7 @@ class chicken_log(models.Model):
                     
                 if delivered:
                     parent.delivered=delivered 
-                    
-#             else:
-#                 if non_inv_logs:
-#                     # calc rest
-#                     inv_fields = {}
-#                     inv_logs.remove(parent)
-#                     for inv_field in self._inv_fields:
-#                         val = parent[inv_field]
-#                         for inv_log in inv_logs:
-#                             val-=inv_log[inv_field]                    
-#                         inv_fields[inv_field] = val
-#                     
-#                     for inv_field in self._inv_fields:
-#                         for log in non_inv_logs:
-                    
+
         else:
             for log in logs:
                 log.inv_hierarchy = False
@@ -478,7 +521,7 @@ class chicken_log(models.Model):
     def action_validate(self):
         for log in self:
             log._validate_inv()
-            logs_after = log.search([("logbook_id","=",self.logbook_id.id),("day",">",self.day)])
+            logs_after = log.search([("logbook_id","=",self.logbook_id.id),("day",">",self.day)], order="day desc")
             logs_after._validate_inv()
         return self.write({"state":"valid"})
     
@@ -577,62 +620,102 @@ class chicken_log(models.Model):
                  "logbook_id.house_id",
                  "logbook_id.house_id.parent_id")
     def _compute_parent_id(self):
-        parent_log = None
-        parent_house = self.logbook_id.house_id.parent_id
+        if self.state != "done":
+            parent_log = None
+            parent_house = self.logbook_id.house_id.parent_id
+            
+            if parent_house:
+                # assign parent log
+                parent_log = self.search([("day","=",self.day),
+                                   ("logbook_id.state","=","active"),
+                                   ("logbook_id.house_id","=",parent_house.id)])
+                # create parent if not exist
+                if parent_log:
+                    parent_log = parent_log[0]
+                    
+            self.parent_id = parent_log
         
-        if parent_house:
-            parent_log = self.search([("day","=",self.day),
-                               ("logbook_id.state","=","active"),
-                               ("logbook_id.house_id","=",parent_house.id)])
-            # create parent if not exist
-            if not parent_log:
+     
+    @api.one
+    def _validate(self, values=None):
+        if self.state != "done":
+            parent = self.parent_id
+            
+            # validate parent
+            parent_house = self.logbook_id.house_id.parent_id
+            if not parent and parent_house:
                 logbook_obj = self.env["farm.chicken.logbook"]
                 parent_logbook = logbook_obj._get_active(parent_house.id)
-                if parent_logbook:
-                    parent_log = self.create({
+                if parent_logbook:                
+                    self.parent_id = self.create({
                             "logbook_id" : parent_logbook.id,
                             "day" : self.day
                           })
-            # use existing
-            else:
-                parent_log = parent_log[0]
-        self.parent_id = parent_log
-        
-    @api.one
-    def _validate(self, values=None):
-        parent = self.parent_id
-        if parent:
-            # check for validate
-            if values:
-                validate_fields = []            
-                for field in self._forward_fields:
-                    if field in values:
-                        validate_fields.append(field)
-            else:
-                validate_fields = self._forward_fields
-
-            # validate fields                
-            if validate_fields:
-                childs = parent.child_ids
-                if childs:
-                    values = self.read(validate_fields)[0]
-                    for key in validate_fields:
-                        val = values[key]
-                        for child in childs:
-                            if child.id == self.id:
-                                continue
-                            val += child[key]
-                        values[key]=val
-                    parent.write(values)
+                    parent = self.parent_id
+            
+            # check if parent exists
+            # and validate
+            if parent:
+                # check for validate
+                if values:
+                    validate_fields = []            
+                    for field in self._forward_fields:
+                        if field in values:
+                            validate_fields.append(field)
+                else:
+                    validate_fields = self._forward_fields
+    
+                # validate fields                
+                if validate_fields:
+                    childs = parent.child_ids
+                    if childs:
+                        values = self.read(validate_fields)[0]
+                        for key in validate_fields:
+                            val = values[key]
+                            for child in childs:
+                                if child.id == self.id:
+                                    continue
+                                val += child[key]
+                            values[key]=val
+                        parent.write(values)
+     
+    @api.multi                  
+    def _calc_beyond(self):
+        for field in ("chicken_count",
+                      "chicken_age",
+                      "chicken_age_weeks",
+                      "eggs_performance"):
+            self._fields[field]._compute_value(self)
                     
-    def _create(self, cr, uid, vals, context=None):
+    def _create(self, cr, uid, vals, context=None):        
         res = super(chicken_log,self)._create(cr, uid, vals, context=context)
-        self.browse(cr, uid, res, context=context)._validate(vals)
+        # validate
+        log = self.browse(cr, uid, res, context=context)
+        log._validate(vals)
+        # validate beyond
+        log._calc_beyond()
         return res
                 
     def _write(self, cr, uid, ids, vals, context=None):
-        res = super(chicken_log,self)._write(cr, uid, ids, vals, context=context)        
+        # check invalid
+        invalid_ids = []
+        if "loss" in vals:
+            for stored_vals in self.search_read(cr, uid, [("id","in",ids)], ["loss"], order="day asc", context=context):
+                if vals.get("loss",0) != stored_vals["loss"]:
+                    invalid_ids.append(stored_vals["id"]) 
+        
+        # write
+        res = super(chicken_log,self)._write(cr, uid, ids, vals, context=context)
+        
+        # validate        
         self.browse(cr, uid, ids, context=context)._validate(vals)
+        # validate beyond
+        if invalid_ids:
+            cr.execute("SELECT l.logbook_id, MIN(l.day) FROM farm_chicken_log l WHERE l.id IN %s GROUP BY 1", (tuple(invalid_ids),))
+            for logbook_id, day in cr.fetchall():
+                log_ids = self.search(cr, uid, [("logbook_id","=",logbook_id),("day",">",day)], order="day asc")
+                self.browse(cr, uid, log_ids, context=context)._calc_beyond()
+            
         return res
     
     _name = "farm.chicken.log"
@@ -642,16 +725,9 @@ class chicken_log(models.Model):
     _rec_name = "day"
     
     _forward_fields = [
-        "loss",
-         "feed",
-         "water",                 
-         "eggs_total",
-         "eggs_nest",
-         "eggs_top",
-         "eggs_buttom",
-         "eggs_dirty",
-         "eggs_broken",
-         "eggs_removed"      
+        "feed",
+        "water",
+        "eggs_machine"         
     ]
     _inv_fields = [
          "delivered_eggs_mixed",
@@ -663,6 +739,10 @@ class chicken_log(models.Model):
          "inv_eggs_s45g",
          "inv_eggs_industry",
          "inv_eggs_presorted"     
+    ]
+    _calc_fields = [
+        "loss",
+        "eggs_total"
     ]
     
     _sql_constraints = [
@@ -741,6 +821,7 @@ class chicken_log(models.Model):
     chicken_age = fields.Integer("Chicken Age [Days]", readonly=True, compute="_compute_chicken_age", store=True)
     chicken_age_weeks = fields.Integer("Chicken Age [Weeks]", readonly=True, compute="_compute_chicken_age", store=True)
     chicken_count = fields.Integer("Chicken Count", readonly=True, compute="_compute_chicken_count", store=True)
+    
     eggs_count = fields.Integer("Eggs Stock", readonly=True, compute="_compute_eggs_count")
     eggs_performance = fields.Float("Eggs Performance", readonly=True, compute="_compute_eggs_performance", store=True)
     

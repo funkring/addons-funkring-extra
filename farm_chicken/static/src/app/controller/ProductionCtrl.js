@@ -5,6 +5,7 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
     requires:[         
          'Ext.view.ViewManager',
          'Ext.ux.Deferred',
+         'Ext.XTemplate',
          'ChickenFarm.core.Core',
          'ChickenFarm.view.ProductionView',
          'ChickenFarm.view.ProductionWeekView',
@@ -35,9 +36,9 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
              'dataview[action=productionWeekDataView]': {
                 itemsingletap: 'onWeekTab'
              },
-             'chf_production_week[action=productionDayView]': {
-                reloadData: 'onReloadDayList'
-             }             
+             'chf_production_week': {
+                 reloadData: 'onReloadDayList'
+             }           
          }
     },
     
@@ -62,8 +63,7 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
     reloadData: function() {
         var self = this; 
         ViewManager.startLoading('Lade Produktionen...');
-        Core.getModel("farm.chicken.logbook")
-            .call('search_read', [[['state','=','active']], ["name"]], {context: Core.getContext()}).then(function(res) {
+        Core.call('farm.chicken.logbook','search_read', [[['state','=','active'],["house_id.hidden","=",false]], ["name"]]).then(function(res) {            
             ViewManager.stopLoading();
             self.logbookStore.setData(res);
         }, function(err) {
@@ -77,8 +77,7 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
         if ( !self.logbook ) return;
 
         ViewManager.startLoading('Lade Woche...');
-        Core.getModel("farm.chicken.logbook")
-            .call('logbook_week', [self.logbook.getId()], {date_start: self.date_start, context: Core.getContext()}).then(function(res) {
+        Core.call('farm.chicken.logbook','logbook_week', [self.logbook.getId()], {date_start: self.date_start, context: Core.getContext()}).then(function(res) {
             ViewManager.stopLoading();            
             // set header
             self.weekStore.setData(res);        
@@ -99,6 +98,10 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
         this.reloadData();
     },
     
+    onReloadDayList: function() {
+        this.reloadDayList();
+    },
+    
     onProductionTap: function(list, index, target, record, e, eOpts) {
         var self = this;
         var mainView = self.getMainView();
@@ -106,7 +109,7 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
         self.logbook = record;
         self.manager = false;
         
-        Core.getModel("res.users").call('has_group',['farm.group_manager']).then(function(res) {
+        Core.call('res.users', 'has_group',['farm.group_manager'], {}).then(function(res) {
             self.manager = res;
             self.reloadDayList();
         
@@ -153,8 +156,7 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
                     }
                 }
                 
-                Core.getModel("farm.chicken.logbook")
-                    .call('update_day', [self.logbook.getId(), values], {next_state: next_state, context: Core.getContext()}).then(function(res) {
+                Core.call('farm.chicken.logbook', 'update_day', [self.logbook.getId(), values], {next_state: next_state, context: Core.getContext()}).then(function(res) {
                     record.commit();                    
                     deferred.resolve();
                     self.reloadDayList();
@@ -168,17 +170,16 @@ Ext.define('ChickenFarm.controller.ProductionCtrl', {
         });
     },
     
-    onReloadDayList: function() {
-        this.reloadDayList();
-    },
-    
     onWeekTab: function(list, index, target, record, e, eOpts) {
         var self = this;
-        if ( !self.logbook ) return;
-        if ( !self.manager ) return;
         
-        Core.getModel("farm.chicken.logbook")
-            .call('logbook_weeks', [self.logbook.getId()], {context: Core.getContext()}).then(function(res) {
+        if ( !self.logbook ) {
+            Core.restart();
+        }
+        
+        ViewManager.startLoading("Lade Wochen...");
+        
+        Core.call('farm.chicken.logbook', 'logbook_weeks', [self.logbook.getId()]).then(function(res) {
             ViewManager.stopLoading();
             
             var weeks = res[0];

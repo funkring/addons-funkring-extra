@@ -31,8 +31,7 @@ Delivery Picking App
     "website" : "http://oerp.at",
     "depends" : ["at_delivery",
                  "bus"],
-    "data" : ["view/app_index.xml",
-              "view/app_release_index.xml"],
+    "data" : [],
     "auto_install" : False,
     "installable": True
 }

@@ -18,11 +18,12 @@
                 <button name="action_dep_export" string="DEP Download" type="object" groups="point_of_sale.group_pos_user" 
                         attrs="{'invisible' : ['|','|',('sign_method','=',False),('liveop','=',False),('sign_status','=','draft')]}"/>
             </button>
-            <field name="iface_invoicing" position="before">                
+            <field name="iface_invoicing" position="before">
                 <field name="iface_waiterkey"/>
                 <field name="iface_place"/>                
                 <field name="iface_user_nobalance"/>
                 <field name="iface_user_printsales"/>
+                <field name="iface_receipt"/>
                 <field name="liveop" invisible="1"/>        
             </field>
             <field name="iface_big_scrollbars" position="after">

@@ -62,6 +62,7 @@ Ext.define('Ext.form.ViewManager', {
         this.keyboardListenerStack=[];
         
         // override translation for picker
+        /*
         Ext.define('Override.Ext.picker.Picker', {
             override: 'Ext.picker.Picker',
             config: {
@@ -77,7 +78,7 @@ Ext.define('Ext.form.ViewManager', {
                 doneButton: 'OK',
                 cancelButton: 'Abbrechen'
             }
-        });
+        });*/
     },
     
     updateButtonState: function(view, items) {

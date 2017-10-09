@@ -65,6 +65,23 @@ $data-forground: #666666;
 $time-background: #ffffff;
 
 // ******************************************************************
+// BUGFIXES
+// ******************************************************************
+
+.x-container {   
+  touch-action: none;
+}
+
+// ******************************************************************
+// FORM
+// ******************************************************************
+
+.invalidField .x-form-field {
+  background-color: red !important;
+}
+
+
+// ******************************************************************
 // BUTTONS
 // ******************************************************************
 
@@ -133,7 +150,7 @@ $time-background: #ffffff;
 
 .StatusData {
     background: $data-background;
-    color: $data-forground;    
+    color: $data-forground;
 }
 
 .StatusDataItem {

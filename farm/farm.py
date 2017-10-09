@@ -18,7 +18,9 @@
 #
 ##############################################################################
 
-from openerp import models, fields
+from openerp import models, fields, api
+from openerp.exceptions import ValidationError
+from openerp.tools.translate import _ 
 
 class farm_house(models.Model):
     _name = "farm.house"
@@ -28,3 +30,10 @@ class farm_house(models.Model):
     parent_id = fields.Many2one("farm.house","Parent House")
     child_ids = fields.One2many("farm.house","parent_id","Houses")
     user_ids = fields.Many2many("res.users", "farm_house_user_rel", "user_id", "house_id", string="Users")
+    hidden = fields.Boolean("Hidden")
+
+    @api.one
+    @api.constrains('parent_id')
+    def _check_parent(self):
+        if self.parent_id and self.id == self.parent_id.id:
+            raise ValidationError(_("Parent could not be the same farm"))

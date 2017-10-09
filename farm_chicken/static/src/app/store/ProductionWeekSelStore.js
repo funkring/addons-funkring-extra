@@ -5,6 +5,7 @@ Ext.define('ChickenFarm.store.ProductionWeekSelStore', {
     config: {
         model: 'ChickenFarm.model.ProductionWeekSel',
         groupDir: "DESC",
-        groupField: 'group'
+        groupField: 'group',
+        sorters: [{property:'date_start', direction: 'DESC'}]
     }
 });

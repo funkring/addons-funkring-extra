@@ -432,6 +432,12 @@ Ext.define('Ext.view.NumberInputView', {
             }
     },
     
+    updateTitle: function(title) {
+        if ( this.numField ) {
+            this.numField.setInfo(title);
+        }  
+    },
+    
     addComma: function() {
         var val = this.numField.getValue();
         if ( val && val.indexOf(futil.comma) !== -1 ) {

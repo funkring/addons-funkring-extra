@@ -20,12 +20,14 @@
 ##############################################################################
 
 from openerp.addons.at_base import extreport
+from openerp.tools.translate import _
 
 class Parser(extreport.basic_parser):
     def __init__(self, cr, uid, name, context=None):
         super(Parser, self).__init__(cr, uid, name, context=context)
         self.localcontext.update({
-            "prepare": self._prepare
+            "prepare": self._prepare,
+            "product_list_name": context.get("product_list_name") or _("Productlist")
         })
         
     def _prepare(self, objects):

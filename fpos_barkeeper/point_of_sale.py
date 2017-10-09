@@ -22,11 +22,92 @@ from openerp.osv import osv
 from openerp.tools.translate import _
 from openerp.addons.at_base import util
 from openerp.addons.at_base import helper
+from openerp.addons.at_base import format
 
 from dateutil.relativedelta import relativedelta
 
 class pos_config(osv.Model):
     _inherit = "pos.config"
+      
+    def barkeeper_years(self, cr, uid, dt, context=None):
+      cr.execute("SELECT to_char(start_at, 'YYYY') FROM pos_session GROUP BY 1 ORDER BY 1 DESC")
+      data = [{"name":r[0],"date":"%s-01-01" % r[0], "next": "barkeeper_months", "nextTitle": _("Months"), "mode": "year"} for r in cr.fetchall()]
+      return {
+        "title": _("Year"),
+        "data": data
+      }
+    
+    def barkeeper_months(self, cr, uid, dt, context=None):
+      range_start = util.getFirstOfYear(dt)
+      range_end = util.getFirstOfNextYear(dt)
+      cr.execute("SELECT to_char(start_at, 'YYYY-MM') FROM pos_session WHERE start_at >= %s AND start_at < %s GROUP BY 1 ORDER BY 1 DESC", (range_start, range_end))
+      data = []
+      f = format.LangFormat(cr, uid, context=context)
+      for m, in cr.fetchall():
+        str_date = "%s-01" % m
+        data.append({
+          "name": f.getMonthName(str_date, context),
+          "date": str_date,
+          "mode": "month",
+          "next": "barkeeper_days",
+          "nextTitle": _("Day")
+        })
+        
+      return {
+        "title": dt[:4],
+        "data": data
+      }
+    
+    def barkeeper_days(self, cr, uid, dt, context=None):
+      range_start = util.getFirstOfMonth(dt)
+      range_end = util.getFirstOfNextMonth(dt)
+      cr.execute("SELECT to_char(start_at, 'YYYY-MM-DD') FROM pos_session WHERE start_at >= %s AND start_at < %s GROUP BY 1 ORDER BY 1 DESC", (range_start, range_end))
+      data = []
+      f = format.LangFormat(cr, uid, context=context)
+      for str_date, in cr.fetchall():
+        week = util.getWeek(str_date)
+        data.append({
+          "name": "%s, %s" % (f.formatLang(str_date, date=True), f.getDayShortName(str_date, context=context)),
+          "date": str_date,
+          "group": _("Week %s") % week,
+          "mode": "day"       
+        })
+      
+      return {
+        "title": "%s %s" % (helper.getMonth(cr, uid, dt, context), dt[:4]),
+        "data": data,
+        "group": True
+      }
+    
+    def barkeeper_range_filter(self, cr, uid, context=None):
+      return {
+          "title": _("Filter"),
+          "data":[
+            {
+              "name": _("Today"),
+              "date": None,
+              "mode": "today"
+            },
+            {
+              "name": _("Day"),
+              "date": None,
+              "mode": "day",
+              "next": "barkeeper_years"
+            },
+            {
+              "name": _("Month"),
+              "date": None,
+              "mode": "month",
+              "next": "barkeeper_years"
+            },
+            {
+              "name": _("Year"),
+              "date": None,
+              "mode": "year",
+              "next": "barkeeper_years"
+            }
+          ]
+        }
 
     def barkeeper_status(self, cr, uid, options, context=None):
         order_obj = self.pool["pos.order"]
@@ -186,6 +267,7 @@ class pos_config(osv.Model):
             startDate = util.getFirstOfYear(statDate)
             endDate = util.getFirstOfNextYear(statDate)
             dt_delta = relativedelta(years=1)
+            time_keyfunc = lambda date_order: helper.strToLocalDateStr(cr, uid, date_order, context=context)[:7]            
         elif mode == "month":
             stat["title"] = _("Month")
             startDate = util.getFirstOfMonth(statDate)
@@ -229,20 +311,19 @@ class pos_config(osv.Model):
         for order in orders:
             # check if it is relevant
             fpos_order = order.fpos_order_id
-            if fpos_order.tag:
-                continue
-            
+            notbalance = fpos_order.tag != "s"
             user = order.user_id
             
             # add turnover for journal
             for st in order.statement_ids:
                 journal = st.journal_id
-                amount = st.amount
+                amount = notbalance and st.amount or 0.0
                 addAmount(amount, stat, [("byJournal", journal.name),("byUser", user.name, [("byJournal", journal.name)])], True)
                 
             # add to order
-            time_key = time_keyfunc(order.date_order) 
-            addAmount(order.amount_total, stat, [("total",),("byTime", time_key, [("byUser", user.name)])], True)
+            time_key = time_keyfunc(order.date_order)
+            amount = notbalance and order.amount_total or 0.0  
+            addAmount(amount, stat, [("total",),("byTime", time_key, [("byUser", user.name)])], True)
 
         # sort dicts            
         for (parent, key, value) in orderDicts:

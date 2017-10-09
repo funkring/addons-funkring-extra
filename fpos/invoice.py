@@ -20,21 +20,50 @@
 
 from openerp import models, fields, api, _
 
-# class account_invoice(models.Model):
-#     _inherit = "account.invoice"
-#     
-#     def invoice_validate(self):
-#         res =  super(account_invoice, self).invoice_validate()
-#         
-#         # check for reconcilation with point of sale order
-#         order_obj = self.env["pos.order"]
-#         for invoice_id in self.ids:            
-#             order = order_obj.search([("state","=","invoiced"),("invoice_id","=",invoice_id),("invoice_id.state","=","open")])
-#             #order.statement_ids.confirm_statement()
-#             order.reconcile_invoice()     
-#         
-#         return res
+class account_invoice(models.Model):
+    _inherit = "account.invoice"
     
+    email_invoice = fields.Boolean("E-Mail Invoice", compute="_email_invoice", readonly=True)
+     
+    @api.multi
+    def invoice_validate(self):
+        res = super(account_invoice, self).invoice_validate()
+        for invoice in self:
+            if not invoice.sent and invoice.email_invoice:
+                
+                template = self.env.ref('account.email_template_edi_invoice', False)
+                message_obj = self.env["mail.compose.message"]
+                                
+                message = message_obj.with_context(
+                    default_template_id=template.id,                                        
+                    default_model="account.invoice",
+                    default_res_id=invoice.id,
+                    mark_invoice_as_sent=True,
+                    default_partner_ids=[invoice.partner_id.id],
+                    default_composition_mode="comment",
+                    default_notify=True).create({})
+                     
+                message.send_mail()
+                
+        return res
+
+    @api.one
+    def _email_invoice(self):
+        self.email_invoice = False
+
+        if self.partner_id.email:
+            order = self.env["pos.order"].sudo().search([("invoice_id","=",self.id)])
+            if order:
+                fpos_order = order.fpos_order_id
+                if fpos_order and fpos_order.send_invoice:
+                    self.email_invoice = True
+                else:
+                    order = order[0]
+                    for payment in order.statement_ids:
+                        if payment.statement_id.journal_id.fpos_invoice_email:
+                            self.email_invoice = True
+                            break
+                   
 
 class account_invoice_line(models.Model):
     _inherit = "account.invoice.line"
@@ -49,7 +78,7 @@ class account_invoice_line(models.Model):
         if status_id:
             for line in self:
                 line_format = res.get(line.id,"")
-                if line.product_id and line.product_id.id == status_id and not "s" in line_format:
+                if line.product_id and line.product_id.id == status_id and not line.price_unit and not line.quantity and not "s" in line_format:
                     line_format += "s"
                     res[line.id] = line_format
         

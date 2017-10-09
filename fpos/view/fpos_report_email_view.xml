@@ -20,17 +20,24 @@
                         <field name="pos_ids" widget="many2many_tags"/>
                         <field name="pos_id"/>
                     </group>
-                    <group>                        
-                        <field name="detail"/>
-                        <field name="separate"/>
-                        <field name="product"/>
-                        <field name="irregular"/>
-                        <field name="daily_overview"/>
-                        <field name="summary"/>
-                        <field name="bmd_export"/>
-                        <field name="rzl_export"/>
-                        <field name="range_start"/>
+                    <group>
+                      <field name="range_start"/>
+                      <field name="bmd_export"/>
+                      <field name="rzl_export"/>                    
                     </group>
+                    <group>
+                        <field name="summary" attrs="{'invisible': [('separate','=',True)]}"/>
+                        <field name="daily_overview" attrs="{'invisible': ['|',('range','=','day'),('separate','=',True)]}"/>
+                        <field name="separate" attrs="{'invisible': ['|','|',('range','=','day'),('daily_overview','=',True),('summary','=',True)]}"/>
+                        <field name="detail"/>  
+                        <field name="journal_ids" widget="many2many_tags" attrs="{'invisible': [('detail','!=',True)]}"/>
+                    </group>
+                    <group>
+                      <field name="product"/> 
+                      <field name="product_summary" attrs="{'invisible': [('product','!=',True)]}"/>
+                      <field name="product_intern"  attrs="{'invisible': [('product','!=',True)]}"/>                
+                    </group>
+                  
                 </group>
             </sheet>
         </form>

@@ -27,7 +27,6 @@ from openerp import SUPERUSER_ID
 import openerp.addons.decimal_precision as dp
 
 from dateutil.relativedelta import relativedelta
-from openerp.osv.fields import datetime
 
 class fpos_order(models.Model):
     _name = "fpos.order"
@@ -233,6 +232,8 @@ class fpos_order(models.Model):
                     # don't override order if it is not in draft state
                     uuid = doc["_id"]
                 else:
+                    # lock order
+                    doc["fdoo__locked"] = True
                     uuid = jdoc_obj.jdoc_put(doc)
                     
                 # notify post
@@ -248,11 +249,6 @@ class fpos_order(models.Model):
             
         return res
         
-    
-    @api.model
-    def create(self, vals):
-        return super(fpos_order, self).create(vals)
-    
     @api.multi
     def _post(self):
         # the right order for booking is expected !!!
@@ -787,8 +783,15 @@ class fpos_report_email(models.Model):
     pos_id = fields.Many2one("pos.config", "Finishing POS", help="Send email after finished this POS")
     
     detail = fields.Boolean("Detail")
+    journal_ids = fields.Many2many("account.journal", "fpos_report_email_journal_rel", "report_id", "journal_id", "Journals", 
+                                   help="Journals for which detail lines should be printed, if empty all are printed")
+    
     separate = fields.Boolean("Separate")
+    
     product = fields.Boolean("Products", help="Print product overview")
+    product_summary = fields.Boolean("Products Summary", help="Print only product categories")
+    product_intern = fields.Boolean("Intern Category", help="Group by intern category")
+    
     irregular = fields.Boolean("Irregularities", help="Print irregularities")
     
     daily_overview = fields.Boolean("Daily Overview", help="Adds an daily overview")
@@ -817,91 +820,103 @@ class fpos_report_email(models.Model):
         data_obj = self.pool["ir.model.data"]        
         template_id = data_obj.xmlid_to_res_id(self._cr, self._uid, "fpos.email_report", raise_if_not_found=True)
        
-        mail_context = self._context and dict(self._context) or {}
-        mail_context["start_date"] = start_date
-        mail_range =  self._cashreport_range(start_date)
-        mail_context["cashreport_name"] = mail_range[2]
+        mail_range = self._cashreport_range(start_date)
         
-        # check options
-        if self.detail:
-            mail_context["print_detail"] = True            
-        if self.separate:
-            mail_context["no_group"] = True
-        if self.product:
-            mail_context["print_product"] = True
-        if self.summary:
-            mail_context["summary"] = True
-        if self.daily_overview:
-            mail_context["daily_overview"] = True
-        if self.irregular:
-            mail_context["irregular"] = True
+        # check if session exist for these range
+        session_ids = self._session_ids(mail_range)
+        if session_ids:        
+        
+            mail_context = self._context and dict(self._context) or {}
+            mail_context["start_date"] = start_date
+            mail_context["cashreport_name"] = mail_range[2]
             
-        # build config
-        config_ids = []
-        if self.pos_ids:
-            for pos in self.pos_ids:
-                config_ids.append(pos.id)
-        else:
-            for config in config_obj.search([("liveop","=",True)]):
-                config_ids.append(config.id)
-            
-        # add report info                
-        mail_context["pos_report_info"] = {            
-            "from" : mail_range[0],
-            "till" : mail_range[1],
-            "name" : mail_range[2],
-            "config_ids" : config_ids
-        }
+            # check options
+            if self.detail:
+                mail_context["print_detail"] = True            
+            if self.separate:
+                mail_context["no_group"] = True
+            if self.product:
+                mail_context["print_product"] = True
+            if self.summary:
+                mail_context["summary"] = True
+            if self.daily_overview:
+                mail_context["daily_overview"] = True
+            if self.irregular:
+                mail_context["irregular"] = True
+            if self.product_summary:
+                mail_context["print_product_summary"] = True
+            if self.product_intern:
+                mail_context["print_product_intern"] = True
+            if self.journal_ids:
+                mail_context["journal_ids"] = [j.id for j in self.journal_ids]
                 
-        
-        attachment_ids = []
-        if self.rzl_export or self.bmd_export:
-            session_ids = self._session_ids(mail_range)
-            
-            # export rzl
-            if self.rzl_export:
-                rzl_data = rzl_obj.with_context(
-                                active_model="pos.session",
-                                active_ids = session_ids                        
-                            ).default_get(["data","data_name"])
-                attachment_ids.append( att_obj.create(self._cr, self._uid, {
-                                            'name': rzl_data["data_name"],
-                                            'datas_fname': rzl_data["data_name"],
-                                            'datas': rzl_data["data"]
-                                        }, context=self._context))
-                                                
-            # export bmd
-            if self.bmd_export:
-                bmd_data = bmd_obj.with_context(
-                                active_model="pos.session",
-                                active_ids = session_ids                        
-                            ).default_get(["data","data_name"])
-                attachment_ids.append( att_obj.create(self._cr, self._uid, {
-                                            'name': "buerf",
-                                            'datas_fname': "buerf",
-                                            'datas': bmd_data["buerf"]
-                                       }, context=self._context))
-            
-        # write
-        msg_id = mail_tmpl_obj.send_mail(self._cr, self._uid, template_id, self.id, force_send=False, context=mail_context)
-        if attachment_ids:
-            mail = mail_obj.browse(self._cr, self._uid, msg_id, context=self._context )
-            # link with message
-            att_obj.write(self._cr, self._uid, attachment_ids, { 
-                    "res_model": "mail.message",
-                    "res_id": mail.mail_message_id.id }, context=self._context)
-            # add attachment ids to message
-            mail_obj.write(self._cr,  self._uid, [msg_id], {
-                            "attachment_ids" : [(4,oid) for oid in attachment_ids]
-                          }, context=self._context)
-        # send
-        mail_obj.send(self._cr,  self._uid, [msg_id], context=mail_context)
+            # build config
+            config_ids = []
+            if self.pos_ids:
+                for pos in self.pos_ids:
+                    config_ids.append(pos.id)
+            else:
+                for config in config_obj.search([("liveop","=",True)]):
+                    config_ids.append(config.id)
+                
+            # add report info                
+            mail_context["pos_report_info"] = {            
+                "from" : mail_range[0],
+                "till" : mail_range[1],
+                "name" : mail_range[2],
+                "config_ids" : config_ids
+            }
+                
+       
+            attachment_ids = []
+            if self.rzl_export or self.bmd_export:
+                # export rzl
+                if self.rzl_export:
+                    rzl_data = rzl_obj.with_context(
+                                    active_model="pos.session",
+                                    active_ids = session_ids                        
+                                ).default_get(["data","data_name"])
+                    attachment_ids.append( att_obj.create(self._cr, self._uid, {
+                                                'name': rzl_data["data_name"],
+                                                'datas_fname': rzl_data["data_name"],
+                                                'datas': rzl_data["data"]
+                                            }, context=self._context))
+                                                    
+                # export bmd
+                if self.bmd_export:
+                    bmd_data = bmd_obj.with_context(
+                                    active_model="pos.session",
+                                    active_ids = session_ids                        
+                                ).default_get(["data","data_name"])
+                    attachment_ids.append( att_obj.create(self._cr, self._uid, {
+                                                'name': "buerf",
+                                                'datas_fname': "buerf",
+                                                'datas': bmd_data["buerf"]
+                                           }, context=self._context))
+                
+            # write
+            msg_id = mail_tmpl_obj.send_mail(self._cr, self._uid, template_id, self.id, force_send=False, context=mail_context)
+            if attachment_ids:
+                mail = mail_obj.browse(self._cr, self._uid, msg_id, context=self._context )
+                # link with message
+                att_obj.write(self._cr, self._uid, attachment_ids, { 
+                        "res_model": "mail.message",
+                        "res_id": mail.mail_message_id.id }, context=self._context)
+                # add attachment ids to message
+                mail_obj.write(self._cr,  self._uid, [msg_id], {
+                                "attachment_ids" : [(4,oid) for oid in attachment_ids]
+                              }, context=self._context)
+            # send
+            mail_obj.send(self._cr,  self._uid, [msg_id], context=mail_context)
     
     def _session_ids(self, report_range):
         # get sessions
         session_obj = self.pool["pos.session"]
+        # convert to time str
+        report_start = helper.strDateToUTCTimeStr(self._cr, self._uid, report_range[0], self._context)
+        report_end = helper.strDateToUTCTimeStr(self._cr, self._uid, util.getNextDayDate(report_range[1]), self._context)
         # build domain
-        domain = [("start_at",">=",report_range[0]),("start_at","<=",report_range[1])]
+        domain = [("start_at",">=",report_start),("start_at","<",report_end)]
         pos_list = self.pos_ids
         if pos_list:
             config_ids = [c.id for c in pos_list]
@@ -959,18 +974,53 @@ class fpos_report_email(models.Model):
         if not start_date:
             start_date = util.currentDate()        
         for report_email in self.search([]):
-            offset = -1
             has_pos = False
+            mail_range = None
             
             # check for main pos to send, or delay one day            
             pos = report_email.pos_id
-            if pos and session and session.config_id.id == pos.id:
-                has_pos = True
-                offset = 0
-            
-            # send last...                    
-            mail_range = report_email._cashreport_range(start_date, offset)
+            if pos and session:
+                config_obj = self.env["pos.config"]
+                mail_range = report_email._cashreport_range(start_date, 0)
+                
+                def all_finished():
+                    if not pos.user_id:
+                        return False
+                    fpos_user_ids = [c.user_id.id for c in config_obj.search([("parent_user_id","=",pos.user_id.id)]) if c.user_id]
+                    fpos_user_ids.append(pos.user_id.id)
+                    return not self.env["fpos.order"].search_count([("fpos_user_id","in",fpos_user_ids),("state","=","paid")])
+                
+                # check if it is main pos
+                if session.config_id.id == pos.id:
+                    has_pos = all_finished()     
+                               
+                # check if it is child of main pos
+                elif session.config_id.parent_user_id:
+                    # get mail range with offset from current day                    
+                    session_ids = self._session_ids(mail_range)
+                    # check if main pos has finished,
+                    #  and all child pos has finished
+                    if session_ids:
+                        session_obj = self.env["pos.session"]
+                        
+                        # query session count
+                        session_domain = [("config_id","=",pos.id),("id","in",session_ids)]
+                        session_count = session_obj.search_count(session_domain)
+                        
+                        # query closed session count
+                        session_domain.append(("stop_at","!=",False))
+                        session_count_closed = session_obj.search_count(session_domain)
+                        
+                        # check all main session finished
+                        if session_count and session_count == session_count_closed:                                                
+                            has_pos = all_finished()
+                
+            # send last... (offset from last day)
+            if not has_pos or not mail_range:                    
+                mail_range = report_email._cashreport_range(start_date, -1)
+                
             has_report = report_email.range_start < mail_range[0] and mail_range[1] < start_date
+            
             # ... or current
             if has_pos and mail_range[1] == start_date:
                 has_report = True

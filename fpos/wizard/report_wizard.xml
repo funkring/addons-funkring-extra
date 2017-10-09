@@ -9,19 +9,25 @@
             <form string="Report">
               <group>
                 <group>
-                  <field name="range" on_change="onchange_range(range, date_from, date_till, True)"/>
+                  <field name="range" on_change="onchange_range(range, date_from, date_till, True)"/>   
                   <field name="pos_ids" widget="many2many_tags"/>
-                  <field name="detail"/>
-                  <field name="separate"/>
-                  <field name="product"/>
-                  <field name="irregular"/>
-                  <field name="daily_overview"/>
-                  <field name="summary"/>
                 </group>
                 <group>
                   <field name="date_from" on_change="onchange_range(range, date_from, date_till)"/>
                   <field name="date_till"/>
+                  <field name="detail"/>  
+                  <field name="journal_ids" widget="many2many_tags" attrs="{'invisible': [('detail','!=',True)]}"/>
                 </group>
+                <group>
+                  <field name="summary" attrs="{'invisible': [('separate','=',True)]}"/>
+                  <field name="daily_overview" attrs="{'invisible': ['|',('range','=','day'),('separate','=',True)]}"/>
+                  <field name="separate" attrs="{'invisible': ['|','|',('range','=','day'),('daily_overview','=',True),('summary','=',True)]}"/>                  
+                </group>
+                <group>
+                  <field name="product"/> 
+                  <field name="product_summary" attrs="{'invisible': [('product','!=',True)]}"/>
+                  <field name="product_intern"  attrs="{'invisible': [('product','!=',True)]}"/>                
+                </group>               
               </group>
               <footer>
                 <button icon="gtk-go-forward" name="action_report" string="Create"  type="object" class="oe_highlight" />

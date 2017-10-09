@@ -13,7 +13,7 @@ Ext.define('DeliveryPicking.view.Main', {
             animation: false            
         },
         navigationBar: {            
-            items: [                
+            items: [
                 {
                     xtype: 'button',
                     id: 'saveButton',
@@ -21,7 +21,7 @@ Ext.define('DeliveryPicking.view.Main', {
                     align: 'right',
                     action: 'saveRecord',
                     hidden: true
-                },
+                },                
                 {
                     xtype: 'button',
                     id: 'packButton',

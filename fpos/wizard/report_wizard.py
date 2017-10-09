@@ -38,10 +38,15 @@ class report_wizard(models.TransientModel):
                                default=lambda self: self.env["pos.config"].search([("liveop","=",True)]))
     
     detail = fields.Boolean("Detail", help="Print detail")
+    journal_ids = fields.Many2many("account.journal", "report_wizard_journal_rel", "wizard_id", "journal_id", "Journals", 
+                                   help="Journals for which detail lines should be printed, if empty all are printed")
+    
     daily_overview = fields.Boolean("Daily Overview", help="Adds an daily overview")
     summary = fields.Boolean("Summary", help="Summary")
     separate = fields.Boolean("Separate", help="Cashreport for every single day")
     product = fields.Boolean("Products", help="Print product overview")
+    product_summary = fields.Boolean("Products Summary", help="Print only product categories")
+    product_intern = fields.Boolean("Intern Category", help="Group by intern category")
     irregular = fields.Boolean("Irregularities", help="Print irregularities")
        
     date_from = fields.Date("From")
@@ -86,8 +91,10 @@ class report_wizard(models.TransientModel):
         session_obj = self.pool["pos.session"]
         for wizard in self:
             # get ids
-            config_ids = [p.id for p in wizard.pos_ids]            
-            session_ids = session_obj.search(self._cr, self._uid, [("start_at",">=",wizard.date_from),("start_at","<=",wizard.date_till),("config_id","in",config_ids),("state","=","closed")], context=self._context)
+            config_ids = [p.id for p in wizard.pos_ids]
+            report_start = helper.strDateToUTCTimeStr(self._cr, self._uid, wizard.date_from, self._context)
+            report_end = helper.strDateToUTCTimeStr(self._cr, self._uid, util.getNextDayDate(wizard.date_till), self._context)        
+            session_ids = session_obj.search(self._cr, self._uid, [("start_at",">=",report_start),("start_at","<",report_end),("config_id","in",config_ids),("state","=","closed")], context=self._context)
             if not session_ids:
                 return True
             
@@ -146,10 +153,16 @@ class report_wizard(models.TransientModel):
                 report_ctx["no_group"] = True
             if wizard.product:
                 report_ctx["print_product"] = True
+            if wizard.product_summary:
+                report_ctx["print_product_summary"] = True
+            if wizard.product_intern:
+                report_ctx["print_product_intern"] = True
             if wizard.summary:
                 report_ctx["summary"] = True
             if wizard.daily_overview:
                 report_ctx["daily_overview"] = True
+            if wizard.journal_ids:
+                report_ctx["journal_ids"] = [j.id for j in wizard.journal_ids]
 
             # add report info                
             report_ctx["pos_report_info"] = {

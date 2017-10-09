@@ -222,13 +222,24 @@
                                         </input>        
                                     </div>
                                 </div>
-                                <div class="row mt4 mb4">
-                                    <div class="col-md-12">
-                                        <input type="checkbox" id="invoice_per_mail" name="invoice_per_mail">                                    
-                                            <label for="invoice_address">Invoice per Mail?</label>
-                                        </input>        
+                                <t t-if="mail_fee_option">
+                                  <fieldset>
+                                    <div class="row mt4 mb4">
+                                        <div class="col-md-12">                                        
+                                            <input type="radio" id="invoice_per_email" name="invoice_mail" value="email" t-att-checked="not invoice_per_mail and 'checked' or None">                                    
+                                                <label for="invoice_address">Invoice per E-Mail?</label>
+                                            </input>        
+                                        </div>
                                     </div>
-                                </div>                           
+                                    <div class="row mt4 mb4">
+                                        <div class="col-md-12">                                        
+                                            <input type="radio" id="invoice_per_mail" name="invoice_mail" value="mail" t-att-checked="invoice_per_email and 'checked' or None">                                    
+                                                <label for="invoice_address"><t t-esc="mail_fee_option"/></label>
+                                            </input>         
+                                        </div>
+                                    </div>
+                                  </fieldset>                           
+                                </t>
                                 <div class="row mt4 mb4">
                                     <div class="col-md-12">
                                         <input type="checkbox" id="invoice_address" name="has_invoice_address">                                    

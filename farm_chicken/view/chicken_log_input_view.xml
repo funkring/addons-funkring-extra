@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+  
+    <record id="tree_chicken_log_input" model="ir.ui.view">
+      <field name="name">farm_chicken.tree_chicken_log_input</field>
+      <field name="model">farm.chicken.log</field>
+      <field name="priority" eval="10"/>
+      <field name="arch" type="xml">
+        <tree string="Days" editable="buttom" colors="blue:state == 'draft'">
+            <field name="day" readonly="1"/>
+            <field name="logbook_id" readonly="1"/>
+            <field name="chicken_count" readonly="1"/>
+            <field name="loss"/>
+            <field name="eggs_total"/>
+            <field name="eggs_nest"/>
+            <field name="eggs_top"/>
+            <field name="eggs_buttom"/>
+            <field name="eggs_dirty"/>
+            <field name="eggs_broken"/>
+            <field name="eggs_weight"/>
+            <field name="weight"/>
+            <field name="state" readonly="1"/>
+            <button type="object" name="action_validate" icon="gtk-apply" states="draft"/>
+            <button type="object" name="action_draft" icon="gtk-cancel" states="valid"/>
+        </tree>
+      </field>
+    </record>
+    
+    <record id="action_chicken_log_input_tree" model="ir.actions.act_window">
+      <field name="name">Input</field>
+      <field name="res_model">farm.chicken.log</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="tree_chicken_log_input"/>
+      <field name="context">{'search_default_filter_logbook':1}</field>
+      <field name="search_view_id" ref="search_chicken_log"/>
+    </record>
+
+    <menuitem id="menu_chicken_log_input" name="Input" parent="menu_farm_chicken"
+      sequence="10"
+      action="action_chicken_log_input_tree"/>
+  </data>
+</openerp>
