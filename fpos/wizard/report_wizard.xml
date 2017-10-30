@@ -17,6 +17,7 @@
                   <field name="date_till"/>
                   <field name="detail"/>  
                   <field name="journal_ids" widget="many2many_tags" attrs="{'invisible': [('detail','!=',True)]}"/>
+                  <field name="product_ids" widget="many2many_tags" attrs="{'invisible': [('detail','!=',True)]}"/>
                 </group>
                 <group>
                   <field name="summary" attrs="{'invisible': [('separate','=',True)]}"/>

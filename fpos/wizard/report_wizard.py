@@ -41,6 +41,10 @@ class report_wizard(models.TransientModel):
     journal_ids = fields.Many2many("account.journal", "report_wizard_journal_rel", "wizard_id", "journal_id", "Journals", 
                                    help="Journals for which detail lines should be printed, if empty all are printed")
     
+    product_ids = fields.Many2many("product.product","report_wizard_product_rel", "wizard_id", "product_id",
+                                   "Products",
+                                   help="Products for which detail lines should be printed")
+    
     daily_overview = fields.Boolean("Daily Overview", help="Adds an daily overview")
     summary = fields.Boolean("Summary", help="Summary")
     separate = fields.Boolean("Separate", help="Cashreport for every single day")
@@ -163,6 +167,8 @@ class report_wizard(models.TransientModel):
                 report_ctx["daily_overview"] = True
             if wizard.journal_ids:
                 report_ctx["journal_ids"] = [j.id for j in wizard.journal_ids]
+            if wizard.product_ids:
+                report_ctx["product_ids"] = [p.id for p in wizard.product_ids]
 
             # add report info                
             report_ctx["pos_report_info"] = {

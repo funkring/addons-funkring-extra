@@ -25,6 +25,7 @@ class Parser(extreport.basic_parser):
             "print_product_summary" : context.get("print_product_summary", False),
             "print_product_intern" : context.get("print_product_intern", False),
             "journal_ids": context.get("journal_ids"),
+            "product_ids": context.get("product_ids"),
             "no_group" : context.get("no_group", False),
             "summary" : context.get("summary", False),
             "cashreport_name" : context.get("cashreport_name",""),
@@ -368,6 +369,7 @@ class Parser(extreport.basic_parser):
         date_max = None
         
         journal_ids = set(self.localcontext.get("journal_ids") or [])
+        product_ids = set(self.localcontext.get("product_ids") or [])
         
         # add turnover
         def addTurnover(data, name, amount, line, tax_amount, is_taxed):
@@ -388,7 +390,7 @@ class Parser(extreport.basic_parser):
                 # build key
                 price = 0.0
                 uom = product.uom_id
-                if uom.nounit or product.pos_price:
+                if uom.nounit:
                     key = (line.name, line.product_id, 0, 0)
                 else:
                     fpos_line = line.fpos_line_id
@@ -537,9 +539,17 @@ class Parser(extreport.basic_parser):
                     atomic_entry = entry
                     noturnover = st_journal.fpos_noturnover
              
-            # details
+            # check product filter
+            has_product = not product_ids
+            if not has_product:
+              for line in order.lines:
+                has_product = (line.product_id.id in product_ids)
+                if has_product:
+                  break
+            
+            # create details if filter match
             order_print_detail = False
-            if print_detail and has_journal:
+            if print_detail and has_journal and has_product:
                 order_print_detail = True
                 detail_lines = []
                 detail_tax = {}
