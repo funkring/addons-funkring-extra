@@ -1,0 +1,46 @@
+<openerp>
+  <data>
+  
+    <record id="form_product_template" model="ir.ui.view">
+      <field name="name">woocommerce.form_product_template</field>
+      <field name="model">product.template</field>
+      <field name="inherit_id" ref="product.product_template_form_view"/>
+      <field name="arch" type="xml">
+        <xpath expr="//form/sheet/notebook" position="inside">
+          <page string="WooCommerce">
+              <group>
+                <group>
+                  <field name="wc_name"/>
+                  <field name="wc_act_price"/>
+                </group>
+                <group>
+                  <field name="wc_state"/>
+                  <div>
+                      
+                    <button name="action_wc_draft" type="object" 
+                      class="oe_highlight"
+                      string="To Draft" 
+                      attrs="{'invisible':[('wc_state','!=',False)]}"/>
+                      
+                    <button name="action_wc_draft" type="object"
+                      string="To Draft" 
+                      attrs="{'invisible':['|',('wc_state','=',False),('wc_state','=','draft')]}"/>
+                      
+                    <button name="action_wc_review" type="object" 
+                      string="To Review" 
+                      attrs="{'invisible':[('wc_state','=','review')]}"/>
+                      
+                    <button name="action_wc_publish" type="object" 
+                      string="Publish" 
+                      attrs="{'invisible':[('wc_state','=','published')]}"/>
+                    
+                  </div>
+                </group>
+              </group>
+          </page>
+        </xpath>
+      </field>
+    </record>
+      
+  </data>
+</openerp>

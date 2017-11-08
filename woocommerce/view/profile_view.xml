@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="form_wc_profile" model="ir.ui.view">
+      <field name="name">wc.form_wc_profile</field>
+      <field name="model">wc.profile</field>
+      <field name="arch" type="xml">
+        <form string="Profile">
+          <header>
+            <button type="object" name="action_activate" states="draft" string="Activate" class="oe_highlight"/>
+            <button type="object" name="action_sync" states="active" string="Synchronize"/>
+            <button type="object" name="action_draft" states="active" string="Reset Draft"/>            
+            <field name="state" widget="statusbar" statusbar_visible="draft,active"/>
+          </header>
+          <sheet string="Profile">
+            <group>
+              <group>
+                <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                <field name="name"/>
+                <field name="url"/>
+              </group>
+              <group>
+                <field name="consumer_key"/>
+                <field name="consumer_secret"/>
+              </group>
+            </group>
+            <div>
+            <notebook>
+              <page  string="Partner Sync">
+                <group>
+                  <group>
+                    <field name="partner_date"/>
+                    <field name="user_date"/>
+                    <field name="user_date_del"/>
+                  </group>
+                  <group>
+                    <field name="user_date_wc"/>
+                    <field name="user_template_id"/>
+                  </group>
+                </group>
+              </page>
+              <page string="Product Sync">
+                <group>
+                  <group>
+                    <field name="product_date"/>
+                    <field name="product_date_del"/>
+                  </group>
+                  <group>
+                    <field name="product_date_wc"/>
+                  </group>
+                </group>
+              </page>              
+            </notebook>
+            </div>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_wc_profile" model="ir.ui.view">
+      <field name="name">wc.tree_wc_profile</field>
+      <field name="model">wc.profile</field>
+      <field name="arch" type="xml">
+        <tree string="Profiles">
+          <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+          <field name="name"/>
+          <field name="url"/>
+          <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_wc_profile" model="ir.ui.view">
+      <field name="name">wc.search_wc_profile</field>
+      <field name="model">wc.profile</field>
+      <field name="arch" type="xml">
+        <search string="Profile">
+          <field name="name"/>          
+        </search>
+      </field>
+    </record>
+
+    <record id="action_wc_profile" model="ir.actions.act_window">
+      <field name="name">Profile</field>
+      <field name="res_model">wc.profile</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>    
+    </record>
+
+    <menuitem id="menu_wc_profile" name="WooCommerce" parent="base.menu_base_config"     
+      sequence="23"
+      action="action_wc_profile"/>
+      
+  </data>
+</openerp>
