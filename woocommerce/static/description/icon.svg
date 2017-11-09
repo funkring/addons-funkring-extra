@@ -14,7 +14,10 @@
    version="1.1"
    id="svg3919"
    sodipodi:docname="icon.svg"
-   inkscape:version="0.92.2 (unknown)">
+   inkscape:version="0.92.2 (unknown)"
+   inkscape:export-filename="/home/martin/Work/odoo/addons-funkring-extra/woocommerce/static/description/icon.png"
+   inkscape:export-xdpi="72.57"
+   inkscape:export-ydpi="72.57">
   <metadata
      id="metadata3925">
     <rdf:RDF>
@@ -23,7 +26,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -45,7 +48,7 @@
      units="px"
      width="128mm"
      inkscape:zoom="0.88601332"
-     inkscape:cx="978.86251"
+     inkscape:cx="577.62701"
      inkscape:cy="-526.31958"
      inkscape:current-layer="svg3919" />
   <g

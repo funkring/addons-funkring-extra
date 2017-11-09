@@ -1,21 +1,20 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* woocommerce
+#	* woocommerce
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-07 12:43+0000\n"
-"PO-Revision-Date: 2017-11-07 13:46+0100\n"
-"Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
+"POT-Creation-Date: 2017-11-09 10:34+0000\n"
+"PO-Revision-Date: 2017-11-09 10:34+0000\n"
+"Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-"X-Generator: Poedit 1.5.4\n"
 
 #. module: woocommerce
 #: view:wc.profile:woocommerce.form_wc_profile
@@ -26,6 +25,17 @@ msgstr "Aktivieren"
 #: selection:wc.profile,state:0
 msgid "Active"
 msgstr "Aktiv"
+
+#. module: woocommerce
+#: field:wc.profile.checkpoint,ts:0
+msgid "Checkpoint"
+msgstr ""
+
+#. module: woocommerce
+#: view:wc.profile:woocommerce.form_wc_profile
+#: field:wc.profile,checkpoint_ids:0
+msgid "Checkpoints"
+msgstr ""
 
 #. module: woocommerce
 #: field:wc.profile,company_id:0
@@ -44,52 +54,54 @@ msgstr ""
 
 #. module: woocommerce
 #: field:wc.profile,create_uid:0
+#: field:wc.profile.checkpoint,create_uid:0
 msgid "Created by"
 msgstr ""
 
 #. module: woocommerce
 #: field:wc.profile,create_date:0
+#: field:wc.profile.checkpoint,create_date:0
 msgid "Created on"
 msgstr ""
 
 #. module: woocommerce
 #: field:wc.profile,display_name:0
+#: field:wc.profile.checkpoint,display_name:0
 msgid "Display Name"
 msgstr ""
 
 #. module: woocommerce
-#: selection:product.template,wc_state:0 selection:wc.profile,state:0
+#: selection:product.template,wc_state:0
+#: selection:wc.profile,state:0
 msgid "Draft"
 msgstr "Entwurf"
 
 #. module: woocommerce
 #: field:wc.profile,id:0
+#: field:wc.profile.checkpoint,id:0
 msgid "ID"
 msgstr ""
 
 #. module: woocommerce
-#: help:product.product,wc_act_price:0 help:product.template,wc_act_price:0
-msgid "If the price is not null an action price is set in WooCommerce"
-msgstr ""
-"Wenn der Aktionspreis gesetzt ist wird im WooCommerce eine Aktion geschalten"
-
-#. module: woocommerce
 #: field:wc.profile,__last_update:0
+#: field:wc.profile.checkpoint,__last_update:0
 msgid "Last Modified on"
 msgstr ""
 
 #. module: woocommerce
 #: field:wc.profile,write_uid:0
+#: field:wc.profile.checkpoint,write_uid:0
 msgid "Last Updated by"
 msgstr ""
 
 #. module: woocommerce
 #: field:wc.profile,write_date:0
+#: field:wc.profile.checkpoint,write_date:0
 msgid "Last Updated on"
 msgstr ""
 
 #. module: woocommerce
-#: code:addons/woocommerce/wc.py:80
+#: code:addons/woocommerce/wc.py:89
 #, python-format
 msgid "Mapping already exist"
 msgstr "Zuordnung existiert bereits"
@@ -100,36 +112,6 @@ msgid "Name"
 msgstr ""
 
 #. module: woocommerce
-#: field:wc.profile,partner_date:0
-msgid "Partner Modification Date"
-msgstr "Abgleich geänderte Partner"
-
-#. module: woocommerce
-#: view:wc.profile:woocommerce.form_wc_profile
-msgid "Partner Sync"
-msgstr "Partner Abgleich"
-
-#. module: woocommerce
-#: model:ir.model,name:woocommerce.model_product_product
-msgid "Product"
-msgstr "Produkt"
-
-#. module: woocommerce
-#: field:wc.profile,product_date_del:0
-msgid "Product Delete Date"
-msgstr "Abgleich gelöschte Produkte"
-
-#. module: woocommerce
-#: field:wc.profile,product_date:0
-msgid "Product Modification Date"
-msgstr "Abgleich geänderte Produkte"
-
-#. module: woocommerce
-#: view:wc.profile:woocommerce.form_wc_profile
-msgid "Product Sync"
-msgstr "Produkt Abgleich"
-
-#. module: woocommerce
 #: model:ir.model,name:woocommerce.model_product_template
 msgid "Product Template"
 msgstr "Produktvorlage"
@@ -138,15 +120,14 @@ msgstr "Produktvorlage"
 #: model:ir.actions.act_window,name:woocommerce.action_wc_profile
 #: view:wc.profile:woocommerce.form_wc_profile
 #: view:wc.profile:woocommerce.search_wc_profile
+#: field:wc.profile.checkpoint,profile_id:0
 msgid "Profile"
 msgstr "Profil"
 
 #. module: woocommerce
 #: constraint:wc.profile:0
 msgid "Profile name have to be lower case without spaces and special chars"
-msgstr ""
-"Der Profilname muss kleingeschreiben werden ohne Sonderzeichen und "
-"Leerzeichen"
+msgstr "Der Profilname muss kleingeschreiben werden ohne Sonderzeichen und Leerzeichen"
 
 #. module: woocommerce
 #: view:wc.profile:woocommerce.tree_wc_profile
@@ -204,16 +185,6 @@ msgid "Url"
 msgstr ""
 
 #. module: woocommerce
-#: field:wc.profile,user_date_del:0
-msgid "User Delete Date"
-msgstr "Abgleich gelöschte Benutzer"
-
-#. module: woocommerce
-#: field:wc.profile,user_date:0
-msgid "User Modification Date"
-msgstr "Abgleich geänderte Benutzer"
-
-#. module: woocommerce
 #: field:wc.profile,user_template_id:0
 msgid "User Template"
 msgstr "Benutzervorlage"
@@ -225,19 +196,14 @@ msgid "WooCommerce"
 msgstr ""
 
 #. module: woocommerce
-#: field:product.product,wc_act_price:0 field:product.template,wc_act_price:0
-msgid "WooCommerce Action Price"
-msgstr "WooCommerce Aktionspreis"
-
-#. module: woocommerce
-#: field:product.product,wc_name:0 field:product.template,wc_name:0
-msgid "WooCommerce Name"
+#: model:ir.model,name:woocommerce.model_wc_profile_checkpoint
+msgid "WooCommerce Checkpoint"
 msgstr ""
 
 #. module: woocommerce
-#: field:wc.profile,product_date_wc:0
-msgid "WooCommerce Product Modification Date"
-msgstr "WooCommerce Abgleich geänderte Produkte"
+#: field:product.template,wc_name:0
+msgid "WooCommerce Name"
+msgstr ""
 
 #. module: woocommerce
 #: model:ir.model,name:woocommerce.model_wc_profile
@@ -250,6 +216,7 @@ msgid "WooCommerce Status"
 msgstr ""
 
 #. module: woocommerce
-#: field:wc.profile,user_date_wc:0
-msgid "WooCommerce User Modification Date"
-msgstr "WooCommerce Abgleich geänderte Benutzer"
+#: field:wc.profile.checkpoint,name:0
+msgid "name"
+msgstr ""
+

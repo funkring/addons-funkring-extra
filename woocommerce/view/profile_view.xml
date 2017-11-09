@@ -23,33 +23,20 @@
                 <field name="consumer_key"/>
                 <field name="consumer_secret"/>
               </group>
+              <group>
+                <field name="user_template_id"/>
+              </group>
             </group>
             <div>
             <notebook>
-              <page  string="Partner Sync">
-                <group>
-                  <group>
-                    <field name="partner_date"/>
-                    <field name="user_date"/>
-                    <field name="user_date_del"/>
-                  </group>
-                  <group>
-                    <field name="user_date_wc"/>
-                    <field name="user_template_id"/>
-                  </group>
-                </group>
-              </page>
-              <page string="Product Sync">
-                <group>
-                  <group>
-                    <field name="product_date"/>
-                    <field name="product_date_del"/>
-                  </group>
-                  <group>
-                    <field name="product_date_wc"/>
-                  </group>
-                </group>
-              </page>              
+              <page  string="Checkpoints">
+                <field name="checkpoint_ids">
+                  <tree editable="bottom">
+                    <field name="name"/>
+                    <field name="ts"/>
+                  </tree>
+                </field>
+              </page>                
             </notebook>
             </div>
           </sheet>

@@ -25,4 +25,22 @@ class product_template(models.Model):
   
   wc_state = fields.Selection([("draft","Draft"),("review","Review"),("published","Published")], readonly=True, string="WooCommerce Status")
   wc_name = fields.Char("WooCommerce Name")
-  wc_act_price = fields.Char("WooCommerce Action Price", help="If the price is not null an action price is set in WooCommerce")
+
+  @api.multi
+  def action_wc_draft(self):
+    for product in self:
+      product.wc_state = "draft"
+    return True
+    
+  @api.multi
+  def action_wc_review(self):
+    for product in self:
+      product.wc_state = "review"
+    return True
+  
+  @api.multi
+  def action_wc_publish(self):
+    for product in self:
+      product.wc_state = "published"
+    return True
+

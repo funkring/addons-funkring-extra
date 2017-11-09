@@ -11,7 +11,6 @@
               <group>
                 <group>
                   <field name="wc_name"/>
-                  <field name="wc_act_price"/>
                 </group>
                 <group>
                   <field name="wc_state"/>
@@ -20,19 +19,19 @@
                     <button name="action_wc_draft" type="object" 
                       class="oe_highlight"
                       string="To Draft" 
-                      attrs="{'invisible':[('wc_state','!=',False)]}"/>
+                      attrs="{'invisible':['|',('wc_state','!=',False),('is_product_variant','=',True)]}"/>
                       
                     <button name="action_wc_draft" type="object"
                       string="To Draft" 
-                      attrs="{'invisible':['|',('wc_state','=',False),('wc_state','=','draft')]}"/>
+                      attrs="{'invisible':['|',('wc_state','=',False),'|',('wc_state','=','draft'),('is_product_variant','=',True)]}"/>
                       
                     <button name="action_wc_review" type="object" 
                       string="To Review" 
-                      attrs="{'invisible':[('wc_state','=','review')]}"/>
+                      attrs="{'invisible':['|',('wc_state','=','review'),('is_product_variant','=',True)]}"/>
                       
                     <button name="action_wc_publish" type="object" 
                       string="Publish" 
-                      attrs="{'invisible':[('wc_state','=','published')]}"/>
+                      attrs="{'invisible':['|',('wc_state','=','published'),('is_product_variant','=',True)]}"/>
                     
                   </div>
                 </group>

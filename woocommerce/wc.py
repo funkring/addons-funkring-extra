@@ -32,7 +32,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 regex_wc_name = re.compile(r"^[a-z0-9_.\\-]+$")
-
+from email.utils import parseaddr
 
 class WcMapper(object):
   """ Mapper Object """
@@ -110,50 +110,92 @@ class WcMapper(object):
 class WcClient(object):
   """ Client Wrapper """
   
-  def __init__(self, wc):
+  def __init__(self, wc, wc_old):
     self.wc = wc
+    self.wc_old = wc_old
     
-  def parse(self, res):
+  def parse(self, res, logerror=False):
     if res.ok:
       return res.json()
     else:
-      errors = res.json().get("errors")
+      res = res.json()
+      errors = res.get("errors")
       if errors:
         for error in errors:
-          raise Warning("[%s] %s" % (error["code"], error["message"]))
+          if logerror:
+            _logger.error("[%s] %s" % (error["code"], error["message"]))
+            return None
+          else:
+            raise Warning("[%s] %s" % (error["code"], error["message"]))
+      message = res.get("message")
+      if message:
+        _logger.error(message)
+        return None
       raise Warning(res.text)
     
   def get(self, resource):
     return self.parse(self.wc.get(resource))
+  
+  def get_filtered(self, resource):
+    return self.parse(self.wc_old.get(resource))
     
-  def post(self, resource, params):
-    return self.parse(self.wc.post(resource, params))
+  def post(self, resource, params, logerror=False):
+    return self.parse(self.wc.post(resource, params), logerror=logerror)
+  
+  def put(self, resource, params, logerror=False):
+    return self.parse(self.wc.put(resource, params), logerror=logerror)
+  
+  def put_force(self, resource, params, logerror=False):
+    return self.parse(self.wc_old.put(resource, params), logerror=logerror)
     
   def delete(self, resource):
     return self.parse(self.wc.delete(resource))
+  
+  def delete_force(self, resource):
+    return self.parse(self.wc_old.delete(resource))
 
 
 class WcSync(object):
   """ Synchronisation Base Class """
 
   def __init__(self, mapper, wc, prefix, model, endpoint, direction="up", domain=None, 
-               dependency=None):
+               dependency=None, entry_name=None, entry_set=None, childs=None, name_field="name", oldapi=False, template_field=None):
+    
     self.wc = wc
     self.mapper = mapper
     self.profile = self.mapper.profile
     self.prefix = prefix
     self.model = self.profile.env[model]
     self.model_name = model
-    self.endpoint = endpoint
-    self.field_odoo_timestamp = self.prefix + "_date"
-    self.field_wc_timestamp = self.prefix + "_date_wc"
-    self.field_odoo_del_timestamp = self.prefix + "_date_del"
-    self.field_template = self.prefix + "_template_id"
+    self.endpoint = endpoint   
     self.direction = direction
     self.domain = domain
     self.dependency = dependency
-  
+    self.entry_name = entry_name or endpoint
+    self.entry_set = entry_set or endpoint
+    self.childs = childs
+    self.name_field = name_field
+    self.oldapi = oldapi
+    self.field_template = template_field
+    
+    # checkpoints
+    self.checkpoints = {}
+    self.checkpoint_odoo = self.prefix
+    self.checkpoint_odoo_del = self.prefix + "_delete"
+    self.checkpoint_wc = self.prefix + "_wc"
+    
+  def parseEmail(self, email):
+    if not email:
+      return None
+    email = parseaddr(email)[1]
+    if email and email.find("@") >= 0:
+      return email
+    return None
+    
   def fromOdoo(self, obj, wid=None):
+    return {}
+  
+  def fromOdooChild(self, model_name, obj, wid=None):
     return {}
   
   def toOdoo(self, doc, obj=None):
@@ -164,6 +206,8 @@ class WcSync(object):
     return datetime.strftime(ts, "%Y-%m-%dT%H:%M:%SZ")
   
   def fromWcGMT(self, ts):
+    if ts.find("Z") < 0:
+      ts = ts + "Z"
     ts = dateutil.parser.parse(ts)
     # parse ISO 8601
     return util.timeToStr(ts)
@@ -174,11 +218,93 @@ class WcSync(object):
       endpoint = "%s?%s" % (endpoint, "&".join(params))
     return endpoint
   
-  def findDoc(self, obj):   
+  def getChildEndpoint(self, endpoint, params):
+    if params:
+      endpoint = "%s?%s" % (endpoint, "&".join(params))
+    return endpoint
+  
+  
+  def findDoc(self, obj, endpoint=None, name_field=None, entry_set=None):
+    if not endpoint:
+      endpoint = self.endpoint
+    if not name_field:
+      name_field = self.name_field
+    if not entry_set:
+      entry_set = self.entry_set
+      
+    try:
+      name = getattr(obj, self.name_field)
+      res = self.wc.get_filtered("%s?filter[q]=%s&filter[limit]=1000" % (endpoint, urllib.quote_plus(name.encode("utf-8"))))
+      docs = res[entry_set]
+      for doc in docs:
+        if doc[self.name_field] == name:
+          return doc
+    except:
+      pass
     return None
   
-  def afterUpdate(self, obj, wid):
-    pass
+  def getCheckpoint(self, name):
+    checkpoint = self.checkpoints.get(name)
+    if not checkpoint:
+      checkpoint_obj = self.profile.env["wc.profile.checkpoint"]
+      checkpoint = checkpoint_obj.search([("profile_id","=",self.profile.id),("name","=",name)])
+      if checkpoint:
+        checkpoint = checkpoint[0]
+      else:        
+        checkpoint = checkpoint_obj.create({
+          "profile_id": self.profile.id,
+          "name": name
+        })                              
+      self.checkpoints[name] = checkpoint      
+    return checkpoint
+  
+  def afterWcUpdate(self, obj, wid):
+    if self.childs:
+      for child_model, child_field, child_endpoint, child_entry_set, child_entry_name in self.childs:
+        child_objs = getattr(obj, child_field)
+        child_wcids = set()
+        for child_obj in child_objs:
+          child_wcid = self.mapper.getWcId(child_model, child_obj.id)
+          
+          # search 
+          if not child_wcid:
+            child_doc = self.findDoc(child_obj, "%s/%s/%s" % (self.endpoint, wid, child_endpoint), entry_set=child_entry_set)
+            if child_doc:
+              child_wcid = child_doc["id"]
+              self.mapper.addWcId(child_model, child_obj.id, child_wcid)
+            
+          child_doc = self.fromOdooChild(child_model, child_obj, child_wcid)
+          if child_doc:
+            if not child_wcid:
+              # create new
+              _logger.info("Create in WooCommerce [model=%s,oid=%s,data=%s]" % (child_model, child_obj.id, repr(child_doc)))
+              child_doc = self.wc.post("%s/%s/%s" % (self.endpoint, wid, child_endpoint), child_doc, logerror=True)
+              if child_doc:
+                child_wcid = child_doc["id"]
+                self.mapper.addWcId(child_model, child_obj.id, child_wcid)
+            else:
+              # update current
+              _logger.info("Update in WooCommerce [model=%s,oid=%s,data=%s]" % (child_model, child_obj.id, repr(child_doc)))
+              if self.oldapi:
+                self.wc.put_force("%s/%s/%s/%s" % (self.endpoint, wid, child_endpoint, child_wcid), {child_entry_name:child_doc}, logerror=True)
+              else:
+                self.wc.put("%s/%s/%s/%s" % (self.endpoint, wid, child_endpoint, child_wcid), child_doc, logerror=True)
+
+            if child_wcid:
+              child_wcids.add(child_wcid)
+        
+        # delete unused childs
+        childAllEndpoint = self.getChildEndpoint("%s/%s/%s" % (self.endpoint, wid, child_endpoint),
+                                                ["filter[limit]=100000"])
+          
+        child_docs = self.wc.get_filtered(childAllEndpoint)[child_entry_set]
+        for child_doc in child_docs:
+          if not child_doc["id"] in child_wcids:
+              _logger.info("Delete in WooCommerce [model=%s,data=%s]" % (child_model, repr(child_doc)))
+              if self.oldapi:
+                self.wc.delete_force("%s/%s/%s/%s" % (self.endpoint, wid, child_endpoint, child_doc["id"]))
+              else:
+                self.wc.delete("%s/%s/%s/%s" % (self.endpoint, wid, child_endpoint, child_doc["id"]))
   
   def sync(self):
     
@@ -195,8 +321,8 @@ class WcSync(object):
       # query dependency changes
       if self.dependency:
         for dep_prefix, dep_model, dep_field, dep_domain in self.dependency:
-          dep_date_field = "%s_date" % dep_prefix
-          dep_timestamp = getattr(self.profile, dep_date_field)
+          dep_checkpoint = self.getCheckpoint("%s_%s" % (self.prefix, dep_prefix))
+          dep_timestamp = dep_checkpoint.ts
           dep_model_obj = self.profile.env[dep_model]
           domain = []
           if dep_timestamp:
@@ -214,11 +340,12 @@ class WcSync(object):
                 dep_ids.add(dep_field_obj.id)
             
           # update dependency time stamp
-          setattr(self.profile, dep_date_field, dep_timestamp)
+          dep_checkpoint.ts = dep_timestamp
             
       
       # query odoo changes
-      odoo_timestamp = getattr(self.profile, self.field_odoo_timestamp)
+      odoo_checkpoint = self.getCheckpoint(self.checkpoint_odoo)
+      odoo_timestamp = odoo_checkpoint.ts
       domain = []
       if odoo_timestamp:
         domain.append(("write_date",">=",util.getNextSecond(odoo_timestamp)))
@@ -241,10 +368,12 @@ class WcSync(object):
       
       ## Get WooCommerce Changes
       wc_timestamp = None
+      wc_checkpoint = None
       if self.direction == "both":    
         # CREATED   
         # query wc creates
-        wc_timestamp = getattr(self.profile, self.field_wc_timestamp)
+        wc_checkpoint = self.getCheckpoint(self.checkpoint_wc) 
+        wc_timestamp = wc_checkpoint.ts
         params = []
         if wc_timestamp:
           wc_ts_param = self.toWcGMT(util.getNextSecond(wc_timestamp))
@@ -258,7 +387,7 @@ class WcSync(object):
         endpoint = self.getEndpoint(params)
         
         # add created docs
-        docs = self.wc.get(endpoint)[self.endpoint]
+        docs = self.wc.get_filtered(endpoint)[self.entry_set]
   
       else:
         docs = []
@@ -293,31 +422,31 @@ class WcSync(object):
           if wid:
             doc["id"] = wid
             updates_wids.add(wid)
-  
-          # check no or to create
+          else:
+            wid = self.mapper.loadWcId(self.model_name, obj.id)       
+          
+          # update
           if wid:
-            updates.append(doc)
+            updates.append((obj,doc))
           else:                  
-            # create new document
-            wid = self.mapper.loadWcId(self.model_name, obj.id)            
-            if wid:
-              updates.append(doc)
-            else:
-              _logger.info("Create in WooCommerce: %s [oid=%s]" % (obj.name, obj.id))
-              
-              res_doc = self.wc.post("%s/bulk" % self.endpoint, {self.endpoint:[doc]})[self.endpoint][0]
-              res_error = res_doc.get("error")
-              if res_error:
-                _logger.error("Import in WooCommerce FAILED: %s [oid=%s], %s" % (obj.name, obj.id, res_error))
-              else:
-                wid = res_doc["id"]
-                updated_at = self.fromWcGMT(res_doc["last_update"])
-                
-                self.mapper.addWcId(self.model_name, obj.id, wid)              
-                
-                # add processed 
+            # create new
+            _logger.info("Create in WooCommerce [model=%s,oid=%s,data=%s]" % (self.model_name, obj.id, doc))
+            res_doc = self.wc.post(self.endpoint, doc, logerror=True)
+            if res_doc:
+              wid = res_doc["id"]                                
+              self.mapper.addWcId(self.model_name, obj.id, wid)              
+                  
+              # changed
+              changes = True
+              self.afterWcUpdate(obj, wid)
+                  
+              # add processed 
+              last_update = res_doc.get("date_modified_gmt")
+              if last_update:
+                updated_at = self.fromWcGMT(last_update)
                 processed_wid.add((wid, updated_at))
-                changes = True
+                
+              
   
             
       ## Process WooCommerce Changes
@@ -347,9 +476,9 @@ class WcSync(object):
           
           if obj:
             obj.write(values)
-            _logger.info("Update in Odoo: [wid=%s,model=%s]" % (wid, self.model_name))
+            _logger.info("Update in Odoo [model=%s,oid=%s,wid=%s,data=%s]" % (self.model_name, obj.id, wid, repr(values)))
           else:
-            _logger.info("Create in Odoo: [wid=%s,model=%s]" % (wid, self.model_name))
+            _logger.info("Create in Odoo [model=%s,wid=%s,data=%s]" % (self.model_name, wid, repr(values)))
             template = getattr(self.profile, self.field_template)
             obj = template.copy(values)
             self.mapper.addWcId(self.model_name, obj.id, wid)            
@@ -360,19 +489,35 @@ class WcSync(object):
         
       ## Post WooCommerce Changes
         
-      if updates:
-        _logger.info("Bulk Update in WooCommerce [model=%s]" % self.model_name)
-        res = self.wc.post("%s/bulk" % self.endpoint, {self.endpoint:updates})          
-        changes = True
+      for obj, doc in updates:
+        wid = doc["id"]
+        _logger.info("Send WooCommerce Update [model=%s,oid=%s,wid=%s,data=%s]" % (self.model_name, obj.id, wid, repr(doc)))
+
+        # update
+        if self.oldapi:
+          doc = self.wc.put_force("%s/%s" % (self.endpoint, wid), {self.entry_name: doc}, logerror=True)
+          if doc:
+            doc = doc[self.entry_name]
+        else:
+          doc = self.wc.put("%s/%s" % (self.endpoint, wid), doc, logerror=True)
+          
+        self.afterWcUpdate(obj, wid)
         
-        docs = res[self.endpoint]
-        for doc in docs:
-          processed_wid.add((doc["id"], self.fromWcGMT(doc["last_update"])))
-        
+        if doc:
+          # mark changed
+          changes = True
+                   
+          # it could be that last update
+          # isn't supported, therefore only direction up is valid
+          last_update = doc.get("date_modified_gmt")
+          if last_update:                
+            processed_wid.add((doc["id"], self.fromWcGMT(last_update)))
+      
         
         
       # Handle Deleted
-      odoo_del_timestamp = getattr(self.profile, self.field_odoo_del_timestamp)
+      odoo_del_checkpoint = self.getCheckpoint(self.checkpoint_odoo_del)
+      odoo_del_timestamp = odoo_del_checkpoint.ts
       deleted_wcids = self.mapper.getDeletedWcIds(self.model_name, odoo_del_timestamp)      
       for deleted in deleted_wcids:
         # update timestamp
@@ -387,25 +532,115 @@ class WcSync(object):
         changes = True
         
         
-      ## Update Timestamps
-      setattr(self.profile, self.field_odoo_del_timestamp, odoo_del_timestamp or odoo_timestamp)
-      setattr(self.profile, self.field_odoo_timestamp, odoo_timestamp)
-      setattr(self.profile, self.field_wc_timestamp, wc_timestamp)
+      ## Update Odoo Timestamp
+      odoo_del_checkpoint.ts = odoo_del_timestamp or odoo_timestamp
+      odoo_checkpoint.ts = odoo_timestamp
+      # Update WooCommerce Timestamp
+      if wc_timestamp:
+        wc_checkpoint.ts = wc_timestamp
     
 
-class WcProductSync(WcSync):
-  """ PRODUCT SYNC """
+class WcProductAttribSync(WcSync):
+  """ ATTRIBUTE SYNC """
   def __init__(self, mapper, wc):
-    super(WcProductSync, self).__init__(mapper, wc, "product", "product.template", "products", 
+    super(WcProductAttribSync, self).__init__(mapper, wc, "product_attribute", "product.attribute", "products/attributes", 
                                         direction="up",
-                                        domain=[("wc_state","!=",False)])  
-    
-    
-  def fromOdoo(self, obj):
-    res = {}
-    
-    return res
+                                        entry_name="product_attribute",
+                                        entry_set="product_attributes",
+                                        dependency=[
+                                          ("product_attribute_value", "product.attribute.value", "attribute_id",[])
+                                        ],
+                                        childs=[
+                                          ("product.attribute.value", "value_ids", "terms", "product_attribute_terms", "product_attribute_term")
+                                        ],
+                                        oldapi=True)
   
+  
+  def fromOdoo(self, obj, wid=None):
+    return {
+      "name": obj.name,
+      "type": "select" 
+    }
+    
+  def fromOdooChild(self, model_name, obj, wid=None):
+    return {
+      "name": obj.name
+    }
+    
+    
+class WcProductSync(WcSync):
+  """ ATTRIBUTE SYNC """
+  def __init__(self, mapper, wc):
+    super(WcProductSync, self).__init__(mapper, wc, "product_tmpl", "product.template", "products", 
+                                        direction="up",
+                                        entry_name="product",
+                                        entry_set="products",
+                                        dependency=[
+                                          ("product", "product.product", "product_tmpl_id", [("wc_state","!=",False)]),
+                                          ("product_attribute", "product.attribute.value", "product_ids", [("product_ids.wc_state","!=",False)])
+                                        ],
+                                        domain=[("wc_state","!=",False)],                                        
+                                        oldapi=True)
+  
+  
+  def fromOdoo(self, obj, wid=None):
+    attributes = []
+    variations = []
+    res =  {
+      "title": obj.name,
+      "description": obj.description_sale,
+      "type": "simple",
+      "sku": obj.default_code or obj.ean13,
+      "regular_price": str(obj.list_price or 0.0),
+      "virtual": False,
+      "in_stock": False,
+      "attributes": attributes,  
+      "variations": variations,
+      "status": obj.wc_state
+    }
+    
+    # add attributes
+    for att_line in obj.attribute_line_ids:
+      att = att_line.attribute_id
+      options = []
+      for att_value in att_line.value_ids:
+        options.append(att_value.name)
+        
+      attributes.append({
+        "name": att.name,
+        "options": options 
+      })
+    
+    # add variants
+    variant_count = obj.product_variant_count
+    if variant_count > 1:
+      res["type"] = "variable"
+      for variant in obj.product_variant_ids:
+        variant_attributes = []
+        variations.append({
+          "regular_price": str(variant.lst_price or 0.0),
+          "sku": obj.default_code or obj.ean13,
+          "attributes": variant_attributes
+        })
+        
+        # add variant values
+        for att_value in variant.attribute_value_ids:
+          variant_attributes.append({
+            "name": att_value.attribute_id.name,
+            "option": att_value.name 
+          })
+    
+    # update stock
+    if obj.type == "service":
+      res["virtual"] = True
+      res["in_stock"] = True
+    elif obj.type == "product":
+      if obj.qty_available > 0:
+        res["in_stock"] = True
+        
+    return res
+    
+   
 class WcUserSync(WcSync):
   """ USER SYNC """
   def __init__(self, mapper, wc):
@@ -413,19 +648,26 @@ class WcUserSync(WcSync):
                                         direction="both",
                                         domain=[("share","=",True)],
                                         dependency=[
-                                          ("partner", "res.partner","user_ids",['|',("user_ids.share","=",True),("user_ids.user_id.share","=",True)])
-                                        ])  
+                                          ("partner","res.partner","user_ids",['|',("user_ids.share","=",True),("user_ids.user_id.share","=",True)])
+                                        ],
+                                        template_field="user_template_id")  
     
     
   def fromOdoo(self, obj, wid=None):    
     # get password
     self.profile._cr.execute("SELECT password FROM res_users WHERE id=%s", (obj.id,))
     password = self.profile._cr.fetchone()[0]
+        
+    # correct email
+    email = self.parseEmail(obj.email)
+    email_login = self.parseEmail(obj.login)
+    if email_login and not email:
+      email = email_login
     
     # get other
     partner = obj.partner_id
     res = {
-      "email": partner.email,
+      "email": email,
       "first_name": partner.firstname,
       "last_name": partner.surname,
       "username": obj.login,
@@ -436,11 +678,11 @@ class WcUserSync(WcSync):
       return {
         "first_name": partner.firstname or "",
         "last_name": partner.surname or "",
-        "company":  partner.name,
+        "company":  partner.is_company and partner.name or "",
         "address_1": partner.street or "",
         "address_2": partner.street2 or "",
         "city": partner.city or "",
-        "email": partner.email or "",
+        "email": parseaddr(partner.email)[1] or "",
         "phone": partner.phone or "",
         "country":  partner.country_id.code or "AT"
       }
@@ -457,21 +699,26 @@ class WcUserSync(WcSync):
   
   def findDoc(self, obj):
     try:
-      res = self.wc.get("customers/email/%s" % urllib.quote_plus(obj.login))
-      return res["customer"]
+      doc = self.fromOdoo(obj)
+      email = doc["email"]
+      if email:
+        email = email.encode("utf-8")
+        res = self.wc.get_filtered("customers/email/%s" % urllib.quote_plus(email))
+        return res["customer"]
     except:
-      return None
+      pass
+    return None
   
   def toOdoo(self, doc, obj=None):
     name = []
-      
-    firstname = doc["first_name"]
-    if firstname:
-      name.append(firstname)
-      
+        
     surname = doc["last_name"]
     if surname:
       name.append(surname)
+    
+    firstname = doc["first_name"]
+    if firstname:
+      name.append(firstname)
 
     email = doc["email"]
     name = " ".join(name)
@@ -482,8 +729,9 @@ class WcUserSync(WcSync):
     phone = None
     country = None
     country_id = None
+    company = None
     
-    billing_address = doc.get("billing_address")    
+    billing_address = doc.get("billing_address")
     if billing_address:
       company = doc.get("company")
       if company:
@@ -502,8 +750,9 @@ class WcUserSync(WcSync):
     values = {
       "email": email,
       "name": name,
-      "login": doc["username"]
-    }    
+      "login": doc["username"],
+      "is_company": company and True or False
+    }
     
     if billing_address:
       values["street"] = street
@@ -543,36 +792,37 @@ class wc_profile(models.Model):
     ]
   
     
-  name = fields.Char("Name", required=True)
-  url = fields.Char("Url", required=True)
-  consumer_key = fields.Char("Consumer Key", required=True)
-  consumer_secret = fields.Char("Consumer Secret", required=True)
+  name = fields.Char("Name", required=True, readonly=True, states={'draft': [('readonly', False)]})
+  url = fields.Char("Url", required=True, readonly=True, states={'draft': [('readonly', False)]})
+  consumer_key = fields.Char("Consumer Key", required=True, readonly=True, states={'draft': [('readonly', False)]})
+  consumer_secret = fields.Char("Consumer Secret", required=True, readonly=True, states={'draft': [('readonly', False)]})
+  
   state = fields.Selection([("draft","Draft"),
                             ("active","Active")],
                            string="Status", required=True, default="draft")
   
-  company_id = fields.Many2one("res.company", "Company", required=True, default=lambda self: self.env.user.company_id.id)
-
-  # product sync  
-  product_date = fields.Datetime("Product Modification Date")
-  product_date_del = fields.Datetime("Product Delete Date")
-  product_date_wc = fields.Datetime("WooCommerce Product Modification Date")
+  company_id = fields.Many2one("res.company", "Company", required=True, default=lambda self: self.env.user.company_id.id,
+                               readonly=True, states={'draft': [('readonly', False)]})
   
-  # user sync  
-  user_date = fields.Datetime("User Modification Date")
-  user_date_del = fields.Datetime("User Delete Date")
-  user_date_wc = fields.Datetime("WooCommerce User Modification Date")
-  user_template_id = fields.Many2one("res.users", "User Template", required=True)
-  
-  # partner sync  
-  partner_date = fields.Datetime("Partner Modification Date")
+  user_template_id = fields.Many2one("res.users", "User Template", required=True, readonly=True, states={'draft': [('readonly', False)]})
+  checkpoint_ids = fields.One2many("wc.profile.checkpoint", "profile_id", "Checkpoints", readonly=True, states={'draft': [('readonly', False)]})
   
   def _get_client(self):
-    return WcClient(woocommerce.api.API(self.url, self.consumer_key, self.consumer_secret))
+    return WcClient(woocommerce.api.API(self.url, self.consumer_key, self.consumer_secret,
+                                        version="wc/v2", wp_api=True),
+                    woocommerce.api.API(self.url, self.consumer_key, self.consumer_secret))
   
   @api.model
   def _sync_user(self, mapper, wc):
     return WcUserSync(mapper, wc).sync()
+  
+  @api.model
+  def _sync_product_attributes(self, mapper, wc):
+    return WcProductAttribSync(mapper, wc).sync()
+  
+  @api.model
+  def _sync_product(self, mapper, wc):
+    return WcProductSync(mapper, wc).sync()
   
   @api.one
   def _sync(self):
@@ -580,7 +830,9 @@ class wc_profile(models.Model):
     mapper = WcMapper(self)    
     wc = self._get_client()
     # SYNC
-    self._sync_user(mapper, wc)
+    #self._sync_user(mapper, wc)
+    #self._sync_product_attributes(mapper, wc)
+    self._sync_product(mapper, wc)
     return True
     
   @api.multi
@@ -602,3 +854,13 @@ class wc_profile(models.Model):
   def action_draft(self):
     self.state = "draft"
     return True
+  
+  
+class wc_profile_checkpoint(models.Model):
+  _name = "wc.profile.checkpoint"
+  _description = "WooCommerce Checkpoint"
+  
+  name = fields.Char("Name", required=True, index=True)
+  profile_id = fields.Many2one("wc.profile", "Profile", required=True, index=True)
+  ts = fields.Datetime("Checkpoint")
+

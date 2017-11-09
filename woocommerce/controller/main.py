@@ -18,31 +18,15 @@
 #
 ##############################################################################
 
-{
-    "name" : "WooCommerce Connector",
-    "summary" : "Connects Odoo with WooCommerce",
-    "description":"""
-WooCommerce Connector
-=====================
+import datetime
+import werkzeug
 
-* Sync Categories
-* Sync Products and availability
-* Sync Orders
-* Webhook for Realtime Updates
+from openerp import tools
+from openerp.addons.web import http
+from openerp.addons.web.http import request
+from openerp.tools.translate import _
+from openerp import SUPERUSER_ID
 
-    """,
-    "version" : "1.0",
-    "author" :  "oerp.at",
-    "website" : "http://oerp.at",
-    "category" : "Sale",
-    "depends" : ["at_base", 
-                 "at_sale",
-                 "at_stock",
-                 "at_firstname",
-                 "web"],
-    "data" : ["security.xml",
-              "view/profile_view.xml",
-              "view/product_view.xml"],
-    "auto_install" : False,
-    "installable": True
-}
+import logging
+_logger = logging.getLogger(__name__)
+

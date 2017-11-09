@@ -11,5 +11,15 @@
       <field name="perm_write" eval="True"/>
     </record>
     
+    <record id="access_wc_profile_checkpoint_system" model="ir.model.access">
+      <field name="name">wc_profile_checkpoint/system</field>
+      <field name="model_id" ref="model_wc_profile_checkpoint"/>
+      <field name="group_id" ref="base.group_system"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+
   </data>
 </openerp>
