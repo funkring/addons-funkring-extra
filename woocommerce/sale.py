@@ -20,27 +20,24 @@
 
 from openerp.osv import fields, osv
 
-class product_template(osv.Model):
-  _inherit = "product.template"
+class sale_order(osv.Model):
+  _inherit = "sale.order"
   _columns = {
-    "wc_sync": fields.boolean("WooCommerce Synchronisation", readonly=True, copy=False, index=True)    
+    "wc_order": fields.boolean("WooCommerce Order", readonly=True)
+#     "wc_state" : fields.selection([("pending","Pending"),
+#                                    ("processing","Processing"),
+#                                    ("on-hold","On Hold"),
+#                                    ("completed","Completed"),
+#                                    ("cancelled","Cancelled"),
+#                                    ("refunded","Refunded"),
+#                                    ("failed","Failed")],
+#                                    "Failed")
   }
-  
-  def action_wc_sync_enable(self, cr, uid, ids, context=None):
-    self.write(cr, uid, ids, {"wc_sync":True}, context=context)
-    return True
-  
-  def action_wc_sync_disable(self, cr, uid, ids, context=None):
-    self.write(cr, uid, ids, {"wc_sync":False}, context=context)
-    return True
-  
-  
-class product_product(osv.Model):
-  _inherit = "product.product"
    
-  def action_wc_sync_enable(self, cr, uid, ids, context=None):
-    return self.pool["product.template"].action_wc_sync_enable(cr, uid, [o.product_tmpl_id.id for o in self.browse(cr, uid, ids, context)], context=context)
   
-  def action_wc_sync_disable(self, cr, uid, ids, context=None):
-    return self.pool["product.template"].action_wc_sync_disable(cr, uid, [o.product_tmpl_id.id for o in self.browse(cr, uid, ids, context)], context=context)
-    
+class sale_order_line(osv.Model):
+  _inherit = "sale.order.line"
+  _columns = {
+    "wc_coupon": fields.char("Coupon Code", copy=False)
+  }
+ 

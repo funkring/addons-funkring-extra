@@ -1,20 +1,21 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* woocommerce
+# 	* woocommerce
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-09 10:34+0000\n"
-"PO-Revision-Date: 2017-11-09 10:34+0000\n"
-"Last-Translator: <>\n"
+"POT-Creation-Date: 2017-11-12 20:30+0000\n"
+"PO-Revision-Date: 2017-11-12 21:31+0100\n"
+"Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
+"X-Generator: Poedit 1.5.4\n"
 
 #. module: woocommerce
 #: view:wc.profile:woocommerce.form_wc_profile
@@ -53,63 +54,120 @@ msgid "Consumer Secret"
 msgstr ""
 
 #. module: woocommerce
-#: field:wc.profile,create_uid:0
-#: field:wc.profile.checkpoint,create_uid:0
+#: field:sale.order.line,wc_coupon:0
+msgid "Coupon Code"
+msgstr ""
+
+#. module: woocommerce
+#: field:wc.profile,coupon_product_id:0
+msgid "Coupon Product"
+msgstr "Coupon Produkt"
+
+#. module: woocommerce
+#: field:wc.profile,create_uid:0 field:wc.profile.checkpoint,create_uid:0
+#: field:wc.profile.payment,create_uid:0
 msgid "Created by"
 msgstr ""
 
 #. module: woocommerce
-#: field:wc.profile,create_date:0
-#: field:wc.profile.checkpoint,create_date:0
+#: field:wc.profile,create_date:0 field:wc.profile.checkpoint,create_date:0
+#: field:wc.profile.payment,create_date:0
 msgid "Created on"
 msgstr ""
 
 #. module: woocommerce
-#: field:wc.profile,display_name:0
-#: field:wc.profile.checkpoint,display_name:0
+#: view:product.template:woocommerce.form_product_template
+msgid "Disable"
+msgstr "Deaktivieren"
+
+#. module: woocommerce
+#: field:wc.profile,display_name:0 field:wc.profile.checkpoint,display_name:0
+#: field:wc.profile.payment,display_name:0
 msgid "Display Name"
 msgstr ""
 
 #. module: woocommerce
-#: selection:product.template,wc_state:0
+#: view:sale.order:woocommerce.search_sale_order
+msgid "Done"
+msgstr "Erledigt"
+
+#. module: woocommerce
 #: selection:wc.profile,state:0
 msgid "Draft"
 msgstr "Entwurf"
 
 #. module: woocommerce
-#: field:wc.profile,id:0
-#: field:wc.profile.checkpoint,id:0
+#: field:wc.profile,dummy_product_tmpl_id:0
+msgid "Dummy Product"
+msgstr "Platzhalter Produkt"
+
+#. module: woocommerce
+#: view:product.template:woocommerce.form_product_template
+msgid "Enable"
+msgstr "Aktivieren"
+
+#. module: woocommerce
+#: field:wc.profile,id:0 field:wc.profile.checkpoint,id:0
+#: field:wc.profile.payment,id:0
 msgid "ID"
 msgstr ""
 
 #. module: woocommerce
+#: field:wc.profile.payment,journal_id:0
+msgid "Journal"
+msgstr ""
+
+#. module: woocommerce
+#: sql_constraint:wc.profile.payment:0
+msgid "Journal could only assigned once to WooCommerce Profile!"
+msgstr ""
+"Dasselbe Journal kann nur einmal einem WooCommerce Profil zugeordnet weren"
+
+#. module: woocommerce
 #: field:wc.profile,__last_update:0
 #: field:wc.profile.checkpoint,__last_update:0
+#: field:wc.profile.payment,__last_update:0
 msgid "Last Modified on"
 msgstr ""
 
 #. module: woocommerce
-#: field:wc.profile,write_uid:0
-#: field:wc.profile.checkpoint,write_uid:0
+#: field:wc.profile,write_uid:0 field:wc.profile.checkpoint,write_uid:0
+#: field:wc.profile.payment,write_uid:0
 msgid "Last Updated by"
 msgstr ""
 
 #. module: woocommerce
-#: field:wc.profile,write_date:0
-#: field:wc.profile.checkpoint,write_date:0
+#: field:wc.profile,write_date:0 field:wc.profile.checkpoint,write_date:0
+#: field:wc.profile.payment,write_date:0
 msgid "Last Updated on"
 msgstr ""
 
 #. module: woocommerce
-#: code:addons/woocommerce/wc.py:89
+#: code:addons/woocommerce/wc.py:90
 #, python-format
 msgid "Mapping already exist"
 msgstr "Zuordnung existiert bereits"
 
 #. module: woocommerce
-#: field:wc.profile,name:0
+#: field:wc.profile.payment,code:0
+msgid "MethodId"
+msgstr ""
+
+#. module: woocommerce
+#: field:wc.profile,name:0 field:wc.profile.checkpoint,name:0
+#: field:wc.profile.payment,name:0
 msgid "Name"
 msgstr ""
+
+#. module: woocommerce
+#: field:wc.profile,order_template_id:0
+msgid "Order Template"
+msgstr "Auftragsvorlage"
+
+#. module: woocommerce
+#: view:wc.profile:woocommerce.form_wc_profile field:wc.profile,payment_ids:0
+msgid "Payment Methods"
+msgstr "Zahlungsmethoden"
 
 #. module: woocommerce
 #: model:ir.model,name:woocommerce.model_product_template
@@ -121,13 +179,16 @@ msgstr "Produktvorlage"
 #: view:wc.profile:woocommerce.form_wc_profile
 #: view:wc.profile:woocommerce.search_wc_profile
 #: field:wc.profile.checkpoint,profile_id:0
+#: field:wc.profile.payment,profile_id:0
 msgid "Profile"
 msgstr "Profil"
 
 #. module: woocommerce
 #: constraint:wc.profile:0
 msgid "Profile name have to be lower case without spaces and special chars"
-msgstr "Der Profilname muss kleingeschreiben werden ohne Sonderzeichen und Leerzeichen"
+msgstr ""
+"Der Profilname muss kleingeschreiben werden ohne Sonderzeichen und "
+"Leerzeichen"
 
 #. module: woocommerce
 #: view:wc.profile:woocommerce.tree_wc_profile
@@ -135,29 +196,34 @@ msgid "Profiles"
 msgstr "Profile"
 
 #. module: woocommerce
-#: view:product.template:woocommerce.form_product_template
-msgid "Publish"
-msgstr "Veröffentlichen"
-
-#. module: woocommerce
-#: selection:product.template,wc_state:0
-msgid "Published"
-msgstr "Veröffentlicht"
-
-#. module: woocommerce
 #: view:wc.profile:woocommerce.form_wc_profile
 msgid "Reset Draft"
 msgstr "Zurücksetzen"
 
 #. module: woocommerce
-#: selection:product.template,wc_state:0
-msgid "Review"
-msgstr "Überprüfung"
+#: model:ir.model,name:woocommerce.model_sale_order
+msgid "Sales Order"
+msgstr "Verkaufsauftrag"
+
+#. module: woocommerce
+#: model:ir.model,name:woocommerce.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Auftragsposition"
+
+#. module: woocommerce
+#: field:wc.profile.payment,sequence:0
+msgid "Sequence"
+msgstr "Sequenz"
 
 #. module: woocommerce
 #: field:wc.profile,state:0
 msgid "Status"
 msgstr ""
+
+#. module: woocommerce
+#: view:wc.profile:woocommerce.form_wc_profile
+msgid "Sync Used Products"
+msgstr "Synchronisiere benutzte Produkte"
 
 #. module: woocommerce
 #: view:wc.profile:woocommerce.form_wc_profile
@@ -170,14 +236,11 @@ msgid "The profile name has to be unique"
 msgstr "Der Profilname muss eindeutig sein"
 
 #. module: woocommerce
-#: view:product.template:woocommerce.form_product_template
-msgid "To Draft"
-msgstr "Entwurf"
-
-#. module: woocommerce
-#: view:product.template:woocommerce.form_product_template
-msgid "To Review"
-msgstr "Überprüfen"
+#: help:wc.profile,dummy_product_tmpl_id:0
+msgid "This Product is used if product not synced to Server"
+msgstr ""
+"Dieses Produkt wird als Platzhalter verwendet wenn das Odoo Produkt noch "
+"synchronisiert wurde"
 
 #. module: woocommerce
 #: field:wc.profile,url:0
@@ -192,6 +255,8 @@ msgstr "Benutzervorlage"
 #. module: woocommerce
 #: model:ir.ui.menu,name:woocommerce.menu_wc_profile
 #: view:product.template:woocommerce.form_product_template
+#: view:sale.order:woocommerce.form_sale_order
+#: view:sale.order:woocommerce.search_sale_order
 msgid "WooCommerce"
 msgstr ""
 
@@ -201,9 +266,9 @@ msgid "WooCommerce Checkpoint"
 msgstr ""
 
 #. module: woocommerce
-#: field:product.template,wc_name:0
-msgid "WooCommerce Name"
-msgstr ""
+#: field:sale.order,wc_order:0
+msgid "WooCommerce Order"
+msgstr "WooCommerce Bestellung"
 
 #. module: woocommerce
 #: model:ir.model,name:woocommerce.model_wc_profile
@@ -211,12 +276,6 @@ msgid "WooCommerce Profile"
 msgstr "WooCommerce Profil"
 
 #. module: woocommerce
-#: field:product.template,wc_state:0
-msgid "WooCommerce Status"
+#: field:product.template,wc_sync:0
+msgid "WooCommerce Synchronisation"
 msgstr ""
-
-#. module: woocommerce
-#: field:wc.profile.checkpoint,name:0
-msgid "name"
-msgstr ""
-

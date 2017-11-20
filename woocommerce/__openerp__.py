@@ -42,7 +42,8 @@ WooCommerce Connector
                  "web"],
     "data" : ["security.xml",
               "view/profile_view.xml",
-              "view/product_view.xml"],
+              "view/product_view.xml",
+              "view/sale_view.xml"],
     "auto_install" : False,
     "installable": True
 }

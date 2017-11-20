@@ -20,3 +20,4 @@
 
 import wc
 import product
+import sale

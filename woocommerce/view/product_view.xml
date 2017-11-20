@@ -8,31 +8,22 @@
       <field name="arch" type="xml">
         <xpath expr="//form/sheet/notebook" position="inside">
           <page string="WooCommerce">
-              <group>
+              <group>               
                 <group>
-                  <field name="wc_name"/>
+                  <field name="wc_sync"/>
                 </group>
                 <group>
-                  <field name="wc_state"/>
-                  <div>
-                      
-                    <button name="action_wc_draft" type="object" 
+                 <div>
+                 
+                    <button name="action_wc_sync_enable" type="object" 
                       class="oe_highlight"
-                      string="To Draft" 
-                      attrs="{'invisible':['|',('wc_state','!=',False),('is_product_variant','=',True)]}"/>
+                      string="Enable" 
+                      attrs="{'invisible':[('wc_sync','=',True)]}"/>
                       
-                    <button name="action_wc_draft" type="object"
-                      string="To Draft" 
-                      attrs="{'invisible':['|',('wc_state','=',False),'|',('wc_state','=','draft'),('is_product_variant','=',True)]}"/>
+                    <button name="action_wc_sync_disable" type="object" 
+                      string="Disable" 
+                      attrs="{'invisible':[('wc_sync','=',False)]}"/>
                       
-                    <button name="action_wc_review" type="object" 
-                      string="To Review" 
-                      attrs="{'invisible':['|',('wc_state','=','review'),('is_product_variant','=',True)]}"/>
-                      
-                    <button name="action_wc_publish" type="object" 
-                      string="Publish" 
-                      attrs="{'invisible':['|',('wc_state','=','published'),('is_product_variant','=',True)]}"/>
-                    
                   </div>
                 </group>
               </group>

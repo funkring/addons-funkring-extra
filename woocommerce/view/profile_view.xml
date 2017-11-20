@@ -9,7 +9,8 @@
           <header>
             <button type="object" name="action_activate" states="draft" string="Activate" class="oe_highlight"/>
             <button type="object" name="action_sync" states="active" string="Synchronize"/>
-            <button type="object" name="action_draft" states="active" string="Reset Draft"/>            
+            <button type="object" name="action_draft" states="active" string="Reset Draft"/>
+            <button type="object" name="action_sync_all_products" states="active" string="Sync Used Products"/>            
             <field name="state" widget="statusbar" statusbar_visible="draft,active"/>
           </header>
           <sheet string="Profile">
@@ -25,18 +26,33 @@
               </group>
               <group>
                 <field name="user_template_id"/>
+                <field name="order_template_id"/>                
+              </group>
+              <group>
+                <field name="dummy_product_tmpl_id"/>
+                <field name="coupon_product_id"/>
               </group>
             </group>
             <div>
             <notebook>
-              <page  string="Checkpoints">
+              <page string="Checkpoints">
                 <field name="checkpoint_ids">
                   <tree editable="bottom">
                     <field name="name"/>
                     <field name="ts"/>
                   </tree>
                 </field>
-              </page>                
+              </page>      
+              <page string="Payment Methods">
+                <field name="payment_ids">
+                  <tree editable="bottom">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="journal_id"/>
+                    <field name="code"/>
+                  </tree>
+                </field>
+              </page>          
             </notebook>
             </div>
           </sheet>
