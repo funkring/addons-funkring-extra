@@ -1261,6 +1261,9 @@ class wc_profile(models.Model):
   
   payment_ids = fields.One2many("wc.profile.payment", "profile_id", "Payment Methods", readonly=True, states={'draft': [('readonly', False)]})
   
+  webhook_url = fields.Char("Webhook Url", readonly=True, states={'draft': [('readonly', False)]})
+  webhook_secret = fields.Char("Webhook Secret", readonly=True, states={'draft': [('readonly', False)]})
+  
   def _get_client(self):
     return WcClient(woocommerce.api.API(self.url, self.consumer_key, self.consumer_secret,
                                         version="wc/v2", wp_api=True),
@@ -1300,14 +1303,6 @@ class wc_profile(models.Model):
     return True
   
   @api.multi
-  def action_sync_all_products(self):
-    product_ids = set()
-    for line in self.env["sale.order.line"].search([("order_id.partner_id.user_ids.share","=",True),("product_id","!=",False)]):
-      product_ids.add(line.product_id.id)
-    self.env["product.product"].browse(list(product_ids)).write({"wc_sync":True})
-    return self.action_sync()
-  
-  @api.multi
   def action_activate(self):
     for profile in self:
       if profile.state == "draft":
@@ -1323,6 +1318,10 @@ class wc_profile(models.Model):
     self.state = "draft"
     return True
   
+  @api.model
+  def sync_all(self):
+    self.search([("state","=","active")]).action_sync()
+    return True
   
 class wc_profile_checkpoint(models.Model):
   _name = "wc.profile.checkpoint"

@@ -41,6 +41,7 @@ WooCommerce Connector
                  "at_firstname",
                  "web"],
     "data" : ["security.xml",
+              "data/cron_wc_sync.xml",
               "view/profile_view.xml",
               "view/product_view.xml",
               "view/sale_view.xml"],

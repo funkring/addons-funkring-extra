@@ -10,7 +10,6 @@
             <button type="object" name="action_activate" states="draft" string="Activate" class="oe_highlight"/>
             <button type="object" name="action_sync" states="active" string="Synchronize"/>
             <button type="object" name="action_draft" states="active" string="Reset Draft"/>
-            <button type="object" name="action_sync_all_products" states="active" string="Sync Used Products"/>            
             <field name="state" widget="statusbar" statusbar_visible="draft,active"/>
           </header>
           <sheet string="Profile">
@@ -23,6 +22,8 @@
               <group>
                 <field name="consumer_key"/>
                 <field name="consumer_secret"/>
+                <field name="webhook_url"/>
+                <field name="webhook_secret"/>
               </group>
               <group>
                 <field name="user_template_id"/>
