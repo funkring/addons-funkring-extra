@@ -107,7 +107,7 @@ class WcMapper(object):
     wcids = []
     if ts:
       ts = util.getNextSecond(ts)
-      for values in self.mapper_obj.with_context(active_test=False).search_read([("name","=",self.name),("write_date",">=", ts),("active","=",False)], ["uuid","write_date"]):      
+      for values in self.mapper_obj.with_context(active_test=False).search_read([("name","=",self.name),("res_model","=",model),("write_date",">=", ts),("active","=",False)], ["uuid","write_date"]):      
         wcids.append((long(values["uuid"]), values["write_date"]))
     return wcids
   
