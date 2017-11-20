@@ -486,14 +486,14 @@ class WcSync(object):
                       
         doc = self.fromOdoo(obj, wid)   
         if doc:
+          # load wid
+          if not wid:
+            wid = self.mapper.loadWcId(self.model_name, obj.id)
+            
+          # update if wid found
           if wid:
             doc["id"] = wid
             updates_wids.add(wid)
-          else:
-            wid = self.mapper.loadWcId(self.model_name, obj.id)       
-          
-          # update
-          if wid:
             updates.append((obj,doc))
           else:                  
             # create new
