@@ -62,7 +62,7 @@
             <field name="view_mode">tree,form</field>
         </record>
 				
-        <menuitem id="menu_ubl_profile" name="UBL Profile" parent="base.menu_custom" sequence="100"
+        <menuitem id="menu_ubl_profile" name="UBL Profile" parent="base.menu_config" sequence="1000"
         		  action="action_ubl_profile"/>		
 	</data>
 </openerp>

@@ -13,10 +13,13 @@
    height="128"
    id="svg2619"
    sodipodi:version="0.32"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.92.2 (unknown)"
    version="1.0"
-   sodipodi:docname="logo-simple.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   sodipodi:docname="icon.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="/home/martin/Work/odoo/addons-funkring-extra/woocommerce/static/description/icon.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
   <defs
      id="defs2621">
     <inkscape:perspective
