@@ -519,8 +519,12 @@ class WcSync(object):
       
       if docs:
         for doc in docs:
-          # update wc_timestamp
-          updated_at = self.fromWcGMT(doc["updated_at"])
+          # update wc_timestamp         
+          updated_at = doc.get("updated_at")
+          if not updated_at:
+            updated_at = doc.get("last_update")          
+          updated_at = self.fromWcGMT(updated_at)
+          
           wc_timestamp = max(updated_at, wc_timestamp)
           wid = doc["id"]
         
