@@ -922,9 +922,11 @@ class WcUserSync(WcSync):
       "email": email,
       "first_name": "",
       "last_name": "",
-      "username": obj.login,
       "password": password
     }
+    
+    if not wid:
+      res["username"] = obj.login
     
     if partner.is_person:
       res["first_name"] = partner.firstname or "" 
@@ -1002,10 +1004,11 @@ class WcUserSync(WcSync):
     if not is_company and surname and firstname:
       is_person = True
       
+    login = self.parseEmail(doc["username"]) or email
     values = {
       "email": email,
       "name": name,
-      "login": doc["username"],
+      "login": login,
       "is_company": is_company,
       "is_person": is_person
     }

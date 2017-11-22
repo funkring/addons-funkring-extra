@@ -18,8 +18,13 @@
 #
 ##############################################################################
 
-import wc
-import product
-import sale
-import controller
-import users
+from openerp.osv import osv
+from openerp import SUPERUSER_ID
+
+class res_users(osv.Model):
+  _inherit = "res.users"
+  
+  def signup(self, cr, uid, values, token=None, context=None):
+    res = super(res_users, self).signup(cr, uid, values, token=token, context=context)
+    self.pool["wc.profile"].sync_all(cr, SUPERUSER_ID, context=context)    
+    return res
