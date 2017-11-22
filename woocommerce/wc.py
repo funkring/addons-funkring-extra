@@ -82,6 +82,18 @@ class WcMapper(object):
       
     return wcid
   
+  def loadOid(self, model, wcid):
+    res = self.mapper_obj.with_context(active_test=False).search_read([("name","=",self.name), 
+                  ("res_model","=", model),
+                  ("uuid","=", str(wcid))],
+                  ["res_id"])
+    oid = None
+    if res:
+      oid = res[0]["res_id"]
+      self.wc2oid[(model, wcid)] = oid
+      self.oid2wc[(model, oid)] = wcid      
+    return oid
+  
   def addWcId(self, model, oid, wcid):
     has_mapping = self.mapper_obj.with_context(active_test=False).search([("name","=",self.name), 
                             ("res_model","=", model),
@@ -255,6 +267,9 @@ class WcSync(object):
   
   def getOid(self, wcid):
     return self.mapper.getOid(self.model_name, wcid)
+  
+  def loadOid(self, wcid):
+    return self.mapper.loadOid(self.model_name, wcid)
   
   def getWid(self, obj):
     return self.mapper.getWcId(self.model_name, obj.id)  
@@ -527,7 +542,11 @@ class WcSync(object):
         
           
           # filter
-          docs = filter(lambda doc: self.getWcModified(doc) > wc_timestamp, docs)                     
+          filtered_docs = []
+          for doc in docs:
+            if self.getWcModified(doc) > wc_timestamp or not self.loadOid(doc["id"]):
+              filtered_docs.append(doc)
+          docs = filtered_docs                
         else:
           docs = self.wc.get_filtered_all(self.endpoint, self.entry_set)
           
@@ -954,6 +973,13 @@ class WcUserSync(WcSync):
       pass
     return None
   
+  def getCountryId(self, code):
+    if code:
+      countries = self.profile.env["res.country"].search([("code","ilike",code)])
+      if countries:
+        return countries[0].id
+    return None
+      
   def toOdoo(self, doc, obj=None):
     name = []
         
@@ -967,6 +993,10 @@ class WcUserSync(WcSync):
 
     email = doc["email"]
     name = " ".join(name)
+
+    # if noname set username as name
+    if not name:
+      name = doc["username"]
 
     street = None
     street2 = None
@@ -985,14 +1015,11 @@ class WcUserSync(WcSync):
       
       street = doc.get("address_1")
       street2 = doc.get("address_2")
-      city = doc.get("city")
-      phone = doc.get("phone")
-      country = doc.get("country")
+      city = doc.get("city")      
       postcode = doc.get("postcode")
-      if country:
-        countries = self.pool["res.country"].search(["code","ilike",country])
-        if countries:
-          country_id = countries[0].id
+      phone = doc.get("phone")    
+      country = doc.get("country")
+      country_id = self.getCountryId(country)
       
     # check company
     is_company = False
@@ -1064,9 +1091,7 @@ class WcOrderSync(WcSync):
     user = obj.partner_id.user_ids
     if user:
       user = user[0]
-    customer_wid = user and self.user_sync.getWid(user) or None
-    if not customer_wid:
-      return {}
+    customer_wid = user and self.user_sync.getWid(user) or 0
    
     # status
     status = "pending"
@@ -1091,7 +1116,7 @@ class WcOrderSync(WcSync):
     }
     
     # get current state
-    line_items = []
+   
     if wid:
       cur_doc = self.wc.get_filtered("orders/%s" % wid)["order"]
       payment_details = cur_doc.get("payment_details")
@@ -1106,9 +1131,9 @@ class WcOrderSync(WcSync):
           payment_details["paid"] = True
           res["payment_details"] = payment_details
                     
-      line_items = cur_doc.get("line_items") or []
-                 
     elif not obj.wc_order:
+
+      line_items = []
       
       # check payment      
       payment_details = self.default_payment_details.copy()
@@ -1149,15 +1174,25 @@ class WcOrderSync(WcSync):
           
       # set line items for update
       res["line_items"] = line_items      
+
+    return res
+  
+  def afterWcUpdate(self, obj, wid, doc):
+    super(WcOrderSync, self).afterWcUpdate(obj, wid, doc)  
+    
+    if doc and obj.state not in ("cancel","draft","sent") and (obj.invoiced or obj.order_policy == "picking"):
       
-      
-    # prepare download links
-    if obj.state not in ("cancel","draft","sent") and (obj.invoiced or obj.order_policy == "picking"):
       download_obj = self.profile.env["portal.download"]
       perm_obj =  self.profile.env["portal.download.perm"]
+      
       for line in obj.order_line:
+        
         product_tmpl_wid = self.mapper.getWcId("product.template", line.product_id.product_tmpl_id.id)
         variation_wid = self.mapper.getWcId("product.product", line.product_id.id)
+        
+        line_items = doc.get("line_items") or []        
+        update_items = []
+        
         for item in line_items:
           item_product_id = item["product_id"]
           item_variation_id = item.get("variation_id",0)
@@ -1179,13 +1214,20 @@ class WcOrderSync(WcSync):
                 continue 
                     
               # change meta data
-              changed, meta_data = self.addMetaData(item.get("meta_data"), {"key":"Download", "value":download_link})
+              changed, meta_data = self.addMetaData(item.get("meta"), {"key":"Download", "value":download_link})
               if changed:
                 item["meta_data"] = meta_data
-                res["line_items"] = line_items 
-                   
-
-    return res
+                if "meta" in item:
+                  del item["meta"]
+                update_items.append(item)
+                
+        if update_items:
+          # update order lines
+          _logger.info("UPDATE order lines [wcorder=%s,update=%s]" % (wid, repr(update_items)) )          
+          self.wc.put("orders/%s" % wid, {
+            "line_items": update_items
+          })
+          
   
   def updateValues(self, data, onchange_res):
     if onchange_res:
@@ -1199,21 +1241,28 @@ class WcOrderSync(WcSync):
     if obj:
       return {}
     
-    user_id = self.user_sync.getOid(doc["customer_id"])
-    if not user_id:
-      return {}
-    
-    user = self.profile.env["res.users"].browse(user_id)
-    if not user:
-      return {}
-    
-    partner = user.partner_id
     partner_obj = self.profile.env["res.partner"]
+    customer_id = doc["customer_id"]
+    partner = None
     
-    # get or crate partner
-    def getPartnerId(data, atype="delivery"):
+    if customer_id:
+      user_id = self.user_sync.getOid(customer_id)
+      if not user_id:
+        raise Warning(_("customer_id=%s not found for order %s") % (doc["customer_id"], doc["id"]))
+      
+      user = self.profile.env["res.users"].browse(user_id)
+      if not user:
+        raise Warning(_("Partner with id=%s not found for order %s") % (user_id,doc["id"]))
+    
+      partner = user.partner_id
+      
+    # get or create partner
+    def getPartner(data, partner=None, atype="delivery"):
       if not data:
-        return partner.id      
+        if not partner:
+          raise Warning(_("No partner for order %s") % doc["id"])
+        return partner.id
+            
       domain = []
             
       firstname = data.get("first_name")
@@ -1245,51 +1294,102 @@ class WcOrderSync(WcSync):
       if zip_code:
         domain.append(("zip","ilike",zip_code))
         
-      # only search within current partner
-      main_partner = partner
-      while main_partner.parent_id:
-        main_partner = partner.parent_id
+      email = data.get("email")
+      phone = data.get("phone")
         
-      domain.append("|")      
-      domain.append(("id","=",main_partner.id))
-      domain.append(("id","child_of",main_partner.id))
+      # only search within current partner
+      main_partner = None
+      if partner:
+        main_partner = partner
+        while main_partner.parent_id:
+          main_partner = partner.parent_id
+        
+        domain.append("|")      
+        domain.append(("id","=",main_partner.id))
+        domain.append(("id","child_of",main_partner.id))
+        
+      def updatePartner(partner):
+        if partner:
+          update = {}
+          if not partner.street and street:
+            update["street"] = street
+          if street and not partner.street2 and street2:
+            update["street2"] = street2
+          if not partner.city and city:
+            update["city"] = city
+          if not partner.zip and zip_code:
+            update["zip"] = zip_code
+          if not partner.email and email:
+            update["email"] = email
+          if not partner.phone and phone:
+            update["phone"] = phone
+          if update:
+            partner.write(update)
+            return True
+        return False
       
       res = partner_obj.with_context(active_test=False).search(domain)
       if res:
-        return res[0].id
+        partner = res[0]
+        updatePartner(partner)        
+        return partner
       elif name and street and city and zip_code:
-        update = {}
-        if not partner.street and street:
-          update["street"] = street
-        if street and not partner.street2 and street2:
-          update["street2"] = street2
-        if not partner.city and city:
-          update["city"] = city
-        if not partner.zip and zip_code:
-          update["zip"] = zip_code
-        
         # update
-        if update:
-          partner.write(update)
-          return partner.id
+        if updatePartner(partner):
+          return partner
         else:
           # validate main partner
-          if not main_partner.is_company:
-            main_partner.is_company = True   
+          if main_partner:
+            if not main_partner.is_company:
+              main_partner.is_company = True   
 
-          # create new child
-          values = self.user_sync.getAddressData(data)
-          values["is_company"] = False
-          values["type"] = atype
-          values["parent_id"] = main_partner.id          
-          return partner_obj.create(values).id
-      else:
+          values = {
+            "name": name,
+            "street": street,
+            "street2": street2,
+            "city": city,
+            "zip": zip_code,
+            "email": email,
+            "phone": phone
+          }
+          
+          country_id = self.user_sync.getCountryId(data.get("country"))
+          if country_id:
+            values["country_id"] = country_id
+          
+          if main_partner:
+            # create new child
+            values["parent_id"] = main_partner.id
+            values["is_company"] = False
+            values["type"] = atype
+          else:
+            # create new main
+            if data.get("company"):
+              values["is_company"] = True
+                     
+          return partner_obj.create(values)
+      elif partner:
         return partner.id
+      else:
+        raise Warning(_("Too few data to create a partner %s") % repr(data))
+      
+    invoice_partner = None
+    shipping_partner = None
+    
+    if not partner:
+      partner = getPartner(doc.get("billing_address"))
+      invoice_partner = partner;
+      
+    if not invoice_partner:
+      invoice_partner = getPartner(doc.get("billing_address"), partner)
+      
+    if not shipping_partner:
+      shipping_partner =  getPartner(doc.get("shipping_address"), partner, "delivery")
       
     res = {
       "partner_id": partner.id,
-      "partner_invoice_id": getPartnerId(doc.get("billing_address"), "invoice"),
-      "partner_shipping_id": getPartnerId(doc.get("shipping_address"), "delivery"),
+      "partner_invoice_id": invoice_partner.id,
+      "partner_shipping_id": shipping_partner.id,
       "date_order": self.fromWcGMT(doc["created_at"]),
       "client_order_ref": "%s: %s" % (self.profile.name, doc["order_number"]),
       "order_policy": "prepaid"
@@ -1309,6 +1409,7 @@ class WcOrderSync(WcSync):
            
     order_obj = self.profile.env["sale.order"]
     self.updateValues(res, order_obj.onchange_partner_id(partner.id))
+    self.updateValues(res, order_obj.onchange_shop_id(res["shop_id"], "draft", res.get("project_id")))
   
     # add note
     note = doc.get("note")
@@ -1574,7 +1675,7 @@ class wc_profile(models.Model):
           for webhook in webhooks:
             name = webhook["name"]
             if name.startswith(webhook_prefix) and name not in used_hooks:
-              wc.put("webhooks/%s" % webhook["id"], {"status":"disabled"})
+              wc.delete_force("webhooks/%s" % webhook["id"])
                 
     return True
   
@@ -1590,7 +1691,7 @@ class wc_profile(models.Model):
         for webhook in webhooks:
           name = webhook["name"]
           if name.startswith(webhook_prefix):
-            wc.put("webhooks/%s" % webhook["id"], {"status":"disabled"})
+            wc.delete_force("webhooks/%s" % webhook["id"])
       except Exception as e:
         logging.exception("Unable to disable webhooks for profile %s" % profile.name)
     return True
