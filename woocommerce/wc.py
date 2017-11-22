@@ -448,15 +448,16 @@ class WcSync(object):
         def addRelIds(dep_obj, dep_fields):
             dep_cur_field = dep_fields[0]
             next_dep_fields = dep_fields[1:]
-            next_dep_obj = getattr(dep_obj, dep_cur_field)            
+            next_dep_objs = getattr(dep_obj, dep_cur_field)            
             # if no more add                        
             if not next_dep_fields:              
-              if next_dep_obj:
-                for dep_item in next_dep_obj:
+              if next_dep_objs:
+                for dep_item in next_dep_objs:
                   dep_ids.add(dep_item.id)
             # go deeper
-            elif next_dep_obj:
-              addRelIds(next_dep_obj, next_dep_fields)
+            elif next_dep_objs:
+              for next_dep_obj in next_dep_objs:
+                addRelIds(next_dep_obj, next_dep_fields)
         
         for dep_prefix, dep_model, dep_field, dep_domain in self.dependency:
           dep_checkpoint = self.getCheckpoint("%s_%s" % (self.prefix, dep_prefix))
