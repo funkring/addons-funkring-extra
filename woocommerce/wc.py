@@ -788,8 +788,6 @@ class WcProductSync(WcSync):
       # and reset sku
       res["status"] = "draft"
       res["in_stock"] = False
-      res["sku"] = ""
-      
     
     # add attributes
     for att_line in obj.attribute_line_ids:
@@ -1483,8 +1481,8 @@ class wc_profile(models.Model):
   
   def _get_client(self):
     return WcClient(woocommerce.api.API(self.url, self.consumer_key, self.consumer_secret,
-                                        version="wc/v2", wp_api=True),
-                    woocommerce.api.API(self.url, self.consumer_key, self.consumer_secret))
+                                        version="wc/v2", wp_api=True, verify_ssl=False),
+                    woocommerce.api.API(self.url, self.consumer_key, self.consumer_secret, verify_ssl=False))
   
   @api.model
   def _sync_user(self, mapper, wc):
