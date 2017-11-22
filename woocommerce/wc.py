@@ -679,7 +679,7 @@ class WcSync(object):
         processed_wid.add(deleted)
         # delete
         _logger.info("Delete in WooCommerce [model=%s,wid=%s]" % (self.model_name, deleted[0]))
-        self.wc.delete("%s/%s" % (self.endpoint,deleted[0]))
+        self.wc.delete_force("%s/%s" % (self.endpoint,deleted[0]))
         changes = True
         
         
