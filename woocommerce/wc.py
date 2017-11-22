@@ -28,6 +28,7 @@ from datetime import datetime
 import dateutil.parser
 import woocommerce.api
 import urllib
+import urlparse
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -1511,15 +1512,69 @@ class wc_profile(models.Model):
     for profile in self:
       if profile.state == "draft":
         profile.dummy_product_tmpl_id.wc_sync = True
-        profile._get_client()        
+        wc = profile._get_client()        
         profile.state = "active"
         # install webhook
-        #res = wc.get("webhooks")        
+        if profile.webhook_url and profile.webhook_secret:
+          webhooks = wc.get("webhooks")
+          used_hooks = set()
+          
+          # add web hook
+          def addWebHook(topic):
+            tokens = topic.split(".")
+            name = tokens[0]
+            trigger = tokens[1]
+            hookId =  "%s/%s/%s" % (profile.name, name, trigger)
+            used_hooks.add(hookId)
+            hookData =  {
+               "name": hookId,
+               "status": "active",
+               "topic": topic,
+               "delivery_url": urlparse.urljoin(profile.webhook_url, "http/wc/%s" % profile.id),
+               "secret": profile.webhook_secret
+            }
+            
+            # update
+            update = False
+            for webhook in webhooks:
+              if webhook["name"] == hookId:
+                wc.put("webhook/%s" % webhook["id"], hookData)
+                update = True
+                break
+            
+            # create new
+            if not update:
+              wc.post("webhooks", hookData)
+
+          # add hooks
+          addWebHook("customer.created")         
+          addWebHook("order.created")
+          #addWebHook("customer.updated")
+          
+          # remove unwanted
+          webhook_prefix = "%s/" % profile.name
+          for webhook in webhooks:
+            name = webhook["name"]
+            if name.startswith(webhook_prefix) and name not in used_hooks:
+              wc.put("webhooks/%s" % webhook["id"], {"status":"disabled"})
+                
     return True
   
   @api.multi
   def action_draft(self):
     self.state = "draft"
+    for profile in self:
+      try:
+        wc = profile._get_client()  
+        webhooks = wc.get("webhooks")
+        # deaktivate
+        webhook_prefix = "%s/" % profile.name
+        for webhook in webhooks:
+          name = webhook["name"]
+          if name.startswith(webhook_prefix):
+            wc.put("webhooks/%s" % webhook["id"], {"status":"disabled"})
+      except Exception as e:
+        logging.exception("Unable to disable webhooks for profile %s" % profile.name)
     return True
   
   @api.model

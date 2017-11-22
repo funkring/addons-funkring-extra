@@ -18,20 +18,39 @@
 #
 ##############################################################################
 
-import datetime
-import werkzeug
-
-from openerp import tools
 from openerp.addons.web import http
 from openerp.addons.web.http import request
 from openerp.tools.translate import _
 from openerp import SUPERUSER_ID
 
+import hmac
+import hashlib
+import base64
+
 import logging
 _logger = logging.getLogger(__name__)
 
 class woocommerce(http.Controller):
-
-    @http.route(["/wc/webhook"], type="http", auth="none", cors="*")
-    def webhook(self, **kwargs):
-      return ""
+ 
+    @http.route(["/http/wc/<int:profile_id>"], type="http", auth="none", methods=["GET","POST"])
+    def webhook(self, profile_id=None, **kwargs):
+      cr, uid, context = request.cr, request.uid, request.context
+      profile_obj = request.registry["wc.profile"]
+      profile = profile_obj.browse(cr, SUPERUSER_ID, profile_id, context=context)
+      content = str(request.httprequest.stream.read())
+      signature = request.httprequest.headers.get("X-Wc-Webhook-Signature")
+      if signature:
+        signature = str(signature)
+        secret = str(profile.webhook_secret)
+        digister = hmac.new(secret, content, hashlib.sha256)
+        signature_calc = base64.encodestring(digister.digest()).strip()        
+        if signature_calc == signature:
+          try:
+            profile_obj._sync(cr, SUPERUSER_ID, [profile_id], context=context)
+            cr.commit()
+          finally:
+            cr.rollback()
+            
+      return "OK"
+    
+    
