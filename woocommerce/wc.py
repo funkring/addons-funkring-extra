@@ -709,6 +709,7 @@ class WcProductSync(WcSync):
                                         entry_name="product",
                                         entry_set="products",
                                         dependency=[
+                                          ("stock_quant","stock.quant","product_id.product_tmpl_id",[("product_id.wc_sync","=",True)]),
                                           ("product", "product.product", "product_tmpl_id", [("wc_sync","=",True)]),
                                           ("product_attribute", "product.attribute.value", "product_ids", [("product_ids.wc_sync","=",True)])
                                         ],
