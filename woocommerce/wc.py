@@ -181,6 +181,19 @@ class WcClient(object):
         break
     return docs    
   
+  def merge(self, docs1, docs2):
+    res = []
+    ids = set()
+    if docs1:
+      for doc in docs1:
+        ids.add(doc["id"])
+        res.append(doc)
+    if docs2:
+      for doc in docs2:
+        if not doc["id"] in ids:
+          res.append(doc)
+    return res
+  
   def get_updated(self, resource):
     return []
   
@@ -205,7 +218,7 @@ class WcSync(object):
 
   def __init__(self, mapper, wc, prefix, model, endpoint, direction="up", domain=None, 
                dependency=None, entry_name=None, entry_set=None, childs=None, name_field="name", 
-               oldapi=False, template_field=None):
+               oldapi=False, template_field=None, noupdate=True):
     
     self.wc = wc
     self.mapper = mapper
@@ -223,6 +236,7 @@ class WcSync(object):
     self.name_field = name_field
     self.oldapi = oldapi
     self.field_template = template_field
+    self.noupdate = noupdate
     
     # checkpoints
     self.checkpoints = {}
@@ -270,6 +284,24 @@ class WcSync(object):
       endpoint = "%s?%s" % (endpoint, "&".join(params))
     return endpoint
   
+  def addMetaData(self, meta_data, new_item):
+    if not meta_data:
+      meta_data = []
+      
+    item = None
+    for cur_item in meta_data:
+      if cur_item["key"] == new_item["key"]:
+        item = cur_item
+        
+    changed = True
+    if item:
+      changed = item["value"] != new_item["value"]
+      item["value"] = new_item["value"]
+    else:
+      meta_data.append(new_item)
+      
+    return (changed, meta_data)
+  
   def getChildEndpoint(self, endpoint, params):
     if params:
       endpoint = "%s?%s" % (endpoint, "&".join(params))
@@ -310,7 +342,10 @@ class WcSync(object):
       self.checkpoints[name] = checkpoint      
     return checkpoint
   
-  def afterWcUpdate(self, obj, wid):
+  def afterOdooUpdate(self, obj, wid, doc):
+    pass
+  
+  def afterWcUpdate(self, obj, wid, doc):
     if self.childs:
       for child_model, child_field, child_endpoint, child_entry_set, child_entry_name in self.childs:
         child_objs = getattr(obj, child_field)
@@ -373,6 +408,26 @@ class WcSync(object):
   
   def update(self, obj, values, doc):
     return obj.write(values)
+  
+  def getWcModified(self, doc):
+    # get modified date
+    wc_update_date = doc.get("date_modified_gmt")
+    if not wc_update_date:
+      wc_update_date = doc.get("updated_at")
+      if not wc_update_date:
+        wc_update_date = doc.get("last_update")
+        
+    # get created date
+    wc_created_date = doc.get("date_created_gmt")
+    if not wc_created_date:
+      wc_created_date = doc.get("created_at")
+    
+    # get max changed date
+    wc_update_date = max(wc_created_date, wc_update_date)      
+    if wc_update_date:
+      return self.fromWcGMT(wc_update_date)
+    
+    return None
   
   def sync(self):
     
@@ -441,20 +496,25 @@ class WcSync(object):
         # CREATED   
         # query wc creates
         wc_checkpoint = self.getCheckpoint(self.checkpoint_wc) 
-        wc_timestamp = wc_checkpoint.ts
-        params = []
-        if wc_timestamp:
+        wc_timestamp = wc_checkpoint.ts       
+        if wc_timestamp:          
           wc_ts_param = self.toWcGMT(util.getNextSecond(wc_timestamp))
-          params.append("filter[updated_at_min]=%s" % wc_ts_param)
-          params.append("filter[created_at_min]=%s" % wc_ts_param)
-          params.append("filter[orderby]=last_update")
-          params.append("filter[order]=asc")
+          
+          if self.noupdate:
+            docs = self.wc.get_filtered_all("%s?filter[created_at_min]=%s" % (self.endpoint,wc_ts_param), self.entry_set)
+            
+          else:          
+            docs = self.wc.merge(self.wc.get_filtered_all("%s?filter[updated_at_min]=%s" % (self.endpoint,wc_ts_param), self.entry_set),
+                                self.wc.get_filtered_all("%s?filter[created_at_min]=%s" % (self.endpoint,wc_ts_param), self.entry_set))
         
-        # get endpoint
-        endpoint = self.getEndpoint(params)
-        
-        # add created docs
-        docs = self.wc.get_filtered_all(endpoint, self.entry_set)
+          
+          # filter
+          docs = filter(lambda doc: self.getWcModified(doc) > wc_timestamp, docs)                     
+        else:
+          docs = self.wc.get_filtered_all(self.endpoint, self.entry_set)
+          
+        # filter and sort docs
+        docs = sorted(docs, key=lambda doc: self.getWcModified(doc))
   
       else:
         docs = []
@@ -505,13 +565,12 @@ class WcSync(object):
                   
               # changed
               changes = True
-              self.afterWcUpdate(obj, wid)
+              self.afterWcUpdate(obj, wid, res_doc)
                   
-              # add processed 
-              last_update = res_doc.get("date_modified_gmt")
+              # add processed
+              last_update = self.getWcModified(res_doc)
               if last_update:
-                updated_at = self.fromWcGMT(last_update)
-                processed_wid.add((wid, updated_at))
+                processed_wid.add((wid, last_update))
               
   
             
@@ -519,13 +578,12 @@ class WcSync(object):
       
       if docs:
         for doc in docs:
-          # update wc_timestamp         
-          updated_at = doc.get("updated_at")
-          if not updated_at:
-            updated_at = doc.get("last_update")          
-          updated_at = self.fromWcGMT(updated_at)
+          # get timestamp
+          last_update = self.getWcModified(doc)
+          if not last_update:
+            continue      
           
-          wc_timestamp = max(updated_at, wc_timestamp)
+          wc_timestamp = max(last_update, wc_timestamp)
           wid = doc["id"]
         
           # check if already processed
@@ -546,18 +604,23 @@ class WcSync(object):
           values = self.toOdoo(doc, obj)
           if values:
             changes = True          
-            if obj:          
-              _logger.info("Update in Odoo [model=%s,oid=%s,wid=%s,data=%s]" % (self.model_name, obj.id, wid, repr(values)))
-              self.update(obj, values, doc)
+            if obj: 
+              if not self.noupdate :                       
+                _logger.info("Update in Odoo [model=%s,oid=%s,wid=%s,data=%s]" % (self.model_name, obj.id, wid, repr(values)))
+                self.update(obj, values, doc)
             else:
               _logger.info("Create in Odoo [model=%s,wid=%s,data=%s]" % (self.model_name, wid, repr(values)))
               obj = self.create(values, doc)                        
-            
+          
           # add processed oid
           if obj:
+            # add processed but before after update
             processed_oid.add((oid, obj.write_date))
-  
-        
+            # do after update
+            self.afterOdooUpdate(obj, wid, doc)
+       
+            
+
       ## Post WooCommerce Changes
         
       for obj, doc in updates:
@@ -572,7 +635,7 @@ class WcSync(object):
         else:
           doc = self.wc.put("%s/%s" % (self.endpoint, wid), doc, logerror=True)
           
-        self.afterWcUpdate(obj, wid)
+        self.afterWcUpdate(obj, wid, doc)
         
         if doc:
           # mark changed
@@ -580,11 +643,10 @@ class WcSync(object):
                    
           # it could be that last update
           # isn't supported, therefore only direction up is valid
-          last_update = doc.get("date_modified_gmt")
+          last_update = self.getWcModified(doc)
           if last_update:                
-            processed_wid.add((doc["id"], self.fromWcGMT(last_update)))
+            processed_wid.add((doc["id"], last_update))
       
-        
         
       # Handle Deleted
       odoo_del_checkpoint = self.getCheckpoint(self.checkpoint_odoo_del)
@@ -801,9 +863,6 @@ class WcUserSync(WcSync):
                                         ],                                     
                                         template_field="user_template_id")  
   
-  def getOrderPolicy(self, obj):
-    return "prepaid"
-    
   def getAddressData(self, partner):
     first_name = None
     last_name = None
@@ -823,6 +882,7 @@ class WcUserSync(WcSync):
       "address_1": partner.street or "",
       "address_2": partner.street2 or "",
       "city": partner.city or "",
+      "postcode": partner.zip or "", 
       "email": parseaddr(partner.email)[1] or "",
       "phone": partner.phone or None,
       "country":  partner.country_id.code or "AT"
@@ -888,7 +948,6 @@ class WcUserSync(WcSync):
 
     email = doc["email"]
     name = " ".join(name)
-    is_person = surname and firstname and True
 
     street = None
     street2 = None
@@ -897,6 +956,7 @@ class WcUserSync(WcSync):
     country = None
     country_id = None
     company = None
+    postcode = None
     
     billing_address = doc.get("billing_address")
     if billing_address:
@@ -909,24 +969,36 @@ class WcUserSync(WcSync):
       city = doc.get("city")
       phone = doc.get("phone")
       country = doc.get("country")
+      postcode = doc.get("postcode")
       if country:
         countries = self.pool["res.country"].search(["code","ilike",country])
         if countries:
           country_id = countries[0].id
       
+    # check company
+    is_company = False
+    if company:
+      is_company = True
+    
+    # check person
+    is_person = False
+    if not is_company and surname and firstname:
+      is_person = True
+      
     values = {
       "email": email,
       "name": name,
       "login": doc["username"],
-      "is_company": company and True,
-      "is_person": is_person and not company and True
+      "is_company": is_company,
+      "is_person": is_person
     }
     
     if billing_address:
       values["street"] = street
       values["street2"] = street2
       values["city"] = city
-      values["phone"] = phone      
+      values["phone"] = phone   
+      values["zip"] = postcode   
       if country_id:
         values["country_id"] = country_id
         
@@ -947,15 +1019,14 @@ class WcOrderSync(WcSync):
                                         entry_name="order",
                                         entry_set="orders",
                                         domain=[("state","not in",["draft","sent"]),("partner_id.user_ids.share","=",True)],                                        
-                                        oldapi=True)
+                                        oldapi=True,
+                                        template_field="order_template_id")
     
     self.user_sync = self.profile._sync_user(mapper, wc)
-    self.product_sync = self.profile._sync_product(mapper, wc)
-    self.dummy_wid = self.product_sync.getWid(self.profile.dummy_product_tmpl_id)
+    self.product_sync = self.profile._sync_product(mapper, wc)    
     self.payments = self.profile.payment_ids
     self.default_payment = None
     self.update_lines = False
-    self.create = False
     if self.payments:
       self.default_payment = self.payments[0]
       self.default_payment_details = {
@@ -965,14 +1036,15 @@ class WcOrderSync(WcSync):
       }
   
   def fromOdoo(self, obj, wid=None):
-    return {}
-  
     # only update?
-    if not wid and not self.create:
+    if not wid:
       return {}
     
-    # get customer wid
-    customer_wid = self.user_sync.getWid(obj.partner_id)
+    # get user
+    user = obj.partner_id.user_ids
+    if user:
+      user = user[0]
+    customer_wid = user and self.user_sync.getWid(user) or None
     if not customer_wid:
       return {}
    
@@ -993,95 +1065,115 @@ class WcOrderSync(WcSync):
     res =  {      
       "status": status,
       "currency": obj.currency_id.name,
-      "billing" : self.user_sync.getAddressData(obj.partner_invoice_id),
-      "shipping": self.user_sync.getAddressData(obj.partner_shipping_id),
+      "billing_address" : self.user_sync.getAddressData(obj.partner_invoice_id),
+      "shipping_address": self.user_sync.getAddressData(obj.partner_shipping_id),
       "customer_id": customer_wid
     }
     
     # get current state
-    item_dict = {}
+    line_items = []
     if wid:
-      cur_doc = self.wc.get("orders/%s" % wid)
+      cur_doc = self.wc.get_filtered("orders/%s" % wid)["order"]
+      payment_details = cur_doc.get("payment_details")
+      
+      # don't updated completed order
+      if cur_doc["status"] == "completed" and payment_details and payment_details.get("paid"):
+        return {}
       
       # check payment
-      if obj.invoiced:
-        payment_details = cur_doc.get("payment_details")
+      if obj.invoiced:       
         if payment_details and not payment_details.get("paid"):
           payment_details["paid"] = True
           res["payment_details"] = payment_details
-              
-      # build item dict
-      if self.update_lines:
-        cur_items = cur_doc.get("items")
-        if cur_items:
-          for cur_item in cur_items:
-            meta_datas = cur_items.get("meta_data")
-            if meta_datas:
-              for meta_data in meta_datas:
-                if meta_data["key"] == "oid":
-                  item_dict[int(meta_data["value"])] = cur_item
+                    
+      line_items = cur_doc.get("line_items") or []
                  
-    else:
+    elif not obj.wc_order:
       
       # check payment      
       payment_details = self.default_payment_details.copy()
       res["payment_details"] = payment_details
       if obj.invoiced:        
         payment_details["paid"] = True
-        
-      
-    # update lines
-    if self.update_lines:
-      items = []
-      coupon_product_id = self.profile.coupon_product_id.id
+
       for line in obj.order_line:
         # add lines
-        if line.product_id and line.product_id.id != coupon_product_id:  
+        if line.product_id:  
           product_tmpl_wid = self.mapper.getWcId("product.template", line.product_id.product_tmpl_id.id)
-          item_values = item_dict.get(line.id)
-          if not item_values:
-            # check if product exist
-            if product_tmpl_wid:            
-              item_values = {
-                "product_id": product_tmpl_wid,
-                "quantity": str(line.product_uom_qty),
-                "total": str(line.price_subtotal),
-                "subtotal": str(line.price_subtotal),
-                "variation_id": 0         
-              }
-               
-              variation_wid = self.mapper.getWcId("product.product", line.product_id.id)
-              if variation_wid:
-                item_values["variation_id"] = variation_wid          
-               
-            # create line with dummy
-            else:
-              item_values = {
-                "product_id": self.dummy_wid,
-                "quantity": str(line.product_uom_qty),
-                "total": str(line.price_subtotal),
-                "subtotal": str(line.price_subtotal),
-              }
-               
+          # check if product exist
+          if product_tmpl_wid:            
+            item_values = {
+              "product_id": product_tmpl_wid,
+              "quantity": str(line.product_uom_qty),
+              #"total": str(line.price_subtotal_taxed), #  total prices of products in cart (with tax) + shipping cost + fees + tax on fees - discount
+              "subtotal": str(line.price_subtotal_taxed), # total prices of products in cart (with tax)
+              "variation_id": 0         
+            }
+             
+            variation_wid = self.mapper.getWcId("product.product", line.product_id.id)
+            if variation_wid:
+              item_values["variation_id"] = variation_wid          
+             
+          # create line with dummy
           else:
-            # del unused line
-            del item_dict[line.id]
-   
+            dummy_wid = self.product_sync.getWid(self.profile.dummy_product_tmpl_id)
+            item_values = {
+              "product_id": dummy_wid,
+              "quantity": str(line.product_uom_qty),
+              #"total": str(line.price_subtotal_taxed),
+              "subtotal": str(line.price_subtotal_taxed),
+              "variation_id": 0
+            }
           # add lines
-          items.append(item_values)      
-   
-        # delete unused items
-        for item in item_dict.values():
-          items.append({
-            "id": item["id"],
-            "product_id": None          
-          })  
-           
-        # set items
-        if items:
-          res["line_items"] = items
-    
+          line_items.append(item_values)
+          
+      # set line items for update
+      res["line_items"] = line_items      
+      
+      
+    # prepare download links
+    if obj.state not in ("cancel","draft","sent") and (obj.invoiced or obj.order_policy == "picking"):
+      download_obj = self.profile.env["portal.download"]
+      perm_obj =  self.profile.env["portal.download.perm"]
+      for line in obj.order_line:
+        product_tmpl_wid = self.mapper.getWcId("product.template", line.product_id.product_tmpl_id.id)
+        variation_wid = self.mapper.getWcId("product.product", line.product_id.id)
+        for item in line_items:
+          item_product_id = item["product_id"]
+          item_variation_id = item.get("variation_id",0)
+          if item_product_id == product_tmpl_wid and not item_variation_id or item_variation_id == variation_wid:
+            # download
+            download = download_obj.search([("product_id","=",line.product_id.id)])
+            if download:
+              download = download[0]
+              perm = perm_obj.search([("partner_id","=",obj.partner_id.id),("download_id","=",download.id)])
+              if not perm:
+                perm = perm_obj.create({
+                  "partner_id": obj.partner_id.id,
+                  "download_id": download.id
+                })
+                
+              # get download link
+              download_link = perm.download_link
+              if not download_link:
+                continue 
+                    
+              # change meta data
+              changed, meta_data = self.addMetaData(item.get("meta_data"), {"key":"Download", "value":download_link})
+              if changed:
+                item["meta_data"] = meta_data
+                res["line_items"] = line_items 
+                   
+
     return res
+  
+  def updateValues(self, data, onchange_res):
+    if onchange_res:
+      values = onchange_res.get("value")
+      if values:
+        for key, value in values.iteritems():
+          if value:
+            data[key] = value
   
   def toOdoo(self, doc, obj=None):
     if obj:
@@ -1103,55 +1195,100 @@ class WcOrderSync(WcSync):
       if not data:
         return partner.id      
       domain = []
-      
-      company = data.get("company")
+            
       firstname = data.get("first_name")
       surname = data.get("last_name")
       
-      domain.append(('|',("name","=",company),
-                    '&',("firstname","=",firstname),("surname","=",surname)))
+      name = data.get("company")
+      if not name:
+        name = []
+        if surname:
+          name.append(surname)
+        if firstname:
+          name.append(firstname)
+        name = " ".join(name)
+      
+      domain.append(("name","ilike",name))
       
       street = data.get("address_1","")
-      domain.append(("street","=",street))
+      domain.append(("street","ilike",street))
       
       street2 =  data.get("address_2")
       if street2:
-        domain.append(("street2","=",street2))
+        domain.append(("street2","ilike",street2))
         
       city = data.get("city")
       if city:
-        domain.append(("city","=",city))
+        domain.append(("city","ilike",city))
         
       zip_code = data.get("postcode")
       if zip_code:
-        domain.append(("zip","=",zip_code))
+        domain.append(("zip","ilike",zip_code))
         
-      res = partner_obj.search(domain)
+      # only search within current partner
+      main_partner = partner
+      while main_partner.parent_id:
+        main_partner = partner.parent_id
+        
+      domain.append("|")      
+      domain.append(("id","=",main_partner.id))
+      domain.append(("id","child_of",main_partner.id))
+      
+      res = partner_obj.with_context(active_test=False).search(domain)
       if res:
         return res[0].id
-      elif street and street2 and city and zip_code and (company or (firstname and surname)):
-        values = self.user_sync.getAddressData(data)
-        values["is_company"] = False
-        values["type"]=atype
-        values["parent_id"]=partner.id
-        return partner_obj.create(values).id
+      elif name and street and city and zip_code:
+        update = {}
+        if not partner.street and street:
+          update["street"] = street
+        if street and not partner.street2 and street2:
+          update["street2"] = street2
+        if not partner.city and city:
+          update["city"] = city
+        if not partner.zip and zip_code:
+          update["zip"] = zip_code
+        
+        # update
+        if update:
+          partner.write(update)
+          return partner.id
+        else:
+          # validate main partner
+          if not main_partner.is_company:
+            main_partner.is_company = True   
+
+          # create new child
+          values = self.user_sync.getAddressData(data)
+          values["is_company"] = False
+          values["type"] = atype
+          values["parent_id"] = main_partner.id          
+          return partner_obj.create(values).id
       else:
-        partner.id
+        return partner.id
       
     res = {
       "partner_id": partner.id,
       "partner_invoice_id": getPartnerId(doc.get("billing_address"), "invoice"),
       "partner_shipping_id": getPartnerId(doc.get("shipping_address"), "delivery"),
-      "order_policy": self.user_sync.getOrderPolicy(partner),
-      "date_order": self.fromWcGMT(doc["created_at"])      
+      "date_order": self.fromWcGMT(doc["created_at"]),
+      "client_order_ref": "%s: %s" % (self.profile.name, doc["order_number"]),
+      "order_policy": "prepaid"
     }
     
     if not obj:
       res["wc_order"] = True
     
+    # check order policy
+    payment_details = doc.get("payment_details")
+    if payment_details:
+      payment = self.profile.env["wc.profile.payment"].search([("code","=",payment_details["method_id"])])
+      if payment:
+        payment = payment[0]
+        if payment.order_policy:
+          res["order_policy"] = payment.order_policy 
+           
     order_obj = self.profile.env["sale.order"]
-    value = order_obj.onchange_partner([],partner.id)["value"]
-    res.update(value)
+    self.updateValues(res, order_obj.onchange_partner_id(partner.id))
   
     # add note
     note = doc.get("note")
@@ -1166,7 +1303,7 @@ class WcOrderSync(WcSync):
       
     # add lines
     lines = []
-    items = doc.get("items")
+    items = doc.get("line_items")
     if items:
       product_obj = self.profile.env["product.product"]
       for item in items:
@@ -1185,13 +1322,13 @@ class WcOrderSync(WcSync):
           "price_nocalc": True
         }
         
-        lines.apppend(line_values)
+        lines.append(line_values)
       
     coupons = doc.get("coupon_lines")
     if coupons:
       f = format.LangFormat(self.profile._cr, self.profile._uid, self.profile._context)
       for coupon in coupons:
-        name = [self.profile.coupon_product_id.name_get()[0]]
+        name = [self.profile.coupon_product_id.name_get()[0][1]]
         coupon_code = coupon.get("code")
         if coupon_code:
           name.append(coupon_code)
@@ -1199,30 +1336,84 @@ class WcOrderSync(WcSync):
         coupon_discount = float(coupon.get("amount",0.0)) * -1.0
         name.append(f.formatLang(coupon_discount, monetary=True))
         name.append(self.profile.company_id.currency_id.symbol)
-          
+        name = " ".join(name)
+        
         line_values = {
           "product_id": self.profile.coupon_product_id.id,
           "product_uom_qty": 1,
           "wc_coupon": coupon.get("code") or "",
           "price_unit": 0,
           "price_nocalc": True,
-          "name": " ".join(name) 
+          "name": name
         }
-        lines.apppend(line_values)
+        lines.append(line_values)
+        
+    shipping = doc.get("shipping_lines")
+    if shipping:
+      for shipment in shipping:
+        line_values = {
+          "product_id": self.profile.delivery_product_id.id,
+          "product_uom_qty": 1,
+          "price_unit": float(shipment["total"]),
+          "price_nocalc": True,
+          "name": shipment["method_title"]
+        }
+        lines.append(line_values)
     
     line_obj = self.profile.env["sale.order.line"]
     for line in lines:      
-      value = line_obj.product_id_change_with_wh_price(self._cr, self._uid, [], 
-            pricelist=res["pricelist_id"], product=line["product_id"], qty=line["product_uom_qty"],
+      onchange_res = line_obj.product_id_change_with_wh_price(pricelist=res["pricelist_id"], product=line["product_id"], qty=line["product_uom_qty"],
             name=line.get("name"), partner_id=res.get("partner_id"),
             date_order=res.get("date_order"), 
-            fiscal_position=res.get("fiscal_position"), flag=True, price_unit=line.price_unit, price_nocalc=line.price_nocalc, context=self._context)["value"]
-      line.update(value)
+            fiscal_position=res.get("fiscal_position"), flag=True, price_unit=line.get("price_unit",0.0), price_nocalc=line.get("price_nocalc",False))
+      self.updateValues(line, onchange_res)
           
     res["order_line"] = [(0,0,l) for l in lines]     
     return res
-  
-
+             
+  def afterOdooUpdate(self, obj, wid, doc):
+    super(WcOrderSync, self).afterOdooUpdate(obj, wid, doc)
+    
+    # only handle woocommerce order
+    if obj.wc_order:    
+      if obj.order_policy == "prepaid":
+        invoice_ids = []
+                  
+        # confirm order
+        if obj.state in ("draft","sent"):
+          obj.action_button_confirm()
+          
+          # open invoices
+          for inv in obj.invoice_ids:
+            if inv.type == "out_invoice" and not inv.state in ("open","paid","cancel"):
+              inv.signal_workflow("invoice_open")            
+              invoice_ids.append(inv.id)
+                            
+        # check invoiced
+        payment_details = doc.get("payment_details")
+        if payment_details and payment_details.get("paid") and not obj.invoiced:
+          # get payment
+          payment_obj = self.profile.env["wc.profile.payment"]        
+          payment = payment_obj.search([("code","=",payment_details["method_id"])])
+          if payment:
+            payment = payment[0]
+            if not obj.invoiced:
+              # reconcile invoice
+              for inv in obj.invoice_ids:
+                if inv.type == "out_invoice" and inv.state == "open":
+                  inv.create_voucher(payment.journal_id.id)
+          
+        # send invoices
+        # ... after all ...
+        if invoice_ids:
+          self.profile.env["account.invoice"].browse(invoice_ids).invoice_send()
+      
+      elif obj.order_policy == "picking":
+        # send quotation
+        if obj.state == "draft":
+          obj.force_quotation_send()
+      
+    
 class wc_profile(models.Model):
   _name = "wc.profile"
   _description = "WooCommerce Profile"
@@ -1258,9 +1449,12 @@ class wc_profile(models.Model):
   
   user_template_id = fields.Many2one("res.users", "User Template", required=True, readonly=True, states={'draft': [('readonly', False)]})
   order_template_id = fields.Many2one("sale.order", "Order Template", required=True, readonly=True, states={'draft': [('readonly', False)]})
+  
   dummy_product_tmpl_id = fields.Many2one("product.template","Dummy Product", required=True, readonly=True, states={'draft': [('readonly', False)]},
                                      help="This Product is used if product not synced to Server")
   coupon_product_id = fields.Many2one("product.product", "Coupon Product", required=True, readonly=True, states={'draft': [('readonly', False)]})
+  delivery_product_id = fields.Many2one("product.product","Delivery Product", required=True, readonly=True, states={'draft': [('readonly', False)]})
+  
   checkpoint_ids = fields.One2many("wc.profile.checkpoint", "profile_id", "Checkpoints", readonly=True, states={'draft': [('readonly', False)]})
   
   payment_ids = fields.One2many("wc.profile.payment", "profile_id", "Payment Methods", readonly=True, states={'draft': [('readonly', False)]})
@@ -1298,7 +1492,7 @@ class wc_profile(models.Model):
     self._sync_user(mapper, wc).sync()    
     self._sync_product_attribute(mapper, wc).sync()
     self._sync_product(mapper, wc).sync()
-    #self._sync_order(mapper, wc).sync()
+    self._sync_order(mapper, wc).sync()
     return True
     
   @api.multi
@@ -1311,10 +1505,10 @@ class wc_profile(models.Model):
     for profile in self:
       if profile.state == "draft":
         profile.dummy_product_tmpl_id.wc_sync = True
-        wc = profile._get_client()
-        res = wc.get("webhooks")
+        profile._get_client()        
         profile.state = "active"
         # install webhook
+        #res = wc.get("webhooks")        
     return True
   
   @api.multi
@@ -1349,6 +1543,7 @@ class wc_profile_payment(models.Model):
   journal_id = fields.Many2one("account.journal", "Journal", required=True, index=True)
   sequence = fields.Integer("Sequence", default=10, required=True)
   code = fields.Char("MethodId", required=True, index=True)
+  order_policy = fields.Selection([("prepaid","Prepaid"),("picking","Picking Payment")], string="Order Policy")
   
   
 

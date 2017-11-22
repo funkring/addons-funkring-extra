@@ -30,3 +30,8 @@ from openerp import SUPERUSER_ID
 import logging
 _logger = logging.getLogger(__name__)
 
+class woocommerce(http.Controller):
+
+    @http.route(["/wc/webhook"], type="http", auth="none", cors="*")
+    def webhook(self, **kwargs):
+      return ""

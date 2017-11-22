@@ -32,6 +32,7 @@
               <group>
                 <field name="dummy_product_tmpl_id"/>
                 <field name="coupon_product_id"/>
+                <field name="delivery_product_id"/>
               </group>
             </group>
             <div>
@@ -51,6 +52,7 @@
                     <field name="name"/>
                     <field name="journal_id"/>
                     <field name="code"/>
+                    <field name="order_policy"/>
                   </tree>
                 </field>
               </page>          

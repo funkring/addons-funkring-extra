@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-12 20:30+0000\n"
-"PO-Revision-Date: 2017-11-12 21:31+0100\n"
+"POT-Creation-Date: 2017-11-21 20:57+0000\n"
+"PO-Revision-Date: 2017-11-21 21:58+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -74,6 +74,11 @@ msgstr ""
 #: field:wc.profile.payment,create_date:0
 msgid "Created on"
 msgstr ""
+
+#. module: woocommerce
+#: field:wc.profile,delivery_product_id:0
+msgid "Delivery Product"
+msgstr "Fracht Produkt"
 
 #. module: woocommerce
 #: view:product.template:woocommerce.form_product_template
@@ -143,7 +148,7 @@ msgid "Last Updated on"
 msgstr ""
 
 #. module: woocommerce
-#: code:addons/woocommerce/wc.py:90
+#: code:addons/woocommerce/wc.py:91
 #, python-format
 msgid "Mapping already exist"
 msgstr "Zuordnung existiert bereits"
@@ -160,6 +165,11 @@ msgid "Name"
 msgstr ""
 
 #. module: woocommerce
+#: field:wc.profile.payment,order_policy:0
+msgid "Order Policy"
+msgstr "Erzeuge Rechnung"
+
+#. module: woocommerce
 #: field:wc.profile,order_template_id:0
 msgid "Order Template"
 msgstr "Auftragsvorlage"
@@ -168,6 +178,21 @@ msgstr "Auftragsvorlage"
 #: view:wc.profile:woocommerce.form_wc_profile field:wc.profile,payment_ids:0
 msgid "Payment Methods"
 msgstr "Zahlungsmethoden"
+
+#. module: woocommerce
+#: selection:wc.profile.payment,order_policy:0
+msgid "Picking Payment"
+msgstr "Zahlung nach Lieferung"
+
+#. module: woocommerce
+#: selection:wc.profile.payment,order_policy:0
+msgid "Prepaid"
+msgstr "Vor Lieferung"
+
+#. module: woocommerce
+#: model:ir.model,name:woocommerce.model_product_product
+msgid "Product"
+msgstr "Produkt"
 
 #. module: woocommerce
 #: model:ir.model,name:woocommerce.model_product_template
@@ -222,11 +247,6 @@ msgstr ""
 
 #. module: woocommerce
 #: view:wc.profile:woocommerce.form_wc_profile
-msgid "Sync Used Products"
-msgstr "Synchronisiere benutzte Produkte"
-
-#. module: woocommerce
-#: view:wc.profile:woocommerce.form_wc_profile
 msgid "Synchronize"
 msgstr "Abgleichen"
 
@@ -253,6 +273,16 @@ msgid "User Template"
 msgstr "Benutzervorlage"
 
 #. module: woocommerce
+#: field:wc.profile,webhook_secret:0
+msgid "Webhook Secret"
+msgstr ""
+
+#. module: woocommerce
+#: field:wc.profile,webhook_url:0
+msgid "Webhook Url"
+msgstr ""
+
+#. module: woocommerce
 #: model:ir.ui.menu,name:woocommerce.menu_wc_profile
 #: view:product.template:woocommerce.form_product_template
 #: view:sale.order:woocommerce.form_sale_order
@@ -276,6 +306,6 @@ msgid "WooCommerce Profile"
 msgstr "WooCommerce Profil"
 
 #. module: woocommerce
-#: field:product.template,wc_sync:0
+#: field:product.product,wc_sync:0 field:product.template,wc_sync:0
 msgid "WooCommerce Synchronisation"
 msgstr ""
