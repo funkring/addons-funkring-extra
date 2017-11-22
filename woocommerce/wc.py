@@ -1485,14 +1485,19 @@ class wc_profile(models.Model):
   
   @api.one
   def _sync(self):
+    _logger.info("START sync of profile %s" % self.name)
+    
     # create context
     mapper = WcMapper(self)    
     wc = self._get_client()
+    
     # SYNC
     self._sync_user(mapper, wc).sync()    
     self._sync_product_attribute(mapper, wc).sync()
     self._sync_product(mapper, wc).sync()
     self._sync_order(mapper, wc).sync()
+    
+    _logger.info("FINISHED sync of profile %s" % self.name)
     return True
     
   @api.multi
