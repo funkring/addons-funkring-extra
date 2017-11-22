@@ -444,6 +444,20 @@ class WcSync(object):
       
       # query dependency changes
       if self.dependency:
+        
+        def addRelIds(dep_obj, dep_fields):
+            dep_cur_field = dep_fields[0]
+            next_dep_fields = dep_fields[1:]
+            next_dep_obj = getattr(dep_obj, dep_cur_field)            
+            # if no more add                        
+            if not next_dep_fields:              
+              if next_dep_obj:
+                for dep_item in next_dep_obj:
+                  dep_ids.add(dep_item.id)
+            # go deeper
+            elif next_dep_obj:
+              addRelIds(next_dep_obj, next_dep_fields)
+        
         for dep_prefix, dep_model, dep_field, dep_domain in self.dependency:
           dep_checkpoint = self.getCheckpoint("%s_%s" % (self.prefix, dep_prefix))
           dep_timestamp = dep_checkpoint.ts
@@ -456,12 +470,14 @@ class WcSync(object):
           
           # search objects
           dep_objs = dep_model_obj.search(domain)
+          
+          # get dependend values
+          dep_fields = dep_field.split(".")
+          
+          # go into         
           for dep_obj in dep_objs:
             dep_timestamp = max(dep_timestamp, dep_obj.write_date)
-            dep_field_value = getattr(dep_obj, dep_field)
-            if dep_field_value:
-              for dep_field_obj in dep_field_value:
-                dep_ids.add(dep_field_obj.id)
+            addRelIds(dep_obj, dep_fields)
             
           # update dependency time stamp
           dep_checkpoint.ts = dep_timestamp
@@ -712,7 +728,7 @@ class WcProductSync(WcSync):
                                         dependency=[
                                           ("stock_quant","stock.quant","product_id.product_tmpl_id",[("product_id.wc_sync","=",True)]),
                                           ("product", "product.product", "product_tmpl_id", [("wc_sync","=",True)]),
-                                          ("product_attribute", "product.attribute.value", "product_ids", [("product_ids.wc_sync","=",True)])
+                                          ("product_attribute", "product.attribute.value", "product_ids.product_tmpl_id", [("product_ids.wc_sync","=",True)])
                                         ],
                                         childs=[
                                           ("product.product", "product_variant_ids", "variations", "variations", "variation")

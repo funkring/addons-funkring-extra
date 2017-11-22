@@ -19,6 +19,7 @@
 ##############################################################################
 
 from openerp.osv import fields, osv
+from openerp import SUPERUSER_ID
 
 class product_template(osv.Model):
   _inherit = "product.template"
@@ -28,10 +29,12 @@ class product_template(osv.Model):
   
   def action_wc_sync_enable(self, cr, uid, ids, context=None):
     self.write(cr, uid, ids, {"wc_sync":True}, context=context)
+    self.pool["wc.profile"].sync_all(cr, SUPERUSER_ID, context=context)
     return True
   
   def action_wc_sync_disable(self, cr, uid, ids, context=None):
     self.write(cr, uid, ids, {"wc_sync":False}, context=context)
+    self.pool["wc.profile"].sync_all(cr, SUPERUSER_ID, context=context)
     return True
   
   
