@@ -26,5 +26,5 @@ class res_users(osv.Model):
   
   def signup(self, cr, uid, values, token=None, context=None):
     res = super(res_users, self).signup(cr, uid, values, token=token, context=context)
-    self.pool["wc.profile"].sync_all(cr, SUPERUSER_ID, context=context)    
+    self.pool["wc.profile"].schedule_sync(cr, SUPERUSER_ID, context=context)    
     return res
