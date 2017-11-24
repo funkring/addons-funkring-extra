@@ -1701,6 +1701,18 @@ class wc_profile(models.Model):
     self.search([("state","=","active")]).action_sync()
     return True
   
+  @api.model
+  def schedule_sync(self):
+    cron = self.env.ref('woocommerce.cron_wc_sync', False)
+    if cron:
+      cron.nextcall = util.nextMinute()
+      
+  @api.multi
+  def action_schedule_sync(self):
+    self.env["wc.profile"].schedule_sync()
+    return True
+  
+  
 class wc_profile_checkpoint(models.Model):
   _name = "wc.profile.checkpoint"
   _description = "WooCommerce Checkpoint"

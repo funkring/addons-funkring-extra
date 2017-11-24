@@ -45,8 +45,10 @@ class woocommerce(http.Controller):
         signature_calc = base64.encodestring(digister.digest()).strip()        
         if signature_calc == signature:
           try:
-            profile_obj._sync(cr, SUPERUSER_ID, [profile_id], context=context)
+            profile_obj.schedule_sync(cr, SUPERUSER_ID, context=context)
             cr.commit()
+          except:
+            _logger.warning("Queue is currently used, unable to update")
           finally:
             cr.rollback()
             

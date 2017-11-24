@@ -8,7 +8,8 @@
         <form string="Profile">
           <header>
             <button type="object" name="action_activate" states="draft" string="Activate" class="oe_highlight"/>
-            <button type="object" name="action_sync" states="active" string="Synchronize"/>
+            <button type="object" name="action_schedule_sync" states="active" string="Schedule Sync" class="oe_highlight"/>
+            <button type="object" name="action_sync" states="active" string="Synchronize"/>            
             <button type="object" name="action_draft" states="active" string="Reset Draft"/>
             <field name="state" widget="statusbar" statusbar_visible="draft,active"/>
           </header>
