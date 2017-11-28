@@ -21,6 +21,7 @@
 from openerp import models, fields, api, _
 from openerp.addons.at_base import util
 from openerp.addons.at_base import format
+from openerp.addons.at_base import helper
 from openerp.exceptions import Warning
 
 import re
@@ -1228,15 +1229,6 @@ class WcOrderSync(WcSync):
             "line_items": update_items
           })
           
-  
-  def updateValues(self, data, onchange_res):
-    if onchange_res:
-      values = onchange_res.get("value")
-      if values:
-        for key, value in values.iteritems():
-          if value:
-            data[key] = value
-  
   def toOdoo(self, doc, obj=None):
     if obj:
       return {}
@@ -1408,8 +1400,8 @@ class WcOrderSync(WcSync):
           res["order_policy"] = payment.order_policy 
            
     order_obj = self.profile.env["sale.order"]
-    self.updateValues(res, order_obj.onchange_partner_id(partner.id))
-    self.updateValues(res, order_obj.onchange_shop_id(res["shop_id"], "draft", res.get("project_id")))
+    helper.onChangeValuesEnv(order_obj, res, order_obj.onchange_partner_id(partner.id))
+    helper.onChangeValuesEnv(order_obj, res, order_obj.onchange_shop_id(res["shop_id"], "draft", res.get("project_id")))
   
     # add note
     note = doc.get("note")
@@ -1487,7 +1479,8 @@ class WcOrderSync(WcSync):
             name=line.get("name"), partner_id=res.get("partner_id"),
             date_order=res.get("date_order"), 
             fiscal_position=res.get("fiscal_position"), flag=True, price_unit=line.get("price_unit",0.0), price_nocalc=line.get("price_nocalc",False))
-      self.updateValues(line, onchange_res)
+      
+      helper.onChangeValuesEnv(line_obj, line, onchange_res)
           
     res["order_line"] = [(0,0,l) for l in lines]     
     return res
