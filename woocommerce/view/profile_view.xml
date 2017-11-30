@@ -21,6 +21,7 @@
                 <field name="url"/>
               </group>
               <group>
+                <field name="enabled"/>
                 <field name="consumer_key"/>
                 <field name="consumer_secret"/>
                 <field name="webhook_url"/>

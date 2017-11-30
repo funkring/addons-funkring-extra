@@ -1576,6 +1576,8 @@ class wc_profile(models.Model):
   webhook_url = fields.Char("Webhook Url", readonly=True, states={'draft': [('readonly', False)]})
   webhook_secret = fields.Char("Webhook Secret", readonly=True, states={'draft': [('readonly', False)]})
   
+  enabled = fields.Boolean("Enabled", default=True)
+  
   def _get_client(self):
     return WcClient(woocommerce.api.API(self.url, self.consumer_key, self.consumer_secret,
                                         version="wc/v2", wp_api=True, verify_ssl=False),
@@ -1599,6 +1601,9 @@ class wc_profile(models.Model):
   
   @api.one
   def _sync(self):
+    if not self.enabled:
+      return True
+    
     _logger.info("START sync of profile %s" % self.name)
     
     # create context
