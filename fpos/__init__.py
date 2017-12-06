@@ -10,3 +10,4 @@ import report
 import res_partner
 import controller
 import invoice
+import pos_order_report

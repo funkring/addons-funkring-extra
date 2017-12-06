@@ -1,0 +1,26 @@
+<openerp>
+  <data>
+    
+    <record id="report_pos_order" model="ir.ui.view">
+      <field name="name">fpos.report_pos_order</field>
+      <field name="model">report.pos.order</field>
+      <field name="inherit_id" ref="point_of_sale.view_report_pos_order_search"/>
+      <field name="arch" type="xml">
+         <field name="partner_id" position="after">
+          <field name="config_id"/>
+          <field name="company_id"/>
+          <field name="fpos_ga"/>
+         </field>
+         <field name="date" position="after">
+          <filter string="Group Order" domain="[('fpos_ga','=',True)]"/>
+         </field>
+         <filter string="Product" position="after">
+          <filter string="Point of Sale" context="{'group_by':'config_id'}"/>
+          <filter string="Company" context="{'group_by':'company_id'}"/>
+          <filter string="Partner" context="{'group_by':'partner_id'}"/>          
+         </filter>         
+      </field>
+    </record>
+    
+  </data>
+</openerp>

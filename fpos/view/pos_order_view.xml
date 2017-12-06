@@ -33,9 +33,26 @@
         <field name="arch" type="xml">
             <field name="pos_reference" position="after">
                 <field name="fpos_place_id"/>
+                <field name="fpos_group_id"/>
+                <field name="fpos_ga"/>
             </field>
         </field>
     </record>
     
+    <record id="search_pos_order" model="ir.ui.view">
+      <field name="name">fpos.search_pos_order</field>
+      <field name="model">pos.order</field>
+      <field name="inherit_id" ref="point_of_sale.view_pos_order_filter"/>
+      <field name="arch" type="xml">
+         <field name="date_order" position="after">
+            <field name="partner_id"/>
+            <field name="fpos_place_id"/>   
+         </field>
+         <filter string="Customer" position="after">
+            <filter name="Group Order" domain="[]" context="{'group_by':'fpos_group_id'}"/>
+         </filter>
+      </field>
+    </record>
+
   </data>
 </openerp>

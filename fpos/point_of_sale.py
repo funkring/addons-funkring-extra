@@ -704,7 +704,8 @@ class pos_order(osv.Model):
     _columns = {
         "fpos_order_id": fields.many2one("fpos.order", "Fpos Order", select=True),
         "fpos_place_id": fields.many2one("fpos.place", "Place", select=True),
-        "fpos_group_id": fields.many2one("fpos.order", "Fpos Group Order", select=True, ondelete="set null")
+        "fpos_group_id": fields.many2one("fpos.order", "Grouped Order", select=True, ondelete="set null"),
+        "fpos_ga": fields.related("fpos_order_id", "ga", type="boolean", readonly=True, string="Groupable")
     }
 
     def reconcile_invoice(self, cr, uid, ids, context=None):
