@@ -18,23 +18,31 @@
 #
 ##############################################################################
 
-{
-    "name" : "oerp.at District Management for Sale",
-    "summary" : "District Management for Sale",
-    "description":"""
-District Management
-===================
-* adds computed district field to account and sale
-""",
-    "version" : "1.0",
-    "author" :  "oerp.at",
-    "website" : "http://oerp.at",
-    "category" : "Sales",
-    "depends" : ["district","at_account","at_sale","account","sale"],
-    "data" : ["view/district_view.xml",
-              "view/invoice_view.xml",
-              "view/sale_view.xml",
-              "report/sale_report.xml"],
-    "auto_install" : False,
-    "installable": True
-}
+from openerp.osv import fields, osv
+
+class sale_report(osv.Model):
+  _inherit = "sale.report"
+  _columns = {
+    "district_id" : fields.many2one("district.district", "District")
+  }
+  
+  def _select(self):
+    res = super(sale_report, self)._select()
+    res += """ 
+      ,pt.district_id
+    """
+    return res
+
+  def _from(self):
+    res = super(sale_report, self)._from()
+    res += """
+      inner join res_partner pt on pt.id = s.partner_id
+    """
+    return res
+    
+  def _group_by(self):
+    res = super(sale_report, self)._group_by()
+    res += """
+      ,pt.district_id
+    """
+    return res
