@@ -22,19 +22,46 @@
 from openerp.osv import osv
 from openerp.report import report_sxw
 
+from openerp import SUPERUSER_ID
+import urlparse
+import qrcode
+import qrcode.image.svg
+from qrcode import constants 
+
+try:
+    import cStringIO as StringIO
+except ImportError:
+    import StringIO
 
 class order(report_sxw.rml_parse):
 
     def __init__(self, cr, uid, name, context):
         super(order, self).__init__(cr, uid, name, context=context)
-
+        self.url = self.pool["ir.config_parameter"].get_param(self.cr, SUPERUSER_ID, "web.base.url", "http://localhost:8069")
         self.localcontext.update({
+            "url": self.url,
             "get_order" : self.get_order,
             "header" : self.header
         })
 
     def header(self, o):
         return o.session_id.config_id.receipt_header or ""
+      
+    def get_qrimage(self, data):
+      if not data:
+          return None
+      
+      qr = qrcode.QRCode(
+              box_size=2.0,
+              border=4
+           )
+      
+      qr.add_data(data, optimize=0)
+      qr.make()
+      im = qr.make_image()
+      image_data = StringIO.StringIO()
+      im.save(image_data,"PNG")
+      return image_data.getvalue().encode("base64")
 
     def get_order(self, o):
         order_lines = []
@@ -43,7 +70,20 @@ class order(report_sxw.rml_parse):
         order = { "lines" : order_lines,
                   "payment" : order_payment, 
                   "taxes" : order_taxes,
-                  "cur" : o.session_id.currency_id.symbol}
+                  "cur" : o.session_id.currency_id.symbol,
+                  "hs": None,
+                  "qr": None,
+                  "qrimage": None}
+        
+        fpos_order = o.fpos_order_id
+        if fpos_order:
+          if fpos_order.hs:
+            order["hs"] = fpos_order.hs
+            order["hsurl"] = urlparse.urljoin(self.url, "fpos/code/%s/%s" % (fpos_order.seq, fpos_order.hs))
+          elif fpos_order.qr:
+            order["qr"] = fpos_order.qr
+            order["qrimage"] = self.get_qrimage(fpos_order.qr) 
+        
         
         account_tax_obj = self.pool.get('account.tax')
         taxes_dict = {}

@@ -88,17 +88,18 @@
                                                 </t>
                                             </td>
                                         </tr>
+                                        <tr t-if="line['l'].notice">
+                                          <td width="5%">&#160;</td>
+                                          <td>
+                                            <t t-foreach="line['l'].notice.split('\n')" t-as="nl">
+                                                <t t-esc="nl"/>
+                                                <br/>
+                                            </t>
+                                          </td>
+                                        </tr> 
                                         </table>
                                     </td>
-                                </tr>
-                                <tr t-if="line['l'].notice">
-                                    <td colspan="2">
-                                        <t t-foreach="line['l'].notice.split('\n')" t-as="nl">
-                                            <t t-esc="nl"/>
-                                            <br/>
-                                        </t>
-                                    </td>
-                                </tr>
+                                </tr>                               
                                 <tr t-if="'b' in line['flags']">
                                     <td colspan="2"><hr style="margin: 2pt 0 2pt 0;"/></td>
                                 </tr>                                
@@ -133,7 +134,19 @@
                             </tr>
                             </t>
                         </table>
-                    </t>               
+                    </t>        
+                    <t t-if="oo['hs']">
+                      <br/>                      
+                      <p align="left">
+                        <a t-att-href="oo['hsurl']"><t t-esc="oo['hsurl']"/></a>
+                      </p>
+                    </t>
+                    <t t-if="oo['qr']">
+                      <br/>
+                      <p align="center">
+                        <img t-att-alt="oo['qr']" t-attf-src="data:image/png;base64,{{ oo['qrimage'] }}"></img>
+                      </p>
+                    </t>          
                 </div>
                 </t>
             </t>

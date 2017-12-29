@@ -7,7 +7,6 @@
       <field name="model">pos.order</field>
       <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
       <field name="arch" type="xml">
-            
             <data>
                 <button name="action_invoice" position="replace">
                     <button name="action_invoice" string="Invoice" type="object" states="paid,done,invoiced" attrs="{'readonly': [('partner_id','=',False)]}"/>
@@ -15,7 +14,9 @@
                 <field name="company_id" position="after">
                     <field name="fpos_place_id"/>
                     <field name="fpos_order_id" readonly="1"/>
-                    <field name="fpos_group_id" readonly="1"/>
+                    <field name="fpos_group_id" readonly="1" string="Grouped Order"/>
+                    <field name="fpos_ga"/>
+                    <field name="config_id"/>                    
                 </field>
                 <xpath expr="//field[@name='lines']/tree/field[@name='product_id']" position="after">
                     <field name="name" string="Description"/>      
@@ -32,10 +33,17 @@
       <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
         <field name="arch" type="xml">
             <field name="pos_reference" position="after">
-                <field name="fpos_place_id"/>
-                <field name="fpos_group_id"/>
-                <field name="fpos_ga"/>
+                <field name="fpos_st"/>
+                <field name="fpos_place_id"/>                
+            </field>           
+            <field name="amount_total" position="replace">
+                <field name="amount_total" groups="base.group_system"/>
+                <field name="fpos_amount_total"/>
             </field>
+            <field name="session_id" position="after">
+                <field name="fpos_group_id" string="Grouped Order"/>
+                <field name="fpos_ga"/>
+            </field>             
         </field>
     </record>
     
@@ -46,7 +54,8 @@
       <field name="arch" type="xml">
          <field name="date_order" position="after">
             <field name="partner_id"/>
-            <field name="fpos_place_id"/>   
+            <field name="fpos_place_id"/>
+            <field name="config_id"/>    
          </field>
          <filter string="Customer" position="after">
             <filter name="Group Order" domain="[]" context="{'group_by':'fpos_group_id'}"/>

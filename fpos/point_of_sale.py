@@ -41,6 +41,8 @@ import struct
 import requests
 import simplejson
 
+import openerp.addons.decimal_precision as dp
+
 AES_KEY_SIZE = 32
 CRC_N = 3
 
@@ -705,7 +707,15 @@ class pos_order(osv.Model):
         "fpos_order_id": fields.many2one("fpos.order", "Fpos Order", select=True),
         "fpos_place_id": fields.many2one("fpos.place", "Place", select=True),
         "fpos_group_id": fields.many2one("fpos.order", "Grouped Order", select=True, ondelete="set null"),
-        "fpos_ga": fields.related("fpos_order_id", "ga", type="boolean", readonly=True, string="Groupable")
+        "fpos_ga": fields.related("fpos_order_id", "ga", type="boolean", readonly=True, string="Groupable"),        
+        "fpos_amount_total": fields.related("fpos_order_id", "amount_total", readonly=True, type="float", digits_compute=dp.get_precision("Account"), string="Amount", active_test=False),
+        "config_id": fields.related("session_id", "config_id", type="many2one", obj="pos.config", readonly=True, string="Point of Sale"),
+        "fpos_st": fields.related("fpos_order_id", "st", type="selection", readonly=True, string="Type", 
+                                  selection=[("s","Start"),
+                                   ("0","Null"),
+                                   ("c","Cancel"),
+                                   ("m","Mixed"),
+                                   ("t","Training")])
     }
 
     def reconcile_invoice(self, cr, uid, ids, context=None):
