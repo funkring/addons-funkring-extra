@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+  
+    <record id="form_thenewsletter_profile" model="ir.ui.view">
+      <field name="name">thenewsletter.form_thenewsletter_profile</field>
+      <field name="model">thenewsletter.profile</field>
+      <field name="arch" type="xml">
+        <form string="thenewsletter Profile">
+         <header>
+            <button type="object" name="action_activate" states="draft" string="Activate" class="oe_highlight"/>
+            <button type="object" name="action_schedule_sync" states="active" string="Schedule Sync" class="oe_highlight"/>
+            <button type="object" name="action_sync" states="active" string="Synchronize"/>            
+            <button type="object" name="action_draft" states="active" string="Reset Draft"/>
+            <field name="state" widget="statusbar" statusbar_visible="draft,active"/>
+          </header>
+          <group>
+            <group>
+              <field name="name"/>              
+            </group>
+            <group>
+              <field name="url"/>
+              <field name="api_key"/>
+              <field name="last_sync"/>
+            </group>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_thenewsletter_profile" model="ir.ui.view">
+      <field name="name">thenewsletter.tree_thenewsletter_profile</field>
+      <field name="model">thenewsletter.profile</field>
+      <field name="arch" type="xml">
+        <tree string="thenewsletter Profiles">
+          <field name="name"/>
+          <field name="url"/>
+          <field name="last_sync"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_thenewsletter_profile" model="ir.ui.view">
+      <field name="name">thenewsletter.search_thenewsletter_profile</field>
+      <field name="model">thenewsletter.profile</field>
+      <field name="arch" type="xml">
+        <search string="thenewsletter Profile">
+          <field name="name"/>
+          <field name="url"/>
+        </search>
+      </field>
+    </record>
+
+    <record id="action_thenewsletter_profile" model="ir.actions.act_window">
+      <field name="name">thenewsletter Profile</field>
+      <field name="res_model">thenewsletter.profile</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>      
+    </record>
+
+    <menuitem id="menu_thenewsletter_profile" name="Newsletter" parent="base.menu_base_config"
+      sequence="24"
+      action="action_thenewsletter_profile"/>
+      
+  </data>
+</openerp>

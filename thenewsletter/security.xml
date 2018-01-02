@@ -1,0 +1,15 @@
+<openerp>
+  <data>
+    
+    <record id="access_thenewsletter_profile_system" model="ir.model.access">
+      <field name="name">thenewsletter.profile/system</field>
+      <field name="model_id" ref="model_thenewsletter_profile"/>
+      <field name="group_id" ref="base.group_system"/>
+      <field name="perm_read" eval="True"/>
+      <field name="perm_unlink" eval="True"/>
+      <field name="perm_create" eval="True"/>
+      <field name="perm_write" eval="True"/>
+    </record>
+    
+  </data>
+</openerp>

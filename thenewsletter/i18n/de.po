@@ -1,0 +1,131 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* thenewsletter
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Language: de_DE\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-02 15:05+0000\n"
+"PO-Revision-Date: 2018-01-02 16:07+0100\n"
+"Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 1.5.4\n"
+
+#. module: thenewsletter
+#: field:thenewsletter.profile,api_key:0
+msgid "API Key"
+msgstr ""
+
+#. module: thenewsletter
+#: view:thenewsletter.profile:thenewsletter.form_thenewsletter_profile
+msgid "Activate"
+msgstr "Aktivieren"
+
+#. module: thenewsletter
+#: selection:thenewsletter.profile,state:0
+msgid "Active"
+msgstr "Aktiv"
+
+#. module: thenewsletter
+#: field:thenewsletter.profile,create_uid:0
+msgid "Created by"
+msgstr ""
+
+#. module: thenewsletter
+#: field:thenewsletter.profile,create_date:0
+msgid "Created on"
+msgstr ""
+
+#. module: thenewsletter
+#: field:thenewsletter.profile,display_name:0
+msgid "Display Name"
+msgstr ""
+
+#. module: thenewsletter
+#: selection:thenewsletter.profile,state:0
+msgid "Draft"
+msgstr "Entwurf"
+
+#. module: thenewsletter
+#: field:thenewsletter.profile,id:0
+msgid "ID"
+msgstr ""
+
+#. module: thenewsletter
+#: field:thenewsletter.profile,__last_update:0
+msgid "Last Modified on"
+msgstr ""
+
+#. module: thenewsletter
+#: field:thenewsletter.profile,last_sync:0
+msgid "Last Sync"
+msgstr "Letzter Abgleich"
+
+#. module: thenewsletter
+#: field:thenewsletter.profile,write_uid:0
+msgid "Last Updated by"
+msgstr ""
+
+#. module: thenewsletter
+#: field:thenewsletter.profile,write_date:0
+msgid "Last Updated on"
+msgstr ""
+
+#. module: thenewsletter
+#: field:thenewsletter.profile,name:0
+msgid "Name"
+msgstr ""
+
+#. module: thenewsletter
+#: model:ir.ui.menu,name:thenewsletter.menu_thenewsletter_profile
+msgid "Newsletter"
+msgstr ""
+
+#. module: thenewsletter
+#: constraint:thenewsletter.profile:0
+msgid "Profile name have to be lower case without spaces and special chars"
+msgstr "Profil Name nur ein Kleinbuchstaben ohne Abstände"
+
+#. module: thenewsletter
+#: view:thenewsletter.profile:thenewsletter.form_thenewsletter_profile
+msgid "Reset Draft"
+msgstr "Auf Entwurf setzen"
+
+#. module: thenewsletter
+#: view:thenewsletter.profile:thenewsletter.form_thenewsletter_profile
+msgid "Schedule Sync"
+msgstr "Abgleich planen"
+
+#. module: thenewsletter
+#: field:thenewsletter.profile,state:0
+msgid "Status"
+msgstr ""
+
+#. module: thenewsletter
+#: view:thenewsletter.profile:thenewsletter.form_thenewsletter_profile
+msgid "Synchronize"
+msgstr "Abgleich"
+
+#. module: thenewsletter
+#: field:thenewsletter.profile,url:0
+msgid "Url"
+msgstr ""
+
+#. module: thenewsletter
+#: model:ir.actions.act_window,name:thenewsletter.action_thenewsletter_profile
+#: model:ir.model,name:thenewsletter.model_thenewsletter_profile
+#: view:thenewsletter.profile:thenewsletter.form_thenewsletter_profile
+#: view:thenewsletter.profile:thenewsletter.search_thenewsletter_profile
+msgid "thenewsletter Profile"
+msgstr "thenewsletter Profil"
+
+#. module: thenewsletter
+#: view:thenewsletter.profile:thenewsletter.tree_thenewsletter_profile
+msgid "thenewsletter Profiles"
+msgstr "thenewsletter Profile"
