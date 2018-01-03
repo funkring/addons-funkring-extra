@@ -12,6 +12,7 @@
               <field name="type"/> 
               <field name="pricelist_id"/> 
               <field name="category_less"/>
+              <field name="sumup" attr="{'invisible': [('pricelist_id','=',False)]}"/>
             </group>
             <group>             
             </group>

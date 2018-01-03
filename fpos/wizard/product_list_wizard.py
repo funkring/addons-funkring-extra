@@ -30,6 +30,7 @@ class product_list_wizard(models.TransientModel):
                             ("all","All")], string="Type", default="private", required=True)
     
     category_less = fields.Boolean("Print Categoryless")
+    sumup = fields.Boolean("Intelligent Sumup", default=True, help="Print only products are used with the selected price list")
     
     
     @api.multi
@@ -45,7 +46,24 @@ class product_list_wizard(models.TransientModel):
             elif wizard.type == "b2b":
                 domain.append(("taxes_id.price_include","!=",True))
                 
-            products = product_obj.search(domain)
+            # intelligent product search      
+            if wizard.sumup and self.pricelist_id:       
+              partners = self.env["res.partner"].search([("property_product_pricelist","=",self.pricelist_id.id)])
+              if partners:
+                self._cr.execute("SELECT pt.pos_categ_id FROM pos_order_line l "
+                                 " INNER JOIN pos_order o ON o.id = l.order_id AND o.partner_id IN %s"
+                                 " INNER JOIN product_product p ON p.id = l.product_id "
+                                 " INNER JOIN product_template pt ON pt.id = p.product_tmpl_id AND NOT pt.pos_categ_id IS NULL AND pt.active"
+                                 " GROUP BY 1", (tuple(partners.ids),))
+                
+                pos_category_ids = [r[0] for r in self._cr.fetchall()]
+                if pos_category_ids:
+                  idomain = list(domain)
+                  idomain.append(("pos_categ_id","in",pos_category_ids))
+                  products = product_obj.search(idomain)
+              
+            if not products:     
+              products = product_obj.search(domain)
            
             # get context
             report_ctx = self._context and dict(self._context) or {}
