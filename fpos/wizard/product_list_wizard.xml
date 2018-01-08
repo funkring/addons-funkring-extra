@@ -14,7 +14,9 @@
               <field name="category_less"/>
               <field name="sumup" attr="{'invisible': [('pricelist_id','=',False)]}"/>
             </group>
-            <group>             
+            <group>      
+              <field name="name"/>
+              <field name="description"/>       
             </group>
           </group>
           <footer>

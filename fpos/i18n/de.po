@@ -1,43 +1,36 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* fpos
+#	* fpos
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-03 12:48+0000\n"
-"PO-Revision-Date: 2018-01-03 13:50+0100\n"
-"Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
+"POT-Creation-Date: 2018-01-05 13:06+0000\n"
+"PO-Revision-Date: 2018-01-05 13:06+0000\n"
+"Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-"X-Generator: Poedit 1.5.4\n"
 
 #. module: fpos
 #: model:email.template,body_html:fpos.email_report
-msgid ""
-"\n"
-"            <div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, "
-"Verdana, sans-serif; font-size: 11pt;\">\n"
+msgid "\n"
+"            <div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 11pt;\">\n"
 "               <p>${object.partner_id.mail_salutation}, </p>\n"
-"               <p>as attachment the <strong>${ctx."
-"get('cashreport_name','Cashreport')}.</strong></p>\n"
+"               <p>as attachment the <strong>${ctx.get('cashreport_name','Cashreport')}.</strong></p>\n"
 "               <p></p>                                               \n"
 "               <p>Best Regards</p>\n"
 "               <p>${object.company_id.name}</p>\n"
 "            </div>\n"
 "        "
-msgstr ""
-"\n"
-"            <div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, "
-"Verdana, sans-serif; font-size: 11pt;\">\n"
+msgstr "\n"
+"            <div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 11pt;\">\n"
 "               <p>${object.partner_id.mail_salutation}, </p>\n"
-"               <p>im Anhang der <strong>${ctx."
-"get('cashreport_name','Kassenbericht')}.</strong></p>\n"
+"               <p>im Anhang der <strong>${ctx.get('cashreport_name','Kassenbericht')}.</strong></p>\n"
 "               <p></p>                                               \n"
 "               <p>Mit freundlichen Grüßen</p>\n"
 "               <p>${object.company_id.name}</p>\n"
@@ -54,8 +47,7 @@ msgstr "${ctx.get('cashreport_name','Kassenbericht')}"
 #: code:addons/fpos/fpos.py:969
 #, python-format
 msgid "%s - %s"
-msgstr ""
-"Druckt nur Produkte die mit der angegebenen Preisliste schon verwendet wurde"
+msgstr "Druckt nur Produkte die mit der angegebenen Preisliste schon verwendet wurde"
 
 #. module: fpos
 #: code:addons/fpos/wizard/report_wizard.py:124
@@ -76,7 +68,8 @@ msgid "%s - %s / CW %s %s"
 msgstr "%s - %s / KW %s %s"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:959 code:addons/fpos/wizard/report_wizard.py:140
+#: code:addons/fpos/fpos.py:959
+#: code:addons/fpos/wizard/report_wizard.py:140
 #, python-format
 msgid "%s - CW %s %s"
 msgstr "%s - KW %s %s"
@@ -113,7 +106,8 @@ msgid "AES256 encryption key, Base64 coded"
 msgstr "AES256 Schlüssel, Base64 kodiert"
 
 #. module: fpos
-#: field:product.product,pos_action:0 field:product.template,pos_action:0
+#: field:product.product,pos_action:0
+#: field:product.template,pos_action:0
 msgid "Action"
 msgstr "Aktion"
 
@@ -123,17 +117,20 @@ msgid "Action after product selection"
 msgstr "Aktion nach Produktauswahl"
 
 #. module: fpos
-#: help:product.product,pos_action:0 help:product.template,pos_action:0
+#: help:product.product,pos_action:0
+#: help:product.template,pos_action:0
 msgid "Action on product selection"
 msgstr "Aktion wenn ein Produkt"
 
 #. module: fpos
-#: field:fpos.order,active:0 selection:pos.config,sign_status:0
+#: field:fpos.order,active:0
+#: selection:pos.config,sign_status:0
 msgid "Active"
 msgstr "Aktiv"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:636 selection:product.template,pos_sec:0
+#: code:addons/fpos/fpos.py:636
+#: selection:product.template,pos_sec:0
 #, python-format
 msgid "Addition"
 msgstr "Zusatz"
@@ -165,27 +162,33 @@ msgid "Allowed users for the Point of Sale"
 msgstr "Erlaubte Benutzer für diese Kasse"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order view:fpos.order:fpos.tree_fpos_order
-#: field:fpos.order.payment,amount:0 field:pos.order,fpos_amount_total:0
+#: view:fpos.order:fpos.form_fpos_order
+#: view:fpos.order:fpos.tree_fpos_order
+#: field:fpos.order.payment,amount:0
+#: field:pos.order,fpos_amount_total:0
 #: view:website:fpos.report_receipt
 msgid "Amount"
 msgstr "Betrag"
 
 #. module: fpos
-#: field:fpos.order.line,a_dec:0 field:product.product,pos_amount_dec:0
+#: field:fpos.order.line,a_dec:0
+#: field:product.product,pos_amount_dec:0
 #: field:product.template,pos_amount_dec:0
 msgid "Amount Decimal"
 msgstr "Menge Nachkommastellen"
 
 #. module: fpos
-#: field:fpos.order.line,a_pre:0 field:product.product,pos_amount_pre:0
+#: field:fpos.order.line,a_pre:0
+#: field:product.product,pos_amount_pre:0
 #: field:product.template,pos_amount_pre:0
 msgid "Amount Predecimal"
 msgstr "Menge Vorkommastellen"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Aqua"
 msgstr "Hellblau"
 
@@ -215,12 +218,14 @@ msgid "Auto Income/Expense"
 msgstr "Automatische Ein/Auszahlung"
 
 #. module: fpos
-#: view:fpos.place:fpos.search_pos_place view:fpos.top:fpos.search_top
+#: view:fpos.place:fpos.search_pos_place
+#: view:fpos.top:fpos.search_top
 msgid "Available"
 msgstr "Verfügbar"
 
 #. module: fpos
-#: field:res.partner,available_in_pos:0 field:res.users,available_in_pos:0
+#: field:res.partner,available_in_pos:0
+#: field:res.users,available_in_pos:0
 msgid "Available in POS"
 msgstr "Verfügbar auf der Kasse"
 
@@ -243,7 +248,8 @@ msgid "BMF Kasseninfo"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:638 selection:fpos.order.line,tag:0
+#: code:addons/fpos/fpos.py:638
+#: selection:fpos.order.line,tag:0
 #, python-format
 msgid "Balance"
 msgstr "Kassenstand"
@@ -254,14 +260,18 @@ msgid "Balancing deactivated for User"
 msgstr "Deaktivieren des Kassenabschluss für Benutzer"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Black"
 msgstr "Schwarz"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Blue"
 msgstr "Blau"
 
@@ -272,8 +282,10 @@ msgid "Break"
 msgstr ""
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Brown"
 msgstr "Braun"
 
@@ -298,7 +310,8 @@ msgid "By User"
 msgstr "Nach Verkäufer"
 
 #. module: fpos
-#: selection:fpos.order,st:0 selection:pos.order,fpos_st:0
+#: selection:fpos.order,st:0
+#: selection:pos.order,fpos_st:0
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -379,7 +392,8 @@ msgid "Category 2"
 msgstr "Kassen Kategorie 2"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:486 field:fpos.order,cent_fix:0
+#: code:addons/fpos/fpos.py:486
+#: field:fpos.order,cent_fix:0
 #, python-format
 msgid "Cent Correction"
 msgstr "Cent Korrektur"
@@ -410,25 +424,30 @@ msgid "Close"
 msgstr "Schließen"
 
 #. module: fpos
-#: field:fpos.order.payment,code:0 field:res.users,code:0
+#: field:fpos.order.payment,code:0
+#: field:res.users,code:0
 msgid "Code"
 msgstr ""
 
 #. module: fpos
-#: field:fpos.place,pos_color:0 field:fpos.top,pos_color:0
-#: field:pos.category,pos_color:0 field:product.product,pos_color:0
+#: field:fpos.place,pos_color:0
+#: field:fpos.top,pos_color:0
+#: field:pos.category,pos_color:0
+#: field:product.product,pos_color:0
 #: field:product.template,pos_color:0
 msgid "Color"
 msgstr "Farbe"
 
 #. module: fpos
-#: selection:fpos.order.line,tag:0 field:product.product,pos_cm:0
+#: selection:fpos.order.line,tag:0
+#: field:product.product,pos_cm:0
 #: field:product.template,pos_cm:0
 msgid "Comment"
 msgstr "Kommentar"
 
 #. module: fpos
-#: field:fpos.order,company_id:0 field:fpos.report.email,company_id:0
+#: field:fpos.order,company_id:0
+#: field:fpos.report.email,company_id:0
 #: view:report.pos.order:fpos.report_pos_order
 msgid "Company"
 msgstr "Firma"
@@ -439,7 +458,8 @@ msgid "Company ID"
 msgstr "Firmen ID"
 
 #. module: fpos
-#: field:fpos.order.line,config:0 field:fpos.payment.iface,config_id:0
+#: field:fpos.order.line,config:0
+#: field:fpos.payment.iface,config_id:0
 msgid "Config"
 msgstr "Konfiguration"
 
@@ -466,12 +486,8 @@ msgstr "Erstellen"
 
 #. module: fpos
 #: view:fpos.product.ean.wizard:fpos.wizard_product_ean
-msgid ""
-"Create Intern EAN Codes for active products. EAN Code is only created if the "
-"current code is empty"
-msgstr ""
-"Erstelle interne EAN Code(s) für aktuell angezeigte Produkte, wenn noch "
-"keiner vorhanden ist."
+msgid "Create Intern EAN Codes for active products. EAN Code is only created if the current code is empty"
+msgstr "Erstelle interne EAN Code(s) für aktuell angezeigte Produkte, wenn noch keiner vorhanden ist."
 
 #. module: fpos
 #: field:account.journal,fpos_invoice:0
@@ -479,34 +495,47 @@ msgid "Create Invoice"
 msgstr "Rechnung erstellen"
 
 #. module: fpos
-#: field:fpos.dist,create_uid:0 field:fpos.hwproxy,create_uid:0
-#: field:fpos.order,create_uid:0 field:fpos.order.line,create_uid:0
-#: field:fpos.order.log,create_uid:0 field:fpos.order.log.line,create_uid:0
+#: field:fpos.dist,create_uid:0
+#: field:fpos.hwproxy,create_uid:0
+#: field:fpos.order,create_uid:0
+#: field:fpos.order.line,create_uid:0
+#: field:fpos.order.log,create_uid:0
+#: field:fpos.order.log.line,create_uid:0
 #: field:fpos.order.payment,create_uid:0
 #: field:fpos.order.payment.receipt,create_uid:0
-#: field:fpos.order.tax,create_uid:0 field:fpos.payment.iface,create_uid:0
-#: field:fpos.place,create_uid:0 field:fpos.printer,create_uid:0
+#: field:fpos.order.tax,create_uid:0
+#: field:fpos.payment.iface,create_uid:0
+#: field:fpos.place,create_uid:0
+#: field:fpos.printer,create_uid:0
 #: field:fpos.product.ean.wizard,create_uid:0
 #: field:fpos.product.list.wizard,create_uid:0
-#: field:fpos.report.email,create_uid:0 field:fpos.report.wizard,create_uid:0
-#: field:fpos.top,create_uid:0 field:fpos.wizard.export.bmd,create_uid:0
+#: field:fpos.report.email,create_uid:0
+#: field:fpos.report.wizard,create_uid:0
+#: field:fpos.top,create_uid:0
+#: field:fpos.wizard.export.bmd,create_uid:0
 #: field:fpos.wizard.export.rzl,create_uid:0
 #: field:product.opt.wizard,create_uid:0
 msgid "Created by"
 msgstr "Erstellt von"
 
 #. module: fpos
-#: field:fpos.dist,create_date:0 field:fpos.hwproxy,create_date:0
-#: field:fpos.order,create_date:0 field:fpos.order.line,create_date:0
-#: field:fpos.order.log,create_date:0 field:fpos.order.log.line,create_date:0
+#: field:fpos.dist,create_date:0
+#: field:fpos.hwproxy,create_date:0
+#: field:fpos.order,create_date:0
+#: field:fpos.order.line,create_date:0
+#: field:fpos.order.log,create_date:0
+#: field:fpos.order.log.line,create_date:0
 #: field:fpos.order.payment,create_date:0
 #: field:fpos.order.payment.receipt,create_date:0
-#: field:fpos.order.tax,create_date:0 field:fpos.payment.iface,create_date:0
-#: field:fpos.place,create_date:0 field:fpos.printer,create_date:0
+#: field:fpos.order.tax,create_date:0
+#: field:fpos.payment.iface,create_date:0
+#: field:fpos.place,create_date:0
+#: field:fpos.printer,create_date:0
 #: field:fpos.product.ean.wizard,create_date:0
 #: field:fpos.product.list.wizard,create_date:0
 #: field:fpos.report.email,create_date:0
-#: field:fpos.report.wizard,create_date:0 field:fpos.top,create_date:0
+#: field:fpos.report.wizard,create_date:0
+#: field:fpos.top,create_date:0
 #: field:fpos.wizard.export.bmd,create_date:0
 #: field:fpos.wizard.export.rzl,create_date:0
 #: field:product.opt.wizard,create_date:0
@@ -557,26 +586,34 @@ msgid "Daily Overview"
 msgstr "Tagesübersicht"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Dark Brown"
 msgstr "Dunkelbraun"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Darkest Brown"
 msgstr "dunkelstes Braun"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Darkest Grey"
 msgstr "dunkelstes Grau"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Darkest Red"
 msgstr "dunkelstes Rot"
 
@@ -586,7 +623,8 @@ msgid "Data Export Protocol Data"
 msgstr "Daten Export Protokoll (DEP)"
 
 #. module: fpos
-#: field:fpos.order,date:0 field:fpos.order.log,date:0
+#: field:fpos.order,date:0
+#: field:fpos.order.log,date:0
 msgid "Date"
 msgstr "Datum"
 
@@ -601,12 +639,14 @@ msgid "Date:"
 msgstr "Datum:"
 
 #. module: fpos
-#: selection:fpos.report.email,range:0 selection:fpos.report.wizard,range:0
+#: selection:fpos.report.email,range:0
+#: selection:fpos.report.wizard,range:0
 msgid "Day"
 msgstr "Tag"
 
 #. module: fpos
-#: help:product.product,pos_amount_dec:0 help:product.product,pos_price_dec:0
+#: help:product.product,pos_amount_dec:0
+#: help:product.product,pos_price_dec:0
 #: help:product.template,pos_amount_dec:0
 #: help:product.template,pos_price_dec:0
 msgid "Decimal digits, -1 is no decimal, 0 is no restriction"
@@ -624,8 +664,11 @@ msgid "Delivery Note"
 msgstr "Lieferschein"
 
 #. module: fpos
-#: field:fpos.dist,description:0 field:fpos.hwproxy,description:0
-#: field:fpos.printer,description:0 view:pos.order:fpos.form_pos_order
+#: field:fpos.dist,description:0
+#: field:fpos.hwproxy,description:0
+#: field:fpos.printer,description:0
+#: field:fpos.product.list.wizard,description:0
+#: view:pos.order:fpos.form_pos_order
 #: view:website:fpos.report_receipt
 msgid "Description"
 msgstr "Bezeichnung"
@@ -641,7 +684,8 @@ msgid "Desktop"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:626 field:fpos.report.email,detail:0
+#: code:addons/fpos/fpos.py:626
+#: field:fpos.report.email,detail:0
 #: field:fpos.report.wizard,detail:0
 #, python-format
 msgid "Detail"
@@ -653,7 +697,8 @@ msgid "Detailed Invoice"
 msgstr "Detaillierte Rechnung"
 
 #. module: fpos
-#: field:fpos.order,fpos_user_id:0 field:fpos.order.log,fpos_user_id:0
+#: field:fpos.order,fpos_user_id:0
+#: field:fpos.order.log,fpos_user_id:0
 msgid "Device"
 msgstr "Gerät"
 
@@ -663,18 +708,23 @@ msgid "Discount %"
 msgstr "Rabatt %"
 
 #. module: fpos
-#: field:fpos.dist,display_name:0 field:fpos.hwproxy,display_name:0
-#: field:fpos.order,display_name:0 field:fpos.order.line,display_name:0
+#: field:fpos.dist,display_name:0
+#: field:fpos.hwproxy,display_name:0
+#: field:fpos.order,display_name:0
+#: field:fpos.order.line,display_name:0
 #: field:fpos.order.log,display_name:0
 #: field:fpos.order.log.line,display_name:0
 #: field:fpos.order.payment,display_name:0
 #: field:fpos.order.payment.receipt,display_name:0
-#: field:fpos.order.tax,display_name:0 field:fpos.payment.iface,display_name:0
-#: field:fpos.place,display_name:0 field:fpos.printer,display_name:0
+#: field:fpos.order.tax,display_name:0
+#: field:fpos.payment.iface,display_name:0
+#: field:fpos.place,display_name:0
+#: field:fpos.printer,display_name:0
 #: field:fpos.product.ean.wizard,display_name:0
 #: field:fpos.product.list.wizard,display_name:0
 #: field:fpos.report.email,display_name:0
-#: field:fpos.report.wizard,display_name:0 field:fpos.top,display_name:0
+#: field:fpos.report.wizard,display_name:0
+#: field:fpos.top,display_name:0
 #: field:fpos.wizard.export.bmd,display_name:0
 #: field:fpos.wizard.export.rzl,display_name:0
 #: field:product.opt.wizard,display_name:0
@@ -688,11 +738,13 @@ msgid "Distribution"
 msgstr "Verteilung"
 
 #. module: fpos
-#: view:fpos.dist:fpos.form_fpos_dist view:fpos.dist:fpos.search_fpos_dist
+#: view:fpos.dist:fpos.form_fpos_dist
+#: view:fpos.dist:fpos.search_fpos_dist
 #: view:fpos.dist:fpos.tree_fpos_dist
 #: model:ir.actions.act_window,name:fpos.action_fpos_dist
 #: model:ir.model,name:fpos.model_fpos_dist
-#: model:ir.ui.menu,name:fpos.menu_fpos_dist field:pos.config,fpos_dist:0
+#: model:ir.ui.menu,name:fpos.menu_fpos_dist
+#: field:pos.config,fpos_dist:0
 #: field:pos.config,fpos_dist_ids:0
 msgid "Distributor"
 msgstr "Verteiler"
@@ -708,13 +760,15 @@ msgid "Done"
 msgstr "Erledigt"
 
 #. module: fpos
-#: selection:fpos.order,state:0 selection:pos.config,sign_status:0
+#: selection:fpos.order,state:0
+#: selection:pos.config,sign_status:0
 msgid "Draft"
 msgstr "Entwurf"
 
 #. module: fpos
 #: field:account.invoice,email_invoice:0
-#: field:account.journal,fpos_invoice_email:0 field:res.users,email_invoice:0
+#: field:account.journal,fpos_invoice_email:0
+#: field:res.users,email_invoice:0
 msgid "E-Mail Invoice"
 msgstr "E-Mail Rechnung"
 
@@ -729,7 +783,8 @@ msgid "EAN Creator"
 msgstr "EAN Erstellung"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:401 code:addons/fpos/fpos.py:430
+#: code:addons/fpos/fpos.py:401
+#: code:addons/fpos/fpos.py:430
 #: code:addons/fpos/fpos.py:450
 #, python-format
 msgid "Empty"
@@ -772,7 +827,8 @@ msgid "Fast User Switch"
 msgstr "Schneller Benutzerwechsel"
 
 #. module: fpos
-#: field:product.product,pos_fav:0 field:product.template,pos_fav:0
+#: field:product.product,pos_fav:0
+#: field:product.template,pos_fav:0
 msgid "Favorite"
 msgstr "Favorit"
 
@@ -847,7 +903,8 @@ msgid "Fpos Model"
 msgstr ""
 
 #. module: fpos
-#: model:ir.model,name:fpos.model_fpos_order field:pos.order,fpos_order_id:0
+#: model:ir.model,name:fpos.model_fpos_order
+#: field:pos.order,fpos_order_id:0
 msgid "Fpos Order"
 msgstr "Fpos Verkauf"
 
@@ -892,8 +949,10 @@ msgid "From"
 msgstr "Von"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Fuchsia"
 msgstr "Rosarot"
 
@@ -903,19 +962,24 @@ msgid "General"
 msgstr "Allgemein"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Gray"
 msgstr "Grau"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Green"
 msgstr "Grün"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:634 field:fpos.order.line,group_id:0
+#: code:addons/fpos/fpos.py:634
+#: field:fpos.order.line,group_id:0
 #: selection:product.template,pos_sec:0
 #, python-format
 msgid "Group"
@@ -946,22 +1010,26 @@ msgid "Group by intern category"
 msgstr "Gruppiere nach interner Kategorie"
 
 #. module: fpos
-#: field:fpos.order,ga:0 field:pos.order,fpos_ga:0
+#: field:fpos.order,ga:0
+#: field:pos.order,fpos_ga:0
 msgid "Groupable"
 msgstr "Sammelrechnung"
 
 #. module: fpos
-#: field:res.partner,ga_count:0 field:res.users,ga_count:0
+#: field:res.partner,ga_count:0
+#: field:res.users,ga_count:0
 msgid "Groupable Order Count"
 msgstr "Sammelverkäufe"
 
 #. module: fpos
-#: field:res.partner,ga_amount:0 field:res.users,ga_amount:0
+#: field:res.partner,ga_amount:0
+#: field:res.users,ga_amount:0
 msgid "Groupable POS Amount"
 msgstr "Betrag Sammelverkäufe"
 
 #. module: fpos
-#: view:pos.order:fpos.form_pos_order view:pos.order:fpos.tree_pos_order
+#: view:pos.order:fpos.form_pos_order
+#: view:pos.order:fpos.tree_pos_order
 #: field:pos.order,fpos_group_id:0
 msgid "Grouped Order"
 msgstr "Sammelrechnung"
@@ -982,7 +1050,8 @@ msgstr ""
 #: model:ir.actions.act_window,name:fpos.action_fpos_hwproxy
 #: model:ir.model,name:fpos.model_fpos_hwproxy
 #: model:ir.ui.menu,name:fpos.menu_fpos_hwproxy
-#: view:pos.config:fpos.form_pos_config field:pos.config,fpos_hwproxy_id:0
+#: view:pos.config:fpos.form_pos_config
+#: field:pos.config,fpos_hwproxy_id:0
 msgid "Hardware Proxy"
 msgstr ""
 
@@ -993,21 +1062,30 @@ msgstr ""
 
 #. module: fpos
 #: help:fpos.report.email,message_summary:0
-msgid ""
-"Holds the Chatter summary (number of messages, ...). This summary is "
-"directly in html format in order to be inserted in kanban views."
+msgid "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
 msgstr ""
 
 #. module: fpos
-#: field:fpos.dist,id:0 field:fpos.hwproxy,id:0 field:fpos.order,id:0
-#: field:fpos.order.line,id:0 field:fpos.order.log,id:0
-#: field:fpos.order.log.line,id:0 field:fpos.order.payment,id:0
-#: field:fpos.order.payment.receipt,id:0 field:fpos.order.tax,id:0
-#: field:fpos.payment.iface,id:0 field:fpos.place,id:0 field:fpos.printer,id:0
-#: field:fpos.product.ean.wizard,id:0 field:fpos.product.list.wizard,id:0
-#: field:fpos.report.email,id:0 field:fpos.report.wizard,id:0
-#: field:fpos.top,id:0 field:fpos.wizard.export.bmd,id:0
-#: field:fpos.wizard.export.rzl,id:0 field:product.opt.wizard,id:0
+#: field:fpos.dist,id:0
+#: field:fpos.hwproxy,id:0
+#: field:fpos.order,id:0
+#: field:fpos.order.line,id:0
+#: field:fpos.order.log,id:0
+#: field:fpos.order.log.line,id:0
+#: field:fpos.order.payment,id:0
+#: field:fpos.order.payment.receipt,id:0
+#: field:fpos.order.tax,id:0
+#: field:fpos.payment.iface,id:0
+#: field:fpos.place,id:0
+#: field:fpos.printer,id:0
+#: field:fpos.product.ean.wizard,id:0
+#: field:fpos.product.list.wizard,id:0
+#: field:fpos.report.email,id:0
+#: field:fpos.report.wizard,id:0
+#: field:fpos.top,id:0
+#: field:fpos.wizard.export.bmd,id:0
+#: field:fpos.wizard.export.rzl,id:0
+#: field:product.opt.wizard,id:0
 #: field:report.fpos.report_receipt,id:0
 msgid "ID"
 msgstr ""
@@ -1015,9 +1093,7 @@ msgstr ""
 #. module: fpos
 #: help:pos.config,iface_nogroup:0
 msgid "If a product is selected twice a new pos line was created"
-msgstr ""
-"Wenn ein Produkt mehrmals gewählt wird, wird jeweils eine Verkaufszeile "
-"erstellt."
+msgstr "Wenn ein Produkt mehrmals gewählt wird, wird jeweils eine Verkaufszeile erstellt."
 
 #. module: fpos
 #: help:fpos.report.email,message_unread:0
@@ -1026,19 +1102,14 @@ msgstr ""
 
 #. module: fpos
 #: help:fpos.printer,pos_category_ids:0
-msgid ""
-"If no category is given all products are printed, otherwise only the "
-"products in the categories"
-msgstr ""
-"Wenn keine Kategorie angegeben wird, werden alle Produkte gedruckt, "
-"ansonsten die die Produkte in der Kategorie"
+msgid "If no category is given all products are printed, otherwise only the products in the categories"
+msgstr "Wenn keine Kategorie angegeben wird, werden alle Produkte gedruckt, ansonsten die die Produkte in der Kategorie"
 
 #. module: fpos
-#: help:product.product,pos_nogroup:0 help:product.template,pos_nogroup:0
+#: help:product.product,pos_nogroup:0
+#: help:product.template,pos_nogroup:0
 msgid "If product selected again a extra line was created"
-msgstr ""
-"Wenn das selbe Produkt auf der Kasse nocheinmal gewählt wird, wird eine neue "
-"Zeile angelegt."
+msgstr "Wenn das selbe Produkt auf der Kasse nocheinmal gewählt wird, wird eine neue Zeile angelegt."
 
 #. module: fpos
 #: field:pos.config,image:0
@@ -1126,7 +1197,8 @@ msgid "Invoice Partner"
 msgstr "Partner"
 
 #. module: fpos
-#: field:fpos.report.email,irregular:0 field:fpos.report.wizard,irregular:0
+#: field:fpos.report.email,irregular:0
+#: field:fpos.report.wizard,irregular:0
 msgid "Irregularities"
 msgstr "Unregelmäßigkeiten"
 
@@ -1136,7 +1208,8 @@ msgid "Is a Follower"
 msgstr ""
 
 #. module: fpos
-#: field:fpos.order.payment,journal_id:0 field:fpos.payment.iface,journal_id:0
+#: field:fpos.order.payment,journal_id:0
+#: field:fpos.payment.iface,journal_id:0
 #: model:ir.model,name:fpos.model_account_journal
 msgid "Journal"
 msgstr ""
@@ -1148,12 +1221,10 @@ msgid "Journals"
 msgstr "Journale"
 
 #. module: fpos
-#: help:fpos.report.email,journal_ids:0 help:fpos.report.wizard,journal_ids:0
-msgid ""
-"Journals for which detail lines should be printed, if empty all are printed"
-msgstr ""
-"Wenn Journale angegeben werden, wird nur für die diese der Detaildruck "
-"gemacht"
+#: help:fpos.report.email,journal_ids:0
+#: help:fpos.report.wizard,journal_ids:0
+msgid "Journals for which detail lines should be printed, if empty all are printed"
+msgstr "Wenn Journale angegeben werden, wird nur für die diese der Detaildruck gemacht"
 
 #. module: fpos
 #: field:fpos.report.email,message_last_post:0
@@ -1161,19 +1232,23 @@ msgid "Last Message Date"
 msgstr ""
 
 #. module: fpos
-#: field:fpos.dist,__last_update:0 field:fpos.hwproxy,__last_update:0
-#: field:fpos.order,__last_update:0 field:fpos.order.line,__last_update:0
+#: field:fpos.dist,__last_update:0
+#: field:fpos.hwproxy,__last_update:0
+#: field:fpos.order,__last_update:0
+#: field:fpos.order.line,__last_update:0
 #: field:fpos.order.log,__last_update:0
 #: field:fpos.order.log.line,__last_update:0
 #: field:fpos.order.payment,__last_update:0
 #: field:fpos.order.payment.receipt,__last_update:0
 #: field:fpos.order.tax,__last_update:0
-#: field:fpos.payment.iface,__last_update:0 field:fpos.place,__last_update:0
+#: field:fpos.payment.iface,__last_update:0
+#: field:fpos.place,__last_update:0
 #: field:fpos.printer,__last_update:0
 #: field:fpos.product.ean.wizard,__last_update:0
 #: field:fpos.product.list.wizard,__last_update:0
 #: field:fpos.report.email,__last_update:0
-#: field:fpos.report.wizard,__last_update:0 field:fpos.top,__last_update:0
+#: field:fpos.report.wizard,__last_update:0
+#: field:fpos.top,__last_update:0
 #: field:fpos.wizard.export.bmd,__last_update:0
 #: field:fpos.wizard.export.rzl,__last_update:0
 #: field:product.opt.wizard,__last_update:0
@@ -1187,126 +1262,170 @@ msgid "Last Range"
 msgstr "Letzter Abgleich"
 
 #. module: fpos
-#: field:fpos.dist,write_uid:0 field:fpos.hwproxy,write_uid:0
-#: field:fpos.order,write_uid:0 field:fpos.order.line,write_uid:0
-#: field:fpos.order.log,write_uid:0 field:fpos.order.log.line,write_uid:0
+#: field:fpos.dist,write_uid:0
+#: field:fpos.hwproxy,write_uid:0
+#: field:fpos.order,write_uid:0
+#: field:fpos.order.line,write_uid:0
+#: field:fpos.order.log,write_uid:0
+#: field:fpos.order.log.line,write_uid:0
 #: field:fpos.order.payment,write_uid:0
 #: field:fpos.order.payment.receipt,write_uid:0
-#: field:fpos.order.tax,write_uid:0 field:fpos.payment.iface,write_uid:0
-#: field:fpos.place,write_uid:0 field:fpos.printer,write_uid:0
+#: field:fpos.order.tax,write_uid:0
+#: field:fpos.payment.iface,write_uid:0
+#: field:fpos.place,write_uid:0
+#: field:fpos.printer,write_uid:0
 #: field:fpos.product.ean.wizard,write_uid:0
 #: field:fpos.product.list.wizard,write_uid:0
-#: field:fpos.report.email,write_uid:0 field:fpos.report.wizard,write_uid:0
-#: field:fpos.top,write_uid:0 field:fpos.wizard.export.bmd,write_uid:0
+#: field:fpos.report.email,write_uid:0
+#: field:fpos.report.wizard,write_uid:0
+#: field:fpos.top,write_uid:0
+#: field:fpos.wizard.export.bmd,write_uid:0
 #: field:fpos.wizard.export.rzl,write_uid:0
 #: field:product.opt.wizard,write_uid:0
 msgid "Last Updated by"
 msgstr "Zuletzt aktualisiert von"
 
 #. module: fpos
-#: field:fpos.dist,write_date:0 field:fpos.hwproxy,write_date:0
-#: field:fpos.order,write_date:0 field:fpos.order.line,write_date:0
-#: field:fpos.order.log,write_date:0 field:fpos.order.log.line,write_date:0
+#: field:fpos.dist,write_date:0
+#: field:fpos.hwproxy,write_date:0
+#: field:fpos.order,write_date:0
+#: field:fpos.order.line,write_date:0
+#: field:fpos.order.log,write_date:0
+#: field:fpos.order.log.line,write_date:0
 #: field:fpos.order.payment,write_date:0
 #: field:fpos.order.payment.receipt,write_date:0
-#: field:fpos.order.tax,write_date:0 field:fpos.payment.iface,write_date:0
-#: field:fpos.place,write_date:0 field:fpos.printer,write_date:0
+#: field:fpos.order.tax,write_date:0
+#: field:fpos.payment.iface,write_date:0
+#: field:fpos.place,write_date:0
+#: field:fpos.printer,write_date:0
 #: field:fpos.product.ean.wizard,write_date:0
 #: field:fpos.product.list.wizard,write_date:0
-#: field:fpos.report.email,write_date:0 field:fpos.report.wizard,write_date:0
-#: field:fpos.top,write_date:0 field:fpos.wizard.export.bmd,write_date:0
+#: field:fpos.report.email,write_date:0
+#: field:fpos.report.wizard,write_date:0
+#: field:fpos.top,write_date:0
+#: field:fpos.wizard.export.bmd,write_date:0
 #: field:fpos.wizard.export.rzl,write_date:0
 #: field:product.opt.wizard,write_date:0
 msgid "Last Updated on"
 msgstr "Zuletzt aktualisiert am"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Light Blue"
 msgstr "Hellblau"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Light Brown"
 msgstr "hellstes Braun"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Light Gold"
 msgstr "Hellgold"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Light Green"
 msgstr "Hellgrün"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Light Red"
 msgstr "Hellrot"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Light Teal"
 msgstr "Helltürkis"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Light-Yellow"
 msgstr "Hellgelb"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Lightest Blue"
 msgstr "hellstes Blau"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Lightest Gold"
 msgstr "hellstes Gold"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Lightest Green"
 msgstr "hellstes Grün"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Lightest Grey"
 msgstr "hellstes Grau"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Lightest Red"
 msgstr "hellstes Rot"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Lightest Teal"
 msgstr "hellstes Türkis"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Lightest-Yellow"
 msgstr "hellstes Gelb"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Lime"
 msgstr "Hellgrün"
 
@@ -1317,7 +1436,8 @@ msgid "Line"
 msgstr "Position"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order field:fpos.order,line_ids:0
+#: view:fpos.order:fpos.form_fpos_order
+#: field:fpos.order,line_ids:0
 #: field:fpos.order.log,line_ids:0
 msgid "Lines"
 msgstr "Positionen"
@@ -1333,7 +1453,8 @@ msgid "Link"
 msgstr ""
 
 #. module: fpos
-#: view:pos.config:fpos.form_pos_config field:pos.config,liveop:0
+#: view:pos.config:fpos.form_pos_config
+#: field:pos.config,liveop:0
 msgid "Live Operation"
 msgstr "Echtbetrieb"
 
@@ -1343,7 +1464,8 @@ msgid "Local"
 msgstr "Lokal"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order field:fpos.order.log.line,log_id:0
+#: view:fpos.order:fpos.form_fpos_order
+#: field:fpos.order.log.line,log_id:0
 msgid "Log"
 msgstr "Protokoll"
 
@@ -1358,8 +1480,10 @@ msgid "Manager"
 msgstr ""
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Maroon"
 msgstr "Dunkelrot"
 
@@ -1374,19 +1498,22 @@ msgid "Messages and communication history"
 msgstr ""
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:620 field:product.product,pos_minus:0
+#: code:addons/fpos/fpos.py:620
+#: field:product.product,pos_minus:0
 #: field:product.template,pos_minus:0
 #, python-format
 msgid "Minus"
 msgstr ""
 
 #. module: fpos
-#: selection:fpos.order,st:0 selection:pos.order,fpos_st:0
+#: selection:fpos.order,st:0
+#: selection:pos.order,fpos_st:0
 msgid "Mixed"
 msgstr "Gemischt"
 
 #. module: fpos
-#: selection:fpos.report.email,range:0 selection:fpos.report.wizard,range:0
+#: selection:fpos.report.email,range:0
+#: selection:fpos.report.wizard,range:0
 msgid "Month"
 msgstr "Monat"
 
@@ -1396,30 +1523,42 @@ msgid "NETTO"
 msgstr ""
 
 #. module: fpos
-#: field:fpos.dist,complete_name:0 field:fpos.hwproxy,complete_name:0
-#: field:fpos.order,name:0 field:fpos.order.line,name:0
-#: field:fpos.order.log.line,name:0 field:fpos.order.payment.receipt,name:0
-#: field:fpos.order.tax,name:0 field:fpos.place,complete_name:0
-#: field:fpos.place,name:0 field:fpos.printer,complete_name:0
-#: field:fpos.report.email,name:0 field:fpos.top,complete_name:0
+#: field:fpos.dist,complete_name:0
+#: field:fpos.hwproxy,complete_name:0
+#: field:fpos.order,name:0
+#: field:fpos.order.line,name:0
+#: field:fpos.order.log.line,name:0
+#: field:fpos.order.payment.receipt,name:0
+#: field:fpos.order.tax,name:0
+#: field:fpos.place,complete_name:0
+#: field:fpos.place,name:0
+#: field:fpos.printer,complete_name:0
+#: field:fpos.product.list.wizard,name:0
+#: field:fpos.report.email,name:0
+#: field:fpos.top,complete_name:0
 #: field:fpos.top,name:0
 msgid "Name"
 msgstr ""
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Navy"
 msgstr "Dunkelblau"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order field:fpos.order.line,netto:0
-#: field:fpos.order.tax,amount_netto:0 view:website:fpos.report_receipt
+#: view:fpos.order:fpos.form_fpos_order
+#: field:fpos.order.line,netto:0
+#: field:fpos.order.tax,amount_netto:0
+#: view:website:fpos.report_receipt
 msgid "Netto"
 msgstr ""
 
 #. module: fpos
-#: field:pos.config,iface_nogroup:0 field:product.product,pos_nogroup:0
+#: field:pos.config,iface_nogroup:0
+#: field:product.product,pos_nogroup:0
 #: field:product.template,pos_nogroup:0
 msgid "No Grouping"
 msgstr "Keine Gruppierung"
@@ -1448,7 +1587,8 @@ msgid "No Unit"
 msgstr "Keine Einheit"
 
 #. module: fpos
-#: code:addons/fpos/product.py:395 code:addons/fpos/product.py:402
+#: code:addons/fpos/product.py:395
+#: code:addons/fpos/product.py:402
 #, python-format
 msgid "No access for product with EAN %s"
 msgstr "Kein Zugriff auf Produkt mit EAN %s"
@@ -1478,9 +1618,7 @@ msgstr "Es wurde kein Eingangskonto für Produkt %s definiert"
 #: code:addons/fpos/wizard/export_wizard_rzl.py:86
 #, python-format
 msgid "No internal account defined on Journal %s for cash transfers"
-msgstr ""
-"Es wurde kein Konto für Schwebende Geldbewegungen für das Journal %s "
-"definiert"
+msgstr "Es wurde kein Konto für Schwebende Geldbewegungen für das Journal %s definiert"
 
 #. module: fpos
 #: field:account.journal,fpos_noreconcile:0
@@ -1488,7 +1626,8 @@ msgid "No invoice reconciliation"
 msgstr "Kein Rechnungsausgleich"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:330 code:addons/fpos/point_of_sale.py:424
+#: code:addons/fpos/point_of_sale.py:330
+#: code:addons/fpos/point_of_sale.py:424
 #, python-format
 msgid "No profile for user %s"
 msgstr "Kein Profil für Benutzer %s"
@@ -1505,29 +1644,36 @@ msgid "Normal"
 msgstr ""
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order field:fpos.order,note:0
+#: view:fpos.order:fpos.form_fpos_order
+#: field:fpos.order,note:0
 msgid "Note"
 msgstr "Notiz"
 
 #. module: fpos
-#: field:fpos.order.line,notice:0 field:fpos.order.log.line,notice:0
+#: field:fpos.order.line,notice:0
+#: field:fpos.order.log.line,notice:0
 msgid "Notice"
 msgstr "Notiz"
 
 #. module: fpos
-#: selection:account.tax,st:0 selection:fpos.order,st:0
-#: selection:fpos.order.tax,st:0 selection:pos.order,fpos_st:0
+#: selection:account.tax,st:0
+#: selection:fpos.order,st:0
+#: selection:fpos.order.tax,st:0
+#: selection:pos.order,fpos_st:0
 msgid "Null"
 msgstr ""
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Olive"
 msgstr "Dunkelgrün"
 
 #. module: fpos
-#: selection:pos.config,fpos_model:0 selection:pos.config,sign_method:0
+#: selection:pos.config,fpos_model:0
+#: selection:pos.config,sign_method:0
 msgid "Online"
 msgstr ""
 
@@ -1582,9 +1728,12 @@ msgid "Options"
 msgstr "Kennzeichnung"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order view:fpos.order:fpos.search_fpos_order
-#: field:fpos.order,log_ids:0 field:fpos.order.line,order_id:0
-#: field:fpos.order.log,order_id:0 field:fpos.order.payment,order_id:0
+#: view:fpos.order:fpos.form_fpos_order
+#: view:fpos.order:fpos.search_fpos_order
+#: field:fpos.order,log_ids:0
+#: field:fpos.order.line,order_id:0
+#: field:fpos.order.log,order_id:0
+#: field:fpos.order.payment,order_id:0
 #: field:fpos.order.tax,order_id:0
 #: model:ir.actions.act_window,name:fpos.action_fpos_order
 msgid "Order"
@@ -1631,7 +1780,8 @@ msgid "PIN have to be unique for User"
 msgstr "Jeder Benutzer muß einen verschiedenen PIN haben"
 
 #. module: fpos
-#: field:fpos.report.email,pos_ids:0 field:fpos.report.wizard,pos_ids:0
+#: field:fpos.report.email,pos_ids:0
+#: field:fpos.report.wizard,pos_ids:0
 #: selection:pos.config,fpos_model:0
 #: view:product.template:fpos.view_product_template_simple
 msgid "POS"
@@ -1659,7 +1809,8 @@ msgid "POS Input"
 msgstr "Kasseneingabe"
 
 #. module: fpos
-#: field:product.product,pos_rate:0 field:product.product,tmpl_pos_rate:0
+#: field:product.product,pos_rate:0
+#: field:product.product,tmpl_pos_rate:0
 #: field:product.template,tmpl_pos_rate:0
 msgid "POS Rate %"
 msgstr "POS Verkauf %"
@@ -1685,20 +1836,23 @@ msgid "Parent Sync User"
 msgstr "Fpos Hauptbenutzer"
 
 #. module: fpos
-#: field:fpos.order,partner_id:0 field:fpos.report.email,partner_id:0
+#: field:fpos.order,partner_id:0
+#: field:fpos.report.email,partner_id:0
 #: model:ir.model,name:fpos.model_res_partner
 #: view:report.pos.order:fpos.report_pos_order
 msgid "Partner"
 msgstr "Kunde"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order field:fpos.order.payment,payment:0
+#: view:fpos.order:fpos.form_fpos_order
+#: field:fpos.order.payment,payment:0
 #: field:fpos.order.payment.receipt,payment_id:0
 msgid "Payment"
 msgstr "Zahlung"
 
 #. module: fpos
-#: view:pos.config:fpos.form_pos_config field:pos.config,payment_iface_ids:0
+#: view:pos.config:fpos.form_pos_config
+#: field:pos.config,payment_iface_ids:0
 msgid "Payment Interfaces"
 msgstr "Bezahlschnittstelle"
 
@@ -1708,14 +1862,17 @@ msgid "Payment Receipt"
 msgstr "Zahlungsbeleg"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order field:fpos.order,payment_ids:0
+#: view:fpos.order:fpos.form_fpos_order
+#: field:fpos.order,payment_ids:0
 msgid "Payments"
 msgstr "Zahlungen"
 
 #. module: fpos
-#: field:fpos.order,place_id:0 view:fpos.place:fpos.form_pos_place
+#: field:fpos.order,place_id:0
+#: view:fpos.place:fpos.form_pos_place
 #: view:fpos.place:fpos.search_pos_place
-#: model:ir.model,name:fpos.model_fpos_place field:pos.order,fpos_place_id:0
+#: model:ir.model,name:fpos.model_fpos_place
+#: field:pos.order,fpos_place_id:0
 msgid "Place"
 msgstr "Platz"
 
@@ -1739,14 +1896,16 @@ msgstr "Es muss ein Partner für den Verkauf angegeben werden"
 
 #. module: fpos
 #: view:account.journal:fpos.form_account_journal
-#: model:ir.model,name:fpos.model_pos_order field:pos.order,config_id:0
+#: model:ir.model,name:fpos.model_pos_order
+#: field:pos.order,config_id:0
 #: view:report.pos.order:fpos.report_pos_order
 #: field:report.pos.order,config_id:0
 msgid "Point of Sale"
 msgstr "Kasse"
 
 #. module: fpos
-#: field:product.product,pos_name:0 field:product.template,pos_name:0
+#: field:product.product,pos_name:0
+#: field:product.template,pos_name:0
 msgid "Point of Sale Name"
 msgstr "Name auf der Kasse"
 
@@ -1761,7 +1920,8 @@ msgid "Post Orders"
 msgstr "Verkäufe buchen"
 
 #. module: fpos
-#: help:product.product,pos_amount_pre:0 help:product.product,pos_price_pre:0
+#: help:product.product,pos_amount_pre:0
+#: help:product.product,pos_price_pre:0
 #: help:product.template,pos_amount_pre:0
 #: help:product.template,pos_price_pre:0
 msgid "Predicimal digits, -1 is no predecimal, 0 is no restriction"
@@ -1773,18 +1933,21 @@ msgid "Price"
 msgstr "Preis"
 
 #. module: fpos
-#: field:fpos.order.line,p_dec:0 field:product.product,pos_price_dec:0
+#: field:fpos.order.line,p_dec:0
+#: field:product.product,pos_price_dec:0
 #: field:product.template,pos_price_dec:0
 msgid "Price Decimal"
 msgstr "Preis Nachkommastellen"
 
 #. module: fpos
-#: field:product.product,pos_price:0 field:product.template,pos_price:0
+#: field:product.product,pos_price:0
+#: field:product.template,pos_price:0
 msgid "Price Input"
 msgstr "Preiseingabe"
 
 #. module: fpos
-#: field:fpos.order.line,p_pre:0 field:product.product,pos_price_pre:0
+#: field:fpos.order.line,p_pre:0
+#: field:product.product,pos_price_pre:0
 #: field:product.template,pos_price_pre:0
 msgid "Price Predecimal"
 msgstr "Preis Vorkommastellen"
@@ -1797,7 +1960,7 @@ msgid "Pricelist"
 msgstr "Preiseliste"
 
 #. module: fpos
-#: code:addons/fpos/wizard/product_list_wizard.py:70
+#: code:addons/fpos/wizard/product_list_wizard.py:75
 #, python-format
 msgid "Pricelist: %s"
 msgstr "Preiseliste: %s"
@@ -1823,7 +1986,8 @@ msgid "Print detail"
 msgstr "Drucke Verkaufszeilen"
 
 #. module: fpos
-#: help:fpos.report.email,irregular:0 help:fpos.report.wizard,irregular:0
+#: help:fpos.report.email,irregular:0
+#: help:fpos.report.wizard,irregular:0
 msgid "Print irregularities"
 msgstr "Drucke Unregelmäßigkeiten"
 
@@ -1844,7 +2008,8 @@ msgid "Print only products are used with the selected price list"
 msgstr ""
 
 #. module: fpos
-#: help:fpos.report.email,product:0 help:fpos.report.wizard,product:0
+#: help:fpos.report.email,product:0
+#: help:fpos.report.wizard,product:0
 msgid "Print product overview"
 msgstr "Drucke Produktaufstellung"
 
@@ -1870,7 +2035,8 @@ msgid "Processing"
 msgstr "Verarbeitung"
 
 #. module: fpos
-#: field:fpos.order.line,product_id:0 field:fpos.order.log.line,product_id:0
+#: field:fpos.order.line,product_id:0
+#: field:fpos.order.log.line,product_id:0
 #: model:ir.model,name:fpos.model_product_product
 #: view:product.template:fpos.view_product_template_simple
 #: view:report.pos.order:fpos.report_pos_order
@@ -1925,7 +2091,8 @@ msgid "Productlist"
 msgstr "Produktliste"
 
 #. module: fpos
-#: field:fpos.report.email,product:0 field:fpos.report.wizard,product:0
+#: field:fpos.report.email,product:0
+#: field:fpos.report.wizard,product:0
 #: field:fpos.report.wizard,product_ids:0
 #: model:ir.actions.act_window,name:fpos.action_product_simple
 msgid "Products"
@@ -1964,8 +2131,10 @@ msgid "Purchase"
 msgstr "Beschaffung"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Purple"
 msgstr "Violett"
 
@@ -1975,7 +2144,8 @@ msgid "QR Code"
 msgstr ""
 
 #. module: fpos
-#: field:fpos.order.line,qty:0 field:fpos.order.log.line,qty:0
+#: field:fpos.order.line,qty:0
+#: field:fpos.order.log.line,qty:0
 msgid "Quantity"
 msgstr "Menge"
 
@@ -1993,7 +2163,8 @@ msgid "RZL Export Wizard"
 msgstr ""
 
 #. module: fpos
-#: field:fpos.report.email,range:0 field:fpos.report.wizard,range:0
+#: field:fpos.report.email,range:0
+#: field:fpos.report.wizard,range:0
 msgid "Range"
 msgstr "Zeitraum"
 
@@ -2049,23 +2220,28 @@ msgid "Receipt:"
 msgstr "Beleg:"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order field:fpos.order.payment,receipt_ids:0
+#: view:fpos.order:fpos.form_fpos_order
+#: field:fpos.order.payment,receipt_ids:0
 msgid "Receipts"
 msgstr "Belege"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Red"
 msgstr "Rot"
 
 #. module: fpos
-#: selection:account.tax,st:0 selection:fpos.order.tax,st:0
+#: selection:account.tax,st:0
+#: selection:fpos.order.tax,st:0
 msgid "Reduced 1"
 msgstr "Ermäßigt-1"
 
 #. module: fpos
-#: selection:account.tax,st:0 selection:fpos.order.tax,st:0
+#: selection:account.tax,st:0
+#: selection:fpos.order.tax,st:0
 msgid "Reduced 2"
 msgstr "Ermäßigt-2"
 
@@ -2106,13 +2282,8 @@ msgstr "Kassenbericht"
 
 #. module: fpos
 #: help:pos.config,fpos_sync_clean:0
-msgid ""
-"Resync all Data after the specified count. if count is 0 auto full sync is "
-"disabled"
-msgstr ""
-"Es wird automatisch eine vollständige Synchronisation ausgeführt wenn die "
-"vorgegebene Anzahl erreicht wurde. 0 deaktiviert den die automatische "
-"Datenbank bereinigung"
+msgid "Resync all Data after the specified count. if count is 0 auto full sync is disabled"
+msgstr "Es wird automatisch eine vollständige Synchronisation ausgeführt wenn die vorgegebene Anzahl erreicht wurde. 0 deaktiviert den die automatische Datenbank bereinigung"
 
 #. module: fpos
 #: view:website:fpos.report_receipt
@@ -2125,7 +2296,8 @@ msgid "Sale"
 msgstr "Verkauf"
 
 #. module: fpos
-#: field:res.partner,sale_discount:0 field:res.users,sale_discount:0
+#: field:res.partner,sale_discount:0
+#: field:res.users,sale_discount:0
 msgid "Sale Discount %"
 msgstr "Standard Rabatt %"
 
@@ -2141,8 +2313,10 @@ msgid "Scan"
 msgstr "Scannen"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Schoko"
 msgstr ""
 
@@ -2152,7 +2326,8 @@ msgid "Search Partner Online"
 msgstr "Online Partnersuche"
 
 #. module: fpos
-#: code:addons/fpos/fpos.py:630 field:product.product,pos_sec:0
+#: code:addons/fpos/fpos.py:630
+#: field:product.product,pos_sec:0
 #: field:product.template,pos_sec:0
 #, python-format
 msgid "Section"
@@ -2169,7 +2344,8 @@ msgid "Section 2"
 msgstr "Abschnitt 2"
 
 #. module: fpos
-#: help:product.product,pos_sec:0 help:product.template,pos_sec:0
+#: help:product.product,pos_sec:0
+#: help:product.template,pos_sec:0
 msgid "Section Flag"
 msgstr "Abschnitt Eigenschaft"
 
@@ -2184,13 +2360,16 @@ msgid "Send email after finished this POS"
 msgstr "Send E-Mail nachdem die angegebene Kasse abgeschlossen wurde"
 
 #. module: fpos
-#: field:fpos.report.email,separate:0 field:fpos.report.wizard,separate:0
+#: field:fpos.report.email,separate:0
+#: field:fpos.report.wizard,separate:0
 msgid "Separate"
 msgstr "Einzeln"
 
 #. module: fpos
-#: field:fpos.order.line,sequence:0 field:fpos.place,sequence:0
-#: field:fpos.top,sequence:0 field:product.product,sequence:0
+#: field:fpos.order.line,sequence:0
+#: field:fpos.place,sequence:0
+#: field:fpos.top,sequence:0
+#: field:product.product,sequence:0
 #: field:product.template,sequence:0
 msgid "Sequence"
 msgstr "Sequenz"
@@ -2216,12 +2395,14 @@ msgid "Show Partner"
 msgstr "Partner anzeigen"
 
 #. module: fpos
-#: field:product.product,pos_report:0 field:product.template,pos_report:0
+#: field:product.product,pos_report:0
+#: field:product.template,pos_report:0
 msgid "Show on Report"
 msgstr "Als Detail im Kassenbericht"
 
 #. module: fpos
-#: help:product.product,pos_categ2_id:0 help:product.template,pos_categ2_id:0
+#: help:product.product,pos_categ2_id:0
+#: help:product.template,pos_categ2_id:0
 msgid "Show the product also in this category"
 msgstr "Zeige das Produkt auch in dieser Kategorie"
 
@@ -2238,7 +2419,8 @@ msgid "Signation is not configured for user %s"
 msgstr "Signierung für Benutzer %s nicht konfiguriert"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order view:pos.config:fpos.form_pos_config
+#: view:fpos.order:fpos.form_fpos_order
+#: view:pos.config:fpos.form_pos_config
 msgid "Signature"
 msgstr "Signatur"
 
@@ -2268,8 +2450,10 @@ msgid "Signed"
 msgstr "Signiert"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Silver"
 msgstr "Silber"
 
@@ -2294,12 +2478,15 @@ msgid "Sort"
 msgstr "Sortieren"
 
 #. module: fpos
-#: selection:account.tax,st:0 selection:fpos.order.tax,st:0
+#: selection:account.tax,st:0
+#: selection:fpos.order.tax,st:0
 msgid "Special"
 msgstr "Besonders"
 
 #. module: fpos
-#: field:account.tax,st:0 field:fpos.order,st:0 field:fpos.order.tax,st:0
+#: field:account.tax,st:0
+#: field:fpos.order,st:0
+#: field:fpos.order.tax,st:0
 msgid "Special Type"
 msgstr "Spezialtyp"
 
@@ -2309,12 +2496,14 @@ msgid "Standard"
 msgstr ""
 
 #. module: fpos
-#: selection:fpos.order,st:0 selection:pos.order,fpos_st:0
+#: selection:fpos.order,st:0
+#: selection:pos.order,fpos_st:0
 msgid "Start"
 msgstr ""
 
 #. module: fpos
-#: field:fpos.order,state:0 selection:fpos.order,tag:0
+#: field:fpos.order,state:0
+#: selection:fpos.order,tag:0
 #: selection:fpos.order.line,tag:0
 #: model:product.template,name:fpos.product_fpos_status_product_template
 msgid "Status"
@@ -2337,8 +2526,10 @@ msgid "Subtotal Incl."
 msgstr ""
 
 #. module: fpos
-#: field:fpos.report.email,message_summary:0 field:fpos.report.email,summary:0
-#: help:fpos.report.email,summary:0 field:fpos.report.wizard,summary:0
+#: field:fpos.report.email,message_summary:0
+#: field:fpos.report.email,summary:0
+#: help:fpos.report.email,summary:0
+#: field:fpos.report.wizard,summary:0
 #: help:fpos.report.wizard,summary:0
 msgid "Summary"
 msgstr "Übersicht"
@@ -2359,7 +2550,8 @@ msgid "Sync User"
 msgstr "Fpos Benutzer"
 
 #. module: fpos
-#: field:fpos.order,sv:0 field:pos.config,fpos_sync_version:0
+#: field:fpos.order,sv:0
+#: field:pos.config,fpos_sync_version:0
 msgid "Sync Version"
 msgstr "Datenbestand Version"
 
@@ -2379,7 +2571,8 @@ msgid "Tablet"
 msgstr ""
 
 #. module: fpos
-#: field:fpos.order,tag:0 field:fpos.order.line,tag:0
+#: field:fpos.order,tag:0
+#: field:fpos.order.line,tag:0
 #: field:fpos.order.payment.receipt,tag:0
 msgid "Tag"
 msgstr ""
@@ -2390,9 +2583,11 @@ msgid "Tara"
 msgstr ""
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order view:fpos.order:fpos.tree_fpos_order
+#: view:fpos.order:fpos.form_fpos_order
+#: view:fpos.order:fpos.tree_fpos_order
 #: field:fpos.order.tax,amount_tax:0
-#: model:ir.model,name:fpos.model_account_tax view:website:fpos.report_receipt
+#: model:ir.model,name:fpos.model_account_tax
+#: view:website:fpos.report_receipt
 msgid "Tax"
 msgstr "Steuer"
 
@@ -2402,14 +2597,17 @@ msgid "Tax Amount"
 msgstr "Steuerbetrag"
 
 #. module: fpos
-#: view:fpos.order:fpos.form_fpos_order field:fpos.order,tax_ids:0
+#: view:fpos.order:fpos.form_fpos_order
+#: field:fpos.order,tax_ids:0
 #: field:fpos.order.line,tax_ids:0
 msgid "Taxes"
 msgstr "Steuern"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Teal"
 msgstr "Türkis"
 
@@ -2436,11 +2634,14 @@ msgid "Till"
 msgstr "Bis"
 
 #. module: fpos
-#: view:fpos.place:fpos.search_pos_place field:fpos.place,top_id:0
-#: view:fpos.top:fpos.form_top view:fpos.top:fpos.search_top
+#: view:fpos.place:fpos.search_pos_place
+#: field:fpos.place,top_id:0
+#: view:fpos.top:fpos.form_top
+#: view:fpos.top:fpos.search_top
 #: view:fpos.top:fpos.tree_top
 #: model:ir.actions.act_window,name:fpos.action_top
-#: model:ir.model,name:fpos.model_fpos_top model:ir.ui.menu,name:fpos.menu_top
+#: model:ir.model,name:fpos.model_fpos_top
+#: model:ir.ui.menu,name:fpos.menu_top
 msgid "Top"
 msgstr "Bereich"
 
@@ -2450,16 +2651,15 @@ msgid "Total"
 msgstr "Gesamt"
 
 #. module: fpos
-#: selection:fpos.order,st:0 selection:pos.order,fpos_st:0
+#: selection:fpos.order,st:0
+#: selection:pos.order,fpos_st:0
 msgid "Training"
 msgstr ""
 
 #. module: fpos
 #: help:pos.config,parent_user_id:0
 msgid "Transfer all open orders to this user before pos is closing"
-msgstr ""
-"Vor dem Kassenabschluss werden alle offenen Verkäufe zum Hauptbenutzer "
-"übertragen"
+msgstr "Vor dem Kassenabschluss werden alle offenen Verkäufe zum Hauptbenutzer übertragen"
 
 #. module: fpos
 #: field:fpos.order,turnover:0
@@ -2467,7 +2667,8 @@ msgid "Turnover Count"
 msgstr "Umsatzzähler"
 
 #. module: fpos
-#: field:fpos.product.list.wizard,type:0 field:pos.order,fpos_st:0
+#: field:fpos.product.list.wizard,type:0
+#: field:pos.order,fpos_st:0
 msgid "Type"
 msgstr "Typ"
 
@@ -2480,22 +2681,21 @@ msgstr "Rechnung %s/%s/%s kann nicht gebucht werden"
 #. module: fpos
 #: code:addons/fpos/fpos.py:423
 #, python-format
-msgid ""
-"Unable to post order %s: tax 'price include/exclude' was changed or tax mixed"
-msgstr ""
-"Die Buchung für den Verkauf %s kann nicht vorgenommen werden: Entweder wurde "
-"bei der Steuer 'Preis inklusive' umgestellt, oder es wurden verschiedene "
-"Steuersätze bei einem Produkt vermischt"
+msgid "Unable to post order %s: tax 'price include/exclude' was changed or tax mixed"
+msgstr "Die Buchung für den Verkauf %s kann nicht vorgenommen werden: Entweder wurde bei der Steuer 'Preis inklusive' umgestellt, oder es wurden verschiedene Steuersätze bei einem Produkt vermischt"
 
 #. module: fpos
-#: view:fpos.place:fpos.search_pos_place field:fpos.place,pos_unavail:0
-#: view:fpos.top:fpos.search_top field:fpos.top,pos_unavail:0
+#: view:fpos.place:fpos.search_pos_place
+#: field:fpos.place,pos_unavail:0
+#: view:fpos.top:fpos.search_top
+#: field:fpos.top,pos_unavail:0
 #: field:pos.category,pos_unavail:0
 msgid "Unavailable"
 msgstr "Nicht Verfügbar"
 
 #. module: fpos
-#: field:fpos.order.line,uom_id:0 field:fpos.order.log.line,uom_id:0
+#: field:fpos.order.line,uom_id:0
+#: field:fpos.order.log.line,uom_id:0
 msgid "Unit"
 msgstr "Einheit"
 
@@ -2505,13 +2705,17 @@ msgid "Unread Messages"
 msgstr ""
 
 #. module: fpos
-#: field:fpos.dist,name:0 field:fpos.hwproxy,name:0 field:fpos.printer,name:0
+#: field:fpos.dist,name:0
+#: field:fpos.hwproxy,name:0
+#: field:fpos.printer,name:0
 msgid "Url"
 msgstr ""
 
 #. module: fpos
-#: field:fpos.order,user_id:0 field:fpos.order.log,user_id:0
-#: view:pos.config:fpos.form_pos_config selection:res.users,pos_role:0
+#: field:fpos.order,user_id:0
+#: field:fpos.order.log,user_id:0
+#: view:pos.config:fpos.form_pos_config
+#: selection:res.users,pos_role:0
 msgid "User"
 msgstr "Benutzer"
 
@@ -2547,12 +2751,14 @@ msgid "User: print sales"
 msgstr ""
 
 #. module: fpos
-#: model:ir.model,name:fpos.model_res_users field:pos.config,user_ids:0
+#: model:ir.model,name:fpos.model_res_users
+#: field:pos.config,user_ids:0
 msgid "Users"
 msgstr "Benutzer"
 
 #. module: fpos
-#: help:product.product,pos_minus:0 help:product.template,pos_minus:0
+#: help:product.product,pos_minus:0
+#: help:product.template,pos_minus:0
 msgid "Value is negative by default"
 msgstr "Ist per Default ein Negativer Wert"
 
@@ -2562,19 +2768,24 @@ msgid "Waiter Key"
 msgstr "Kellnerschloss"
 
 #. module: fpos
-#: selection:fpos.report.email,range:0 selection:fpos.report.wizard,range:0
+#: selection:fpos.report.email,range:0
+#: selection:fpos.report.wizard,range:0
 msgid "Week"
 msgstr "Woche"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "White"
 msgstr "Weiß"
 
 #. module: fpos
-#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
-#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+#: selection:fpos.place,pos_color:0
+#: selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0
+#: selection:product.template,pos_color:0
 msgid "Yellow"
 msgstr "Gelb"
 
@@ -2582,9 +2793,7 @@ msgstr "Gelb"
 #: code:addons/fpos/fpos.py:94
 #, python-format
 msgid "You cannot delete an order which are not in draft state"
-msgstr ""
-"Es kann kein Verkauf gelöscht werden, welcher nicht mehr im Entwurfsstatus "
-"ist."
+msgstr "Es kann kein Verkauf gelöscht werden, welcher nicht mehr im Entwurfsstatus ist."
 
 #. module: fpos
 #: field:fpos.wizard.export.bmd,buerf_name:0
@@ -2644,3 +2853,4 @@ msgstr "zur Basis"
 #, python-format
 msgid "€-Format: %s,%s"
 msgstr ""
+

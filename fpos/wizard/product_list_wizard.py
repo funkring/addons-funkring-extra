@@ -31,7 +31,8 @@ class product_list_wizard(models.TransientModel):
     
     category_less = fields.Boolean("Print Categoryless")
     sumup = fields.Boolean("Intelligent Sumup", default=True, help="Print only products are used with the selected price list")
-    
+    name = fields.Char("Name")
+    description = fields.Text("Description")
     
     @api.multi
     def action_print(self):
@@ -66,10 +67,17 @@ class product_list_wizard(models.TransientModel):
               products = product_obj.search(domain)
            
             # get context
+            pricelist_name = wizard.name
             report_ctx = self._context and dict(self._context) or {}
             if wizard.pricelist_id:
                 report_ctx["pricelist_id"] = wizard.pricelist_id.id
-                report_ctx["product_list_name"] = _("Pricelist: %s") % wizard.pricelist_id.name
+                if not pricelist_name:
+                  pricelist_name = _("Pricelist: %s") % wizard.pricelist_id.name
+              
+            if pricelist_name:
+              report_ctx["product_list_name"] = pricelist_name
+            if wizard.description:
+              report_ctx["product_list_description"] = wizard.description 
                 
             
             product_ids = [p.id for p in products]

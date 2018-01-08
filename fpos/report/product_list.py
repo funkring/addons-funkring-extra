@@ -27,7 +27,8 @@ class Parser(extreport.basic_parser):
         super(Parser, self).__init__(cr, uid, name, context=context)
         self.localcontext.update({
             "prepare": self._prepare,
-            "product_list_name": context.get("product_list_name") or _("Productlist")
+            "product_list_name": context.get("product_list_name") or _("Productlist"),
+            "product_list_description" : context.get("product_list_description") or ""
         })
         
     def _prepare(self, objects):
