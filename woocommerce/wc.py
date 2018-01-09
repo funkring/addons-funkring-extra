@@ -1420,16 +1420,23 @@ class WcOrderSync(WcSync):
     if items:
       product_obj = self.profile.env["product.product"]
       for item in items:
-        product_tmpl_id = self.mapper.getOid("product.template",item["product_id"])
-        variation_id = item.get("variation_id")
-        if variation_id:
-          product_id = self.mapper.getOid("product.product",variation_id)
-          
-        if not variation_id:
-          product_ids = product_obj.with_context(active_test=False).search([("product_tmpl_id","=",product_tmpl_id)], limit=1)
-          if not product_ids:
-            raise Warning("Product for product.template[%s] and woocommerce product[%s] not found" % (product_tmpl_id, item["product_id"]))
-          product_id = product_ids[0].id
+        product_tmpl_id = self.mapper.getOid("product.template",item["product_id"])         
+        product_id = None
+        if not product_tmpl_id:
+          # if product not found,
+          # search it with sku
+          _logger.warning("Woocommerce product %s/%s/%s NOT MAPPED WITH ODOO!" % (item["product_id"], item.get("sku") or "", item.get("name") or ""))
+          if item.get("sku"):            
+            product_ids = product_obj.search([("default_code","=",item.get("sku"))], limit=1)
+            if product_ids:
+              product_id = product_ids[0].id
+        else:
+          # search product
+          variation_id = item.get("variation_id")
+          if variation_id:
+            product_id = self.mapper.getOid("product.product",variation_id)
+          else:
+            product_id = product_obj.with_context(active_test=False).search([("product_tmpl_id","=",product_tmpl_id)], limit=1)[0].id
         
         line_values = {
           "product_id": product_id,
