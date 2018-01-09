@@ -1426,7 +1426,10 @@ class WcOrderSync(WcSync):
           product_id = self.mapper.getOid("product.product",variation_id)
           
         if not variation_id:
-          product_id = product_obj.with_context(active_test=False).search([("product_tmpl_id","=",product_tmpl_id)])[0].id
+          product_ids = product_obj.with_context(active_test=False).search([("product_tmpl_id","=",product_tmpl_id)], limit=1)
+          if not product_ids:
+            raise Warning("Product for product.template[%s] and woocommerce product[%s] not found" % (product_tmpl_id, item["product_id"]))
+          product_id = product_ids[0].id
         
         line_values = {
           "product_id": product_id,
