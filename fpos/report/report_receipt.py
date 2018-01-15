@@ -77,12 +77,13 @@ class order(report_sxw.rml_parse):
         
         fpos_order = o.fpos_order_id
         if fpos_order:
-          if fpos_order.hs:
-            order["hs"] = fpos_order.hs
-            order["hsurl"] = urlparse.urljoin(self.url, "fpos/code/%s/%s" % (fpos_order.seq, fpos_order.hs))
-          elif fpos_order.qr:
+          if fpos_order.qr:
             order["qr"] = fpos_order.qr
             order["qrimage"] = self.get_qrimage(fpos_order.qr) 
+          elif fpos_order.hs:
+            order["hs"] = fpos_order.hs
+            order["hsurl"] = urlparse.urljoin(self.url, "fpos/code/%s/%s" % (fpos_order.seq, fpos_order.hs))
+        
         
         
         account_tax_obj = self.pool.get('account.tax')
