@@ -778,22 +778,45 @@ class Parser(extreport.basic_parser):
             users = io_value.get("users")
             io_value["users"] = sorted(users.itervalues(), key=lambda val: val.get("sum",0.0), reverse=True)
 
+        def sortDetailList(to):
+          detailList = self._sortedDetail(to["detail"].itervalues())
+          for d in detailList:
+            d["description"] = self._getDetailName(d, currency)
+          to["detail"] = detailList
+          return detailList
+        
+        turnoverStats = []
+        
         # sort details
         turnoverDetails = []
         turnoverList = self._sortedTurnover(turnover_dict.itervalues())
         for to in turnoverList:
-            detailList = self._sortedDetail(to["detail"].itervalues())
-            for d in detailList:
-                d["description"] = self._getDetailName(d, currency)
-            to["detail"] = detailList
-            turnoverDetails = turnoverDetails + detailList
+            turnoverDetails = turnoverDetails + sortDetailList(to)
         # overall detail
         turnoverDetails = self._sortedDetail(turnoverDetails)
+        if len(turnoverDetails) > 0:
+          turnoverStats.append({
+            "name": "",
+            "details": turnoverDetails
+          })
 
         # convert statement turnovers to list
         for st in statements:
-            st["turnover_detail"] = self._sortedTurnover(st["turnover_detail"].itervalues())
-
+            # detail
+            st_turnover = self._sortedTurnover(st["turnover_detail"].itervalues())
+            # overall details
+            st_turnoverDetails = []
+            for st_to in st_turnover:            
+              st_turnoverDetails = st_turnoverDetails + sortDetailList(st_to)
+            # set turnover
+            st["turnover_detail"] = st_turnover
+            # add to details
+            if len(st_turnoverDetails) > 0:
+              turnoverStats.append({
+                "name": st["journal"],
+                "details": self._sortedDetail(st_turnoverDetails)
+              })
+              
         # get date range
         date_range = []
         if date_min:
@@ -838,11 +861,13 @@ class Parser(extreport.basic_parser):
             "incomeList" : income_dict.itervalues(),
             "turnoverList" : turnoverList,
             "turnoverDetails" : turnoverDetails,
+            "turnoverStats": turnoverStats,
             "details_start" : first_session.details_ids,
             "details_end" : last_session.details_ids,
             "details" : details,
             "order_count" : order_count,
             "noturnover_active": noturnover_active,
+            "simple_turnover": len(turnoverStats) <= 1 and len(turnoverDetails) < 13, 
             "days" : []
         }
         return stat
