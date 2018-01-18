@@ -966,7 +966,7 @@ class fpos_report_email(models.Model):
                 date_from = util.dateToStr(dt_date_from)
                 date_till = date_from
                 
-            cashreport_name = _("%s - %s") % (cashreport_name, f.formatLang(date_from, date=True))
+            cashreport_name = "%s - %s" % (cashreport_name, f.formatLang(date_from, date=True))
             
         return (date_from, date_till, cashreport_name)
     
