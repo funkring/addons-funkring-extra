@@ -26,11 +26,46 @@ from openerp.addons.at_account.report import account_invoice_report
 class Parser(account_invoice_report.Parser):
     
     def __init__(self, cr, uid, name, context):
-        super(Parser, self).__init__(cr, uid, name, context)
+      super(Parser, self).__init__(cr, uid, name, context)
+      self.localcontext.update({
+        "pos_order": self._pos_order
+      })
+    
+    def _pos_order(self, inv):
+      res = {
+        "order": None,
+        "fpos_order": None,
+        "qrimage": None,
+        "journal": None,
+        "term": self._payment_term(inv)
+      }
+       
+      self.cr.execute("SELECT o.id FROM pos_order o"
+                       " WHERE o.invoice_id = %s ", (inv.id,))
       
-    def _load_objects(self, cr, uid, ids, report_xml, context):
-        invoice_ids = []
-        for order in self.pool.get("pos.order").browse(cr, uid, ids, context=context):
-            if order.invoice_id:
-                invoice_ids.append(order.invoice_id.id)
-        return self.pool.get("account.invoice").browse(cr, uid, invoice_ids, context=context)   
+      sql_res = self.cr.fetchone()    
+      if not sql_res or not sql_res[0]:
+        return [res]
+      
+      pos_order = self.pool["pos.order"].browse(self.cr, self.uid, sql_res[0], context=self.localcontext)
+      if not pos_order:
+        return [res]
+      
+      res["order"] = pos_order
+      
+      statements = pos_order.statement_ids
+      if len(statements) > 1:
+        statements = [st for st in statements if st.amount]        
+      if len(statements) == 1:
+        journal = statements[0].statement_id.journal_id
+        res["journal"] = journal
+        
+      fpos_order = pos_order.fpos_order_id
+      res["fpos_order"] = fpos_order
+      
+      if fpos_order:
+        if fpos_order.qr:
+          res["qrimage"] = self.get_qrimage(fpos_order.qr) 
+                      
+      return [res]
+        
