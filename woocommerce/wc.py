@@ -1085,8 +1085,8 @@ class WcOrderSync(WcSync):
   
   def fromOdoo(self, obj, wid=None):
     # only update?
-    if not wid:
-      return {}
+    #if not wid:
+    #  return {}
     
     # get user
     user = obj.partner_id.user_ids
@@ -1146,13 +1146,17 @@ class WcOrderSync(WcSync):
         # add lines
         if line.product_id:  
           product_tmpl_wid = self.mapper.getWcId("product.template", line.product_id.product_tmpl_id.id)
+          line_sum_nodisc = line._line_sum_nodisc()
+          subtotal = line_sum_nodisc["total_included"]
+                   
           # check if product exist
           if product_tmpl_wid:            
             item_values = {
+              "name": line.name,
               "product_id": product_tmpl_wid,
-              "quantity": str(line.product_uom_qty),
-              #"total": str(line.price_subtotal_taxed), #  total prices of products in cart (with tax) + shipping cost + fees + tax on fees - discount
-              "subtotal": str(line.price_subtotal_taxed), # total prices of products in cart (with tax)
+              "quantity": str(line.product_uom_qty),              
+              "subtotal": subtotal, # Line subtotal (before discounts)
+              "total":  str(line.price_subtotal_taxed), # Line subtotal (before discounts)        
               "variation_id": 0         
             }
              
@@ -1164,10 +1168,11 @@ class WcOrderSync(WcSync):
           else:
             dummy_wid = self.product_sync.getWid(self.profile.dummy_product_tmpl_id)
             item_values = {
+              "name": line.name,
               "product_id": dummy_wid,
               "quantity": str(line.product_uom_qty),
-              #"total": str(line.price_subtotal_taxed),
-              "subtotal": str(line.price_subtotal_taxed),
+              "subtotal": subtotal, # Line subtotal (before discounts)
+              "total":  str(line.price_subtotal_taxed), # Line subtotal (before discounts)     
               "variation_id": 0
             }
           # add lines
