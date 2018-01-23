@@ -35,11 +35,18 @@
                 <field name="dummy_product_tmpl_id"/>
                 <field name="coupon_product_id"/>
                 <field name="delivery_product_id"/>
-              </group>
+              </group>              
             </group>
             <div>
             <notebook>
               <page string="Checkpoints">
+                <group> 
+                  <group>
+                    <field name="upload_order"/>
+                  </group>
+                  <group>
+                  </group>
+                </group>
                 <field name="checkpoint_ids">
                   <tree editable="bottom">
                     <field name="name"/>

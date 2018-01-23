@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-30 14:28+0000\n"
-"PO-Revision-Date: 2017-11-30 15:29+0100\n"
+"POT-Creation-Date: 2018-01-23 08:41+0000\n"
+"PO-Revision-Date: 2018-01-23 09:42+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -170,7 +170,7 @@ msgid "Name"
 msgstr ""
 
 #. module: woocommerce
-#: code:addons/woocommerce/wc.py:1255
+#: code:addons/woocommerce/wc.py:1260
 #, python-format
 msgid "No partner for order %s"
 msgstr "Kein Partner für Bestellung %s"
@@ -186,7 +186,7 @@ msgid "Order Template"
 msgstr "Auftragsvorlage"
 
 #. module: woocommerce
-#: code:addons/woocommerce/wc.py:1247
+#: code:addons/woocommerce/wc.py:1252
 #, python-format
 msgid "Partner with id=%s not found for order %s"
 msgstr "Kunde mit der id=%s wurde für Bestellung %s nicht gefunden"
@@ -285,10 +285,20 @@ msgstr ""
 "synchronisiert wurde"
 
 #. module: woocommerce
-#: code:addons/woocommerce/wc.py:1366
+#: code:addons/woocommerce/wc.py:1371
 #, python-format
 msgid "Too few data to create a partner %s"
 msgstr "Zu wenig Daten um den Kunden %s zu erstellen"
+
+#. module: woocommerce
+#: field:wc.profile,upload_order:0
+msgid "Upload Order"
+msgstr "Aufträge hochladen"
+
+#. module: woocommerce
+#: help:wc.profile,upload_order:0
+msgid "Upload Order from Odoo"
+msgstr "Aufträge die nur im Odoo erzeugt wurden auch hochladen"
 
 #. module: woocommerce
 #: field:wc.profile,url:0
@@ -344,7 +354,7 @@ msgid "WooCommerce Synchronisation"
 msgstr ""
 
 #. module: woocommerce
-#: code:addons/woocommerce/wc.py:1243
+#: code:addons/woocommerce/wc.py:1248
 #, python-format
 msgid "customer_id=%s not found for order %s"
 msgstr "customer_id=%s wurde nicht gefunden für Bestellung %s"

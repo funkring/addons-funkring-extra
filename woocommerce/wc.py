@@ -30,6 +30,8 @@ import dateutil.parser
 import woocommerce.api
 import urllib
 import urlparse
+from openerp.tools import mute_logger
+import psycopg2
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -1084,9 +1086,9 @@ class WcOrderSync(WcSync):
       }
   
   def fromOdoo(self, obj, wid=None):
-    # only update?
-    #if not wid:
-    #  return {}
+    # only update?    
+    if not wid and not self.profile.upload_order:
+      return {}
     
     # get user
     user = obj.partner_id.user_ids
@@ -1591,6 +1593,8 @@ class wc_profile(models.Model):
   webhook_url = fields.Char("Webhook Url", readonly=True, states={'draft': [('readonly', False)]})
   webhook_secret = fields.Char("Webhook Secret", readonly=True, states={'draft': [('readonly', False)]})
   
+  upload_order = fields.Boolean("Upload Order", help="Upload Order from Odoo")
+  
   enabled = fields.Boolean("Enabled", default=True)
   
   def _get_client(self):
@@ -1716,12 +1720,17 @@ class wc_profile(models.Model):
   
   @api.model
   def schedule_sync(self):
-    cron = self.env.ref('woocommerce.cron_wc_sync', False)
-    if cron:
-      cron.nextcall = util.nextMinute()
-      
+    with mute_logger('openerp.sql_db'), self._cr.savepoint():
+      try:
+        cron = self.env.ref('woocommerce.cron_wc_sync', False)
+        if cron:
+          cron.write({"nextcall": util.nextMinute()})
+      except (psycopg2.Error, models.except_orm):
+        pass
+        
   @api.multi
   def action_schedule_sync(self):
+    self.with_context()
     self.env["wc.profile"].schedule_sync()
     return True
   
