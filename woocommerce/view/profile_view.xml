@@ -45,6 +45,7 @@
                     <field name="upload_order"/>
                   </group>
                   <group>
+                    <field name="sync_error"/>
                   </group>
                 </group>
                 <field name="checkpoint_ids">
@@ -68,6 +69,10 @@
             </notebook>
             </div>
           </sheet>
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+            <field name="message_ids" widget="mail_thread"/>
+          </div>
         </form>
       </field>
     </record>

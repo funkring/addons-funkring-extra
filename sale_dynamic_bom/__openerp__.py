@@ -18,26 +18,20 @@
 #
 ##############################################################################
 
-from openerp.osv import fields, osv
-
-class sale_order(osv.Model):
-  _inherit = "sale.order"
-  _columns = {
-    "wc_order": fields.boolean("WooCommerce Order", readonly=True, copy=False)
-#     "wc_state" : fields.selection([("pending","Pending"),
-#                                    ("processing","Processing"),
-#                                    ("on-hold","On Hold"),
-#                                    ("completed","Completed"),
-#                                    ("cancelled","Cancelled"),
-#                                    ("refunded","Refunded"),
-#                                    ("failed","Failed")],
-#                                    "Failed")
-  }
-   
-  
-class sale_order_line(osv.Model):
-  _inherit = "sale.order.line"
-  _columns = {
-    "wc_coupon": fields.char("Coupon Code", copy=False)
-  }
- 
+{
+    "name" : "Sale dynamic Bill of Material",
+    "summary" : "Create dynamic MRP order from sale order",
+    "description":"""
+Dynamic Bill of Material
+========================
+* Create dynamic MRP order from sale order
+    """,
+    "version" : "1.0",
+    "author" :  "oerp.at",
+    "website" : "http://oerp.at",
+    "category" : "Sales",
+    "depends" : ["at_mrp", "sale"],
+    "data" : [],
+    "auto_install" : False,
+    "installable": True
+}

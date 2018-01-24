@@ -30,8 +30,6 @@ import dateutil.parser
 import woocommerce.api
 import urllib
 import urlparse
-from openerp.tools import mute_logger
-import psycopg2
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -321,6 +319,22 @@ class WcSync(object):
       
     return (changed, meta_data)
   
+  def addMetaItems(self, meta_data, items):
+    changed = False
+    for item in items:
+      item_changed, meta_data = self.addMetaData(meta_data, item)
+      if item_changed:
+        changed = True
+    return (changed, meta_data)
+      
+  def getMetaValue(self, meta_data, key, default=None):
+    if not meta_data:
+      return default
+    for item in meta_data:
+      if item.get("key") == key:
+        return item.get("value", default)
+    return default
+      
   def getChildEndpoint(self, endpoint, params):
     if params:
       endpoint = "%s?%s" % (endpoint, "&".join(params))
@@ -424,7 +438,7 @@ class WcSync(object):
     obj = template.copy(values)
     self.mapper.addWcId(self.model_name, obj.id, doc["id"])
     return obj
-  
+   
   def update(self, obj, values, doc):
     return obj.write(values)
   
@@ -1069,7 +1083,7 @@ class WcOrderSync(WcSync):
                                         entry_name="order",
                                         entry_set="orders",
                                         domain=[("state","not in",["draft","sent"]),("partner_id.user_ids.share","=",True)],                                        
-                                        oldapi=True,
+                                        #oldapi=True,
                                         template_field="order_template_id")
     
     self.user_sync = self.profile._sync_user(mapper, wc)
@@ -1080,9 +1094,8 @@ class WcOrderSync(WcSync):
     if self.payments:
       self.default_payment = self.payments[0]
       self.default_payment_details = {
-        "method_id": self.default_payment.code,
-        "method_title": self.default_payment.name,
-        "paid": False
+        "payment_method": self.default_payment.code,
+        "payment_method_title": self.default_payment.name
       }
   
   def fromOdoo(self, obj, wid=None):
@@ -1113,36 +1126,57 @@ class WcOrderSync(WcSync):
     res =  {      
       "status": status,
       "currency": obj.currency_id.name,
-      "billing_address" : self.user_sync.getAddressData(obj.partner_invoice_id),
-      "shipping_address": self.user_sync.getAddressData(obj.partner_shipping_id),
+      "billing" : self.user_sync.getAddressData(obj.partner_invoice_id),
+      "shipping": self.user_sync.getAddressData(obj.partner_shipping_id),
       "customer_id": customer_wid
     }
+
+    meta_items = [{"key": "Name",
+                   "value": obj.name}]
+    meta_data = None
+    
+    # add vat    
+    meta_items.append({"key": "_vat_number",
+                       "value": obj.partner_invoice_id.vat})
     
     # get current state
-   
     if wid:
-      cur_doc = self.wc.get_filtered("orders/%s" % wid)["order"]
-      payment_details = cur_doc.get("payment_details")
-      
+      cur_doc = self.wc.get("orders/%s" % wid)
+      paid = False
+      if cur_doc.get("date_paid"):
+        paid = True
+        
       # don't updated completed order
-      if cur_doc["status"] == "completed" and payment_details and payment_details.get("paid"):
+      if cur_doc["status"] == "completed" and paid:
         return {}
       
-      # check payment
-      if obj.invoiced:       
-        if payment_details and not payment_details.get("paid"):
-          payment_details["paid"] = True
-          res["payment_details"] = payment_details
+      # get meta data
+      meta_data = cur_doc.get("meta_data")
+      
+      # check payment, 
+      # and pay if neccessary
+      if obj.invoiced and not paid:           
+          res["set_paid"] = True
+          if not cur_doc.get("payment_method"):
+            res.update(self.default_payment_details)
+          else:
+            res["payment_method"] = cur_doc.get("payment_method")
+            res["payment_method_title"] = cur_doc.get("payment_method_title") or ""
                     
     elif not obj.wc_order:
-
+  
       line_items = []
+      meta_items.append({"key": "_from_odoo",
+                         "value": "yes"})
+      
+      # customer note
+      res["customer_note"] = obj.note
       
       # check payment      
-      payment_details = self.default_payment_details.copy()
-      res["payment_details"] = payment_details
+      res.update(self.default_payment_details)
+      res["transaction_id"] = obj.name
       if obj.invoiced:        
-        payment_details["paid"] = True
+        res["set_paid"] = True
 
       for line in obj.order_line:
         # add lines
@@ -1183,6 +1217,11 @@ class WcOrderSync(WcSync):
       # set line items for update
       res["line_items"] = line_items      
 
+    # add meta data     
+    (meta_changed, meta_data) = self.addMetaItems(meta_data, meta_items) 
+    if meta_changed:
+      res["meta_data"] = meta_data
+        
     return res
   
   def afterWcUpdate(self, obj, wid, doc):
@@ -1381,6 +1420,11 @@ class WcOrderSync(WcSync):
       
     if not invoice_partner:
       invoice_partner = getPartner(doc.get("billing_address"), partner)
+      # update vat
+      if not invoice_partner.vat:
+        vat = doc.get("vat_number")
+        if vat:
+          invoice_partner.write({"vat": vat})
       
     if not shipping_partner:
       shipping_partner =  getPartner(doc.get("shipping_address"), partner, "delivery")
@@ -1406,8 +1450,14 @@ class WcOrderSync(WcSync):
         if payment.order_policy:
           res["order_policy"] = payment.order_policy 
            
+    template = getattr(self.profile, self.field_template)  
     order_obj = self.profile.env["sale.order"]
     helper.onChangeValuesEnv(order_obj, res, order_obj.onchange_partner_id(partner.id))
+    # check if default shop was found
+    shop_id = res.get("shop_id")
+    if not shop_id:
+      res["shop_id"] = template.shop_id.id
+    # otherwise take it from template 
     helper.onChangeValuesEnv(order_obj, res, order_obj.onchange_shop_id(res["shop_id"], "draft", res.get("project_id")))
   
     # add note
@@ -1419,7 +1469,6 @@ class WcOrderSync(WcSync):
         notes.append(note)
       notes.append(note)
       res["note"] = "\n".join(notes)
-      
       
     # add lines
     lines = []
@@ -1543,10 +1592,28 @@ class WcOrderSync(WcSync):
         # send quotation
         if obj.state == "draft":
           obj.force_quotation_send()
+          
+  def create(self, values, doc):
+    template = getattr(self.profile, self.field_template)            
+    obj = template.copy(values)
+    self.mapper.addWcId(self.model_name, obj.id, doc["id"])
+    
+    # copy followers
+    followers = self.profile.env["mail.followers"].search([("res_model", "=", template._name), ("res_id", "=", template.id)])
+    partner_ids = [f.partner_id.id for f in followers]
+    if partner_ids:
+      # subscribe partners
+      obj.message_subscribe(partner_ids)
+      # post woocommerce ref
+      obj.message_post(body=obj.client_order_ref, 
+                        subtype="mt_comment")
+      
+    return obj
       
     
 class wc_profile(models.Model):
   _name = "wc.profile"
+  _inherit = ['mail.thread', 'ir.needaction_mixin']
   _description = "WooCommerce Profile"
 
   @api.multi
@@ -1597,6 +1664,8 @@ class wc_profile(models.Model):
   
   enabled = fields.Boolean("Enabled", default=True)
   
+  sync_error = fields.Boolean("Sync Error", readonly=True)
+  
   def _get_client(self):
     return WcClient(woocommerce.api.API(self.url, self.consumer_key, self.consumer_secret,
                                         version="wc/v2", wp_api=True, verify_ssl=False),
@@ -1640,7 +1709,18 @@ class wc_profile(models.Model):
     
   @api.multi
   def action_sync(self):
-    self._sync()
+    try:
+      self._sync()
+      if self.sync_error:         
+        self.sync_error = False
+        self.message_post(subject=_("WooCommerce Sync OK: %s") % self.name, body="<pre>Sync OK</pre>", subtype="mt_comment")
+    except Exception as e:
+      self._cr.rollback()
+      self.sync_error = True           
+      self.message_post(subject=_("WooCommerce Sync failed: %s") % self.name,
+                        body="<pre>%s</pre>" % str(e), 
+                        subtype="mt_comment")
+      self._cr.commit()
     return True
   
   @api.multi
@@ -1720,13 +1800,10 @@ class wc_profile(models.Model):
   
   @api.model
   def schedule_sync(self):
-    with mute_logger('openerp.sql_db'), self._cr.savepoint():
-      try:
-        cron = self.env.ref('woocommerce.cron_wc_sync', False)
-        if cron:
-          cron.write({"nextcall": util.nextMinute()})
-      except (psycopg2.Error, models.except_orm):
-        pass
+    #with mute_logger('openerp.sql_db'), self._cr.savepoint():
+    cron = self.env.ref('woocommerce.cron_wc_sync', False)
+    if cron:
+        cron.try_write({"nextcall": util.nextMinute()})
         
   @api.multi
   def action_schedule_sync(self):
