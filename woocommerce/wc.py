@@ -1152,6 +1152,9 @@ class WcOrderSync(WcSync):
       
       # get meta data
       meta_data = cur_doc.get("meta_data")
+      # set transaction id if not set
+      if not cur_doc.get("transaction_id"):
+        res["transaction_id"] = obj.name 
       
       # check payment, 
       # and pay if neccessary
