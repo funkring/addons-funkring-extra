@@ -54,32 +54,6 @@ class stock_move(osv.Model):
 class stock_picking(osv.Model):
   _inherit = "stock.picking"
   
-#   def action_invoice_create(self, cr, uid, ids, journal_id, group=False, type="out_invoice", context=None):
-#       """ Creates invoice based on the invoice state selected for picking.
-#       @param journal_id: Id of journal
-#       @param group: Whether to create a group invoice or not
-#       @param type: Type invoice to be created
-#       @return: Ids of created invoices for the pickings
-#       """
-#       context = context or {}
-#       todo = {}
-#       for picking in self.browse(cr, uid, ids, context=context):
-#           partner = self._get_partner_to_invoice(cr, uid, picking, dict(context, type=type))
-#           #grouping is based on the invoiced partner
-#           if group:
-#               key = partner
-#           else:
-#               key = picking.id
-#           for move in picking.move_lines:
-#               if move.invoice_state == "2binvoiced":
-#                   if (move.state != "cancel") and not move.scrapped:
-#                       todo.setdefault(key, [])
-#                       todo[key].append(move)
-#       invoices = []
-#       for moves in todo.values():
-#           invoices += self._invoice_create_line(cr, uid, moves, journal_id, type, context=context)
-#       return invoices
-  
   def _invoice_create_line(self, cr, uid, moves, journal_id, inv_type='out_invoice', context=None):
     forward_moves = []
     invoice_ids = []
