@@ -78,3 +78,24 @@ class mrp_production(osv.Model):
       if location and location.dynbom:
         return "make_to_stock"
     return super(mrp_bom, self)._get_raw_material_procure_method(cr, uid, product, location_id=location_id, location_dest_id=location_dest_id, context=context)
+  
+  def _procurement_info(self, cr, uid, ids, field_name, arg, context=None):
+    res = dict.fromkeys(ids)
+    
+    cr.execute("SELECT p.id, po2.name, ol.procurement_note FROM procurement_order po"
+                " INNER JOIN mrp_production p ON p.id = po.production_id "
+                " INNER JOIN stock_move m ON m.id = po.move_dest_id "
+                " INNER JOIN procurement_order po2 ON po2.id = m.procurement_id "
+                " LEFT JOIN sale_order_line ol ON ol.id = po2.sale_line_id "
+                " WHERE p.id IN %s ", (tuple(ids),))
+    
+    for production_id, name, note in cr.fetchall():
+      if note:
+        name = "%s\n\n%s" % (note,name)
+      res[production_id] = name
+      
+    return res
+  
+  _columns = {
+    "procurement_info": fields.function(_procurement_info, type="text", string="Procurement Information")
+  }

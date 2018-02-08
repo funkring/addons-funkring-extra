@@ -37,7 +37,8 @@ Dynamic Bill of Material
                  "at_purchase_sale" ],
     "data" : ["view/product_view.xml",
               "view/sale_view.xml",
-              "view/stock_view.xml"],
+              "view/stock_view.xml",
+              "view/mrp_view.xml"],
     "auto_install" : False,
     "installable": True
 }
