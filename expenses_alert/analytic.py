@@ -33,12 +33,12 @@ class account_analytic_account(osv.Model):
         alert_date = context and context.get("alert_date") or util.lastDay()
         
         cr.execute("SELECT a.id, al.id FROM account_analytic_account a "
-                "      INNER JOIN account_analytic_line al ON al.account_id=a.id AND al.to_invoice IS NOT NULL " 
+                "      INNER JOIN account_analytic_line al ON al.account_id=a.id " 
                 "             AND ( (a.expense_alert_date IS NULL AND al.date=%s) " 
                 "                OR (a.expense_alert_date IS NOT NULL AND al.date > a.expense_alert_date AND al.date<=%s) ) "
                 "      INNER JOIN resource_resource r ON r.user_id = al.user_id "      
                 "      INNER JOIN hr_employee e ON e.resource_id = r.id AND e.journal_id = al.journal_id "  
-                "      WHERE a.expense_alert AND a.id IN %s AND NOT a.partner_id IS NULL " 
+                "      WHERE a.expense_alert AND a.id IN %s AND NOT a.partner_id IS NULL AND (al.to_invoice IS NOT NULL OR a.to_invoice IS NULL) " 
                 "      GROUP BY 1,2 "
                 "      ORDER BY a.id, al.date ",
                 (alert_date, alert_date, tuple(ids)))
@@ -68,12 +68,12 @@ class account_analytic_account(osv.Model):
           
         # query alerts
         cr.execute("SELECT a.id FROM account_analytic_account a " 
-                    "      INNER JOIN account_analytic_line al ON al.account_id=a.id AND al.to_invoice IS NOT NULL " 
+                    "      INNER JOIN account_analytic_line al ON al.account_id=a.id " 
                     "             AND ( (a.expense_alert_date IS NULL AND al.date=%s) " 
                     "                OR (a.expense_alert_date IS NOT NULL AND al.date > a.expense_alert_date AND al.date<=%s) ) "
                     "      INNER JOIN resource_resource r ON r.user_id = al.user_id "      
                     "      INNER JOIN hr_employee e ON e.resource_id = r.id AND e.journal_id = al.journal_id "  
-                    "      WHERE a.expense_alert AND NOT a.partner_id IS NULL " 
+                    "      WHERE a.expense_alert AND NOT a.partner_id IS NULL AND (al.to_invoice IS NOT NULL OR a.to_invoice IS NULL)" 
                     "      GROUP BY 1 ",
                    (alert_date, alert_date))
         
