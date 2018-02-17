@@ -183,7 +183,7 @@ class account_invoice(osv.osv):
         ubl_means.append(("cbc:PaymentDueDate",inv.date_due))
         ubl_means.append(("cbc:PaymentChannelCode","IBAN"))
         if inv.payment_term:
-            ubl_means.append(("cbc:InstructionNote",inv.payment_term.name))
+            ubl_means.append(("cbc:InstructionNote",inv.payment_term.note))
         
         bank = inv.company_id.partner_id.bank_ids
         if bank:
