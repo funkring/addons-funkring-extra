@@ -177,13 +177,20 @@ class account_invoice(osv.osv):
         
         ubl_list.append(("cac:Delivery", ubl_delivery))
     
-    def _ubl_add_payment_means(self, cr, uid, ubl_list, inv, context):
+    def _ubl_add_payment_means(self, cr, uid, ubl_list, inv, profile, context):
         ubl_means = []
         ubl_means.append(("cbc:PaymentMeansCode",31))
         ubl_means.append(("cbc:PaymentDueDate",inv.date_due))
         ubl_means.append(("cbc:PaymentChannelCode","IBAN"))
         if inv.payment_term:
-            ubl_means.append(("cbc:InstructionNote",inv.payment_term.note))
+            payment_note = []
+            if inv.payment_term.note:
+              payment_note.append(inv.payment_term.note)
+            elif inv.payment_term.name:
+              payment_note.append(inv.payment_term.name)            
+            if profile and profile.payment_note:
+              payment_note.append(profile.payment_note)
+            ubl_means.append(("cbc:InstructionNote","\n".join(payment_note)))
         
         bank = inv.company_id.partner_id.bank_ids
         if bank:
@@ -270,7 +277,7 @@ class account_invoice(osv.osv):
                 return ubl_uom_obj.browse(cr, uid, uom_ids[0], context).name
         return "EA"
     
-    def _ubl_invoice(self, cr, uid, inv, context=None):
+    def _ubl_invoice(self, cr, uid, inv, profile=None, context=None):
         ubl_list = [("cbc:UBLVersionID","2.0"),
                     ("cbc:CustomizationID","urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0", {"schemeID" : "PEPPOL" }),
                     ("cbc:ProfileID","urn:www.cenbii.eu:profile:bii04:ver1.0" ),
@@ -287,7 +294,7 @@ class account_invoice(osv.osv):
         self._ubl_add_accounting_supplier(cr, uid, ubl_list, inv, context)
         self._ubl_add_accounting_customer(cr, uid, ubl_list, inv, context)
         self._ubl_add_delivery(cr, uid, ubl_list, inv, context)
-        self._ubl_add_payment_means(cr, uid, ubl_list, inv, context)
+        self._ubl_add_payment_means(cr, uid, ubl_list, inv, profile, context)
         self._ubl_add_payment_terms(cr, uid, ubl_list, inv, context)
         self._ubl_tax(cr, uid, ubl_list, inv.invoice_line, context)
         self._ubl_total(cr, uid, ubl_list, inv, context)

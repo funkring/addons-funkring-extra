@@ -18,25 +18,10 @@
 #
 ##############################################################################
 
-{
-    "name" : "oerp.at UBL Invoice",
-    "description":"""
-Universal Business Language Support
-===================================
+from openerp.osv import fields, osv
 
-* Supports sending invoice
-* XML Reports with UBL 2.1
-
-""",
-    "version" : "1.0",
-    "author" :  "oerp.at",
-    "category" : "EDI",
-    "depends" : ["ubl_base",
-                 "at_account",
-                 "account"],
-    "data" : ["wizard/ubl_transfer_wizard.xml",
-              "view/invoice_view.xml",
-              "view/ubl_profile.xml"],
-    "auto_install" : False,
-    "installable": True
-}
+class ubl_profile(osv.Model):
+  _inherit = "ubl.profile"
+  _columns = {
+    "payment_note" : fields.text("Payment Note")
+  }

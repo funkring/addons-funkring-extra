@@ -89,18 +89,18 @@ class ubl_transfer_wizard(osv.osv_memory):
                             res["ubl_ref"] = safe_eval(ubl_profile.ubl_ref, locals_dict={ "partner" : partner, "invoice" : invoice, "profile" : ubl_profile } ) or invoice.number
             
                     if "xml_data" in fields_list:               
-                        res["xml_data"] = self._get_xml_data(cr, uid, invoice, res.get("partner_id"), res.get("ubl_ref"), no_delivery_address, context)
+                        res["xml_data"] = self._get_xml_data(cr, uid, invoice, res.get("partner_id"), res.get("ubl_ref"), no_delivery_address, ubl_profile, context)
                  
                     
         return res
     
-    def _get_xml_data(self, cr, uid, invoice, customer_id, ubl_ref, no_delivery_address, context=None):
+    def _get_xml_data(self, cr, uid, invoice, customer_id, ubl_ref, no_delivery_address, profile=None, context=None):
         invoice_obj = self.pool.get("account.invoice")
         inv_context = context and dict(context) or {}
         inv_context["customer_id"]=customer_id
         inv_context["ubl_ref"]=ubl_ref
         inv_context["no_delivery_address"]=no_delivery_address
-        ubl = invoice_obj._ubl_invoice(cr, uid, invoice, inv_context)
+        ubl = invoice_obj._ubl_invoice(cr, uid, invoice, profile=profile, context=inv_context)
         return base64.encodestring(tuple2xml.translate(StringIO(), ubl).getvalue())
     
     def _send_invoice(self, cr, uid, wizard, context=None):
