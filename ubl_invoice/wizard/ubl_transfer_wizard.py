@@ -110,7 +110,7 @@ class ubl_transfer_wizard(osv.osv_memory):
     def action_ok(self, cr, uid, ids, context=None):
         invoice_obj = self.pool.get("account.invoice")
         for wizard in self.browse(cr, uid, ids, context):
-            self.write(cr, uid, [wizard.id], {"xml_data" : self._get_xml_data(cr, uid, wizard.invoice_id, wizard.partner_id.id, wizard.ubl_ref, wizard.no_delivery_address, context)}, context)
+            self.write(cr, uid, [wizard.id], {"xml_data" : self._get_xml_data(cr, uid, wizard.invoice_id, wizard.partner_id.id, wizard.ubl_ref, wizard.no_delivery_address, wizard.profile_id, context)}, context)
             invoice_obj.write(cr, uid, wizard.invoice_id.id, {"ubl_ref": wizard.ubl_ref, "ubl_status": wizard.ubl_action}, context=context)
         return { "type" : "ir.actions.act_window_close" }
         
