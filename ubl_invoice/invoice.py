@@ -72,9 +72,14 @@ class account_invoice(osv.osv):
         res["total_tax"] = total_tax     
         return res
     
-    def _ubl_add_comment(self, cr, uid, ubl_list, inv, context=None):
+    def _ubl_add_comment(self, cr, uid, ubl_list, inv, profile, context=None):
+        note = []
         if inv.comment:
-            ubl_list.append(("cbc:Note",inv.comment))
+          note.append(inv.comment)
+        if profile and profile.payment_note:
+          note.append(profile.payment_note)
+        if note:
+          ubl_list.append(("cbc:Note","\n\n".join(note)))
             
     def _ubl_add_order_ref(self, cr, uid, ubl_list, inv, context=None):
         ubl_ref = context.get("ubl_ref")
@@ -182,15 +187,19 @@ class account_invoice(osv.osv):
         ubl_means.append(("cbc:PaymentMeansCode",31))
         ubl_means.append(("cbc:PaymentDueDate",inv.date_due))
         ubl_means.append(("cbc:PaymentChannelCode","IBAN"))
-        if inv.payment_term:
-            payment_note = []
+        
+        payment_note = []
+        if inv.payment_term:            
             if inv.payment_term.note:
               payment_note.append(inv.payment_term.note)
             elif inv.payment_term.name:
-              payment_note.append(inv.payment_term.name)            
-            if profile and profile.payment_note:
-              payment_note.append(profile.payment_note)
-            ubl_means.append(("cbc:InstructionNote","\n".join(payment_note)))
+              payment_note.append(inv.payment_term.name)
+                          
+        if profile and profile.payment_note:
+          payment_note.append(profile.payment_note)
+        
+        if payment_note:
+          ubl_means.append(("cbc:InstructionNote","\n\n".join(payment_note)))
         
         bank = inv.company_id.partner_id.bank_ids
         if bank:
@@ -286,7 +295,7 @@ class account_invoice(osv.osv):
                     ("cbc:InvoiceTypeCode",380)
                    ]
         
-        self._ubl_add_comment(cr, uid, ubl_list, inv, context)
+        self._ubl_add_comment(cr, uid, ubl_list, inv, profile, context)
         
         ubl_list.append(("cbc:DocumentCurrencyCode",inv.currency_id.name))
         
