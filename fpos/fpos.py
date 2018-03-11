@@ -27,6 +27,9 @@ from openerp import SUPERUSER_ID
 import openerp.addons.decimal_precision as dp
 
 from dateutil.relativedelta import relativedelta
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class fpos_order(models.Model):
     _name = "fpos.order"
@@ -570,7 +573,14 @@ class fpos_order(models.Model):
                 
                 # delete unused draft
                 draft_orders = self.search([("date","<",session.start_at),("state","=","draft"),("fpos_user_id","=",order.fpos_user_id.id)])
-                draft_orders.unlink()                
+                draft_orders.unlink()
+                
+                # delete double orders
+                self._cr.execute("DELETE FROM pos_order WHERE fpos_order_id in (SELECT MAX(o.id) FROM fpos_order o group by o.name, o.date, o.qr having count(o.id) > 1)")       
+                self._cr.execute("DELETE FROM fpos_order WHERE id in (SELECT MAX(o.id) FROM fpos_order o group by o.name, o.date, o.qr having count(o.id) > 1)")                
+                double_rows = self._cr.rowcount
+                if double_rows:
+                  _logger.error("deleted %s double orders", double_rows)
                  
         return True
     
