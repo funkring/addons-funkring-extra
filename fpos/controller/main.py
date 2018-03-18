@@ -31,8 +31,8 @@ _logger = logging.getLogger(__name__)
 
 class fpos_export(http.Controller):
     
-    @http.route(["/fpos/dep/<int:profile_id>"], type="http", auth="user", methods=["GET"])
-    def dep_download(self, profile_id, **kwargs):
+    @http.route(["/fpos/dep/<int:profile_id>/<int:order_id>"], type="http", auth="user", methods=["GET"])
+    def dep_download(self, profile_id, order_id, **kwargs):
         cr, uid, context, pool = request.cr, request.uid, request.context, request.registry
         
         if isinstance(profile_id, basestring):
@@ -41,7 +41,7 @@ class fpos_export(http.Controller):
         profile_obj = pool["pos.config"]
         profile = profile_obj.browse(cr, uid, profile_id, context=context)
         
-        res = profile_obj._dep_export(cr, uid, profile, context=context)
+        res = profile_obj._dep_export(cr, uid, profile, order_id=order_id, context=context)
         res = simplejson.dumps(res, indent=2)
         
         return request.make_response(
@@ -49,6 +49,9 @@ class fpos_export(http.Controller):
                 [("Content-Type", "application/json"),
                  ("Content-Disposition", content_disposition("dep.json"))])
         
+    @http.route(["/fpos/dep/<int:profile_id>"], type="http", auth="user", methods=["GET"])
+    def dep_download_all(self, profile_id, **kwargs):
+        return self.dep_download(profile_id, None, **kwargs)
         
     @http.route(["/fpos/dep/<int:profile_id>/<dep_key>"], type="http", auth="public", methods=["GET"])
     def dep_download_bmf(self, profile_id, dep_key, **kwargs):

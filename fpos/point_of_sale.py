@@ -652,7 +652,7 @@ class pos_config(osv.Model):
 
         return config_id
 
-    def _dep_export(self, cr, uid, profile, context=None):
+    def _dep_export(self, cr, uid, profile, order_id=None, context=None):
         forder_obj = self.pool["fpos.order"]
 
         if context is None:
@@ -672,10 +672,25 @@ class pos_config(osv.Model):
         fpos_user = profile.user_id
         if fpos_user:
             # search start seq
-            orderEntries = forder_obj.search_read(cr, uid, [("fpos_user_id","=", fpos_user.id),("st","=","s")], ["seq"], order="seq asc", limit=1, context=export_context)
-            if orderEntries:
-                # export other
+            startSeq = 0
+            
+            # search form specific order
+            fpos_order_id = None
+            if order_id:
+              fpos_order_id = self.pool["pos.order"].read(cr, uid, order_id, ["fpos_order_id"], context=context)
+              if fpos_order_id:
+                fpos_order_id =  fpos_order_id["fpos_order_id"][0]
+                startSeq = forder_obj.read(cr, uid, fpos_order_id, ["seq"], context=context)["seq"]
+            
+            # search from start
+            if not startSeq:
+              orderEntries = forder_obj.search_read(cr, uid,  [("fpos_user_id","=", fpos_user.id),("st","=","s")], ["seq"], order="seq asc", limit=1, context=export_context)
+              if orderEntries:
                 startSeq = orderEntries[0]["seq"]
+          
+            # if start seq found, export
+            if startSeq:
+                # export other
                 orderEntries = forder_obj.search_read(cr, uid, [("fpos_user_id", "=", fpos_user.id),("seq", ">=", startSeq)], ["dep"], order="seq asc", context=export_context)
                 for entry in orderEntries:
                     receipts.append(entry["dep"])
@@ -684,7 +699,7 @@ class pos_config(osv.Model):
              "Belege-Gruppe" : [data]
         }
 
-    def action_dep_export(self, cr, uid, ids, context=None):
+    def action_dep_download(self, cr, uid, ids, context=None):
         for profile in self.browse(cr, uid, ids, context=context):
 
             if not profile.sign_status or profile.sign_status == "draft":
@@ -747,6 +762,17 @@ class pos_order(osv.Model):
 
     def _after_invoice(self, cr, uid, order, context=None):
         self.reconcile_invoice(cr, uid, [order.id], context=context)
+        
+    def action_dep_export(self, cr, uid, ids, context=None):
+      for order in self.browse(cr, uid, ids, context=context):
+        url = "/fpos/dep/%s/%s" % (order.config_id.id, order.id)
+        return {
+             'name': _('DEP Export %s') % order.config_id.sign_pid,
+             'type': 'ir.actions.act_url',
+             'url': url,
+             'target': 'self'
+        }
+      return True
 
     def action_invoice(self, cr, uid, ids, context=None):
         inv_ref = self.pool.get('account.invoice')

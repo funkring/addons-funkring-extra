@@ -15,7 +15,7 @@
                         attrs="{'invisible' : ['|','|',('sign_method','=',False),('liveop','=',False),('sign_status','in',['draft','react'])]}"/>
                 <button name="action_post" string="Post Orders" type="object" groups="point_of_sale.group_pos_manager" 
                         attrs="{'invisible' : ['|',('user_id','=',False),('liveop','=',False)]}"/>
-                <button name="action_dep_export" string="DEP Download" type="object" groups="point_of_sale.group_pos_user" 
+                <button name="action_dep_download" string="DEP Download" type="object" groups="point_of_sale.group_pos_user" 
                         attrs="{'invisible' : ['|','|',('sign_method','=',False),('liveop','=',False),('sign_status','=','draft')]}"/>
             </button>
             <field name="iface_invoicing" position="before">
