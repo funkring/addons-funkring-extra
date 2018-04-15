@@ -20,7 +20,7 @@
 
 from openerp.osv import fields, osv
 
-class account_analytic_analysis(osv.Model):
+class account_analytic_account(osv.Model):
     
     def _ct_year_hours(self, cr, uid, ids, fieldnames, args, context=None):
         res = dict.fromkeys(ids, 0)
@@ -55,7 +55,13 @@ class account_analytic_analysis(osv.Model):
         account_ids = [r[0] for r in cr.fetchall()]
         return account_ids
     
-    
+    def on_change_template(self, cr, uid, ids, template_id, date_start=False, context=None):
+        res = super(account_analytic_account, self).on_change_template(cr, uid, ids, template_id, date_start=date_start, context=context)
+        if template_id:
+          template = self.browse(cr, uid, template_id, context=context)
+          if not ids:
+            res["value"]["ct_month_hours"] = template.ct_month_hours
+        return res
     
     _inherit = "account.analytic.account"
     _columns = {
