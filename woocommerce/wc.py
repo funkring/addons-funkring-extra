@@ -1139,9 +1139,14 @@ class WcOrderSync(WcSync):
     meta_items.append({"key": "_vat_number",
                        "value": obj.partner_invoice_id.vat})
     
-    # get current state
+    # get doc
+    cur_doc = None    
     if wid:
       cur_doc = self.wc.get("orders/%s" % wid)
+    
+    # if doc exists 
+    if cur_doc:
+      
       paid = False
       if cur_doc.get("date_paid"):
         paid = True
@@ -1173,7 +1178,9 @@ class WcOrderSync(WcSync):
                          "value": "yes"})
       
       # customer note
-      res["customer_note"] = obj.note
+      res["note"] = obj.note
+      if obj.note:
+        res["customer_note"] = True
       
       # check payment      
       res.update(self.default_payment_details)
@@ -1718,6 +1725,7 @@ class wc_profile(models.Model):
         self.sync_error = False
         self.message_post(subject=_("WooCommerce Sync OK: %s") % self.name, body="<pre>Sync OK</pre>", subtype="mt_comment")
     except Exception as e:
+      _logger.exception("Sync Error")
       self._cr.rollback()
       self.sync_error = True           
       self.message_post(subject=_("WooCommerce Sync failed: %s") % self.name,
