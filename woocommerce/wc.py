@@ -1678,8 +1678,8 @@ class wc_profile(models.Model):
   
   def _get_client(self):
     return WcClient(woocommerce.api.API(self.url, self.consumer_key, self.consumer_secret,
-                                        version="wc/v2", wp_api=True, verify_ssl=False),
-                    woocommerce.api.API(self.url, self.consumer_key, self.consumer_secret, verify_ssl=False))
+                                        version="wc/v2", wp_api=True, verify_ssl=False, timeout=30),
+                    woocommerce.api.API(self.url, self.consumer_key, self.consumer_secret, verify_ssl=False, timeout=30))
   
   @api.model
   def _sync_user(self, mapper, wc):
