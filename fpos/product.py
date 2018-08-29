@@ -92,7 +92,8 @@ class product_template(osv.Model):
                                       ("2","Section 2"),
                                       ("g","Group"),
                                       ("a","Addition")], string="Section", help="Section Flag"),
-        "tmpl_pos_rate" : fields.float("POS Rate %", readonly=True)
+        "tmpl_pos_rate" : fields.float("POS Rate %", readonly=True),
+        "fpos_profile_ids": fields.many2many("fpos.profile", "product_tmpl_fpos_profile_rel", "prod_tmpl_id", "profile_id", string="Profiles", copy=True)
     }
     _defaults = {
         "sequence" : 10
@@ -245,6 +246,8 @@ class product_product(osv.Model):
         taxMap = {}
         prices = {}
         
+        get_sale_ok = lambda obj: obj.sale_ok
+        
         # build mappings from profile
         profile_obj = self.pool["pos.config"]
         profile_id = profile_obj.search_id(cr, uid, [("user_id","=", uid)], context=context)
@@ -279,10 +282,15 @@ class product_product(osv.Model):
             if profile.pricelist_id:
                 prices = self.pool['product.pricelist']._price_get_multi(cr, uid, profile.pricelist_id, [(o, 1, None) for o in objs], context=context)
                         
+            # product profiles
+            fpos_profiles = profile.fpos_profile_ids
+            if fpos_profiles:
+              sale_product_ids = set(self.pool["product.product"].search(cr, uid, [("fpos_profile_ids","in",fpos_profiles.ids),("id","in",objs.ids)]))
+              get_sale_ok = lambda obj: obj.sale_ok and obj.id in sale_product_ids
         
         # build docs
         docs = []
-        names = dict(self.name_get(cr, uid, [o.id for o in objs], context=context))
+        names = dict(self.name_get(cr, uid, objs.ids, context=context))
         for obj in objs:
             
             # read tax        
@@ -298,13 +306,15 @@ class product_product(osv.Model):
             netto = price_include == 0 and len(taxes_id) > 0
                 
             # get price
-            price = prices.get(obj.id, obj.lst_price)            
-                
+            price = prices.get(obj.id, obj.lst_price)       
+            
+            # calc sale ok
+            sale_ok = get_sale_ok(obj)
                 
             # build product
             values =  {
                 "_id" : get_uuid(obj),
-                META_MODEL : obj._model._name,
+                META_MODEL : obj._model._name,                
                 "name" : names.get(obj.id,obj.name),
                 "pos_name" : obj.pos_name or obj.name,
                 "description" : obj.description,
@@ -324,12 +334,13 @@ class product_product(osv.Model):
                 "sequence" : obj.sequence,
                 "active": obj.active,
                 "available_in_pos" : obj.available_in_pos,
-                "sale_ok" : obj.sale_ok,
+                "sale_ok" : sale_ok,
                 "pos_color" : obj.pos_color,
                 "pos_report" : obj.pos_report,
                 "pos_fav" : obj.pos_fav,
                 "pos_categ2_id" : get_uuid(obj.pos_categ2_id),
-                "pos_rate" : obj.pos_rate
+                "pos_rate" : obj.pos_rate,
+                "type": obj.type
             }
             
             if obj.pos_nogroup:
@@ -438,3 +449,13 @@ class product_product(osv.Model):
             "price": prices[product_id],
             "amount": amount        
         }
+        
+    def fpos_stock(self, cr, uid, product_id, context=None):
+        # product
+        if product_id:
+          if isinstance(product_id, basestring):
+              product = self.pool["res.mapping"]._browse_mapped(cr, uid, product_id, "product.product", context=context)
+              product_id = product.id
+          else:
+              product = self.browse(cr, uid, product_id, context=context)
+        return product.qty_available

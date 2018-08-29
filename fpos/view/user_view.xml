@@ -11,6 +11,9 @@
             <field name="code"/>
             <field name="pin"/>            
             <field name="pos_role"/>
+            <field name="fpos_disable_price"/>
+            <field name="fpos_disable_cancel"/>
+            <field name="fpos_disable_payment"/>
         </field>
       </field>
     </record>

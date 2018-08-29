@@ -18,6 +18,9 @@
                 <button name="action_dep_download" string="DEP Download" type="object" groups="point_of_sale.group_pos_user" 
                         attrs="{'invisible' : ['|','|',('sign_method','=',False),('liveop','=',False),('sign_status','=','draft')]}"/>
             </button>
+            <field name="group_by" position="after">
+                <field name="fpos_profile_ids" widget="many2many_tags"/>
+            </field>
             <field name="iface_invoicing" position="before">
                 <field name="iface_waiterkey"/>
                 <field name="iface_place"/>                
@@ -56,6 +59,7 @@
                     <field name="fpos_sync_version"/>
                     <field name="fpos_sync_reset"/>
                     <field name="fpos_sync_realtime"/>
+                    <field name="fpos_query_stock"/>
                 </group>
             </group>
             <group string="Hardware Proxy" position="replace">

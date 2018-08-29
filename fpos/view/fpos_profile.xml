@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="form_fpos_profile" model="ir.ui.view">
+      <field name="name">fpos.form_fpos_profile</field>
+      <field name="model">fpos.profile</field>
+      <field name="arch" type="xml">
+        <form string="Profile">
+          <group>
+            <group>
+              <field name="name"/>
+            </group>
+            <group>
+            </group>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="tree_fpos_profile" model="ir.ui.view">
+      <field name="name">fpos.tree_fpos_profile</field>
+      <field name="model">fpos.profile</field>
+      <field name="arch" type="xml">
+        <tree string="Profiles">
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="search_fpos_profile" model="ir.ui.view">
+      <field name="name">fpos.search_fpos_profile</field>
+      <field name="model">fpos.profile</field>
+      <field name="arch" type="xml">
+        <search string="Profile">
+          <field name="name"/>
+          <!--field name="name" filter_domain="['|', ('name','ilike',self), ('otherfield','ilike',self)]" string="Profile"/ -->
+          <!--filter string="Some State" domain="[('state','=','draft')]" icon="terp-camera_test"/ -->
+          <!--field name="state"/ -->
+          <!--
+          <group expand="0" string="Group By...">
+            <filter string="Status" context="{'group_by': 'state'}" icon="terp-stock_effects-object-colorize"/>
+          </group>
+          -->
+        </search>
+      </field>
+    </record>
+
+    <record id="action_fpos_profile" model="ir.actions.act_window">
+      <field name="name">Profile</field>
+      <field name="res_model">fpos.profile</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_fpos_profile" name="Profile" parent="point_of_sale.menu_point_config_product" 
+      sequence="40"
+      action="action_fpos_profile"/>
+  </data>
+</openerp>

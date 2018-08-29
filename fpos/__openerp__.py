@@ -59,6 +59,7 @@ oerp.at Fpos
               "view/partner_view.xml",
               "view/invoice_view.xml",
               "view/fpos_order_report_view.xml",
+              "view/fpos_profile.xml",
               "wizard/product_list_wizard.xml",            
               "wizard/export_wizard.xml",
               "wizard/export_wizard_rzl.xml",

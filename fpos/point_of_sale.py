@@ -116,6 +116,7 @@ class pos_config(osv.Model):
         "fpos_sync_reset" : fields.boolean("Sync Reset"),
         "fpos_sync_version" : fields.integer("Sync Version", readonly=True),
         "fpos_sync_realtime" : fields.boolean("Realtime Online Sync", help="Realtime online order synchronisation"),
+        "fpos_query_stock" : fields.boolean("Realtime Stock Query"),
         "iface_nogroup" : fields.boolean("No Grouping", help="If a product is selected twice a new pos line was created"),
         "iface_fold" : fields.boolean("Fold",help="Don't show foldable categories"),
         "iface_place" : fields.boolean("Place Management"),
@@ -208,7 +209,9 @@ class pos_config(osv.Model):
             export=True,
             store={
                 "pos.config": (lambda self, cr, uid, ids, c={}: ids, ['image'], 10),
-            })
+            }),
+                
+        "fpos_profile_ids": fields.many2many("fpos.profile", "fpos_config_fpos_profile_rel", "config_id", "profile_id", string="Profiles", copy=True)
     }
     _sql_constraints = [
         ("user_uniq", "unique (user_id)", "Fpos User could only assinged once"),

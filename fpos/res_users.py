@@ -27,6 +27,11 @@ class res_users(osv.Model):
         "pos_role" : fields.selection([("user","User"),
                                        ("manager","Manager"),
                                        ("admin","Administrator")], "POS Role"),
+        
+        "fpos_disable_price": fields.boolean("Disable Price"),
+        "fpos_disable_cancel": fields.boolean("Disable Cancellation"),
+        "fpos_disable_payment": fields.boolean("Disable Payment Methods"),
+        
         "code" : fields.char("Code"),
         "child_config_ids" : fields.one2many("pos.config", "parent_user_id", "POS Childs")
     }

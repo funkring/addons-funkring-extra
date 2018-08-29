@@ -1053,3 +1053,11 @@ class fpos_report_email(models.Model):
         for report_mail in self:
             report_mail._send_mail(start_date=self.range_start)
         return True
+      
+
+class fpos_profile(models.Model):
+    _name = "fpos.profile"
+    _description = "Profile"
+
+    name = fields.Char("Name", required=True)
+    

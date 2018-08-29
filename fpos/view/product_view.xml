@@ -9,6 +9,7 @@
       <field name="arch" type="xml">
          <field name="categ_id" position="after">
             <field name="pos_categ_id"/>
+            <field name="fpos_profile_ids"/>
          </field>
          <filter string="Category" position="after">
             <filter name="pos_category" string="POS Category" domain="[]" context="{'group_by':'pos_categ_id'}"/>
@@ -50,6 +51,7 @@
         <field name="pos_categ_id" position="after">
             <field name="pos_name"/>
             <field name="pos_categ2_id"/>
+            <field name="fpos_profile_ids" widget="many2many_tags"/>
             <field name="pos_color"/>   
             <field name="pos_fav"/>
             <field name="pos_sec"/>

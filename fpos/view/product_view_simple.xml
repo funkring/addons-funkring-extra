@@ -35,7 +35,7 @@
                                         <field name="pos_categ_id"/>
                                         <field name="uom_id" on_change="onchange_uom(uom_id,uom_po_id)" groups="product.group_uom"/>
                                         <field name="type" on_change="onchange_type(type)"/>
-                                        <field name="categ_id"/>
+                                        <field name="categ_id"/>                                        
                                     </group>
                                     <group string="Options">
                                         <field name="active"/>
@@ -53,13 +53,21 @@
                                         <field name="standard_price"/>                          
                                         <field name="supplier_taxes_id" colspan="2" widget="many2many_tags"/>    
                                         <field name="uom_po_id" invisible="1"/>    
+                                        <label for="qty_available" attrs="{'invisible': [('type', '=', 'service')]}"/>
+                                        <div attrs="{'invisible': [('type', '=', 'service')]}">
+                                          <field name="qty_available" class="oe_inline"/>
+                                          <button name="%(stock.action_view_change_product_quantity)d" string="⇒ Update"
+                                              type="action"
+                                              class="oe_link"/>
+                                        </div>
                                     </group>
                                     <group string="POS">
                                         <field name="pos_name"/>
                                         <field name="pos_categ2_id"/>
                                         <field name="pos_color"/>    
-                                        <field name="pos_sec"/> 
+                                        <field name="pos_sec"/>
                                         <field name="pos_action"/>
+                                        <field name="fpos_profile_ids" widget="many2many_tags"/>
                                         <field name="available_in_pos"/>
                                         <field name="pos_fav"/>
                                         <field name="pos_report"/>                                           
