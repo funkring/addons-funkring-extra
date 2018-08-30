@@ -290,7 +290,7 @@ class product_product(osv.Model):
         
         # build docs
         docs = []
-        names = dict(self.name_get(cr, uid, objs.ids, context=context))
+        names = dict(self.name_get(cr, uid, [o.id for o in objs], context=context))
         for obj in objs:
             
             # read tax        
