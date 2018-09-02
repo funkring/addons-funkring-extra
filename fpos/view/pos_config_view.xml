@@ -37,6 +37,7 @@
                 <field name="iface_fastuswitch"/>                
                 <field name="iface_nosearch"/>
                 <field name="iface_printleft"/>
+                <field name="iface_hidecat"/>
                 <field name="iface_ponline"/>        
                 <field name="iface_test"/>                
             </field>            

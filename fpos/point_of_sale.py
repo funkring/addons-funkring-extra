@@ -211,7 +211,8 @@ class pos_config(osv.Model):
                 "pos.config": (lambda self, cr, uid, ids, c={}: ids, ['image'], 10),
             }),
                 
-        "fpos_profile_ids": fields.many2many("fpos.profile", "fpos_config_fpos_profile_rel", "config_id", "profile_id", string="Profiles", copy=True)
+        "fpos_profile_ids": fields.many2many("fpos.profile", "fpos_config_fpos_profile_rel", "config_id", "profile_id", string="Profiles", copy=True),
+        "iface_hidecat": fields.boolean("Hide Categories")
     }
     _sql_constraints = [
         ("user_uniq", "unique (user_id)", "Fpos User could only assinged once"),
