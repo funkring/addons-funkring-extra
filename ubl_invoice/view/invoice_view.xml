@@ -41,7 +41,7 @@
          </field>
          <filter name="unpaid" position="after">
             <filter name="ubl" string="UBL Invoices" domain="[('ubl_status','!=',False)]"/>
-            <filter name="ubl_unsent" string="UBL Prepare"  domain="[('ubl_status','=',prepare)]"/>
+            <filter name="ubl_unsent" string="UBL Prepare"  domain="[('ubl_status','=','prepare')]"/>
             <filter name="ubl_except" string="UBL Excepted" domain="[('ubl_status','=','except')]" />            
          </filter>
          <filter string="Status" position="after">
