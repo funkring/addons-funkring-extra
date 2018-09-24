@@ -51,8 +51,8 @@ class account_invoice(osv.osv):
             if not res.get("currency"):
                 res["currency"]=line.invoice_id.currency_id.name
             tax_calc = tax_obj.compute_all(cr, uid, line.invoice_line_tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line_qty, line.product_id, line.partner_id)
-            res["total"]=res["total"]+tax_calc["total"]
-            res["total_included"]=res["total_included"]+tax_calc["total_included"]
+            res["total"]=res["total"]+round(tax_calc["total"],4)
+            res["total_included"]=res["total_included"]+round(tax_calc["total_included"],4)
             for tax_line in tax_calc["taxes"]:
                 tax = tax_obj.browse(cr,uid,tax_line["id"],context)
                 res_tax = res["taxes"].get(tax.amount)
@@ -60,10 +60,10 @@ class account_invoice(osv.osv):
                     res_tax = {"name" : tax.name,
                                "percent" : tax.amount}  
                     res["taxes"][tax.amount]=res_tax
-                tax_amount = tax_line.get("amount",0.0)
+                tax_amount = round(tax_line.get("amount",0.0),4)
                 total_tax += tax_amount
                 res_tax["amount"] = res_tax.get("amount",0.0) + tax_amount
-                res_tax["base"] = res_tax.get("base",0.0) + (tax_line.get("price_unit",0.0) * line.quantity)
+                res_tax["base"] = res_tax.get("base",0.0) + round((tax_line.get("price_unit",0.0) * line.quantity),4)
         
         if not res.get("currency"):
             currency = self.pool.get("res.currency").browse(cr,uid,self._get_currency(self, cr, uid, context),context=context)
