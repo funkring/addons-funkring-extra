@@ -8,7 +8,7 @@ msgstr ""
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-02-19 20:44+0000\n"
-"PO-Revision-Date: 2018-02-19 21:45+0100\n"
+"PO-Revision-Date: 2018-09-24 23:12+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -150,7 +150,7 @@ msgstr "Übermitteln"
 #. module: ubl_invoice
 #: selection:account.invoice,ubl_status:0
 msgid "Sent"
-msgstr "Senden"
+msgstr "Gesendet"
 
 #. module: ubl_invoice
 #: view:account.invoice:ubl_invoice.search_invoice
