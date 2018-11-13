@@ -93,13 +93,14 @@ class price_table(models.Model):
         version_values = []
         for vline in version.items_id:
             if vline.product_id:
-                values = products.pop(vline.product_id.id)
-                # update
-                if values:
-                    version_values.append((1,vline.id,values))
-                # remove                                
-                else:
-                    version_values.append((2,vline.id))        
+                try:
+                  values = products.pop(vline.product_id.id)
+                  # update
+                  if values:
+                      version_values.append((1,vline.id,values))
+                except KeyError:
+                  # remove                                
+                  version_values.append((2,vline.id))        
         
         # insert new values         
         for values in products.values():
