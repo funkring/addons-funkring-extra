@@ -1,0 +1,479 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#   * fpos
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Language: de_DE\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-01-16 21:41+0000\n"
+"PO-Revision-Date: 2019-01-16 22:49+0100\n"
+"Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 1.5.4\n"
+
+#. module: fpos
+#: code:addons/fpos/wizard/report_wizard.py:124
+#, python-format
+msgid "%s - %s %s"
+msgstr ""
+
+#. module: fpos
+#: code:addons/fpos/wizard/report_wizard.py:118
+#, python-format
+msgid "%s - %s / %s %s"
+msgstr ""
+
+#. module: fpos
+#: code:addons/fpos/fpos.py:650
+#, python-format
+msgid "*-Format: %s,%s"
+msgstr ""
+
+#. module: fpos
+#: selection:res.users,pos_role:0
+msgid "Administrator"
+msgstr ""
+
+#. module: fpos
+#: model:product.template,name:fpos.product_fpos_balance_product_template
+msgid "Ausgleich"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.report.email,bmd_export:0
+#: view:fpos.wizard.export.bmd:fpos.wizard_export_bmd
+#: field:fpos.wizard.export.bmd,buerf:0
+#: model:ir.actions.act_window,name:fpos.action_export_bmd
+msgid "BMD Export"
+msgstr ""
+
+#. module: fpos
+#: model:ir.model,name:fpos.model_fpos_wizard_export_bmd
+msgid "BMD Export Wizard"
+msgstr ""
+
+#. module: fpos
+#: model:ir.actions.report.xml,name:fpos.report_pos_config_pdf
+msgid "BMF Kasseninfo"
+msgstr ""
+
+#. module: fpos
+#: code:addons/fpos/fpos.py:634
+#, python-format
+msgid "Break"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.order.payment,code:0 field:res.users,code:0
+msgid "Code"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.order,dep:0
+msgid "DEP"
+msgstr ""
+
+#. module: fpos
+#: view:pos.config:fpos.form_pos_config view:pos.order:fpos.form_pos_order
+msgid "DEP Download"
+msgstr ""
+
+#. module: fpos
+#: code:addons/fpos/point_of_sale.py:714 code:addons/fpos/point_of_sale.py:774
+#, python-format
+msgid "DEP Export %s"
+msgstr ""
+
+#. module: fpos
+#: field:pos.config,dep_key:0
+msgid "DEP Key"
+msgstr ""
+
+#. module: fpos
+#: help:fpos.report.email,message_last_post:0
+msgid "Date of the last message posted on the record."
+msgstr ""
+
+#. module: fpos
+#: field:pos.config,iface_desktop:0
+msgid "Desktop"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.wizard.export.rzl,data_name:0
+msgid "Export Name"
+msgstr ""
+
+#. module: fpos
+#: selection:pos.config,fpos_model:0
+msgid "Fine"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.order.line,flags:0
+msgid "Flags"
+msgstr ""
+
+#. module: fpos
+#: selection:pos.config,fpos_model:0
+msgid "Flex"
+msgstr ""
+
+#. module: fpos
+#: selection:pos.config,fpos_model:0
+msgid "Flex 2"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.report.email,message_follower_ids:0
+msgid "Followers"
+msgstr ""
+
+#. module: fpos
+#: model:ir.ui.menu,name:fpos.menu_fpos
+msgid "Fpos"
+msgstr ""
+
+#. module: fpos
+#: field:pos.order.line,fpos_line_id:0
+msgid "Fpos Line"
+msgstr ""
+
+#. module: fpos
+#: field:pos.config,fpos_model:0
+msgid "Fpos Model"
+msgstr ""
+
+#. module: fpos
+#: field:pos.config,fpos_prefix:0
+msgid "Fpos Prefix"
+msgstr ""
+
+#. module: fpos
+#: view:pos.sale.report:fpos.view_pos_sale_report_search
+msgid "Group By"
+msgstr ""
+
+#. module: fpos
+#: selection:pos.config,fpos_model:0
+msgid "Hand"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.order,hs:0
+msgid "Hash"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.dist,id:0 field:fpos.hwproxy,id:0 field:fpos.order,id:0
+#: field:fpos.order.line,id:0 field:fpos.order.log,id:0
+#: field:fpos.order.log.line,id:0 field:fpos.order.payment,id:0
+#: field:fpos.order.payment.receipt,id:0 field:fpos.order.tax,id:0
+#: field:fpos.payment.iface,id:0 field:fpos.place,id:0 field:fpos.printer,id:0
+#: field:fpos.product.ean.wizard,id:0 field:fpos.product.list.wizard,id:0
+#: field:fpos.profile,id:0 field:fpos.report.email,id:0
+#: field:fpos.report.wizard,id:0 field:fpos.top,id:0
+#: field:fpos.wizard.export.bmd,id:0 field:fpos.wizard.export.rzl,id:0
+#: field:pos.sale.report,id:0 field:product.opt.wizard,id:0
+#: field:report.fpos.report_receipt,id:0
+msgid "ID"
+msgstr ""
+
+#. module: fpos
+#: help:fpos.report.email,message_unread:0
+msgid "If checked new messages require your attention."
+msgstr ""
+
+#. module: fpos
+#: view:pos.order:fpos.form_pos_order
+msgid "Info"
+msgstr ""
+
+#. module: fpos
+#: view:product.template:fpos.view_product_template_simple
+msgid "Information"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.order.payment,journal_id:0 field:fpos.payment.iface,journal_id:0
+#: model:ir.model,name:fpos.model_account_journal
+#: field:pos.sale.report,journal_id:0
+msgid "Journal"
+msgstr ""
+
+#. module: fpos
+#: view:pos.sale.report:fpos.view_pos_sale_report_search
+msgid "Journal invoices with period in current year"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.report.email,message_last_post:0
+msgid "Last Message Date"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.dist,__last_update:0 field:fpos.hwproxy,__last_update:0
+#: field:fpos.order,__last_update:0 field:fpos.order.line,__last_update:0
+#: field:fpos.order.log,__last_update:0
+#: field:fpos.order.log.line,__last_update:0
+#: field:fpos.order.payment,__last_update:0
+#: field:fpos.order.payment.receipt,__last_update:0
+#: field:fpos.order.tax,__last_update:0
+#: field:fpos.payment.iface,__last_update:0 field:fpos.place,__last_update:0
+#: field:fpos.printer,__last_update:0
+#: field:fpos.product.ean.wizard,__last_update:0
+#: field:fpos.product.list.wizard,__last_update:0
+#: field:fpos.profile,__last_update:0 field:fpos.report.email,__last_update:0
+#: field:fpos.report.wizard,__last_update:0 field:fpos.top,__last_update:0
+#: field:fpos.wizard.export.bmd,__last_update:0
+#: field:fpos.wizard.export.rzl,__last_update:0
+#: field:pos.sale.report,__last_update:0
+#: field:product.opt.wizard,__last_update:0
+#: field:report.fpos.report_receipt,__last_update:0
+msgid "Last Modified on"
+msgstr ""
+
+#. module: fpos
+#: field:pos.category,link_id:0
+msgid "Link"
+msgstr ""
+
+#. module: fpos
+#: selection:res.users,pos_role:0
+msgid "Manager"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.report.email,message_ids:0
+msgid "Messages"
+msgstr ""
+
+#. module: fpos
+#: help:fpos.report.email,message_ids:0
+msgid "Messages and communication history"
+msgstr ""
+
+#. module: fpos
+#: code:addons/fpos/fpos.py:630 field:product.product,pos_minus:0
+#: field:product.template,pos_minus:0
+#, python-format
+msgid "Minus"
+msgstr ""
+
+#. module: fpos
+#: view:website:fpos.report_receipt
+msgid "NETTO"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.dist,complete_name:0 field:fpos.hwproxy,complete_name:0
+#: field:fpos.order,name:0 field:fpos.order.line,name:0
+#: field:fpos.order.log.line,name:0 field:fpos.order.payment.receipt,name:0
+#: field:fpos.order.tax,name:0 field:fpos.place,complete_name:0
+#: field:fpos.place,name:0 field:fpos.printer,complete_name:0
+#: field:fpos.product.list.wizard,name:0 field:fpos.profile,name:0
+#: field:fpos.report.email,name:0 field:fpos.top,complete_name:0
+#: field:fpos.top,name:0
+msgid "Name"
+msgstr ""
+
+#. module: fpos
+#: selection:pos.config,iface_receipt:0
+msgid "Normal"
+msgstr ""
+
+#. module: fpos
+#: selection:account.tax,st:0 selection:fpos.order,st:0
+#: selection:fpos.order.tax,st:0 selection:pos.order,fpos_st:0
+msgid "Null"
+msgstr ""
+
+#. module: fpos
+#: selection:pos.config,fpos_model:0 selection:pos.config,sign_method:0
+msgid "Online"
+msgstr ""
+
+#. module: fpos
+#: selection:pos.config,fpos_model:0
+msgid "OrderJIM"
+msgstr ""
+
+#. module: fpos
+#: view:website:fpos.report_receipt
+msgid "P A R T N E R"
+msgstr ""
+
+#. module: fpos
+#: selection:pos.config,fpos_model:0
+msgid "PC"
+msgstr ""
+
+#. module: fpos
+#: field:res.users,pin:0
+msgid "PIN"
+msgstr ""
+
+#. module: fpos
+#: view:pos.sale.report:fpos.view_pos_sale_report_search
+#: selection:pos.sale.report,state:0
+msgid "Pro-forma"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.order,qr:0
+msgid "QR Code"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.report.email,rzl_export:0
+#: view:fpos.wizard.export.rzl:fpos.wizard_export_rzl
+#: field:fpos.wizard.export.rzl,data:0
+#: model:ir.actions.act_window,name:fpos.action_export_rzl
+msgid "RZL Export"
+msgstr ""
+
+#. module: fpos
+#: model:ir.model,name:fpos.model_fpos_wizard_export_rzl
+msgid "RZL Export Wizard"
+msgstr ""
+
+#. module: fpos
+#: view:website:fpos.report_receipt
+msgid "S U M M E"
+msgstr ""
+
+#. module: fpos
+#: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
+#: selection:pos.category,pos_color:0 selection:product.template,pos_color:0
+msgid "Schoko"
+msgstr ""
+
+#. module: fpos
+#: selection:fpos.printer,font_size:0
+msgid "Standard"
+msgstr ""
+
+#. module: fpos
+#: selection:fpos.order,st:0 selection:pos.order,fpos_st:0
+msgid "Start"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.order,state:0 selection:fpos.order,tag:0
+#: selection:fpos.order.line,tag:0
+#: view:pos.sale.report:fpos.view_pos_sale_report_search
+#: model:product.template,name:fpos.product_fpos_status_product_template
+msgid "Status"
+msgstr ""
+
+#. module: fpos
+#: selection:fpos.payment.iface,iface:0
+msgid "TIM"
+msgstr ""
+
+#. module: fpos
+#: selection:pos.config,fpos_model:0
+msgid "Tablet"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.order,tag:0 field:fpos.order.line,tag:0
+#: field:fpos.order.payment.receipt,tag:0
+msgid "Tag"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.order.line,tara:0
+msgid "Tara"
+msgstr ""
+
+#. module: fpos
+#: selection:fpos.order,tag:0
+msgid "Temp"
+msgstr ""
+
+#. module: fpos
+#: view:fpos.report.email:fpos.form_fpos_report_email
+#: field:pos.config,iface_test:0
+msgid "Test"
+msgstr ""
+
+#. module: fpos
+#: selection:fpos.order,st:0 selection:pos.order,fpos_st:0
+msgid "Training"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.report.email,message_unread:0
+msgid "Unread Messages"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.dist,name:0 field:fpos.hwproxy,name:0 field:fpos.printer,name:0
+msgid "Url"
+msgstr ""
+
+#. module: fpos
+#: field:pos.config,iface_user_nobalance:0
+msgid "User: no Balancing"
+msgstr ""
+
+#. module: fpos
+#: field:pos.config,iface_user_printsales:0
+msgid "User: print sales"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.wizard.export.bmd,buerf_name:0
+msgid "buerf_name"
+msgstr ""
+
+#. module: fpos
+#: selection:fpos.payment.iface,iface:0
+msgid "mCashier"
+msgstr ""
+
+#. module: fpos
+#: view:fpos.product.list.wizard:fpos.wizard_product_list
+msgid "product_list"
+msgstr ""
+
+#. module: fpos
+#: view:product.opt.wizard:fpos.wizard_product_opt
+msgid "product_opt"
+msgstr ""
+
+#. module: fpos
+#: code:addons/fpos/fpos.py:652
+#, python-format
+msgid "€-Format: %s,%s"
+msgstr ""
+
+#. module: fpos
+#: selection:pos.config,fpos_model:0
+msgid "Raw"
+msgstr ""
+
+#. module: fpos
+#: help:fpos.report.email,message_summary:0
+msgid "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
+msgstr ""
+
+#. module: fpos
+#: view:fpos.order:fpos.form_fpos_order
+#: field:fpos.order.line,netto:0
+#: field:fpos.order.tax,amount_netto:0
+#: view:website:fpos.report_receipt
+msgid "Netto"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.report.email,message_is_follower:0
+msgid "Is a Follower"
+msgstr ""

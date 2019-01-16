@@ -1,1 +1,2 @@
 import report_receipt
+import pos_sale_report

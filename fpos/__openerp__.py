@@ -74,6 +74,7 @@ oerp.at Fpos
               "report/pos_order_delivery.xml",
               "report/payment_overview_report.xml",
               "report/product_list.xml",
+              "report/pos_sale_report_view.xml",
               "data/cron_fpos_post.xml",
               "data/cron_fpos_product.xml",
               "data/product_fpos_status.xml",
