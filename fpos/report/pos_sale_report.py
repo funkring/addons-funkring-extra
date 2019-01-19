@@ -105,6 +105,14 @@ class pos_sale_report(osv.osv):
         'residual': fields.float('Total Residual', readonly=True),
         'user_currency_residual': fields.function(_compute_amounts_in_user_currency, string="Total Residual", type='float', digits_compute=dp.get_precision('Account'), multi="_compute_amounts"),
         'country_id': fields.many2one('res.country', 'Country of the Partner Company'),
+        'weekday': fields.selection([(0,"Sunday"),
+                                      (1,"Monday"),
+                                      (2,"Tuesday"),
+                                      (3,"Wednesday"),
+                                      (4,"Thursday"),
+                                      (5,"Friday"),
+                                      (6,"Saturday")],
+                                     string="Weekday")
     }
     _order = 'date desc'
 
@@ -133,7 +141,8 @@ class pos_sale_report(osv.osv):
                 sub.fiscal_position, sub.user_id, sub.company_id, sub.nbr, sub.type, sub.state,
                 sub.categ_id, sub.pos_categ_id, sub.date_due, sub.account_id, sub.account_line_id, sub.partner_bank_id,
                 sub.product_qty, sub.price_total / cr.rate as price_total, sub.price_average /cr.rate as price_average,
-                cr.rate as currency_rate, sub.residual / cr.rate as residual, sub.commercial_partner_id as commercial_partner_id
+                cr.rate as currency_rate, sub.residual / cr.rate as residual, sub.commercial_partner_id as commercial_partner_id,
+                weekday
         """
         return select_str
 
@@ -178,7 +187,8 @@ class pos_sale_report(osv.osv):
                     count(*) AS residual,
                     ai.commercial_partner_id as commercial_partner_id,
                     partner.country_id,
-                    pt.pos_categ_id
+                    pt.pos_categ_id,
+                    EXTRACT(DOW FROM ai.date_invoice) AS weekday
         """
         return select_str
 
@@ -200,7 +210,8 @@ class pos_sale_report(osv.osv):
                     ai.partner_id, ai.payment_term, ai.period_id, u2.name, u2.id, ai.currency_id, ai.journal_id,
                     ai.fiscal_position, ai.user_id, ai.company_id, ai.type, ai.state, pt.categ_id,
                     ai.date_due, ai.account_id, ail.account_id, ai.partner_bank_id, ai.residual,
-                    ai.amount_total, ai.commercial_partner_id, partner.country_id, pt.pos_categ_id
+                    ai.amount_total, ai.commercial_partner_id, partner.country_id, pt.pos_categ_id,
+                    EXTRACT(DOW FROM ai.date_invoice)
         """
         return group_by_str
       
@@ -223,7 +234,8 @@ class pos_sale_report(osv.osv):
             0 AS residual,
             partner.commercial_partner_id AS commercial_partner_id,
             partner.country_id,
-            pt.pos_categ_id
+            pt.pos_categ_id,
+            EXTRACT(DOW FROM fo.date) AS weekday
         """
         return select_str
       
@@ -245,7 +257,8 @@ class pos_sale_report(osv.osv):
           GROUP BY fo.date::timestamp::date, l.product_id, partner.id,
               u2.name, fo.currency_id, o.sale_journal, fo.user_id, fo.company_id, fo.st,
               fo.state, pt.categ_id, partner.commercial_partner_id, partner.country_id,
-              pt.pos_categ_id
+              pt.pos_categ_id,
+              EXTRACT(DOW FROM fo.date)
         """
         return group_by_str
 

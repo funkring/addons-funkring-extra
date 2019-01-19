@@ -60,6 +60,7 @@
                 <field name="pos_categ_id"/>
                 <field name="categ_id"/>
                 <field name="date"/>
+                <field name="weekday"/>
                 <filter string="This Year" name="thisyear" domain="['|', ('date', '=', False), '&amp;',('date','&lt;=', time.strftime('%%Y-12-31')),('date','&gt;=',time.strftime('%%Y-01-01'))]" help="Journal invoices with period in current year"/>
                 <separator/>
                 <filter string="To Invoice" domain="[('state','=','draft')]" help = "Draft Invoices"/>
@@ -87,6 +88,7 @@
                     <separator orientation="vertical" />
                     <filter string="Period" context="{'group_by':'period_id'}"/>
                     <filter string="Due Month" context="{'group_by':'date_due:month'}"/>
+                    <filter string="Weekday" context="{'group_by':'weekday'}"/>
                 </group>
             </search>
         </field>

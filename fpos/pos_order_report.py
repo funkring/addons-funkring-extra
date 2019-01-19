@@ -26,7 +26,17 @@ class pos_order_report(osv.osv):
     _inherit = "report.pos.order"
     _columns = {
         "config_id": fields.many2one('pos.config', "Point of Sale", readonly=True),
-        "fpos_ga": fields.boolean("Group Order")
+        "fpos_ga": fields.boolean("Group Order"),
+        "weekday": fields.selection([(0,"Sunday"),
+                                      (1,"Monday"),
+                                      (2,"Tuesday"),
+                                      (3,"Wednesday"),
+                                      (4,"Thursday"),
+                                      (5,"Friday"),
+                                      (6,"Saturday")],
+                                     string="Weekday"),
+                
+        "pos_categ_id": fields.many2one("pos.category","POS Category", readonly=True)
     }
 
     def init(self, cr):
@@ -51,7 +61,9 @@ class pos_order_report(osv.osv):
                     s.sale_journal as journal_id,
                     l.product_id as product_id,
                     pt.categ_id as product_categ_id,
-                    fo.ga as fpos_ga
+                    fo.ga as fpos_ga,
+                    EXTRACT(DOW FROM fo.date) AS weekday,
+                    pt.pos_categ_id
                 from pos_order_line as l
                     left join pos_order s on (s.id=l.order_id)
                     left join fpos_order fo on (fo.id=s.fpos_order_id) 
@@ -62,7 +74,9 @@ class pos_order_report(osv.osv):
                 group by
                     s.date_order, s.partner_id,s.state, pt.categ_id,
                     s.user_id,s.location_id,se.config_id,s.company_id,
-                    s.sale_journal,l.product_id,s.create_date, fo.ga
+                    s.sale_journal,l.product_id,s.create_date, fo.ga,
+                    EXTRACT(DOW FROM fo.date),
+                    pt.pos_categ_id
                 having
                     sum(l.qty * u.factor) != 0)""")
 
