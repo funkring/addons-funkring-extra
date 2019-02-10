@@ -112,27 +112,13 @@ class pos_sale_report(osv.osv):
                                       (4,"Thursday"),
                                       (5,"Friday"),
                                       (6,"Saturday")],
-                                     string="Weekday")
+                                     string="Weekday"),
+                
+        "config_id": fields.many2one("pos.config", "POS"),
+        "base_product_id": fields.many2one("product.template", "Base Product")
     }
     _order = 'date desc'
 
-    _depends = {
-        'account.invoice': [
-            'account_id', 'amount_total', 'commercial_partner_id', 'company_id',
-            'currency_id', 'date_due', 'date_invoice', 'fiscal_position',
-            'journal_id', 'partner_bank_id', 'partner_id', 'payment_term',
-            'period_id', 'residual', 'state', 'type', 'user_id',
-        ],
-        'account.invoice.line': [
-            'account_id', 'invoice_id', 'price_subtotal', 'product_id',
-            'quantity', 'uos_id',
-        ],
-        'product.product': ['product_tmpl_id'],
-        'product.template': ['categ_id'],
-        'product.uom': ['category_id', 'factor', 'name', 'uom_type'],
-        'res.currency.rate': ['currency_id', 'name'],
-        'res.partner': ['country_id'],
-    }
 
     def _select(self):
         select_str = """
@@ -142,7 +128,9 @@ class pos_sale_report(osv.osv):
                 sub.categ_id, sub.pos_categ_id, sub.date_due, sub.account_id, sub.account_line_id, sub.partner_bank_id,
                 sub.product_qty, sub.price_total / cr.rate as price_total, sub.price_average /cr.rate as price_average,
                 cr.rate as currency_rate, sub.residual / cr.rate as residual, sub.commercial_partner_id as commercial_partner_id,
-                weekday
+                weekday,
+                config_id,
+                base_product_id
         """
         return select_str
 
@@ -188,7 +176,9 @@ class pos_sale_report(osv.osv):
                     ai.commercial_partner_id as commercial_partner_id,
                     partner.country_id,
                     pt.pos_categ_id,
-                    EXTRACT(DOW FROM ai.date_invoice) AS weekday
+                    EXTRACT(DOW FROM ai.date_invoice) AS weekday,
+                    NULL AS config_id,
+                    COALESCE(pt.base_product_id, pt.id) AS base_product_id
         """
         return select_str
 
@@ -198,7 +188,7 @@ class pos_sale_report(osv.osv):
                 JOIN account_invoice ai ON ai.id = ail.invoice_id
                 JOIN res_partner partner ON ai.commercial_partner_id = partner.id
                 LEFT JOIN product_product pr ON pr.id = ail.product_id
-                left JOIN product_template pt ON pt.id = pr.product_tmpl_id
+                LEFT JOIN product_template pt ON pt.id = pr.product_tmpl_id
                 LEFT JOIN product_uom u ON u.id = ail.uos_id
                 LEFT JOIN product_uom u2 ON u2.id = pt.uom_id
         """
@@ -211,7 +201,9 @@ class pos_sale_report(osv.osv):
                     ai.fiscal_position, ai.user_id, ai.company_id, ai.type, ai.state, pt.categ_id,
                     ai.date_due, ai.account_id, ail.account_id, ai.partner_bank_id, ai.residual,
                     ai.amount_total, ai.commercial_partner_id, partner.country_id, pt.pos_categ_id,
-                    EXTRACT(DOW FROM ai.date_invoice)
+                    EXTRACT(DOW FROM ai.date_invoice),
+                    ai.user_id,
+                    COALESCE(pt.base_product_id, pt.id)
         """
         return group_by_str
       
@@ -235,20 +227,23 @@ class pos_sale_report(osv.osv):
             partner.commercial_partner_id AS commercial_partner_id,
             partner.country_id,
             pt.pos_categ_id,
-            EXTRACT(DOW FROM fo.date) AS weekday
+            EXTRACT(DOW FROM fo.date) AS weekday,
+            s.config_id AS config_id,
+            COALESCE(pt.base_product_id, pt.id) AS base_product_id
         """
         return select_str
       
     def _pos_from(self):
         from_str = """
           FROM fpos_order_line l
-          JOIN fpos_order fo ON fo.id = l.order_id       
-          JOIN pos_order o ON o.fpos_order_id = fo.id AND o.invoice_id IS NULL    
+          INNER JOIN fpos_order fo ON fo.id = l.order_id       
+          INNER JOIN pos_order o ON o.fpos_order_id = fo.id AND o.invoice_id IS NULL    
+          INNER JOIN pos_session s ON s.id = o.session_id
+          INNER JOIN product_product pr ON pr.id = l.product_id
+          INNER JOIN product_template pt ON pt.id = pr.product_tmpl_id
+          INNER JOIN product_uom u ON u.id = l.uom_id
+          INNER JOIN product_uom u2 ON u2.id = pt.uom_id
           LEFT JOIN res_partner partner ON partner.id = o.partner_id
-          LEFT JOIN product_product pr ON pr.id = l.product_id
-          LEFT JOIN product_template pt ON pt.id = pr.product_tmpl_id
-          LEFT JOIN product_uom u ON u.id = l.uom_id
-          LEFT JOIN product_uom u2 ON u2.id = pt.uom_id    
         """
         return from_str
       
@@ -258,7 +253,9 @@ class pos_sale_report(osv.osv):
               u2.name, fo.currency_id, o.sale_journal, fo.user_id, fo.company_id, fo.st,
               fo.state, pt.categ_id, partner.commercial_partner_id, partner.country_id,
               pt.pos_categ_id,
-              EXTRACT(DOW FROM fo.date)
+              EXTRACT(DOW FROM fo.date),
+              s.config_id,
+              COALESCE(pt.base_product_id, pt.id)
         """
         return group_by_str
 

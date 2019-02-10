@@ -52,6 +52,7 @@
             <field name="pos_name"/>
             <field name="pos_categ2_id"/>
             <field name="fpos_profile_ids" widget="many2many_tags"/>
+            <field name="base_product_id"/>
             <field name="pos_color"/>   
             <field name="pos_fav"/>
             <field name="pos_sec"/>

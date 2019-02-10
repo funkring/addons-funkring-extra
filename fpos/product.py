@@ -93,7 +93,9 @@ class product_template(osv.Model):
                                       ("g","Group"),
                                       ("a","Addition")], string="Section", help="Section Flag"),
         "tmpl_pos_rate" : fields.float("POS Rate %", readonly=True),
-        "fpos_profile_ids": fields.many2many("fpos.profile", "product_tmpl_fpos_profile_rel", "prod_tmpl_id", "profile_id", string="Profiles", copy=True)
+        "fpos_profile_ids": fields.many2many("fpos.profile", "product_tmpl_fpos_profile_rel", "prod_tmpl_id", "profile_id", string="Profiles", copy=True),
+        
+        "base_product_id": fields.many2one("product.template", "Base Product", copy=False)
     }
     _defaults = {
         "sequence" : 10

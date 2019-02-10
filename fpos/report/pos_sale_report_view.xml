@@ -61,6 +61,8 @@
                 <field name="categ_id"/>
                 <field name="date"/>
                 <field name="weekday"/>
+                <field name="config_id"/>
+                <field name="user_id"/>
                 <filter string="This Year" name="thisyear" domain="['|', ('date', '=', False), '&amp;',('date','&lt;=', time.strftime('%%Y-12-31')),('date','&gt;=',time.strftime('%%Y-01-01'))]" help="Journal invoices with period in current year"/>
                 <separator/>
                 <filter string="To Invoice" domain="[('state','=','draft')]" help = "Draft Invoices"/>
