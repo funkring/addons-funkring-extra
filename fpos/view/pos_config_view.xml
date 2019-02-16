@@ -48,10 +48,12 @@
                 <field name="fpos_prefix"/>                
             </field>
             <group string="Features" position="inside">
-                <group string="Auto Income/Expense">
+                <group string="Auto Income/Expense/Payment">
                     <field name="fpos_income_id"/>
                     <field name="fpos_expense_id"/>
-                </group>
+                    <field name="fpos_1nd_journal_id"/>
+                    <field name="fpos_2nd_journal_id"/>
+                </group>                
                 <group string="Distribution">                    
                     <field name="fpos_printer_ids" widget="many2many_tags"/>
                     <field name="fpos_dist_ids" widget="many2many_tags"/>

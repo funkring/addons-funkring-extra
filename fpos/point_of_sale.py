@@ -212,7 +212,10 @@ class pos_config(osv.Model):
             }),
                 
         "fpos_profile_ids": fields.many2many("fpos.profile", "fpos_config_fpos_profile_rel", "config_id", "profile_id", string="Profiles", copy=True),
-        "iface_hidecat": fields.boolean("Hide Categories")
+        "iface_hidecat": fields.boolean("Hide Categories"),
+        
+        "fpos_1nd_journal_id": fields.many2one("account.journal", "1nd Payment Method", domain="[('journal_user', '=', True ), ('type', 'in', ['bank', 'cash'])]"),
+        "fpos_2nd_journal_id": fields.many2one("account.journal", "2nd Payment Method", domain="[('journal_user', '=', True ), ('type', 'in', ['bank', 'cash'])]")
     }
     _sql_constraints = [
         ("user_uniq", "unique (user_id)", "Fpos User could only assinged once"),
@@ -465,7 +468,7 @@ class pos_config(osv.Model):
         jdoc_options = {
             "model" : {
                 "pos.config" : {
-                    "compositions" : ["journal_ids","user_ids","company_id","sequence_id"]
+                    "compositions" : ["journal_ids","user_ids","company_id","sequence_id","fpos_1nd_journal_id","fpos_2nd_journal_id"]
                 },
                 "res.company" : {
                     "fields" : ["name",
