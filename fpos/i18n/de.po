@@ -7,25 +7,23 @@ msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-15 22:30+0000\n"
-"PO-Revision-Date: 2019-02-15 23:30+0100\n"
+"POT-Creation-Date: 2019-03-18 00:33+0000\n"
+"PO-Revision-Date: 2019-03-18 01:34+0100\n"
 "Last-Translator: Martin Reisenhofer <martin.reisenhofer@funkring.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #. module: fpos
 #: model:email.template,body_html:fpos.email_report
 msgid ""
 "\n"
-"            <div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, "
-"Verdana, sans-serif; font-size: 11pt;\">\n"
+"            <div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 11pt;\">\n"
 "               <p>${object.partner_id.mail_salutation}, </p>\n"
-"               <p>as attachment the <strong>${ctx."
-"get('cashreport_name','Cashreport')}.</strong></p>\n"
+"               <p>as attachment the <strong>${ctx.get('cashreport_name','Cashreport')}.</strong></p>\n"
 "               <p></p>                                               \n"
 "               <p>Best Regards</p>\n"
 "               <p>${object.company_id.name}</p>\n"
@@ -33,11 +31,9 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"            <div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, "
-"Verdana, sans-serif; font-size: 11pt;\">\n"
+"            <div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 11pt;\">\n"
 "               <p>${object.partner_id.mail_salutation}, </p>\n"
-"               <p>im Anhang der <strong>${ctx."
-"get('cashreport_name','Kassenbericht')}.</strong></p>\n"
+"               <p>im Anhang der <strong>${ctx.get('cashreport_name','Kassenbericht')}.</strong></p>\n"
 "               <p></p>                                               \n"
 "               <p>Mit freundlichen Grüßen</p>\n"
 "               <p>${object.company_id.name}</p>\n"
@@ -327,13 +323,13 @@ msgid "Card"
 msgstr "Karte"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:281
+#: code:addons/fpos/point_of_sale.py:282
 #, python-format
 msgid "Card certifcate is empty"
 msgstr "Karten Zertifikat ist leer"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:279
+#: code:addons/fpos/point_of_sale.py:280
 #, python-format
 msgid "Card could only activated by Fpos"
 msgstr "Karte kann nur über eine Fpos aktiviert werden"
@@ -387,8 +383,7 @@ msgid "Category"
 msgstr "Kategorie"
 
 #. module: fpos
-#: field:product.product,pos_categ2_id:0
-#: field:product.template,pos_categ2_id:0
+#: field:product.product,pos_categ2_id:0 field:product.template,pos_categ2_id:0
 msgid "Category 2"
 msgstr "Kassen Kategorie 2"
 
@@ -493,12 +488,8 @@ msgstr "Erstellen"
 
 #. module: fpos
 #: view:fpos.product.ean.wizard:fpos.wizard_product_ean
-msgid ""
-"Create Intern EAN Codes for active products. EAN Code is only created if the "
-"current code is empty"
-msgstr ""
-"Erstelle interne EAN Code(s) für aktuell angezeigte Produkte, wenn noch "
-"keiner vorhanden ist."
+msgid "Create Intern EAN Codes for active products. EAN Code is only created if the current code is empty"
+msgstr "Erstelle interne EAN Code(s) für aktuell angezeigte Produkte, wenn noch keiner vorhanden ist."
 
 #. module: fpos
 #: field:account.journal,fpos_invoice:0
@@ -557,7 +548,7 @@ msgid "Customer"
 msgstr "Kunde"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:872 selection:pos.sale.report,type:0
+#: code:addons/fpos/point_of_sale.py:874 selection:pos.sale.report,type:0
 #, python-format
 msgid "Customer Invoice"
 msgstr "Kundenrechnung"
@@ -568,7 +559,7 @@ msgid "Customer Refund"
 msgstr "Kunden Gutschrift"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:717 code:addons/fpos/point_of_sale.py:777
+#: code:addons/fpos/point_of_sale.py:719 code:addons/fpos/point_of_sale.py:779
 #, python-format
 msgid "DEP Export %s"
 msgstr ""
@@ -626,8 +617,7 @@ msgstr "Tag"
 
 #. module: fpos
 #: help:product.product,pos_amount_dec:0 help:product.product,pos_price_dec:0
-#: help:product.template,pos_amount_dec:0
-#: help:product.template,pos_price_dec:0
+#: help:product.template,pos_amount_dec:0 help:product.template,pos_price_dec:0
 msgid "Decimal digits, -1 is no decimal, 0 is no restriction"
 msgstr "Dezimalstellen, -1 ist keine Dezimalstelle, 0 ist keine Beschränkung"
 
@@ -695,8 +685,7 @@ msgstr "Rabatt %"
 #. module: fpos
 #: field:fpos.dist,display_name:0 field:fpos.hwproxy,display_name:0
 #: field:fpos.order,display_name:0 field:fpos.order.line,display_name:0
-#: field:fpos.order.log,display_name:0
-#: field:fpos.order.log.line,display_name:0
+#: field:fpos.order.log,display_name:0 field:fpos.order.log.line,display_name:0
 #: field:fpos.order.payment,display_name:0
 #: field:fpos.order.payment.receipt,display_name:0
 #: field:fpos.order.tax,display_name:0 field:fpos.payment.iface,display_name:0
@@ -707,8 +696,7 @@ msgstr "Rabatt %"
 #: field:fpos.report.wizard,display_name:0 field:fpos.top,display_name:0
 #: field:fpos.wizard.export.bmd,display_name:0
 #: field:fpos.wizard.export.rzl,display_name:0
-#: field:pos.sale.report,display_name:0
-#: field:product.opt.wizard,display_name:0
+#: field:pos.sale.report,display_name:0 field:product.opt.wizard,display_name:0
 #: field:report.fpos.report_receipt,display_name:0
 msgid "Display Name"
 msgstr "Anzeigename"
@@ -788,7 +776,7 @@ msgid "Encryption Key"
 msgstr "Schlüssel"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:798
+#: code:addons/fpos/point_of_sale.py:800
 #, python-format
 msgid "Error!"
 msgstr "Fehler!"
@@ -905,14 +893,8 @@ msgstr "Von"
 
 #. module: fpos
 #: model:ir.actions.act_window,help:fpos.action_pos_sale_report
-msgid ""
-"From this report, you can have an overview of the amount invoiced to your "
-"customer. The tool search can also be used to personalise your Invoices "
-"reports and so, match this analysis to your needs."
-msgstr ""
-"Durch diesen Bericht erhalten Sie einen Überblick über die Abrechnungen "
-"Ihrer Kunden. Das Suche + Filter Tool kann zur weiteren individuellen "
-"Analyse einegsetzt werden."
+msgid "From this report, you can have an overview of the amount invoiced to your customer. The tool search can also be used to personalise your Invoices reports and so, match this analysis to your needs."
+msgstr "Durch diesen Bericht erhalten Sie einen Überblick über die Abrechnungen Ihrer Kunden. Das Suche + Filter Tool kann zur weiteren individuellen Analyse einegsetzt werden."
 
 #. module: fpos
 #: selection:fpos.place,pos_color:0 selection:fpos.top,pos_color:0
@@ -957,8 +939,7 @@ msgstr "Sammelrechnung"
 
 #. module: fpos
 #: field:account.journal,fpos_group:0
-#: view:report.pos.order:fpos.report_pos_order
-#: field:report.pos.order,fpos_ga:0
+#: view:report.pos.order:fpos.report_pos_order field:report.pos.order,fpos_ga:0
 msgid "Group Order"
 msgstr "Sammelrechnung"
 
@@ -1012,25 +993,17 @@ msgstr "Kategorien nicht anzeigen"
 #. module: fpos
 #: help:pos.config,iface_nogroup:0
 msgid "If a product is selected twice a new pos line was created"
-msgstr ""
-"Wenn ein Produkt mehrmals gewählt wird, wird jeweils eine Verkaufszeile "
-"erstellt."
+msgstr "Wenn ein Produkt mehrmals gewählt wird, wird jeweils eine Verkaufszeile erstellt."
 
 #. module: fpos
 #: help:fpos.printer,pos_category_ids:0
-msgid ""
-"If no category is given all products are printed, otherwise only the "
-"products in the categories"
-msgstr ""
-"Wenn keine Kategorie angegeben wird, werden alle Produkte gedruckt, "
-"ansonsten die die Produkte in der Kategorie"
+msgid "If no category is given all products are printed, otherwise only the products in the categories"
+msgstr "Wenn keine Kategorie angegeben wird, werden alle Produkte gedruckt, ansonsten die die Produkte in der Kategorie"
 
 #. module: fpos
 #: help:product.product,pos_nogroup:0 help:product.template,pos_nogroup:0
 msgid "If product selected again a extra line was created"
-msgstr ""
-"Wenn das selbe Produkt auf der Kasse nocheinmal gewählt wird, wird eine neue "
-"Zeile angelegt."
+msgstr "Wenn das selbe Produkt auf der Kasse nocheinmal gewählt wird, wird eine neue Zeile angelegt."
 
 #. module: fpos
 #: field:pos.config,image:0
@@ -1074,19 +1047,19 @@ msgid "Internal Sequence"
 msgstr "Interne Sequenz"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:239
+#: code:addons/fpos/point_of_sale.py:240
 #, python-format
 msgid "Invalid AES Key"
 msgstr "Ungültiger AES Schlüssel"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:532
+#: code:addons/fpos/point_of_sale.py:534
 #, python-format
 msgid "Invalid Sequence %s/%s"
 msgstr "Ungültige Sequenz %s/%s"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:287
+#: code:addons/fpos/point_of_sale.py:288
 #, python-format
 msgid "Invalid SerialNo: Expected is %s, but transmitted was %s"
 msgstr "Ungültige Seriennr.: Erwartet wird %s, ist übertragen wurde %s"
@@ -1124,18 +1097,14 @@ msgid "Irregularities"
 msgstr "Unregelmäßigkeiten"
 
 #. module: fpos
-#: field:fpos.report.email,journal_ids:0
-#: field:fpos.report.wizard,journal_ids:0
+#: field:fpos.report.email,journal_ids:0 field:fpos.report.wizard,journal_ids:0
 msgid "Journals"
 msgstr "Journale"
 
 #. module: fpos
 #: help:fpos.report.email,journal_ids:0 help:fpos.report.wizard,journal_ids:0
-msgid ""
-"Journals for which detail lines should be printed, if empty all are printed"
-msgstr ""
-"Wenn Journale angegeben werden, wird nur für die diese der Detaildruck "
-"gemacht"
+msgid "Journals for which detail lines should be printed, if empty all are printed"
+msgstr "Wenn Journale angegeben werden, wird nur für die diese der Detaildruck gemacht"
 
 #. module: fpos
 #: field:fpos.report.email,range_start:0
@@ -1371,7 +1340,7 @@ msgid "No access for product with EAN %s"
 msgstr "Kein Zugriff auf Produkt mit EAN %s"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:277
+#: code:addons/fpos/point_of_sale.py:278
 #, python-format
 msgid "No activiation in this sign status possible"
 msgstr "Es ist keine Aktivierung in diesem Signaturstatus möglich"
@@ -1395,9 +1364,7 @@ msgstr "Es wurde kein Eingangskonto für Produkt %s definiert"
 #: code:addons/fpos/wizard/export_wizard_rzl.py:86
 #, python-format
 msgid "No internal account defined on Journal %s for cash transfers"
-msgstr ""
-"Es wurde kein Konto für Schwebende Geldbewegungen für das Journal %s "
-"definiert"
+msgstr "Es wurde kein Konto für Schwebende Geldbewegungen für das Journal %s definiert"
 
 #. module: fpos
 #: field:account.journal,fpos_noreconcile:0
@@ -1405,13 +1372,13 @@ msgid "No invoice reconciliation"
 msgstr "Kein Rechnungsausgleich"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:337 code:addons/fpos/point_of_sale.py:431
+#: code:addons/fpos/point_of_sale.py:338 code:addons/fpos/point_of_sale.py:433
 #, python-format
 msgid "No profile for user %s"
 msgstr "Kein Profil für Benutzer %s"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:713
+#: code:addons/fpos/point_of_sale.py:715
 #, python-format
 msgid "No signation activated for %s"
 msgstr "Es wurde keine Signierung für %s aktiviert"
@@ -1454,7 +1421,7 @@ msgid "Only Administrator could correct Fpos orders"
 msgstr "Nur der Administrator darf Fpos Verkäufe korrigieren"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:308
+#: code:addons/fpos/point_of_sale.py:309
 #, python-format
 msgid "Only system admin could set pos system into live operation"
 msgstr "Nur der Systemadministrator kann eine Kasse in Echtbetrieb setzen"
@@ -1587,6 +1554,7 @@ msgstr "Firma"
 #. module: fpos
 #: view:fpos.order:fpos.form_fpos_order field:fpos.order.payment,payment:0
 #: field:fpos.order.payment.receipt,payment_id:0
+#: field:pos.config,fpos_payment_id:0
 msgid "Payment"
 msgstr "Zahlung"
 
@@ -1635,7 +1603,7 @@ msgid "Places"
 msgstr "Plätze"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:798
+#: code:addons/fpos/point_of_sale.py:800
 #, python-format
 msgid "Please provide a partner for the sale."
 msgstr "Es muss ein Partner für den Verkauf angegeben werden"
@@ -1665,8 +1633,7 @@ msgstr "Verkäufe buchen"
 
 #. module: fpos
 #: help:product.product,pos_amount_pre:0 help:product.product,pos_price_pre:0
-#: help:product.template,pos_amount_pre:0
-#: help:product.template,pos_price_pre:0
+#: help:product.template,pos_amount_pre:0 help:product.template,pos_price_pre:0
 msgid "Predicimal digits, -1 is no predecimal, 0 is no restriction"
 msgstr "Vorkommastellen, -1 keine Vorkommastellen, 0 keine Einschränkung"
 
@@ -1822,6 +1789,11 @@ msgid "Product Template"
 msgstr "Produktvorlage"
 
 #. module: fpos
+#: help:pos.config,fpos_payment_id:0
+msgid "Product for payment"
+msgstr "Produkt für Zahlung"
+
+#. module: fpos
 #: code:addons/fpos/product.py:404
 #, python-format
 msgid "Product with EAN %s not found"
@@ -1872,8 +1844,7 @@ msgid "Profile"
 msgstr "Profil"
 
 #. module: fpos
-#: view:fpos.profile:fpos.tree_fpos_profile
-#: field:pos.config,fpos_profile_ids:0
+#: view:fpos.profile:fpos.tree_fpos_profile field:pos.config,fpos_profile_ids:0
 #: field:product.product,fpos_profile_ids:0
 #: field:product.template,fpos_profile_ids:0
 msgid "Profiles"
@@ -2032,13 +2003,8 @@ msgstr "Kassenbericht"
 
 #. module: fpos
 #: help:pos.config,fpos_sync_clean:0
-msgid ""
-"Resync all Data after the specified count. if count is 0 auto full sync is "
-"disabled"
-msgstr ""
-"Es wird automatisch eine vollständige Synchronisation ausgeführt wenn die "
-"vorgegebene Anzahl erreicht wurde. 0 deaktiviert den die automatische "
-"Datenbank bereinigung"
+msgid "Resync all Data after the specified count. if count is 0 auto full sync is disabled"
+msgstr "Es wird automatisch eine vollständige Synchronisation ausgeführt wenn die vorgegebene Anzahl erreicht wurde. 0 deaktiviert den die automatische Datenbank bereinigung"
 
 #. module: fpos
 #: view:product.template:fpos.view_product_template_simple
@@ -2165,13 +2131,13 @@ msgid "Show the product also in this category"
 msgstr "Zeige das Produkt auch in dieser Kategorie"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:407
+#: code:addons/fpos/point_of_sale.py:409
 #, python-format
 msgid "Signation failed for user %s"
 msgstr "Signierung für Benutzer %s fehlgeschlagen"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:341
+#: code:addons/fpos/point_of_sale.py:342
 #, python-format
 msgid "Signation is not configured for user %s"
 msgstr "Signierung für Benutzer %s nicht konfiguriert"
@@ -2256,7 +2222,7 @@ msgstr "Summe"
 #. module: fpos
 #: field:fpos.order.line,subtotal_incl:0
 msgid "Subtotal Incl."
-msgstr "Zwischensumme inkl."
+msgstr ""
 
 #. module: fpos
 #: field:fpos.report.email,message_summary:0 field:fpos.report.email,summary:0
@@ -2312,8 +2278,8 @@ msgstr "Komplettabgleich nach"
 
 #. module: fpos
 #: view:fpos.order:fpos.form_fpos_order view:fpos.order:fpos.tree_fpos_order
-#: field:fpos.order.tax,amount_tax:0
-#: model:ir.model,name:fpos.model_account_tax view:website:fpos.report_receipt
+#: field:fpos.order.tax,amount_tax:0 model:ir.model,name:fpos.model_account_tax
+#: view:website:fpos.report_receipt
 msgid "Tax"
 msgstr "Steuer"
 
@@ -2335,7 +2301,7 @@ msgid "Teal"
 msgstr "Türkis"
 
 #. module: fpos
-#: code:addons/fpos/point_of_sale.py:567
+#: code:addons/fpos/point_of_sale.py:569
 #, python-format
 msgid "There is no company for user %s"
 msgstr "Es existiert keine Firma für Benutzer %s"
@@ -2363,8 +2329,7 @@ msgstr "Zu verrechnen"
 #. module: fpos
 #: view:fpos.place:fpos.search_pos_place field:fpos.place,top_id:0
 #: view:fpos.top:fpos.form_top view:fpos.top:fpos.search_top
-#: view:fpos.top:fpos.tree_top
-#: model:ir.actions.act_window,name:fpos.action_top
+#: view:fpos.top:fpos.tree_top model:ir.actions.act_window,name:fpos.action_top
 #: model:ir.model,name:fpos.model_fpos_top model:ir.ui.menu,name:fpos.menu_top
 msgid "Top"
 msgstr "Bereich"
@@ -2389,9 +2354,7 @@ msgstr "Gesamt (Netto)"
 #. module: fpos
 #: help:pos.config,parent_user_id:0
 msgid "Transfer all open orders to this user before pos is closing"
-msgstr ""
-"Vor dem Kassenabschluss werden alle offenen Verkäufe zum Hauptbenutzer "
-"übertragen"
+msgstr "Vor dem Kassenabschluss werden alle offenen Verkäufe zum Hauptbenutzer übertragen"
 
 #. module: fpos
 #: selection:pos.sale.report,weekday:0 selection:report.pos.order,weekday:0
@@ -2418,12 +2381,8 @@ msgstr "Rechnung %s/%s/%s kann nicht gebucht werden"
 #. module: fpos
 #: code:addons/fpos/fpos.py:426
 #, python-format
-msgid ""
-"Unable to post order %s: tax 'price include/exclude' was changed or tax mixed"
-msgstr ""
-"Die Buchung für den Verkauf %s kann nicht vorgenommen werden: Entweder wurde "
-"bei der Steuer 'Preis inklusive' umgestellt, oder es wurden verschiedene "
-"Steuersätze bei einem Produkt vermischt"
+msgid "Unable to post order %s: tax 'price include/exclude' was changed or tax mixed"
+msgstr "Die Buchung für den Verkauf %s kann nicht vorgenommen werden: Entweder wurde bei der Steuer 'Preis inklusive' umgestellt, oder es wurden verschiedene Steuersätze bei einem Produkt vermischt"
 
 #. module: fpos
 #: view:fpos.place:fpos.search_pos_place field:fpos.place,pos_unavail:0
@@ -2512,9 +2471,7 @@ msgstr "Gelb"
 #: code:addons/fpos/fpos.py:97
 #, python-format
 msgid "You cannot delete an order which are not in draft state"
-msgstr ""
-"Es kann kein Verkauf gelöscht werden, welcher nicht mehr im Entwurfsstatus "
-"ist."
+msgstr "Es kann kein Verkauf gelöscht werden, welcher nicht mehr im Entwurfsstatus ist."
 
 #. module: fpos
 #: view:product.template:fpos.view_product_template_simple

@@ -215,7 +215,8 @@ class pos_config(osv.Model):
         "iface_hidecat": fields.boolean("Hide Categories"),
         
         "fpos_1nd_journal_id": fields.many2one("account.journal", "1nd Payment Method", domain="[('journal_user', '=', True ), ('type', 'in', ['bank', 'cash'])]"),
-        "fpos_2nd_journal_id": fields.many2one("account.journal", "2nd Payment Method", domain="[('journal_user', '=', True ), ('type', 'in', ['bank', 'cash'])]")
+        "fpos_2nd_journal_id": fields.many2one("account.journal", "2nd Payment Method", domain="[('journal_user', '=', True ), ('type', 'in', ['bank', 'cash'])]"),
+        "fpos_payment_id" : fields.many2one("product.product","Payment", domain=[("income_pdt","=",False),("expense_pdt","=",False)], help="Product for payment")
     }
     _sql_constraints = [
         ("user_uniq", "unique (user_id)", "Fpos User could only assinged once"),
@@ -348,6 +349,7 @@ class pos_config(osv.Model):
             return ("%0.2f" % val).replace(".",",")
 
         def dateToStr(val):
+            val = helper.strToLocalTimeStr(cr, uid, val, context=context)
             return util.strToTime(val).strftime("%Y-%m-%dT%H:%M:%S")
 
         def encryptTurnover():
