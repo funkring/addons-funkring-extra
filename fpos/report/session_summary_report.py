@@ -391,14 +391,21 @@ class Parser(extreport.basic_parser):
                 price = 0.0
                 uom = product.uom_id
                 if uom.nounit:
-                    key = (line.name, line.product_id, 0, 0)
+                    key = (line.name, line.product_id, 0, 0, 0)
                 else:
                     fpos_line = line.fpos_line_id
                     if fpos_line:
                         price = fpos_line.price
                     elif line.qty:
                         price = amount / line.qty
-                    key = (line.name, line.product_id, line.discount, price)
+                    
+                    sign = 0
+                    if line.qty < 0:
+                      sign = -1
+                    elif line.qty > 0:
+                      sign = 1 
+                                                            
+                    key = (line.name, line.product_id, line.discount, price, sign)
                 # get detail
                 detail = detailDict.get(key)
                 if detail is None:
@@ -408,7 +415,7 @@ class Parser(extreport.basic_parser):
                         "amount" : amount,
                         "discount" : line.discount,
                         "price" : price,
-                        "name" : line.name,
+                        "name" : line.name,                        
                         "tax_name" : is_taxed and name or ""
                     }
                     detailDict[key] = detail
