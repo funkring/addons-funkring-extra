@@ -104,7 +104,6 @@ class fpos_order(models.Model):
             raise Warning(_("Only Administrator could correct Fpos orders"))
         
         tax_obj = self.pool["account.tax"]
-        line_obj = self.env["pos.order.line"]
         
         for order in self:
             cash_payment = None
@@ -153,12 +152,12 @@ class fpos_order(models.Model):
                 taxes = {}
                 fpos_taxes = []
                 order_tax = 0
-                for line in order.line_ids:      
-                    taxes_ids = line_obj._get_taxes(line)              
+                for line in order.line_ids:
+                    taxes = line.tax_ids
                     price = line.price
-                    calc = tax_obj.compute_all(self._cr, self._uid, taxes_ids, price, line.qty, product=line.product_id, partner=line.order_id.partner_id or False)
-                    if taxes_ids:
-                        tax_rec = taxes_ids[0]
+                    calc = tax_obj.compute_all(self._cr, self._uid, taxes, price, line.qty, product=line.product_id, partner=line.order_id.partner_id or False)
+                    if taxes:
+                        tax_rec = taxes[0]
                         tax = taxes.get(tax_rec.id)
                         tax_amount = calc["total_included"] - calc["total"]
                         order_tax += tax_amount
@@ -185,12 +184,12 @@ class fpos_order(models.Model):
                     break
                 
                 # correct turnover, cpos
-                order.cpos = order.cpos + diff
-                order.turnover = order.turnover + diff
-                next_orders = order.search([("fpos_user_id","=",order.fpos_user_id.id),("seq",">",order.seq)],order="seq asc")
-                for next_order in next_orders:
-                    next_order.cpos = next_order.cpos + diff
-                    next_order.turnover = next_order.turnover + diff
+                #order.cpos = order.cpos + diff
+                #order.turnover = order.turnover + diff
+                #next_orders = order.search([("fpos_user_id","=",order.fpos_user_id.id),("seq",">",order.seq)],order="seq asc")
+                #for next_order in next_orders:
+                #    next_order.cpos = next_order.cpos + diff
+                #    next_order.turnover = next_order.turnover + diff
                      
                 order.amount_total = order_total
                 order.amount_tax = order_tax
