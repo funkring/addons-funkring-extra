@@ -32,6 +32,7 @@ class fpos_top(models.Model):
     sequence = fields.Integer("Sequence", default=10)
     pos_color = fields.Selection(COLOR_NAMES, string="Color")
     pos_unavail = fields.Boolean("Unavailable")
+    active = fields.Boolean("Active", default=True)
         
     @api.one
     @api.depends('name', 'parent_id.name')
@@ -62,6 +63,7 @@ class fpos_place(models.Model):
     pos_color = fields.Selection(COLOR_NAMES, string="Color")
     pos_unavail = fields.Boolean("Unavailable")
     complete_name = fields.Char("Name", compute="_complete_name", store=True)
+    active = fields.Boolean("Active", default=True)
     
     @api.multi
     def name_get(self):

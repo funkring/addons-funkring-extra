@@ -19,6 +19,8 @@
                         <field name="pos_color"/>
                     </group>
                     <group>
+                        <field name="active"/>
+                        <field name="sequence"/>
                     </group>
                 </group>
             </sheet>
@@ -45,9 +47,13 @@
       <field name="model">fpos.place</field>
       <field name="arch" type="xml">
         <search string="Place">
-          <field string="Top" name="name" filter_domain="[('name','ilike',self)]"/>
+          <field name="name" filter_domain="[('name','ilike',self)]"/>
+          <field name="top_id"/>
           <filter string="Unavailable" domain="[('pos_unavail','=',True)]"/>
           <filter string="Available" domain="[('pos_unavail','=',False)]"/>
+          <group expand="0" string="Group By...">
+            <filter string="Top" context="{'group_by': 'top_id'}"/>
+          </group>
         </search>
       </field>
     </record>
@@ -62,5 +68,6 @@
     <menuitem id="menu_pos_place" name="Places" parent="menu_areas"
       sequence="20"
       action="action_pos_place"/>
+      
   </data>
 </openerp>
