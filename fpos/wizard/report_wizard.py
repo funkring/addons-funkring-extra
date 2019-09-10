@@ -38,6 +38,7 @@ class report_wizard(models.TransientModel):
                                default=lambda self: self.env["pos.config"].search([("liveop","=",True)]))
     
     detail = fields.Boolean("Detail", help="Print detail")
+    filter_journal = fields.Boolean("Filter Journal")
     journal_ids = fields.Many2many("account.journal", "report_wizard_journal_rel", "wizard_id", "journal_id", "Journals", 
                                    help="Journals for which detail lines should be printed, if empty all are printed")
     
@@ -169,6 +170,8 @@ class report_wizard(models.TransientModel):
                 report_ctx["journal_ids"] = [j.id for j in wizard.journal_ids]
             if wizard.product_ids:
                 report_ctx["product_ids"] = [p.id for p in wizard.product_ids]
+            if wizard.filter_journal:
+                report_ctx["filter_journal"] = True
 
             # add report info                
             report_ctx["pos_report_info"] = {

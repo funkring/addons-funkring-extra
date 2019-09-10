@@ -14,9 +14,10 @@
                 </group>
                 <group>
                   <field name="date_from" on_change="onchange_range(range, date_from, date_till)"/>
-                  <field name="date_till"/>
-                  <field name="detail"/>  
-                  <field name="journal_ids" widget="many2many_tags" attrs="{'invisible': [('detail','!=',True)]}"/>
+                  <field name="date_till"/>                
+                  <field name="detail"/>   
+                  <field name="filter_journal"/>
+                  <field name="journal_ids" widget="many2many_tags" attrs="{'invisible': [('detail','!=',True),('filter_journal','!=',True)]}"/>
                   <field name="product_ids" widget="many2many_tags" attrs="{'invisible': [('detail','!=',True)]}"/>
                 </group>
                 <group>

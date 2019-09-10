@@ -25,6 +25,7 @@ class Parser(extreport.basic_parser):
             "print_product_summary" : context.get("print_product_summary", False),
             "print_product_intern" : context.get("print_product_intern", False),
             "journal_ids": context.get("journal_ids"),
+            "filter_journal": context.get("filter_journal", False),
             "product_ids": context.get("product_ids"),
             "no_group" : context.get("no_group", False),
             "summary" : context.get("summary", False),
@@ -368,6 +369,7 @@ class Parser(extreport.basic_parser):
         date_min = None
         date_max = None
         
+        filter_journal = self.localcontext.get("filter_journal") or False
         journal_ids = set(self.localcontext.get("journal_ids") or [])
         product_ids = set(self.localcontext.get("product_ids") or [])
         
@@ -448,9 +450,13 @@ class Parser(extreport.basic_parser):
         first_order = None
         last_order = None
         user = None
-        order_ids = order_obj.search(self.cr, self.uid, [("session_id","in",session_ids),("state","in",["paid","done","invoiced"])], order="id asc")
         order_count = 0
-
+        
+        domain = [("session_id","in",session_ids),("state","in",["paid","done","invoiced"])]
+        if filter_journal and journal_ids:
+          domain.append(("statement_ids.journal_id","in",list(journal_ids)))
+        
+        order_ids = order_obj.search(self.cr, self.uid, domain, order="id asc")
         for order in order_obj.browse(self.cr, self.uid, order_ids, context=self.localcontext):
             # get min date
             if date_min is None:
@@ -808,6 +814,7 @@ class Parser(extreport.basic_parser):
           })
 
         # convert statement turnovers to list
+        otherCashStatementsWithTurnover = 0
         for st in statements:
             # detail
             st_turnover = self._sortedTurnover(st["turnover_detail"].itervalues())
@@ -819,6 +826,8 @@ class Parser(extreport.basic_parser):
             st["turnover_detail"] = st_turnover
             # add to details
             if len(st_turnoverDetails) > 0:
+              if st != cashEntry:
+                otherCashStatementsWithTurnover+=1
               turnoverStats.append({
                 "name": st["journal"],
                 "details": self._sortedDetail(st_turnoverDetails)
@@ -874,7 +883,7 @@ class Parser(extreport.basic_parser):
             "details" : details,
             "order_count" : order_count,
             "noturnover_active": noturnover_active,
-            "simple_turnover": len(turnoverStats) <= 1 and len(turnoverDetails) < 13, 
+            "simple_turnover": len(turnoverStats) <= 1 and len(turnoverDetails) < 13 and not otherCashStatementsWithTurnover,             
             "days" : []
         }
         return stat
