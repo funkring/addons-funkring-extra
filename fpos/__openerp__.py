@@ -37,7 +37,8 @@ oerp.at Fpos
                  "at_account",
                  "jdoc",
                  "point_of_sale",
-                 "at_sale"
+                 "at_sale",
+                 "automation"
                 ],
     "data" : ["security.xml",
               "menu.xml",              
@@ -60,6 +61,7 @@ oerp.at Fpos
               "view/invoice_view.xml",
               "view/fpos_order_report_view.xml",
               "view/fpos_profile.xml",
+              "view/fpos_post_task.xml",
               "wizard/product_list_wizard.xml",            
               "wizard/export_wizard.xml",
               "wizard/export_wizard_rzl.xml",

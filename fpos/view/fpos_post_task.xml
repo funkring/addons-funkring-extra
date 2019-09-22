@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+  
+    <record id="form_fpos_post_task" model="ir.ui.view">
+      <field name="name">fpos.form_fpos_post_task</field>
+      <field name="model">fpos.post.task</field>
+      <field name="inherit_id" ref="automation.form_automation_task"/>
+      <field name="mode">primary</field>
+      <field name="arch" type="xml">
+        <group name="task_specific" position="inside">
+          <group>
+            <field name="config_id"/>
+          </group>
+          <group>
+          </group>
+        </group>
+      </field>
+    </record>
+
+    <record id="tree_fpos_post_task" model="ir.ui.view">
+      <field name="name">fpos.tree_fpos_post_task</field>
+      <field name="model">fpos.post.task</field>
+      <field name="mode">primary</field>
+      <field name="inherit_id" ref="automation.tree_automation_task"/>
+      <field name="arch" type="xml">
+        <field name="name" position="after">          
+          <field name="config_id"/> 
+        </field>
+      </field>
+    </record>
+
+    <record id="search_fpos_post_task" model="ir.ui.view">
+      <field name="name">fpos.search_fpos_post_task</field>
+      <field name="model">fpos.post.task</field>
+      <field name="inherit_id" ref="automation.search_automation_task"/>
+      <field name="arch" type="xml">
+        <field name="name" position="after">
+          <field name="config_id"/>
+        </field>
+      </field>
+    </record>
+
+    <record id="action_fpos_post_task" model="ir.actions.act_window">
+      <field name="name">Post Task</field>
+      <field name="res_model">fpos.post.task</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    
+     <menuitem action="action_fpos_post_task"
+            id="menu_fpos_post_task"
+            name="Post Task" parent="menu_fpos" sequence="100"/>
+
+  </data>
+</openerp>

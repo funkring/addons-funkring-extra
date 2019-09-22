@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Language: de_DE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-10 07:14+0000\n"
-"PO-Revision-Date: 2019-09-10 07:14+0000\n"
+"POT-Creation-Date: 2019-09-22 22:16+0000\n"
+"PO-Revision-Date: 2019-09-22 22:16+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -559,6 +559,7 @@ msgstr "Rechnung erstellen"
 #: field:fpos.order.tax,create_uid:0
 #: field:fpos.payment.iface,create_uid:0
 #: field:fpos.place,create_uid:0
+#: field:fpos.post.task,create_uid:0
 #: field:fpos.printer,create_uid:0
 #: field:fpos.product.ean.wizard,create_uid:0
 #: field:fpos.product.list.wizard,create_uid:0
@@ -584,6 +585,7 @@ msgstr "Erstellt von"
 #: field:fpos.order.tax,create_date:0
 #: field:fpos.payment.iface,create_date:0
 #: field:fpos.place,create_date:0
+#: field:fpos.post.task,create_date:0
 #: field:fpos.printer,create_date:0
 #: field:fpos.product.ean.wizard,create_date:0
 #: field:fpos.product.list.wizard,create_date:0
@@ -779,6 +781,7 @@ msgstr "Rabatt %"
 #: field:fpos.order.tax,display_name:0
 #: field:fpos.payment.iface,display_name:0
 #: field:fpos.place,display_name:0
+#: field:fpos.post.task,display_name:0
 #: field:fpos.printer,display_name:0
 #: field:fpos.product.ean.wizard,display_name:0
 #: field:fpos.product.list.wizard,display_name:0
@@ -873,6 +876,11 @@ msgstr "Leer"
 #: field:pos.config,sign_key:0
 msgid "Encryption Key"
 msgstr "Schlüssel"
+
+#. module: fpos
+#: field:fpos.post.task,error:0
+msgid "Error"
+msgstr "Fehler"
 
 #. module: fpos
 #: code:addons/fpos/point_of_sale.py:800
@@ -1248,6 +1256,7 @@ msgstr "Letzter Abgleich"
 #: field:fpos.order.tax,write_uid:0
 #: field:fpos.payment.iface,write_uid:0
 #: field:fpos.place,write_uid:0
+#: field:fpos.post.task,write_uid:0
 #: field:fpos.printer,write_uid:0
 #: field:fpos.product.ean.wizard,write_uid:0
 #: field:fpos.product.list.wizard,write_uid:0
@@ -1273,6 +1282,7 @@ msgstr "Zuletzt aktualisiert von"
 #: field:fpos.order.tax,write_date:0
 #: field:fpos.payment.iface,write_date:0
 #: field:fpos.place,write_date:0
+#: field:fpos.post.task,write_date:0
 #: field:fpos.printer,write_date:0
 #: field:fpos.product.ean.wizard,write_date:0
 #: field:fpos.product.list.wizard,write_date:0
@@ -1616,8 +1626,8 @@ msgstr "Nur der Systemadministrator kann eine Kasse in Echtbetrieb setzen"
 
 #. module: fpos
 #: code:addons/fpos/report/session_summary_report.py:762
-#: code:addons/fpos/report/session_summary_report.py:891
-#: code:addons/fpos/report/session_summary_report.py:907
+#: code:addons/fpos/report/session_summary_report.py:894
+#: code:addons/fpos/report/session_summary_report.py:910
 #: selection:pos.sale.report,state:0
 #, python-format
 msgid "Open"
@@ -1664,6 +1674,11 @@ msgstr "Protokoll Position"
 #: view:fpos.order:fpos.tree_fpos_order
 msgid "Orders"
 msgstr "Verkäufe"
+
+#. module: fpos
+#: field:fpos.post.task,owner_id:0
+msgid "Owner"
+msgstr "Eigentümer"
 
 #. module: fpos
 #: sql_constraint:res.users:0
@@ -1810,6 +1825,7 @@ msgstr "Es muss ein Partner für den Verkauf angegeben werden"
 
 #. module: fpos
 #: view:account.journal:fpos.form_account_journal
+#: field:fpos.post.task,config_id:0
 #: model:ir.model,name:fpos.model_pos_order
 #: field:pos.order,config_id:0
 #: view:report.pos.order:fpos.report_pos_order
@@ -1829,9 +1845,32 @@ msgid "Point of Sale Orders Statistics"
 msgstr "Auswertungen Kassen Verkäufe"
 
 #. module: fpos
+#: code:addons/fpos/fpos_post_task.py:71
+#, python-format
+msgid "Post %s"
+msgstr ""
+
+#. module: fpos
+#: code:addons/fpos/fpos_post_task.py:73
+#, python-format
+msgid "Post All"
+msgstr "Buche Alle"
+
+#. module: fpos
+#: model:ir.model,name:fpos.model_fpos_post_task
+msgid "Post Order Task"
+msgstr "Buchungsaufgabe"
+
+#. module: fpos
 #: view:pos.config:fpos.form_pos_config
 msgid "Post Orders"
 msgstr "Verkäufe buchen"
+
+#. module: fpos
+#: model:ir.actions.act_window,name:fpos.action_fpos_post_task
+#: model:ir.ui.menu,name:fpos.menu_fpos_post_task
+msgid "Post Task"
+msgstr "Buchen"
 
 #. module: fpos
 #: help:product.product,pos_amount_pre:0
@@ -2063,6 +2102,11 @@ msgid "Profiles"
 msgstr "Profile"
 
 #. module: fpos
+#: field:fpos.post.task,progress:0
+msgid "Progress"
+msgstr "Fortschritt"
+
+#. module: fpos
 #: model:ir.model,name:fpos.model_pos_category
 msgid "Public Category"
 msgstr "Öffentliche Kategorie"
@@ -2223,6 +2267,21 @@ msgid "Report Wizard"
 msgstr "Kassenbericht"
 
 #. module: fpos
+#: field:fpos.post.task,res_ref:0
+msgid "Resource"
+msgstr "Ressource"
+
+#. module: fpos
+#: field:fpos.post.task,res_id:0
+msgid "Resource ID"
+msgstr ""
+
+#. module: fpos
+#: field:fpos.post.task,res_model:0
+msgid "Resource Model"
+msgstr "Ressource Model"
+
+#. module: fpos
 #: help:pos.config,fpos_sync_clean:0
 msgid "Resync all Data after the specified count. if count is 0 auto full sync is disabled"
 msgstr "Es wird automatisch eine vollständige Synchronisation ausgeführt wenn die vorgegebene Anzahl erreicht wurde. 0 deaktiviert den die automatische Datenbank bereinigung"
@@ -2273,6 +2332,11 @@ msgstr "Samstag"
 #: selection:product.template,pos_action:0
 msgid "Scan"
 msgstr "Scannen"
+
+#. module: fpos
+#: field:fpos.post.task,cron_id:0
+msgid "Scheduled Job"
+msgstr "Geplante Ausführung"
 
 #. module: fpos
 #: field:pos.config,iface_ponline:0
@@ -2445,6 +2509,21 @@ msgid "Special Type"
 msgstr "Spezialtyp"
 
 #. module: fpos
+#: help:fpos.post.task,after_once_task_id:0
+msgid "Start this task after that task has finished successfully only once"
+msgstr "\"Start diesen Prozess einmal nach einer erfolgreichen Ausführung des aktuellen Prozesses"
+
+#. module: fpos
+#: field:fpos.post.task,state:0
+msgid "State"
+msgstr "Status"
+
+#. module: fpos
+#: field:fpos.post.task,state_change:0
+msgid "State Change"
+msgstr "Status Änderung"
+
+#. module: fpos
 #: code:addons/fpos/fpos.py:641
 #, python-format
 msgid "Subsection"
@@ -2515,6 +2594,16 @@ msgstr "Datenbestand Version"
 #: help:pos.config,fpos_sync_count:0
 msgid "Synchronization count after full database sync"
 msgstr "Komplettabgleich nach"
+
+#. module: fpos
+#: field:fpos.post.task,task_id:0
+msgid "Task"
+msgstr "Aufgabe"
+
+#. module: fpos
+#: field:fpos.post.task,after_once_task_id:0
+msgid "Task After (Once)"
+msgstr "Prozess nach Ausführung (Einmalig)"
 
 #. module: fpos
 #: view:fpos.order:fpos.form_fpos_order
@@ -2590,10 +2679,25 @@ msgid "Total"
 msgstr "Gesamt"
 
 #. module: fpos
+#: field:fpos.post.task,total_logs:0
+msgid "Total Logs"
+msgstr "Log Einträge"
+
+#. module: fpos
 #: field:pos.sale.report,residual:0
 #: field:pos.sale.report,user_currency_residual:0
 msgid "Total Residual"
 msgstr "Restbetrag"
+
+#. module: fpos
+#: field:fpos.post.task,total_stages:0
+msgid "Total Stages"
+msgstr "Abschnitte"
+
+#. module: fpos
+#: field:fpos.post.task,total_warnings:0
+msgid "Total Warnings"
+msgstr "Warnungen"
 
 #. module: fpos
 #: field:pos.sale.report,price_total:0
