@@ -110,23 +110,11 @@ class fpos_order(models.Model):
             payment_total = 0
             
             for payment in order.payment_ids:
-                if payment.journal_id.type == "cash":
+                if payment.journal_id.type == "cash":            
                     cash_payment = payment
                 payment_total += payment.amount
                 
                 
-            # ###################################################
-            # FIX invalid payment BUG, DELETE KASSASTURZ LINES 
-            # ###################################################
-            if cash_payment and not payment_total and order.amount_total:
-                cash_payment.amount = order.amount_total
-                cash_payment.payment = order.amount_total
-                order.cpos = order.cpos + order.amount_total
-                next_orders = order.search([("fpos_user_id","=",order.fpos_user_id.id),("seq",">",order.seq)],order="seq asc")
-                for next_order in next_orders:
-                    next_order.cpos = next_order.cpos + order.amount_total
-            
-          
             # ###################################################
             # FIX invalid status flag
             # ###################################################
@@ -183,14 +171,6 @@ class fpos_order(models.Model):
                     payment.amount = payment.amount + diff 
                     break
                 
-                # correct turnover, cpos
-                #order.cpos = order.cpos + diff
-                #order.turnover = order.turnover + diff
-                #next_orders = order.search([("fpos_user_id","=",order.fpos_user_id.id),("seq",">",order.seq)],order="seq asc")
-                #for next_order in next_orders:
-                #    next_order.cpos = next_order.cpos + diff
-                #    next_order.turnover = next_order.turnover + diff
-                     
                 order.amount_total = order_total
                 order.amount_tax = order_tax
 
