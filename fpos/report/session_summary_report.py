@@ -24,6 +24,7 @@ class Parser(extreport.basic_parser):
             "print_product" : context.get("print_product", name == "fpos.report_session_product"),
             "print_product_summary" : context.get("print_product_summary", False),
             "print_product_intern" : context.get("print_product_intern", False),
+            "print_deleted": context.get("irregular", False),
             "journal_ids": context.get("journal_ids"),
             "filter_journal": context.get("filter_journal", False),
             "product_ids": context.get("product_ids"),
@@ -327,7 +328,9 @@ class Parser(extreport.basic_parser):
     def _buildStatistic(self, sessions):
         if not sessions:
             return None
-
+          
+        cr = self.cr
+        
         turnover_dict = {}
         expense_dict = {}
         income_dict = {}
@@ -362,6 +365,7 @@ class Parser(extreport.basic_parser):
 
         print_detail = self.localcontext["print_detail"]
         print_product = self.localcontext["print_product"]
+        print_deleted = self.localcontext["print_deleted"]
 
         currency = first_session.currency_id.symbol
         status_id = self.pool["ir.model.data"].xmlid_to_res_id(self.cr, self.uid, "fpos.product_fpos_status", raise_if_not_found=True)
@@ -840,6 +844,35 @@ class Parser(extreport.basic_parser):
         if date_max:
             date_range.append(self.formatLang(date_max, date_time=True))
         date_range = " - ".join(date_range)
+        
+        # print deleted
+        deletions = []
+        if print_deleted and order_ids:
+          cr.execute("""SELECT
+              o.date, p.name, o.name, up.name, ll.name, SUM(ll.qty)
+            FROM fpos_order_log_line ll 
+            INNER JOIN fpos_order_log l ON l.id = ll.log_id 
+            INNER JOIN fpos_order o ON o.id = l.order_id 
+            INNER JOIN pos_order po ON po.fpos_order_id = o.id
+            LEFT JOIN fpos_place p ON p.id = o.place_id 
+            LEFT JOIN res_users u ON u.id = l.user_id 
+            LEFT JOIN res_partner up ON up.id = u.partner_id 
+            WHERE po.id IN %s 
+              AND ll.qty < 0
+            GROUP BY 1,2,3,4,5
+            ORDER BY o.date
+          """, (tuple(order_ids),))
+
+          for ts, place, order_name, user_name, line_name, qty in cr.fetchall():
+            deletions.append({
+              "date": self.formatLang(ts, date_time=True),
+              "place": place or "",
+              "order": order_name, 
+              "name": line_name, 
+              "qty": qty,
+              "user": user_name
+            })
+            
 
         # stat
         stat = {
@@ -884,7 +917,8 @@ class Parser(extreport.basic_parser):
             "order_count" : order_count,
             "noturnover_active": noturnover_active,
             "simple_turnover": len(turnoverStats) <= 1 and len(turnoverDetails) < 13 and not otherCashStatementsWithTurnover,             
-            "days" : []
+            "days" : [],
+            "deletions": deletions
         }
         return stat
 

@@ -172,6 +172,8 @@ class report_wizard(models.TransientModel):
                 report_ctx["product_ids"] = [p.id for p in wizard.product_ids]
             if wizard.filter_journal:
                 report_ctx["filter_journal"] = True
+            if wizard.irregular:
+                report_ctx["irregular"] = True
 
             # add report info                
             report_ctx["pos_report_info"] = {

@@ -33,6 +33,7 @@
                         <field name="journal_ids" widget="many2many_tags" attrs="{'invisible': [('detail','!=',True)]}"/>
                     </group>
                     <group>
+                      <field name="irregular"/>
                       <field name="product"/> 
                       <field name="product_summary" attrs="{'invisible': [('product','!=',True)]}"/>
                       <field name="product_intern"  attrs="{'invisible': [('product','!=',True)]}"/>                
